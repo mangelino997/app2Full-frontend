@@ -76,3 +76,6 @@ tr.planilla-no-seleccionada:hover {
 .planilla-seleccionada {
     background-color:#50A8FA !important;
 }
+button {
+    width: fit-content !important;
+}

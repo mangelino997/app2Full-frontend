@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { EmitirFacturaRoutingModule } from './emitir-factura-routing.module';
 
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
-  MatSelectModule, MatProgressBarModule } from '@angular/material';
+  MatSelectModule, MatProgressBarModule, MatIconModule, MatButtonModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { EmitirFacturaComponent } from 'src/app/componentes/emitir-factura/emitir-factura.component';
 import { TextMaskModule } from 'angular2-text-mask';
@@ -21,6 +21,8 @@ import { OrdenVentaService } from 'src/app/servicios/orden-venta.service';
 import { OrdenVentaEscalaService } from 'src/app/servicios/orden-venta-escala.service';
 import { VentaItemConceptoService } from 'src/app/servicios/venta-item-concepto.service';
 import { AfipAlicuotaIvaService } from 'src/app/servicios/afip-alicuota-iva.service';
+import { VentaComprobante } from 'src/app/modelos/ventaComprobante';
+import { VentaComprobanteItemFA } from 'src/app/modelos/ventaComprobanteItemFA';
 
 @NgModule({
   declarations: [
@@ -38,7 +40,9 @@ import { AfipAlicuotaIvaService } from 'src/app/servicios/afip-alicuota-iva.serv
     MatSortModule,
     MatSelectModule,
     MatProgressBarModule,
-    TextMaskModule
+    TextMaskModule,
+    MatIconModule,
+    MatButtonModule
   ],
   providers: [
     VentaComprobanteService,
@@ -53,7 +57,9 @@ import { AfipAlicuotaIvaService } from 'src/app/servicios/afip-alicuota-iva.serv
     OrdenVentaEscalaService,
     VentaItemConceptoService,
     AfipAlicuotaIvaService,
-    EmitirFactura
+    VentaComprobante,
+    VentaComprobanteItemFA
+
   ]
 })
 export class EmitirFacturaModule { }

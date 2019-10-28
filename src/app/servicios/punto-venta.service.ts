@@ -57,6 +57,10 @@ export class PuntoVentaService {
   public listarPorSucursal(id) {
     return this.http.get(this.url + '/listarPorSucursal/' + id, this.options);
   }
+  //Obtiene una lista de habilitados por Sucursal, Empresa y fe
+  public listarHabilitadosPorSucursalEmpresaYFe(idSucursal, idEmpresa) {
+    return this.http.get(this.url + '/listarHabilitadosPorSucursalEmpresaYFe/' + idSucursal + '/' + idEmpresa, this.options);
+  }
   //Obtiene una lista por sucursal y empresa
   public listarPorSucursalYEmpresa(idSucursal, idEmpresa) {
     return this.http.get(this.url + '/listarPorSucursalYEmpresa/' + idSucursal + '/' + idEmpresa, this.options);

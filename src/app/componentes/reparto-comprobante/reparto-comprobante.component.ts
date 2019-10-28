@@ -369,11 +369,11 @@ export class RepartoComprobanteComponent implements OnInit {
   }
   //Imprime la suma de kilos efectivos de la lista VentaCpte ItemFAs 
   public sumaKiloEfectivoVentaCpte(listaItemFAs) {
-    let kiloEfectivoTotal;
+    let kilosEfectivoTotal;
     listaItemFAs.array.forEach(elemento => {
-      kiloEfectivoTotal += elemento.kiloEfectivo;
+      kilosEfectivoTotal += elemento.kilosEfectivo;
     });
-    return kiloEfectivoTotal;
+    return kilosEfectivoTotal;
   }
   //Abre el modal para confirmar eliminar comprobante de reparto
   public activarEliminarCpteReparto(elemento) {

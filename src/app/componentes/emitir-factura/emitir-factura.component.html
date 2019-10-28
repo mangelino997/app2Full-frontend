@@ -3,42 +3,68 @@
     <h5>Emitir Factura</h5>
     <form [formGroup]="formulario" class="contenedor">
       <div class="row">
-        <div class="col-md-3">
+        <div class="col-md-6">
           <div class="row">
             <div class="col-md-6">
               <div class="form-group has-float-label">
-                <label for="idFecha" class="tamanio-label">Fecha</label>
-                <input id="idFecha" type="date" formControlName="fechaEmision" class="form-control form-control-sm"
-                  min="{{fechaActual}}">
-              </div>
-            </div>
-            <div class="col-md-6">
-              <div class="form-group has-float-label">
-                <label for="idPuntoVenta" class="tamanio-label">Punto de venta</label>
-                <mat-select id="idPuntoVenta" class="form-control form-control-sm" formControlName="puntoVenta"
-                  [compareWith]="compareFn" (selectionChange)="comprobarCodAfip()">
-                  <mat-option *ngFor="let itemPuntoVenta of resultadosPuntoVenta" [value]="itemPuntoVenta">
-                    {{establecerCerosIzq(itemPuntoVenta.puntoVenta, "0000", -5)}}
-                  </mat-option>
-                </mat-select>
-              </div>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-md-12">
-              <div class="form-group has-float-label inline">
-                <label for="idItem" class="tamanio-label">Item *</label>
-                <mat-select id="idItem" class="form-control form-control-sm" [formControl]="item"
-                  [compareWith]="compareFn" (selectionChange)="cambioItem()">
-                  <mat-option *ngFor="let item of resultadosItems" [value]="item">
+                <label for="idTipoComprobante" class="tamanio-label">Tipo de Comprobante *</label>
+                <mat-select id="idTipoComprobante" class="form-control form-control-sm" formControlName="tipoComprobante"
+                  [compareWith]="compareFn">
+                  <mat-option *ngFor="let item of tiposComprobante" [value]="item">
                     {{item.nombre}}
                   </mat-option>
                 </mat-select>
               </div>
             </div>
+            <div class="col-md-3">
+              <div class="form-group has-float-label">
+                <label for="idPuntoVenta" class="tamanio-label">Punto de Venta *</label>
+                <mat-select id="idPuntoVenta" class="form-control form-control-sm" formControlName="puntoVenta"
+                  [compareWith]="compareFn" (selectionChange)="comprobarCodAfip()">
+                  <mat-option *ngFor="let item of puntosDeVenta" [value]="item">
+                    {{establecerCerosIzq(item.puntoVenta, "0000", -5)}}
+                  </mat-option>
+                </mat-select>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <!-- <div class="form-group has-float-label">
+                <label for="idFecha" class="tamanio-label">Fecha</label>
+                <input id="idFecha" type="date" formControlName="fechaEmision" class="form-control form-control-sm"
+                  min="{{fechaActual}}">
+              </div> -->
+              <div class="form-group has-float-label-icon">
+                <label for="idFechaEmision" class="tamanio-label">Fecha *</label>
+                <div class="input-group input-group-sm mb-3">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text">
+                      <mat-icon>date_range</mat-icon>
+                    </span>
+                  </div>
+                  <input id="idFechaEmision" type="date" formControlName="fechaEmision" autocomplete="off"
+                    class="form-control form-control-sm">
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group has-float-label inline">
+                <label for="idItem" class="tamanio-label">Item a Facturar *</label>
+                <mat-select id="idItem" class="form-control form-control-sm" formControlName="afipConcepto"
+                  [compareWith]="compareFn" (selectionChange)="cambioItem()">
+                  <mat-option *ngFor="let item of itemsAFacturar" [value]="item">
+                    {{item.nombre}}
+                  </mat-option>
+                </mat-select>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <button id="idBtnFCE" mat-raised-button color="primary">FCE MiPyMEs</button>
+            </div>
           </div>
         </div>
-        <div class="col-md-3"></div>
+        <div class="col"></div>
         <div class="col-md-1">
           <div class="form-group has-float-label">
             <label for="idLetra" class="tamanio-label">P. Venta</label>
@@ -66,13 +92,6 @@
               class="form-control form-control-sm number-right" readonly>
           </div>
         </div>
-        <div class="col-md-2">
-          <div class="form-group has-float-label">
-            <label for="idTipoComprobante" class="tamanio-label">Tipo de Comprobante</label>
-            <input id="idTipoComprobante" type="text" [formControl]="tipoComprobante"
-              class="form-control form-control-sm" readonly>
-          </div>
-        </div>
       </div>
       <hr style="margin-top: 10px; margin-bottom: 20px;">
       <div class="tamanio-pantalla inline">
@@ -95,43 +114,46 @@
                 style="width: 50px;">Agregar</button>
             </div>
           </div>
-          <div formGroupName="rem">
-            <div class="inline">
+            <!-- <div class="inline">
               <div class="form-group has-float-label">
                 <label for="idDomicilioRem" class="tamanio-label">Domicilio</label>
-                <input id="idDomicilioRem" type="text" formControlName="domicilio" readonly
+                <input id="idDomicilioRem" type="text" [formControl]="formulario.get('clienteRemitente').value.domicilio" readonly
                   class="form-control form-control-sm" style="width: 300px;">
               </div>
               <div class="form-group has-float-label">
                 <label for="idLocalidadRem" class="tamanio-label">Localidad</label>
-                <input id="idLocalidadRem" type="text" formControlName="localidad" readonly
+                <input id="idLocalidadRem" type="text" [formControl]="formulario.get('clienteRemitente').value.domicilio" readonly
                   class="form-control form-control-sm" style="width: 300px;">
               </div>
             </div>
             <div class="inline">
               <div class="form-group has-float-label">
                 <label for="idCondicionIvaRem" class="tamanio-label">Condición de IVA</label>
-                <input id="idCondicionIvaRem" type="text" formControlName="afipCondicionIva" readonly
+                <input id="idCondicionIvaRem" type="text" [formControl]="formulario.get('clienteRemitente').value.domicilio" readonly
                   class="form-control form-control-sm" style="width: 300px;">
               </div>
               <div class="form-group has-float-label">
                 <label for="idCondicionVtaRem" class="tamanio-label">Condición de Venta</label>
-                <input id="idCondicionVtaRem" type="text" formControlName="condicionVenta" readonly
+                <input id="idCondicionVtaRem" type="text" [formControl]="condicionVenta" readonly
                   class="form-control form-control-sm" style="width: 300px;">
               </div>
             </div>
             <div class="inline">
               <div class="form-group has-float-label">
+                <label for="idDocumentoRem" class="tamanio-label">Tipo y N° de Documento</label>
+                <input id="idDocumentoRemitente" type="text" [formControl]="tipoYDocumento" readonly
+                  class="form-control form-control-sm" style="width: 300px;">
+              </div>
+              <div class="form-group has-float-label">
                 <label for="idSucursalRem" class="tamanio-label">Sucursal</label>
-                <mat-select id="idSucursalRem" class="form-control form-control-sm" style="width: 606px;"
-                  formControlName="sucursal" [compareWith]="compareFn">
+                <mat-select id="idSucursalRem" class="form-control form-control-sm"
+                  style="width: 300px; margin-left: 5px;" [formControl]="sucursal" [compareWith]="compareFn">
                   <mat-option *ngFor="let itemSucursal of resultadosSucursalesRem" [value]="itemSucursal">
                     {{itemSucursal.nombre}} | {{itemSucursal.domicilio}} | {{itemSucursal.localidad.nombre}}
                   </mat-option>
                 </mat-select>
               </div>
-            </div>
-          </div>
+            </div> -->
         </div>
         <div class="border has-float-label" id="Destinatario" style="margin-left: 5px;">
           <label style="font-size: 16px;">Destinatario</label>
@@ -153,8 +175,7 @@
                 style="width: 50px;">Agregar</button>
             </div>
           </div>
-          <div formGroupName="des">
-            <div class="inline">
+            <!-- <div class="inline">
               <div class="form-group has-float-label">
                 <label for="idDomicilioDes" class="tamanio-label">Domicilio</label>
                 <input id="idDomicilioDes" type="text" formControlName="domicilio" readonly
@@ -180,31 +201,101 @@
             </div>
             <div class="inline">
               <div class="form-group has-float-label">
+                <label for="idDocumentoDes" class="tamanio-label">Tipo y N° de Documento</label>
+                <input id="idDocumentoDestinatario" type="text" formControlName="tipoYDocumento" readonly
+                  class="form-control form-control-sm" style="width: 300px;">
+              </div>
+              <div class="form-group has-float-label">
                 <label for="idSucursalDes" class="tamanio-label">Sucursal</label>
-                <mat-select id="idSucursalDes" class="form-control form-control-sm" style="width: 606px;"
-                  formControlName="sucursal" [compareWith]="compareFn">
+                <mat-select id="idSucursalDes" class="form-control form-control-sm"
+                  style="width: 300px; margin-left: 5px;" formControlName="sucursal" [compareWith]="compareFn">
                   <mat-option *ngFor="let itemSucursal of resultadosSucursalesDes" [value]="itemSucursal">
                     {{itemSucursal.nombre}} | {{itemSucursal.domicilio}} | {{itemSucursal.localidad.nombre}}
                   </mat-option>
                 </mat-select>
-              </div>
-            </div>
-          </div>
+              </div> 
+            </div>-->
         </div>
       </div>
       <br>
-      <div class="form-group has-float-label col-md-2 ">
-        <label for="idPagoOrigen" class="tamanio-label">Pago en: </label>
-        <mat-select id="idPagoOrigen" formControlName="pagoEnOrigen" class="form-control form-control-sm"
-          (selectionChange)="pagoEnOrigen()">
-          <mat-option [value]="true">Origen</mat-option>
-          <mat-option [value]="false">Destino</mat-option>
-        </mat-select>
-      </div>
+      <!-- <div class="row">
+        <div class="col">
+          <div class="form-group has-float-label">
+            <label for="idPagoOrigen" class="tamanio-label">Pago en: *</label>
+            <mat-select id="idPagoOrigen" formControlName="pagoEnOrigen" class="form-control form-control-sm"
+              (selectionChange)="pagoEnOrigen()">
+              <mat-option [value]="true">Origen</mat-option>
+              <mat-option [value]="false">Destino</mat-option>
+            </mat-select>
+          </div>
+        </div>
+        <div style="width: 70px;">
+          <button id="idBtnGS" mat-raised-button color="primary">G.S</button>
+        </div>
+        <div class="col">
+          <div class="form-group has-float-label">
+            <label for="idViaje" class="tamanio-label">N° Viaje*</label>
+            <input id="idViaje" type="text" formControlName="numeroViaje" [readOnly]="soloLectura" placeholder="00"
+              [textMask]="obtenerMascaraEnteroSinDecimales(8)" class="form-control form-control-sm number-right">
+          </div>
+        </div>
+        <div class="col">
+          <div class="form-group has-float-label ">
+            <label for="idRemito" class="tamanio-label">N° Remito*</label>
+            <input id="idRemito" type="number" [formControl]="viajeRemito" [readOnly]="soloLectura" placeholder="00"
+              [textMask]="obtenerMascaraEnteroSinDecimales(8)" class="form-control form-control-sm number-right"
+              (blur)="cambioRemito()">
+          </div>
+        </div>
+        <div class="col">
+          <div class="form-group has-float-label">
+            <label for="idBultos" class="tamanio-label">Bultos</label>
+            <input id="idBultos" type="text" formControlName="bultos" class="form-control form-control-sm number-right"
+              placeholder="00" [textMask]="obtenerMascaraEnteroSinDecimales(8)" autocomplete="off"
+              [readOnly]="soloLectura">
+          </div>
+        </div>
+        <div class="col">
+          <div class="form-group has-float-label">
+            <label for="idKiloEfectivo" class="tamanio-label">Kg Efectivo</label>
+            <input id="idKiloEfectivo" type="text" formControlName="kilosEfectivo"
+              class="form-control form-control-sm number-right" autocomplete="off" placeholder="0.00"
+              [textMask]="obtenerMascaraEnteroConDecimales(8)"
+              (blur)="setDecimales(formularioItem.get('kilosEfectivo'), 2)" [readOnly]="soloLectura">
+          </div>
+        </div>
+        <div class="col">
+          <div class="form-group has-float-label">
+            <label for="idKiloAforado" class="tamanio-label">Kg Aforado</label>
+            <input id="idKiloAforado" type="text" formControlName="kilosAforado"
+              class="form-control form-control-sm number-right" placeholder="0.00" autocomplete="off"
+              (blur)="setDecimales(formularioItem.get('kilosAforado'), 2)"
+              [textMask]="obtenerMascaraEnteroConDecimales(8)" [readOnly]="soloLectura">
+          </div>
+        </div>
+        <div style="width: 60px;">
+          <button class="btn btn-secondary btn-custom" (click)="agregarAforo()">Aforar</button>
+        </div>
+        <div class="col">
+          <div class="form-group has-float-label">
+            <label for="idM3" class="tamanio-label">m3</label>
+            <input id="idM3" type="number" formControlName="m3" class="form-control form-control-sm" placeholder="0.00"
+              (blur)="setDecimales(formularioItem.get('m3'), 2)" autocomplete="off" [readOnly]="soloLectura">
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="form-group has-float-label">
+            <label for="idDescripcionCarga" class="tamanio-label">Descripción Carga</label>
+            <input id="idDescripcionCarga" type="text" formControlName="descripcionCarga"
+              class="form-control form-control-sm"  autocomplete="off" [readOnly]="soloLectura" maxlength="100">
+          </div>
+        </div>
+      </div> -->
+
       <hr style="margin-top: 10px; margin-bottom: 20px;">
       <form [formGroup]="formularioItem">
         <div class="row">
-          <div class="form-group has-float-label">
+          <!-- <div class="form-group has-float-label">
             <label for="idViaje" class="tamanio-label">N° Viaje*</label>
             <input id="idViaje" type="text" formControlName="numeroViaje" [readOnly]="soloLectura" placeholder="00"
               [textMask]="obtenerMascaraEnteroSinDecimales(8)" class="form-control form-control-sm number-right"
@@ -242,7 +333,7 @@
             <input id="idM3" type="number" formControlName="m3" class="form-control form-control-sm" placeholder="0.00"
               style="width: 45px;" (blur)="setDecimales(formularioItem.get('m3'), 2)" autocomplete="off"
               [readOnly]="soloLectura">
-          </div>
+          </div> 
           <div class="form-group has-float-label ">
             <label for="idTarifaOVta" class="tamanio-label">Tarifa O.Vta.*</label>
             <mat-select id="idTarifaOVta" class="form-control form-control-sm" formControlName="ordenVenta"
@@ -256,8 +347,8 @@
             <label for="idDescripcionCarga" class="tamanio-label">Descripción Carga</label>
             <input id="idDescripcionCarga" type="text" formControlName="descripcionCarga"
               class="form-control form-control-sm" style="width: 140px;" autocomplete="off" [readOnly]="soloLectura">
-          </div>
-          <div class="form-group has-float-label">
+          </div> -->
+          <!-- <div class="form-group has-float-label">
             <label for="idValorDeclarado" class="tamanio-label">Valor Declarado</label>
             <input id="idValorDeclarado" type="text" formControlName="valorDeclarado" placeholder="0.00"
               class="form-control form-control-sm number-right" style="width: 125px;" autocomplete="off"
@@ -294,8 +385,8 @@
               class="form-control form-control-sm number-right" placeholder="$ 0.00" style="width: 68px;"
               autocomplete="off" [textMask]="obtenerMascaraImporte(8, 2)" (blur)="calcularSubtotal($event)"
               [readOnly]="soloLectura">
-          </div>
-          <div class="form-group has-float-label ">
+          </div> -->
+          <!-- <div class="form-group has-float-label ">
             <label for="idConcepto" class="tamanio-label">Conceptos Varios</label>
             <mat-select id="idConcepto" class="form-control form-control-sm" formControlName="conceptosVarios"
               style="width: 150px;" [compareWith]="compareFn" (selectionChange)="habilitarPrecioCV()">
@@ -311,8 +402,8 @@
             <input id="idImporteConcepto" type="text" formControlName="importeVentaItemConcepto" placeholder="$ 0.00"
               class="form-control form-control-sm number-right" style="width: 130px;" autocomplete="off"
               [textMask]="obtenerMascaraImporte(8, 2)" (blur)="calcularSubtotal($event)">
-          </div>
-          <div class="form-group has-float-label">
+          </div> -->
+          <!-- <div class="form-group has-float-label">
             <label for="idSubtotal" class="tamanio-label">Subtotal</label>
             <input id="idSubtotal" type="text" formControlName="importeNetoGravado"
               class="form-control form-control-sm number-right" style="width: 73px;"
@@ -328,8 +419,7 @@
             </mat-select>
           </div>
           <button class="btn btn-warning btn-custom margin-left-button" [disabled]="!formularioItem.valid"
-            (click)="agregarItemViaje()">Agregar</button>
-          <!---->
+            (click)="agregarItemViaje()">Agregar</button> -->
         </div>
       </form>
       <div class="inline">
@@ -368,7 +458,7 @@
         </div>
       </div>
       <br>
-      <div class="inline">
+      <!-- <div class="inline">
         <div class="form-group has-float-label">
           <label for="idTotalItems" class="tamanio-label">Total Items</label>
           <input id="idTotalItems" type="text" [formControl]="contador"
@@ -398,8 +488,8 @@
             [textMask]="obtenerMascaraImporte(8, 2)" (blur)="setDecimales(formulario.get('importeTotal'), 2)"
             class="form-control input-bold form-control-sm number-right" style="width: 130px;">
         </div>
-      </div>
-      <form [formGroup]="formularioCR">
+      </div> -->
+      <!-- <form [formGroup]="formularioCR">
         <div class="inline">
           <div class="form-group has-float-label">
             <label for="idContraReembolso" class="tamanio-label">ContraReembolso</label>
@@ -446,7 +536,7 @@
           <span class="spacer"></span>
           <button class="btn btn-primary" type="button" style="width: 130px;" (click)="emitirFactura()">Emitir</button>
         </div>
-      </form>
+      </form> -->
       <div class="inline">
         <button class="btn btn-info btn-custom margin-left-button" style="width: 130px;">ContraReembolso</button>
         <button class="btn btn-info btn-custom margin-left-button" style="width: 125px;"
