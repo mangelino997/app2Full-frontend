@@ -8,7 +8,6 @@ import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModul
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { EmitirFacturaComponent } from 'src/app/componentes/emitir-factura/emitir-factura.component';
 import { TextMaskModule } from 'angular2-text-mask';
-import { EmitirFactura } from 'src/app/modelos/emitirFactura';
 import { VentaComprobanteService } from 'src/app/servicios/venta-comprobante.service';
 import { ClienteService } from 'src/app/servicios/cliente.service';
 import { SucursalClienteService } from 'src/app/servicios/sucursal-cliente.service';
@@ -42,7 +41,7 @@ import { VentaComprobanteItemFA } from 'src/app/modelos/ventaComprobanteItemFA';
     MatProgressBarModule,
     TextMaskModule,
     MatIconModule,
-    MatButtonModule
+    MatButtonModule,
   ],
   providers: [
     VentaComprobanteService,

@@ -45,6 +45,9 @@ export class EmitirFacturaComponent implements OnInit {
   public formularioItem: FormGroup;
   //Define un formulario para el contrareembolso
   public formularioCR: FormGroup;
+  //Define los formularios para mostrar los datos del cliente remitente y destinatario
+  public formularioRemitente: FormGroup;
+  public formularioDestinatario: FormGroup;
   //Define la lista de Tipos de Comprobante
   public tiposComprobante = [];
   //Define la lista para Puntos de Venta
@@ -54,6 +57,9 @@ export class EmitirFacturaComponent implements OnInit {
   //Define la lista de resultados de busqueda para Reminentes y Destinatarios
   public reminentes = [];
   public destinatarios = [];
+  //Define la lista de resultados de sucursales para el Remitente y Destinatario
+  public sucursalesRemitente = [];
+  public sucursalesDestinatario = [];
   //Define la fecha actual
   public fechaActual: string = null;
 
@@ -72,13 +78,10 @@ export class EmitirFacturaComponent implements OnInit {
   public sucursalRemitente: FormControl = new FormControl();
   //Define el form control para tipo de comprobante
   public tipoComprobante: FormControl = new FormControl();
-  
+
 
   //Define la lista de resultados de busqueda localidad
   public resultadosLocalidades = [];
-  //Define la lista de resultados de sucursales para el Remitente y Destinatario
-  public resultadosSucursalesRem = [];
-  public resultadosSucursalesDes = [];
 
   //Define la lista de Remitos
   public resultadosRemitos = [];
@@ -130,9 +133,23 @@ export class EmitirFacturaComponent implements OnInit {
     private ordenVentaServicio: OrdenVentaService, private ordenVentaEscalaServicio: OrdenVentaEscalaService, private ventaItemConceptoService: VentaItemConceptoService,
     private alicuotasIvaService: AfipAlicuotaIvaService, private route: Router) { }
   ngOnInit() {
-    //Define el formulario de orden venta
+    //Define los formularios y sus validaciones
     this.formulario = this.ventaComprobante.formulario; // formulario general (engloba los demás)
     this.formularioItem = this.ventaComprobanteItemFA.formulario; // formulario para los item de tabla
+    this.formularioRemitente = new FormGroup({
+      domicilio: new FormControl(),
+      localidad: new FormControl(),
+      afipCondicionIva: new FormControl(),
+      condicionVenta: new FormControl(),
+      tipoYNumeroDocumento: new FormControl()
+    });
+    this.formularioDestinatario = new FormGroup({
+      domicilio: new FormControl(),
+      localidad: new FormControl(),
+      afipCondicionIva: new FormControl(),
+      condicionVenta: new FormControl(),
+      tipoYNumeroDocumento: new FormControl()
+    });
     // this.formularioCR = this.factura.formularioContraReembolso; // formulario para contrareembolso
     this.reestablecerFormulario();
     //Obtiene la lista de tipos de comprobante
@@ -146,7 +163,7 @@ export class EmitirFacturaComponent implements OnInit {
     //Autcompletado - Buscar por Remitente
     this.formulario.get('clienteRemitente').valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
-        this.clienteService.listarPorAlias(data).subscribe(res => {
+        this.clienteService.listarActivosPorAlias(data).subscribe(res => {
           console.log(res.json());
           this.reminentes = res.json();
         })
@@ -155,7 +172,7 @@ export class EmitirFacturaComponent implements OnInit {
     //Autcompletado - Buscar por Destinatario
     this.formulario.get('clienteDestinatario').valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
-        this.clienteService.listarPorAlias(data).subscribe(res => {
+        this.clienteService.listarActivosPorAlias(data).subscribe(res => {
           this.destinatarios = res.json();
         })
       }
@@ -230,14 +247,15 @@ export class EmitirFacturaComponent implements OnInit {
   private vaciarListas() {
     this.reminentes = [];
     this.destinatarios = [];
-    this.resultadosSucursalesRem = [];
-    this.resultadosSucursalesDes = [];
+    this.sucursalesRemitente = [];
+    this.sucursalesDestinatario = [];
     this.resultadosRemitos = [];
     this.listaRemitos = new MatTableDataSource([]);
   }
   //Establece valores por defecto
   private establecerValoresPorDefecto() {
     this.soloLectura = true;
+    this.formulario.get('pagoEnOrigen').setValue(true);
     this.formulario.get('empresa').setValue(this.appService.getEmpresa());
     this.formulario.get('sucursal').setValue(this.appService.getUsuario().sucursal);
     this.formulario.get('tipoComprobante').setValue(this.tiposComprobante[0]);
@@ -246,7 +264,6 @@ export class EmitirFacturaComponent implements OnInit {
       this.formulario.get('fechaEmision').setValue(res.json());
       this.formulario.get('fechaRegistracion').setValue(res.json());
       this.fechaActual = res.json();
-      console.log(this.fechaActual);
     });
   }
   //Comprueba si ya existe un codigo de afip entonces vuelve a llamar a la funcion que obtiene el valor del campo Numero
@@ -329,66 +346,162 @@ export class EmitirFacturaComponent implements OnInit {
     //     break;
     // }
   }
-  //Obtiene el listado de Sucursales por Remitente
+  //Valida el tipo y numero documento, luego setea datos para mostrar y obtiene el listado de sucursales por Remitente
   public cambioRemitente() {
-    this.formulario.get('rem.domicilio').setValue(this.formulario.get('clienteRemitente').value.domicilio);
-    this.formulario.get('rem.localidad').setValue(this.formulario.get('clienteRemitente').value.localidad.nombre);
-    this.formulario.get('rem.condicionVenta').setValue(this.formulario.get('clienteRemitente').value.condicionVenta.nombre);
-    this.formulario.get('rem.afipCondicionIva').setValue(this.formulario.get('clienteRemitente').value.afipCondicionIva.nombre);
-    this.sucursalService.listarPorCliente(this.formulario.get('clienteRemitente').value.id).subscribe(
+    let clienteRemitente = this.formulario.value.clienteRemitente;
+    let res = this.validarDocumento(clienteRemitente.tipoDocumento, clienteRemitente.numeroDocumento, 'Remitente');
+    if (res) {
+      this.formularioRemitente.get('domicilio').setValue(clienteRemitente.domicilio);
+      this.formularioRemitente.get('localidad').setValue(clienteRemitente.localidad.nombre);
+      this.formularioRemitente.get('condicionVenta').setValue(clienteRemitente.condicionVenta.nombre);
+      this.formularioRemitente.get('afipCondicionIva').setValue(clienteRemitente.afipCondicionIva.nombre);
+      this.formularioRemitente.get('tipoYNumeroDocumento').setValue(
+        clienteRemitente.tipoDocumento.nombre + ' - ' + clienteRemitente.numeroDocumento);
+      this.listarSucursales('remitente', clienteRemitente.id);
+      this.pagoEnOrigen();
+    }
+  }
+  /*Valida que el Destinatario no sea el mismo que el Remitente, luego valida el tipo y numero documento, 
+  luego setea datos para mostrar y obtiene el listado de sucursales por Destinatario */
+  public cambioDestinatario() {
+    let clienteDestinatario = this.formulario.value.clienteDestinatario;
+    let clienteRemitente = this.formulario.value.clienteRemitente;
+    if (clienteRemitente && clienteDestinatario.id != clienteRemitente.id) {
+      let res = this.validarDocumento(clienteDestinatario.tipoDocumento, clienteDestinatario.numeroDocumento, 'Destinatario');
+      if (res) {
+        this.formularioDestinatario.get('domicilio').setValue(clienteDestinatario.domicilio);
+        this.formularioDestinatario.get('localidad').setValue(clienteDestinatario.localidad.nombre);
+        this.formularioDestinatario.get('condicionVenta').setValue(clienteDestinatario.condicionVenta.nombre);
+        this.formularioDestinatario.get('afipCondicionIva').setValue(clienteDestinatario.afipCondicionIva.nombre);
+        this.formularioDestinatario.get('tipoYNumeroDocumento').setValue(
+          clienteDestinatario.tipoDocumento.nombre + ' - ' + clienteDestinatario.numeroDocumento);
+        this.listarSucursales('destinatario', clienteDestinatario.id);
+        this.pagoEnOrigen();
+      }
+    } else {
+      clienteRemitente ? this.toastr.error("El Destinatario no puede ser el mismo que el Remitente.") :
+        this.toastr.warning("Seleccione un Remitente.");
+      this.formulario.get('clienteDestinatario').reset();
+      this.formularioDestinatario.reset();
+      document.getElementById('idDestinatario').focus();
+    }
+  }
+  //Obtiene el listado de sucursales para el remitente y destinatario
+  private listarSucursales(tipoCliente, idCliente) {
+    this.sucursalService.listarPorCliente(idCliente).subscribe(
       res => {
-        this.resultadosSucursalesRem = res.json();
-        this.formulario.get('rem.sucursal').setValue(this.resultadosSucursalesRem[0]);
+        if (tipoCliente == 'remitente') {
+          this.sucursalesRemitente = res.json();
+          this.sucursalesRemitente.length > 0 ? this.formulario.get('sucursalClienteRem').setValue(this.sucursalesRemitente[0]) : '';
+        } else {
+          this.sucursalDestinatario = res.json();
+          this.sucursalesDestinatario.length > 0 ? this.formulario.get('sucursalClienteDes').setValue(this.sucursalDestinatario[0]) : '';
+        }
       },
       err => {
-        this.toastr.error("El Remitente no tiene asignada una sucursal de entrega.");
+        this.toastr.error(err.json().mensaje);
       }
     );
   }
   //Validad el numero de documento
-  public validarDocumento(): void {
-    let documento = this.formulario.get('numeroDocumento').value;
-    let tipoDocumento = this.formulario.get('tipoDocumento').value;
+  public validarDocumento(tipoDocumento, documento, tipoCliente) {
+    let respuesta;
     if (documento) {
       switch (tipoDocumento.id) {
         case 1:
-          let respuesta = this.appService.validarCUIT(documento.toString());
+          respuesta = this.appService.validarCUIT(documento.toString());
           if (!respuesta) {
-            this.formulario.get('numeroDocumento').reset();
+            this.formulario.get('clienteRemitente').reset();
             let err = { codigo: 11010, mensaje: 'CUIT Incorrecto!' };
-            this.lanzarError(err);
+            this.lanzarError(err, 'id' + tipoCliente, 'label' + tipoCliente);
           }
           break;
         case 2:
-          let respuesta2 = this.appService.validarCUIT(documento.toString());
-          if (!respuesta2) {
-            this.formulario.get('numeroDocumento').reset();
+          respuesta = this.appService.validarCUIT(documento.toString());
+          if (!respuesta) {
+            this.formulario.get('clienteRemitente').reset();
             let err = { codigo: 11010, mensaje: 'CUIL Incorrecto!' };
-            this.lanzarError(err);
+            this.lanzarError(err, 'id' + tipoCliente, 'label' + tipoCliente);
           }
           break;
         case 8:
-          let respuesta8 = this.appService.validarDNI(documento.toString());
-          if (!respuesta8) {
-            this.formulario.get('numeroDocumento').reset();
+          respuesta = this.appService.validarDNI(documento.toString());
+          if (!respuesta) {
+            this.formulario.get('clienteRemitente').reset();
             let err = { codigo: 11010, mensaje: 'DNI Incorrecto!' };
-            this.lanzarError(err);
+            this.lanzarError(err, 'id' + tipoCliente, 'label' + tipoCliente);
           }
           break;
       }
     }
+    return respuesta;
   }
   //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
-  private lanzarError(err) {
+  private lanzarError(err, idCampo, labelCampo) {
     this.formulario.get('numeroDocumento').setErrors({ 'incorrect': true });
     var respuesta = err;
     if (respuesta.codigo == 11010) {
-      document.getElementById("labelNumeroDocumento").classList.add('label-error');
-      document.getElementById("idNumeroDocumento").classList.add('is-invalid');
-      document.getElementById("idNumeroDocumento").focus();
+      document.getElementById(labelCampo).classList.add('label-error');
+      document.getElementById(idCampo).classList.add('is-invalid');
+      document.getElementById(idCampo).focus();
     }
     this.toastr.error(respuesta.mensaje);
   }
+  //Establece el punto de venta, letra, numero, codigoAfip
+  public pagoEnOrigen() {
+    console.log(this.formulario.value.pagoEnOrigen);
+    if (this.formulario.value.pagoEnOrigen == true) {
+      document.getElementById('Remitente').className = "border has-float-label pagaSeleccionado";
+      document.getElementById('Destinatario').className = "border has-float-label";
+      this.formulario.get('cliente').setValue(this.formulario.get('clienteRemitente').value);
+      this.formulario.get('condicionVenta').setValue({ id: this.formulario.get('clienteRemitente').value.condicionVenta.id });
+      this.formulario.get('tipoDocumento').setValue(this.formulario.get('clienteRemitente').value.tipoDocumento);
+      this.formulario.get('numeroDocumento').setValue(this.formulario.get('clienteRemitente').value.numeroDocumento);
+      this.formulario.get('afipCondicionIva').setValue(this.formulario.get('clienteRemitente').value.afipCondicionIva);
+      this.formulario.get('cobrador').setValue(this.formulario.get('clienteRemitente').value.cobrador);
+      this.formulario.value.condicionVenta.id == 1 ? this.formulario.get('letra').setValue('A') : this.formulario.get('letra').setValue('B');
+      this.cargarCodigoAfip(this.formulario.value.letra);
+      this.listarTarifaOVenta();
+      // this.afipComprobanteService.obtenerLetra(1, this.formulario.get('clienteRemitente').value.afipCondicionIva.id).subscribe(
+      //   res => {
+      //     this.formulario.get('letra').setValue(res.text());
+      //     this.cargarCodigoAfip(res.text());
+      //     this.listarTarifaOVenta();
+      //   }
+      // )
+    }
+    else {
+      document.getElementById('Remitente').className = "border has-float-label";
+      document.getElementById('Destinatario').className = "border has-float-label pagaSeleccionado";
+      this.formulario.get('condicionVenta').setValue({ id: this.formulario.get('clienteDestinatario').value.condicionVenta.id });
+      this.formulario.get('afipCondicionIva').setValue(this.formulario.get('clienteDestinatario').value.afipCondicionIva);
+      this.formulario.get('tipoDocumento').setValue(this.formulario.get('clienteDestinatario').value.tipoDocumento);
+      this.formulario.get('numeroDocumento').setValue(this.formulario.get('clienteDestinatario').value.numeroDocumento);
+      this.formulario.get('cobrador').setValue(this.formulario.get('clienteDestinatario').value.cobrador);
+      this.formulario.get('cliente').setValue(this.formulario.get('clienteDestinatario').value);
+      this.formulario.value.condicionVenta.id == 1 ? this.formulario.get('letra').setValue('A') : this.formulario.get('letra').setValue('B');
+      this.cargarCodigoAfip(this.formulario.value.letra);
+      this.listarTarifaOVenta();
+      // this.afipComprobanteService.obtenerLetra(1, this.formulario.get('clienteDestinatario').value.afipCondicionIva.id).subscribe(
+      //   res => {
+      //     this.formulario.get('letra').setValue(res.text());
+      //     this.cargarCodigoAfip(res.text());
+      //     this.listarTarifaOVenta();
+      //   }
+      // )
+    }
+  }
+
+  //Verifica si se selecciono un elemento del autocompletado
+  public verificarSeleccion(valor, tipoCliente): void {
+    if (typeof valor.value != 'object') {
+      valor.setValue(null);
+      tipoCliente == 'remitente'? this.formularioRemitente.reset(): this.formularioDestinatario.reset();
+    }
+  }
+
+
+
 
 
   //Con cada click sobre la lista "Item *" se debe resetear 
@@ -449,7 +562,7 @@ export class EmitirFacturaComponent implements OnInit {
         this.formulario.get('rem.sucursal').setValue(resultado.remito.clienteRemitente.sucursalLugarPago);
         //setea los valores en cliente destinatario
         this.formulario.get('clienteDestinatario').setValue(resultado.remito.clienteDestinatario);
-        this.listarSucursalesDestinatario();
+        this.cambioDestinatario();
         this.formulario.get('des.sucursal').setValue(resultado.remito.clienteDestinatario.sucursalLugarPago);
         //Setea los valores en el formulario item
         this.formularioItem.get('viajeRemito').setValue(resultado.remito);
@@ -504,22 +617,7 @@ export class EmitirFacturaComponent implements OnInit {
     // );
   }
 
-  //Obtiene el listado de Sucursales por Remitente
-  public listarSucursalesDestinatario() {
-    this.formulario.get('des.domicilio').setValue(this.formulario.get('clienteDestinatario').value.domicilio);
-    this.formulario.get('des.localidad').setValue(this.formulario.get('clienteDestinatario').value.localidad.nombre);
-    this.formulario.get('des.condicionVenta').setValue(this.formulario.get('clienteDestinatario').value.condicionVenta.nombre);
-    this.formulario.get('des.afipCondicionIva').setValue(this.formulario.get('clienteDestinatario').value.afipCondicionIva.nombre);
-    this.sucursalService.listarPorCliente(this.formulario.get('clienteDestinatario').value.id).subscribe(
-      res => {
-        this.resultadosSucursalesDes = res.json();
-        this.formulario.get('des.sucursal').setValue(this.resultadosSucursalesDes[0]);
-      },
-      err => {
-        this.toastr.error("El Destinatario no tiene asignada una sucursal de entrega.");
-      }
-    );
-  }
+
   //Abre el dialogo para agregar un cliente eventual
   public agregarClienteEventual(): void {
     const dialogRef = this.dialog.open(ClienteEventualComponent, {
@@ -587,43 +685,7 @@ export class EmitirFacturaComponent implements OnInit {
   //       break;
   //   }
   // }
-  //Controla los checkbox
-  public pagoEnOrigen() {
-    if (this.formulario.get('pagoEnOrigen').value == true) {
-      document.getElementById('Remitente').className = "border has-float-label pagaSeleccionado";
-      document.getElementById('Destinatario').className = "border has-float-label";
-      this.formulario.get('condicionVenta').setValue({ id: this.formulario.get('clienteRemitente').value.condicionVenta.id });
-      this.formulario.get('tipoDocumento').setValue(this.formulario.get('clienteRemitente').value.tipoDocumento);
-      this.formulario.get('numeroDocumento').setValue(this.formulario.get('clienteRemitente').value.numeroDocumento);
-      this.formulario.get('afipCondicionIva').setValue(this.formulario.get('clienteRemitente').value.afipCondicionIva);
-      this.formulario.get('cobrador').setValue(this.formulario.get('clienteRemitente').value.cobrador);
-      this.formulario.get('cliente').setValue(this.formulario.get('clienteRemitente').value);
-      this.afipComprobanteService.obtenerLetra(1, this.formulario.get('clienteRemitente').value.afipCondicionIva.id).subscribe(
-        res => {
-          this.formulario.get('letra').setValue(res.text());
-          this.cargarCodigoAfip(res.text());
-          this.listarTarifaOVenta();
-        }
-      )
-    }
-    else {
-      document.getElementById('Remitente').className = "border has-float-label";
-      document.getElementById('Destinatario').className = "border has-float-label pagaSeleccionado";
-      this.formulario.get('condicionVenta').setValue({ id: this.formulario.get('clienteDestinatario').value.condicionVenta.id });
-      this.formulario.get('afipCondicionIva').setValue(this.formulario.get('clienteDestinatario').value.afipCondicionIva);
-      this.formulario.get('tipoDocumento').setValue(this.formulario.get('clienteDestinatario').value.tipoDocumento);
-      this.formulario.get('numeroDocumento').setValue(this.formulario.get('clienteDestinatario').value.numeroDocumento);
-      this.formulario.get('cobrador').setValue(this.formulario.get('clienteDestinatario').value.cobrador);
-      this.formulario.get('cliente').setValue(this.formulario.get('clienteDestinatario').value);
-      this.afipComprobanteService.obtenerLetra(1, this.formulario.get('clienteDestinatario').value.afipCondicionIva.id).subscribe(
-        res => {
-          this.formulario.get('letra').setValue(res.text());
-          this.cargarCodigoAfip(res.text());
-          this.listarTarifaOVenta();
-        }
-      )
-    }
-  }
+
 
 
   //Agrega un Contra Reembolso

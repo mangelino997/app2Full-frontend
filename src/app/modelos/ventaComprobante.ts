@@ -40,7 +40,7 @@ export class VentaComprobante {
             importeSaldo: new FormControl(),
 
             cobrador: new FormControl('', Validators.required),
-            pagoEnOrigen: new FormControl('', Validators.required), //campo ‘pago en’
+            pagoEnOrigen: new FormControl(true, Validators.required), 
             usuarioAlta: new FormControl(),
             usuarioMod: new FormControl(),
             esCAEA: new FormControl(),

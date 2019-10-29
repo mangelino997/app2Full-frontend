@@ -8,8 +8,8 @@
             <div class="col-md-6">
               <div class="form-group has-float-label">
                 <label for="idTipoComprobante" class="tamanio-label">Tipo de Comprobante *</label>
-                <mat-select id="idTipoComprobante" class="form-control form-control-sm" formControlName="tipoComprobante"
-                  [compareWith]="compareFn">
+                <mat-select id="idTipoComprobante" class="form-control form-control-sm"
+                  formControlName="tipoComprobante" [compareWith]="compareFn">
                   <mat-option *ngFor="let item of tiposComprobante" [value]="item">
                     {{item.nombre}}
                   </mat-option>
@@ -94,9 +94,10 @@
           <label style="font-size: 16px;">Remitente</label>
           <div class="inline">
             <div class="form-group has-float-label">
-              <label for="idRemitente" class="tamanio-label">Buscar Remitente</label>
+              <label for="idRemitente" id="labelRemitente" class="tamanio-label">Buscar Remitente</label>
               <input id="idRemitente" type="text" class="form-control form-control-sm" style="width: 522px;" matInput
-                [formControl]="formulario.get('clienteRemitente')" [matAutocomplete]="autoRemitente" autocomplete="off">
+                [formControl]="formulario.get('clienteRemitente')" [matAutocomplete]="autoRemitente" autocomplete="off"
+                (blur)="verificarSeleccion(formulario.get('clienteRemitente'), 'remitente')">
               <mat-autocomplete #autoRemitente="matAutocomplete" [displayWith]="displayF.bind(this)"
                 (optionSelected)="cambioRemitente()">
                 <mat-option *ngFor="let itemCliente of reminentes" [value]="itemCliente">
@@ -104,63 +105,66 @@
                 </mat-option>
               </mat-autocomplete>
             </div>
+
             <div class="form-group ">
               <button id="idBtnCli1" mat-raised-button color="primary" (click)="agregarClienteEventual()"
                 style="width: 50px;">Agregar</button>
             </div>
           </div>
+          <form [formGroup]="formularioRemitente">
             <div class="inline">
               <div class="form-group has-float-label">
                 <label for="idDomicilioRem" class="tamanio-label">Domicilio</label>
-                <input id="idDomicilioRem" type="text" readonly
-                [formControl]="formulario.get('clienteRemitente').value ? formulario.get('clienteRemitente').value.domicilio: ''" 
-                  class="form-control form-control-sm" style="width: 300px;">
+                <input id="idDomicilioRem" type="text" formControlName="domicilio" class="form-control form-control-sm"
+                  style="width: 300px;" readonly>
               </div>
-              <!-- <div class="form-group has-float-label">
+              <div class="form-group has-float-label">
                 <label for="idLocalidadRem" class="tamanio-label">Localidad</label>
-                <input id="idLocalidadRem" type="text" [formControl]="formulario.get('clienteRemitente').value.domicilio" readonly
-                  class="form-control form-control-sm" style="width: 300px;">
-              </div> -->
+                <input id="idLocalidadRem" type="text" formControlName="localidad" class="form-control form-control-sm"
+                  style="width: 300px;" readonly>
+              </div>
             </div>
-            <!-- <div class="inline">
+            <div class="inline">
               <div class="form-group has-float-label">
                 <label for="idCondicionIvaRem" class="tamanio-label">Condición de IVA</label>
-                <input id="idCondicionIvaRem" type="text" [formControl]="formulario.get('clienteRemitente').value.domicilio" readonly
+                <input id="idCondicionIvaRem" type="text" readonly formControlName="afipCondicionIva"
                   class="form-control form-control-sm" style="width: 300px;">
               </div>
               <div class="form-group has-float-label">
                 <label for="idCondicionVtaRem" class="tamanio-label">Condición de Venta</label>
-                <input id="idCondicionVtaRem" type="text" [formControl]="condicionVenta" readonly
+                <input id="idCondicionVtaRem" type="text" readonly formControlName="condicionVenta"
                   class="form-control form-control-sm" style="width: 300px;">
               </div>
             </div>
             <div class="inline">
               <div class="form-group has-float-label">
                 <label for="idDocumentoRem" class="tamanio-label">Tipo y N° de Documento</label>
-                <input id="idDocumentoRemitente" type="text" [formControl]="tipoYDocumento" readonly
+                <input id="idDocumentoRemitente" type="text" formControlName="tipoYNumeroDocumento" readonly
                   class="form-control form-control-sm" style="width: 300px;">
               </div>
               <div class="form-group has-float-label">
                 <label for="idSucursalRem" class="tamanio-label">Sucursal</label>
                 <mat-select id="idSucursalRem" class="form-control form-control-sm"
-                  style="width: 300px; margin-left: 5px;" [formControl]="sucursal" [compareWith]="compareFn">
-                  <mat-option *ngFor="let itemSucursal of resultadosSucursalesRem" [value]="itemSucursal">
+                  style="width: 300px; margin-left: 5px;" [formControl]="formulario.get('sucursalClienteRem')"
+                  [compareWith]="compareFn">
+                  <mat-option *ngFor="let itemSucursal of sucursalesRemitente" [value]="itemSucursal">
                     {{itemSucursal.nombre}} | {{itemSucursal.domicilio}} | {{itemSucursal.localidad.nombre}}
                   </mat-option>
                 </mat-select>
               </div>
-            </div> -->
+            </div>
+          </form>
         </div>
         <div class="border has-float-label" id="Destinatario" style="margin-left: 5px;">
           <label style="font-size: 16px;">Destinatario</label>
           <div class="inline">
             <div class="form-group has-float-label">
-              <label for="idDestinatario" class="tamanio-label">Buscar Destinatario</label>
+              <label for="idDestinatario" id="labelDestinatario" class="tamanio-label">Buscar Destinatario</label>
               <input id="idDestinatario" type="text" class="form-control form-control-sm" style="width: 522px;" matInput
                 [formControl]="formulario.get('clienteDestinatario')" [matAutocomplete]="autoDestinatario"
-                autocomplete="off">
+                autocomplete="off" (blur)="verificarSeleccion(formulario.get('clienteDestinatario'), 'destinatario')">
               <mat-autocomplete #autoDestinatario="matAutocomplete" [displayWith]="displayF.bind(this)"
-                (optionSelected)="listarSucursalesDestinatario()">
+                (optionSelected)="cambioDestinatario()">
                 <mat-option *ngFor="let itemCliente of destinatarios" [value]="itemCliente">
                   {{itemCliente.alias}}
                 </mat-option>
@@ -171,7 +175,8 @@
                 style="width: 50px;">Agregar</button>
             </div>
           </div>
-            <!-- <div class="inline">
+          <form [formGroup]="formularioDestinatario">
+            <div class="inline">
               <div class="form-group has-float-label">
                 <label for="idDomicilioDes" class="tamanio-label">Domicilio</label>
                 <input id="idDomicilioDes" type="text" formControlName="domicilio" readonly
@@ -198,19 +203,20 @@
             <div class="inline">
               <div class="form-group has-float-label">
                 <label for="idDocumentoDes" class="tamanio-label">Tipo y N° de Documento</label>
-                <input id="idDocumentoDestinatario" type="text" formControlName="tipoYDocumento" readonly
+                <input id="idDocumentoDestinatario" type="text" formControlName="tipoYNumeroDocumento" readonly
                   class="form-control form-control-sm" style="width: 300px;">
               </div>
               <div class="form-group has-float-label">
                 <label for="idSucursalDes" class="tamanio-label">Sucursal</label>
                 <mat-select id="idSucursalDes" class="form-control form-control-sm"
-                  style="width: 300px; margin-left: 5px;" formControlName="sucursal" [compareWith]="compareFn">
-                  <mat-option *ngFor="let itemSucursal of resultadosSucursalesDes" [value]="itemSucursal">
+                  style="width: 300px; margin-left: 5px;" [formControl]="formulario.get('sucursalClienteDes')" [compareWith]="compareFn">
+                  <mat-option *ngFor="let itemSucursal of sucursalesDestinatario" [value]="itemSucursal">
                     {{itemSucursal.nombre}} | {{itemSucursal.domicilio}} | {{itemSucursal.localidad.nombre}}
                   </mat-option>
                 </mat-select>
-              </div> 
-            </div>-->
+              </div>
+            </div>
+          </form>
         </div>
       </div>
       <br>
