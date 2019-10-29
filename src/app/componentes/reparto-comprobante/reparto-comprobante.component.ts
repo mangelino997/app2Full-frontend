@@ -219,10 +219,10 @@ export class RepartoComprobanteComponent implements OnInit {
     if (tipoComprobante.id == 13) {
       this.ordenRecoleccionService.obtenerPorId(numero).subscribe(
         res => {
-          if(res.text() != ''){ //Controla que exista una orden recoleccion
+          if (res.text() != '') { //Controla que exista una orden recoleccion
             this.formularioComprobante.get('ordenRecoleccion').setValue({ id: res.json().id });
             this.agregarComprobanteReparto(this.formularioComprobante.value);
-          }else{
+          } else {
             this.toastr.error("No existe una Orden Recolección con el número ingresado.");
           }
         },
@@ -234,7 +234,7 @@ export class RepartoComprobanteComponent implements OnInit {
       this.viajeRemitoService.obtenerParaReparto(this.formulario.get('puntoVenta').value, this.formulario.get('letra').value,
         this.formulario.get('numero').value).subscribe(
           res => {
-            if(res.text() != ''){ //Controla que exista un viaje remito
+            if (res.text() != '') { //Controla que exista un viaje remito
               let respuesta = res.json();
               let viajeRemito = {
                 letra: respuesta.letra,
@@ -243,7 +243,7 @@ export class RepartoComprobanteComponent implements OnInit {
               }
               this.formularioComprobante.get('viajeRemito').setValue(viajeRemito);
               this.agregarComprobanteReparto(this.formularioComprobante.value);
-            }else{
+            } else {
               this.toastr.error("No existe un Viaje Remito con el punto de venta, letra y número ingresado.");
             }
           },
@@ -255,7 +255,7 @@ export class RepartoComprobanteComponent implements OnInit {
       this.ventaComprobanteService.obtener(this.formulario.get('puntoVenta').value, this.formulario.get('letra').value,
         this.formulario.get('numero').value, tipoComprobante.id).subscribe(
           res => {
-            if(res.text() != ''){ //Controla que exista una venta comprobante
+            if (res.text() != '') { //Controla que exista una venta comprobante
               let respuesta = res.json();
               let ventaComprobante = {
                 letra: respuesta.letra,
@@ -265,7 +265,7 @@ export class RepartoComprobanteComponent implements OnInit {
               }
               this.formularioComprobante.get('ventaComprobante').setValue(ventaComprobante);
               this.agregarComprobanteReparto(this.formularioComprobante.value);
-            }else{
+            } else {
               this.toastr.error("No existe una Venta Comprobante con el punto de venta, letra y número ingresado.");
             }
           },
@@ -361,17 +361,17 @@ export class RepartoComprobanteComponent implements OnInit {
   }
   //Imprime la suma de bultos VentaCpte de la lista VentaCpte ItemFAs 
   public sumaBultosVentaCpte(listaItemFAs) {
-    let bultosTotal;
-    listaItemFAs.array.forEach(elemento => {
-      bultosTotal += Number(elemento.bultos);
+    let bultosTotal = 0;
+    listaItemFAs.forEach(elemento => {
+      elemento.bultos? bultosTotal += elemento.bultos : '';
     });
     return bultosTotal;
   }
   //Imprime la suma de kilos efectivos de la lista VentaCpte ItemFAs 
   public sumaKiloEfectivoVentaCpte(listaItemFAs) {
-    let kilosEfectivoTotal;
-    listaItemFAs.array.forEach(elemento => {
-      kilosEfectivoTotal += elemento.kilosEfectivo;
+    let kilosEfectivoTotal = 0;
+    listaItemFAs.forEach(elemento => {
+      elemento.kilosEfectivo ? kilosEfectivoTotal += elemento.kilosEfectivo : '';
     });
     return kilosEfectivoTotal;
   }

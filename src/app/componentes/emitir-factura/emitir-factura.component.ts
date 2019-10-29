@@ -51,7 +51,11 @@ export class EmitirFacturaComponent implements OnInit {
   public puntosDeVenta = [];
   //Define la lista de items a facturar
   public itemsAFacturar = [];
-
+  //Define la lista de resultados de busqueda para Reminentes y Destinatarios
+  public reminentes = [];
+  public destinatarios = [];
+  //Define la fecha actual
+  public fechaActual: string = null;
 
   //Define el siguiente id
   public siguienteId: number = null;
@@ -68,9 +72,7 @@ export class EmitirFacturaComponent implements OnInit {
   public sucursalRemitente: FormControl = new FormControl();
   //Define el form control para tipo de comprobante
   public tipoComprobante: FormControl = new FormControl();
-  //Define la lista de resultados de busqueda para Reminentes y Destinatarios
-  public resultadosReminentes = [];
-  public resultadosDestinatarios = [];
+  
 
   //Define la lista de resultados de busqueda localidad
   public resultadosLocalidades = [];
@@ -95,8 +97,7 @@ export class EmitirFacturaComponent implements OnInit {
   public puntoVenta: FormControl = new FormControl();
   //Define el campo viajeRemito (el de solo lectura) como un formControl
   public viajeRemito: FormControl = new FormControl();
-  //Define la fecha actual
-  public fechaActual: string = null;
+
   //Define el array de los items-viajes para la tabla
   public listaItemViaje: Array<any> = [];
   //Define el array del Contra Reembolso
@@ -147,7 +148,7 @@ export class EmitirFacturaComponent implements OnInit {
       if (typeof data == 'string' && data.length > 2) {
         this.clienteService.listarPorAlias(data).subscribe(res => {
           console.log(res.json());
-          this.resultadosReminentes = res.json();
+          this.reminentes = res.json();
         })
       }
     });
@@ -155,7 +156,7 @@ export class EmitirFacturaComponent implements OnInit {
     this.formulario.get('clienteDestinatario').valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
         this.clienteService.listarPorAlias(data).subscribe(res => {
-          this.resultadosDestinatarios = res.json();
+          this.destinatarios = res.json();
         })
       }
     });
@@ -227,8 +228,8 @@ export class EmitirFacturaComponent implements OnInit {
   }
   //Limpia las listas
   private vaciarListas() {
-    this.resultadosReminentes = [];
-    this.resultadosDestinatarios = [];
+    this.reminentes = [];
+    this.destinatarios = [];
     this.resultadosSucursalesRem = [];
     this.resultadosSucursalesDes = [];
     this.resultadosRemitos = [];
@@ -243,32 +244,52 @@ export class EmitirFacturaComponent implements OnInit {
     this.formulario.get('puntoVenta').setValue(this.puntosDeVenta[0]);
     this.fechaService.obtenerFecha().subscribe(res => {
       this.formulario.get('fechaEmision').setValue(res.json());
+      this.formulario.get('fechaRegistracion').setValue(res.json());
       this.fechaActual = res.json();
+      console.log(this.fechaActual);
     });
   }
   //Comprueba si ya existe un codigo de afip entonces vuelve a llamar a la funcion que obtiene el valor del campo Numero
-  public comprobarCodAfip() {
+  public cambioPuntoVenta() {
     this.puntoVenta.setValue(this.establecerCerosIzq(this.formulario.get('puntoVenta').value.puntoVenta, "0000", -5));
     this.validarFechaEmision();
     // if (this.formulario.get('codigoAfip').value != null || this.formulario.get('codigoAfip').value > 0)
     //   this.cargarNumero(this.formulario.get('codigoAfip').value);
   }
+  //Controla el cambio en el campo Fecha
+  public cambioFecha() {
+    this.formulario.value.puntoVenta ? this.validarFechaEmision() : '';
+  }
   //Controla el campo fecha de emision dependiento el punto de venta seleccionado
-  private validarFechaEmision(){
-    console.log(this.formulario.value.puntoVenta);
-    let f = new Date(this.formulario.value.fechaEmision);
-    console.log(this.formulario.value.fechaEmision, f.setDate(f.getDate() + 1));
-
+  private validarFechaEmision() {
     this.formulario.value.puntoVenta.feCAEA ? this.verificarFechaFeCAEA() : this.verificarFechaNoFeCAEA();
   }
   //Controla el rango valido para la fecha de emision cuando el punto de venta es feCAEA
-  private verificarFechaFeCAEA(){
-    // if( <= this.formulario.value.fechaEmision => (this.formulario.value.fechaEmision + 1))
+  private verificarFechaFeCAEA() {
+    if (this.formulario.value.fechaEmision >= this.generarFecha(-15) && this.formulario.value.fechaEmision <= this.generarFecha(+1)) {
+      this.toastr.success("Fecha válida.");
+    } else {
+      this.toastr.error("El campo Fecha no es válido. Se establece la fecha actual.");
+      this.formulario.get('fechaEmision').setValue(this.fechaActual);
+      document.getElementById('idFechaEmision').focus();
+    }
   }
   //Controla el rango valido para la fecha de emision cuando el punto de venta no es feCAEA
-  private verificarFechaNoFeCAEA(){
-
+  private verificarFechaNoFeCAEA() {
+    if (this.formulario.value.fechaEmision >= this.generarFecha(-5) && this.formulario.value.fechaEmision <= this.generarFecha(+1)) {
+      this.toastr.success("Fecha válida.");
+    } else {
+      this.toastr.error("El campo Fecha no es válido.");
+      this.formulario.get('fechaEmision').setValue(this.fechaActual);
+      document.getElementById('idFechaEmision').focus();
+    }
+  }  //Genera y retorna una fecha segun los parametros que recibe (dias - puede ser + ó -)
+  private generarFecha(dias) {
+    let fechaActual = new Date();
+    let fechaGenerada = fechaActual.getFullYear() + '-' + (fechaActual.getMonth() + 1) + '-' + (fechaActual.getDate() + dias); //Al mes se le debe sumar 1
+    return fechaGenerada;
   }
+
   //Setea el codigo de Afip por el tipo de comprobante y la letra
   public cargarCodigoAfip(letra) {
     this.afipComprobanteService.obtenerCodigoAfip(this.formulario.get('tipoComprobante').value.id, letra).subscribe(
@@ -287,31 +308,89 @@ export class EmitirFacturaComponent implements OnInit {
         }
       );
   }
-  
-
-
-
   //Maneja el cambio en el combo Items
   public cambioItem() {
-    this.resetearItem();
-    this.formularioItem.get('ventaTipoItem').setValue(this.item.value);
-    switch (this.item.value.id) {
-      case 4: //el item con id=4 es Contrareembolso
-        this.reestablecerFormularioItemViaje();
-        break;
-      case 1:
-      case 2:
-        this.reestablecerFormularioCR();
-        this.resetearItem();
-        this.abrirDialogoTramo();
-        this.manejarItems();
-        break;
-      case 4:
-      case 5:
-        this.manejarItems();
-        break;
+    // this.resetearItem();
+    // this.formularioItem.get('ventaTipoItem').setValue(this.item.value);
+    // switch (this.item.value.id) {
+    //   case 4: //el item con id=4 es Contrareembolso
+    //     this.reestablecerFormularioItemViaje();
+    //     break;
+    //   case 1:
+    //   case 2:
+    //     this.reestablecerFormularioCR();
+    //     this.resetearItem();
+    //     this.abrirDialogoTramo();
+    //     this.manejarItems();
+    //     break;
+    //   case 4:
+    //   case 5:
+    //     this.manejarItems();
+    //     break;
+    // }
+  }
+  //Obtiene el listado de Sucursales por Remitente
+  public cambioRemitente() {
+    this.formulario.get('rem.domicilio').setValue(this.formulario.get('clienteRemitente').value.domicilio);
+    this.formulario.get('rem.localidad').setValue(this.formulario.get('clienteRemitente').value.localidad.nombre);
+    this.formulario.get('rem.condicionVenta').setValue(this.formulario.get('clienteRemitente').value.condicionVenta.nombre);
+    this.formulario.get('rem.afipCondicionIva').setValue(this.formulario.get('clienteRemitente').value.afipCondicionIva.nombre);
+    this.sucursalService.listarPorCliente(this.formulario.get('clienteRemitente').value.id).subscribe(
+      res => {
+        this.resultadosSucursalesRem = res.json();
+        this.formulario.get('rem.sucursal').setValue(this.resultadosSucursalesRem[0]);
+      },
+      err => {
+        this.toastr.error("El Remitente no tiene asignada una sucursal de entrega.");
+      }
+    );
+  }
+  //Validad el numero de documento
+  public validarDocumento(): void {
+    let documento = this.formulario.get('numeroDocumento').value;
+    let tipoDocumento = this.formulario.get('tipoDocumento').value;
+    if (documento) {
+      switch (tipoDocumento.id) {
+        case 1:
+          let respuesta = this.appService.validarCUIT(documento.toString());
+          if (!respuesta) {
+            this.formulario.get('numeroDocumento').reset();
+            let err = { codigo: 11010, mensaje: 'CUIT Incorrecto!' };
+            this.lanzarError(err);
+          }
+          break;
+        case 2:
+          let respuesta2 = this.appService.validarCUIT(documento.toString());
+          if (!respuesta2) {
+            this.formulario.get('numeroDocumento').reset();
+            let err = { codigo: 11010, mensaje: 'CUIL Incorrecto!' };
+            this.lanzarError(err);
+          }
+          break;
+        case 8:
+          let respuesta8 = this.appService.validarDNI(documento.toString());
+          if (!respuesta8) {
+            this.formulario.get('numeroDocumento').reset();
+            let err = { codigo: 11010, mensaje: 'DNI Incorrecto!' };
+            this.lanzarError(err);
+          }
+          break;
+      }
     }
   }
+  //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
+  private lanzarError(err) {
+    this.formulario.get('numeroDocumento').setErrors({ 'incorrect': true });
+    var respuesta = err;
+    if (respuesta.codigo == 11010) {
+      document.getElementById("labelNumeroDocumento").classList.add('label-error');
+      document.getElementById("idNumeroDocumento").classList.add('is-invalid');
+      document.getElementById("idNumeroDocumento").focus();
+    }
+    this.toastr.error(respuesta.mensaje);
+  }
+
+
   //Con cada click sobre la lista "Item *" se debe resetear 
   private resetearItem() {
     this.formulario.get('rem').reset();
@@ -366,7 +445,7 @@ export class EmitirFacturaComponent implements OnInit {
         this.item.disable();
         //setea los valores en cliente remitente
         this.formulario.get('clienteRemitente').setValue(resultado.remito.clienteRemitente);
-        this.listarSucursalesRemitente();
+        this.cambioRemitente();
         this.formulario.get('rem.sucursal').setValue(resultado.remito.clienteRemitente.sucursalLugarPago);
         //setea los valores en cliente destinatario
         this.formulario.get('clienteDestinatario').setValue(resultado.remito.clienteDestinatario);
@@ -424,22 +503,7 @@ export class EmitirFacturaComponent implements OnInit {
     // }
     // );
   }
-  //Obtiene el listado de Sucursales por Remitente
-  public listarSucursalesRemitente() {
-    this.formulario.get('rem.domicilio').setValue(this.formulario.get('clienteRemitente').value.domicilio);
-    this.formulario.get('rem.localidad').setValue(this.formulario.get('clienteRemitente').value.localidad.nombre);
-    this.formulario.get('rem.condicionVenta').setValue(this.formulario.get('clienteRemitente').value.condicionVenta.nombre);
-    this.formulario.get('rem.afipCondicionIva').setValue(this.formulario.get('clienteRemitente').value.afipCondicionIva.nombre);
-    this.sucursalService.listarPorCliente(this.formulario.get('clienteRemitente').value.id).subscribe(
-      res => {
-        this.resultadosSucursalesRem = res.json();
-        this.formulario.get('rem.sucursal').setValue(this.resultadosSucursalesRem[0]);
-      },
-      err => {
-        this.toastr.error("El Remitente no tiene asignada una sucursal de entrega.");
-      }
-    );
-  }
+
   //Obtiene el listado de Sucursales por Remitente
   public listarSucursalesDestinatario() {
     this.formulario.get('des.domicilio').setValue(this.formulario.get('clienteDestinatario').value.domicilio);

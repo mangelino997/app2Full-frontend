@@ -59,6 +59,10 @@ export class ClienteService {
     return this.http.get(this.url + '/listarPorAlias/' + alias, this.options);
   }
   //Obtiene un listado por alias
+  public listarActivosPorAlias(alias) {
+    return this.http.get(this.url + '/listarActivosPorAlias/' + alias, this.options);
+  }
+  //Obtiene un listado por alias
   public listarPorAliasListaPrecio(alias) {
     return this.http.get(this.url + '/listarPorAliasListaPrecio/' + alias, this.options);
   }
