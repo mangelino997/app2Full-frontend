@@ -15,8 +15,6 @@ export class ViajeTarifaService {
   private topic:string = null;
   //Define el headers y token de autenticacion
   private options = null;
-  //Define la lista obtenida por nombre
-  private listaPorNombre = null;
   //Define la subcripcion
   private subcripcion: Subscription;
   //Define el mensaje de respuesta a la subcripcion
@@ -57,6 +55,14 @@ export class ViajeTarifaService {
         return data;
       })
     })
+  }
+  //Obtiene la lista por costo tramo true
+  public listarPorCostoTramoTrue() {
+    return this.http.get(this.url + '/listarPorCostoTramoTrue', this.options);
+  }
+  //Obtiene la lista por costo tramo false
+  public listarPorCostoTramoFalse() {
+    return this.http.get(this.url + '/listarPorCostoTramoFalse', this.options);
   }
   //Agrega un registro
   public agregar(elemento) {
