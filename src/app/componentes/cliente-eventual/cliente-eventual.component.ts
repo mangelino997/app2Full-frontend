@@ -62,6 +62,24 @@ export class ClienteEventualComponent implements OnInit {
       .subscribe((state: LoaderState) => {
         this.show = state.show;
       });
+    //Obtiene la lista de condiciones de iva
+    this.listarCondicionesIva();
+    //Obtiene la lista de tipos de documentos
+    this.listarTiposDocumentos();
+    //Obtiene el siguiente id
+    this.obtenerSiguienteId();
+    //Obtiene la lista de cobradore
+    this.obtenerCobrador();
+    //Obtiene la lista de zonas
+    this.listarZonas();
+    //Obtiene la lista de rubros
+    this.listarRubros();
+    //Obtiene la lista de sucursales de pagos
+    this.listarSucursales();
+    //Establece el foco en condicion de iva
+    setTimeout(function () {
+      document.getElementById('idCondicionIva').focus();
+    }, 20);
     //Define los campos para validaciones
     this.formulario = this.clienteEventual.formulario;
     //Autocompletado Barrio - Buscar por nombre
@@ -80,24 +98,6 @@ export class ClienteEventualComponent implements OnInit {
         })
       }
     })
-    //Obtiene la lista de condiciones de iva
-    this.listarCondicionesIva();
-    //Obtiene la lista de tipos de documentos
-    this.listarTiposDocumentos();
-    //Obtiene el siguiente id
-    this.obtenerSiguienteId();
-    //Establece el foco en condicion de iva
-    setTimeout(function () {
-      document.getElementById('idCondicionIva').focus();
-    }, 20);
-    //Obtiene la lista de cobradore
-    this.obtenerCobrador();
-    //Obtiene la lista de zonas
-    this.listarZonas();
-    //Obtiene la lista de rubros
-    this.listarRubros();
-    //Obtiene la lista de sucursales de pagos
-    this.listarSucursales();
   }
   //Obtiene la lista de sucursales
   private listarSucursales(): void {
@@ -187,12 +187,12 @@ export class ClienteEventualComponent implements OnInit {
       res => {
         var respuesta = res.json();
         if (respuesta.codigo == 201) {
+          this.data.formulario = this.formulario.value;
+          this.toastr.success(respuesta.mensaje);
           this.reestablecerFormulario(respuesta.id);
           setTimeout(function () {
             document.getElementById('idCondicionIva').focus();
           }, 20);
-          this.data.formulario = respuesta.id - 1;
-          this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
           this.closeDialog();
         }
@@ -202,10 +202,6 @@ export class ClienteEventualComponent implements OnInit {
         this.loaderService.hide();
       }
     )
-  }
-  //Cierra el modal
-  public cerrarDialog() {
-    this.closeDialog();
   }
   //Verifica si se selecciono un elemento del autocompletado
   public verificarSeleccion(valor): void {

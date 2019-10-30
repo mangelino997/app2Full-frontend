@@ -52,6 +52,10 @@ export class ClienteCuentaBancariaService {
   public listarPorCliente(idCliente) {
     return this.http.get(this.url + '/listarPorCliente/' + idCliente, this.options);
   }
+  //Obtiene la lista de registros por cliente y empresa
+  public listarPorClienteYEmpresa(idCliente, idEmpresa) {
+    return this.http.get(this.url + '/listarPorClienteYEmpresa/' + idCliente + '/' + idEmpresa, this.options);
+  }
   //Obtiene la lista de registros por cuenta bancaria
   public listarPorCuentaBancaria(idCuentaBancaria) {
     return this.http.get(this.url + '/listarPorCuentaBancaria/' + idCuentaBancaria, this.options);

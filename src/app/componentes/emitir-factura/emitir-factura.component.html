@@ -55,7 +55,8 @@
               </div>
             </div>
             <div class="col-md-3">
-              <button id="idBtnFCE" mat-raised-button color="primary">FCE MiPyMEs</button>
+              <button id="idBtnFCE" mat-raised-button color="primary" (click)="abrirFCEMiPyMEs()">FCE MiPyMEs</button>
+              <!--[disabled]="!btnFCE"-->
             </div>
           </div>
         </div>
@@ -107,7 +108,7 @@
             </div>
 
             <div class="form-group ">
-              <button id="idBtnCli1" mat-raised-button color="primary" (click)="agregarClienteEventual()"
+              <button id="idBtnCli1" mat-raised-button color="primary" (click)="agregarClienteEventual('Remitente')"
                 style="width: 50px;">Agregar</button>
             </div>
           </div>
@@ -171,7 +172,7 @@
               </mat-autocomplete>
             </div>
             <div class="form-group ">
-              <button id="idBtnCli2" mat-raised-button color="primary" (click)="agregarClienteEventual()"
+              <button id="idBtnCli2" mat-raised-button color="primary" (click)="agregarClienteEventual('Destinatario')"
                 style="width: 50px;">Agregar</button>
             </div>
           </div>
@@ -209,7 +210,8 @@
               <div class="form-group has-float-label">
                 <label for="idSucursalDes" class="tamanio-label">Sucursal</label>
                 <mat-select id="idSucursalDes" class="form-control form-control-sm"
-                  style="width: 300px; margin-left: 5px;" [formControl]="formulario.get('sucursalClienteDes')" [compareWith]="compareFn">
+                  style="width: 300px; margin-left: 5px;" [formControl]="formulario.get('sucursalClienteDes')"
+                  [compareWith]="compareFn">
                   <mat-option *ngFor="let itemSucursal of sucursalesDestinatario" [value]="itemSucursal">
                     {{itemSucursal.nombre}} | {{itemSucursal.domicilio}} | {{itemSucursal.localidad.nombre}}
                   </mat-option>
@@ -220,141 +222,106 @@
         </div>
       </div>
       <br>
-      <!-- <div class="row">
-        <div class="col">
-          <div class="form-group has-float-label">
-            <label for="idPagoOrigen" class="tamanio-label">Pago en: *</label>
-            <mat-select id="idPagoOrigen" formControlName="pagoEnOrigen" class="form-control form-control-sm"
-              (selectionChange)="pagoEnOrigen()">
-              <mat-option [value]="true">Origen</mat-option>
-              <mat-option [value]="false">Destino</mat-option>
+      <form [formGroup]="formularioVtaCpteItemFA">
+        <div class="row">
+          <div class="col">
+            <div class="form-group has-float-label">
+              <label for="idPagoOrigen" class="tamanio-label">Pago en: *</label>
+              <mat-select id="idPagoOrigen" [formControl]="formulario.get('pagoEnOrigen')"
+                class="form-control form-control-sm" (selectionChange)="pagoEnOrigen()">
+                <mat-option [value]="true">Origen</mat-option>
+                <mat-option [value]="false">Destino</mat-option>
+              </mat-select>
+            </div>
+          </div>
+          <div style="width: 70px;">
+            <button id="idBtnGS" mat-raised-button color="primary">G.S</button>
+          </div>
+          <div class="col">
+            <div class="form-group has-float-label">
+              <label for="idViaje" class="tamanio-label">N° Viaje GS *</label>
+              <input id="idViaje" type="text" [formControl]="numeroViajeGS" [readOnly]="soloLectura" placeholder="00"
+                [textMask]="mascararEnteroSinDecimales(8)" class="form-control form-control-sm number-right">
+            </div>
+          </div>
+          <div class="col">
+            <div class="form-group has-float-label ">
+              <label for="idRemito" class="tamanio-label">N° Remito*</label>
+              <input id="idRemito" type="number" formControlName="viajeRemito" [readOnly]="soloLectura" placeholder="00"
+                [textMask]="mascararEnteroSinDecimales(8)" class="form-control form-control-sm number-right"
+                (blur)="cambioRemito()">
+            </div>
+          </div>
+          <div class="col">
+            <div class="form-group has-float-label">
+              <label for="idBultos" class="tamanio-label">Bultos</label>
+              <input id="idBultos" type="text" formControlName="bultos"
+                class="form-control form-control-sm number-right" placeholder="00"
+                [textMask]="mascararEnteroSinDecimales(8)" autocomplete="off" [readOnly]="soloLectura">
+            </div>
+          </div>
+          <div class="col">
+            <div class="form-group has-float-label">
+              <label for="idKiloEfectivo" class="tamanio-label">Kg Efectivo</label>
+              <input id="idKiloEfectivo" type="text" formControlName="kilosEfectivo"
+                class="form-control form-control-sm number-right" autocomplete="off" placeholder="0.00"
+                [textMask]="mascararEnteroConDecimales(8)"
+                (blur)="setDecimales(formularioVtaCpteItemFA.get('kilosEfectivo'), 2)" [readOnly]="soloLectura">
+            </div>
+          </div>
+          <div class="col">
+            <div class="form-group has-float-label">
+              <label for="idKiloAforado" class="tamanio-label">Kg Aforado</label>
+              <input id="idKiloAforado" type="text" formControlName="kilosAforadoCampo"
+                class="form-control form-control-sm number-right" placeholder="0.00" autocomplete="off"
+                (blur)="setDecimales(formularioVtaCpteItemFA.get('kilosAforadoCampo'), 2)"
+                [textMask]="mascararEnteroConDecimales(8)" [readOnly]="soloLectura">
+            </div>
+          </div>
+          <div style="width: 60px;">
+            <button class="btn btn-secondary btn-custom" (click)="abrirAforoDialogo()">Aforar</button>
+          </div>
+          <div class="col">
+            <div class="form-group has-float-label">
+              <label for="idM3" class="tamanio-label">m3</label>
+              <input id="idM3" type="number" formControlName="m3" class="form-control form-control-sm"
+                placeholder="0.00" (blur)="setDecimales(formularioVtaCpteItemFA.get('m3'), 2)" autocomplete="off"
+                [readOnly]="soloLectura">
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="form-group has-float-label">
+              <label for="idDescripcionCarga" class="tamanio-label">Descripción Carga</label>
+              <input id="idDescripcionCarga" type="text" formControlName="descripcionCarga"
+                class="form-control form-control-sm" autocomplete="off" [readOnly]="soloLectura" maxlength="100">
+            </div>
+          </div>
+        </div>
+        <hr style="margin-top: 10px; margin-bottom: 20px;">
+        <div class="row">
+          <div class="form-group has-float-label ">
+            <label for="idTarifaOVta" class="tamanio-label">Orden Vta. *</label>
+            <mat-select id="idTarifaOVta" class="form-control form-control-sm" [formControl]="ordenVenta"
+              style="width: 140px;" [compareWith]="compareFn" (selectionChange)="cambioOVta()">
+              <mat-option *ngFor="let item of ordenesVenta" [value]="item">
+                {{item.nombre}}
+              </mat-option>
             </mat-select>
           </div>
-        </div>
-        <div style="width: 70px;">
-          <button id="idBtnGS" mat-raised-button color="primary">G.S</button>
-        </div>
-        <div class="col">
-          <div class="form-group has-float-label">
-            <label for="idViaje" class="tamanio-label">N° Viaje*</label>
-            <input id="idViaje" type="text" formControlName="numeroViaje" [readOnly]="soloLectura" placeholder="00"
-              [textMask]="obtenerMascaraEnteroSinDecimales(8)" class="form-control form-control-sm number-right">
-          </div>
-        </div>
-        <div class="col">
-          <div class="form-group has-float-label ">
-            <label for="idRemito" class="tamanio-label">N° Remito*</label>
-            <input id="idRemito" type="number" [formControl]="viajeRemito" [readOnly]="soloLectura" placeholder="00"
-              [textMask]="obtenerMascaraEnteroSinDecimales(8)" class="form-control form-control-sm number-right"
-              (blur)="cambioRemito()">
-          </div>
-        </div>
-        <div class="col">
-          <div class="form-group has-float-label">
-            <label for="idBultos" class="tamanio-label">Bultos</label>
-            <input id="idBultos" type="text" formControlName="bultos" class="form-control form-control-sm number-right"
-              placeholder="00" [textMask]="obtenerMascaraEnteroSinDecimales(8)" autocomplete="off"
-              [readOnly]="soloLectura">
-          </div>
-        </div>
-        <div class="col">
-          <div class="form-group has-float-label">
-            <label for="idKiloEfectivo" class="tamanio-label">Kg Efectivo</label>
-            <input id="idKiloEfectivo" type="text" formControlName="kilosEfectivo"
-              class="form-control form-control-sm number-right" autocomplete="off" placeholder="0.00"
-              [textMask]="obtenerMascaraEnteroConDecimales(8)"
-              (blur)="setDecimales(formularioItem.get('kilosEfectivo'), 2)" [readOnly]="soloLectura">
-          </div>
-        </div>
-        <div class="col">
-          <div class="form-group has-float-label">
-            <label for="idKiloAforado" class="tamanio-label">Kg Aforado</label>
-            <input id="idKiloAforado" type="text" formControlName="kilosAforado"
-              class="form-control form-control-sm number-right" placeholder="0.00" autocomplete="off"
-              (blur)="setDecimales(formularioItem.get('kilosAforado'), 2)"
-              [textMask]="obtenerMascaraEnteroConDecimales(8)" [readOnly]="soloLectura">
-          </div>
-        </div>
-        <div style="width: 60px;">
-          <button class="btn btn-secondary btn-custom" (click)="agregarAforo()">Aforar</button>
-        </div>
-        <div class="col">
-          <div class="form-group has-float-label">
-            <label for="idM3" class="tamanio-label">m3</label>
-            <input id="idM3" type="number" formControlName="m3" class="form-control form-control-sm" placeholder="0.00"
-              (blur)="setDecimales(formularioItem.get('m3'), 2)" autocomplete="off" [readOnly]="soloLectura">
-          </div>
-        </div>
-        <div class="col-md-3">
-          <div class="form-group has-float-label">
-            <label for="idDescripcionCarga" class="tamanio-label">Descripción Carga</label>
-            <input id="idDescripcionCarga" type="text" formControlName="descripcionCarga"
-              class="form-control form-control-sm"  autocomplete="off" [readOnly]="soloLectura" maxlength="100">
-          </div>
-        </div>
-      </div> -->
-
-      <hr style="margin-top: 10px; margin-bottom: 20px;">
-      <form [formGroup]="formularioItem">
-        <div class="row">
-          <!-- <div class="form-group has-float-label">
-            <label for="idViaje" class="tamanio-label">N° Viaje*</label>
-            <input id="idViaje" type="text" formControlName="numeroViaje" [readOnly]="soloLectura" placeholder="00"
-              [textMask]="obtenerMascaraEnteroSinDecimales(8)" class="form-control form-control-sm number-right"
-              style="width: 78px;">
-          </div>
-          <div class="form-group has-float-label ">
-            <label for="idRemito" class="tamanio-label">N° Remito*</label>
-            <input id="idRemito" type="number" [formControl]="viajeRemito" [readOnly]="soloLectura" placeholder="00"
-              [textMask]="obtenerMascaraEnteroSinDecimales(8)" class="form-control form-control-sm number-right"
-              style="width: 100px;" (blur)="cambioRemito()">
-          </div>
-          <div class="form-group has-float-label">
-            <label for="idBultos" class="tamanio-label">Bultos</label>
-            <input id="idBultos" type="text" formControlName="bultos" class="form-control form-control-sm number-right"
-              placeholder="00" [textMask]="obtenerMascaraEnteroSinDecimales(8)" style="width: 58px;" autocomplete="off"
-              [readOnly]="soloLectura">
-          </div>
-          <div class="form-group has-float-label">
-            <label for="idKiloEfectivo" class="tamanio-label">Kg Efectivo</label>
-            <input id="idKiloEfectivo" type="text" formControlName="kilosEfectivo"
-              class="form-control form-control-sm number-right" style="width: 91px;" autocomplete="off"
-              placeholder="0.00" [textMask]="obtenerMascaraEnteroConDecimales(8)"
-              (blur)="setDecimales(formularioItem.get('kilosEfectivo'), 2)" [readOnly]="soloLectura">
-          </div>
-          <div class="form-group has-float-label">
-            <label for="idKiloAforado" class="tamanio-label">Kg Aforado</label>
-            <input id="idKiloAforado" type="text" formControlName="kilosAforado"
-              class="form-control form-control-sm number-right" placeholder="0.00" style="width: 91px;"
-              autocomplete="off" (blur)="setDecimales(formularioItem.get('kilosAforado'), 2)"
-              [textMask]="obtenerMascaraEnteroConDecimales(8)" [readOnly]="soloLectura">
-          </div>
-          <button class="btn btn-secondary btn-custom" (click)="agregarAforo()">Aforar</button>
-          <div class="form-group has-float-label">
-            <label for="idM3" class="tamanio-label">m3</label>
-            <input id="idM3" type="number" formControlName="m3" class="form-control form-control-sm" placeholder="0.00"
-              style="width: 45px;" (blur)="setDecimales(formularioItem.get('m3'), 2)" autocomplete="off"
-              [readOnly]="soloLectura">
-          </div> 
           <div class="form-group has-float-label ">
             <label for="idTarifaOVta" class="tamanio-label">Tarifa O.Vta.*</label>
-            <mat-select id="idTarifaOVta" class="form-control form-control-sm" formControlName="ordenVenta"
+            <mat-select id="idTarifaOVta" class="form-control form-control-sm" formControlName="ordenVentaTarifa"
               style="width: 140px;" [compareWith]="compareFn" (selectionChange)="cambioOVta()">
-              <mat-option *ngFor="let itemOrdenVenta of resultadosTarifas" [value]="itemOrdenVenta">
-                {{itemOrdenVenta.nombre}} | {{itemOrdenVenta.tipoTarifa.nombre}}
+              <mat-option *ngFor="let item of tarifasOrdenVta" [value]="item">
+                {{item.tipoTarifa.nombre}}
               </mat-option>
             </mat-select>
           </div>
           <div class="form-group has-float-label">
-            <label for="idDescripcionCarga" class="tamanio-label">Descripción Carga</label>
-            <input id="idDescripcionCarga" type="text" formControlName="descripcionCarga"
-              class="form-control form-control-sm" style="width: 140px;" autocomplete="off" [readOnly]="soloLectura">
-          </div> -->
-          <!-- <div class="form-group has-float-label">
             <label for="idValorDeclarado" class="tamanio-label">Valor Declarado</label>
             <input id="idValorDeclarado" type="text" formControlName="valorDeclarado" placeholder="0.00"
               class="form-control form-control-sm number-right" style="width: 125px;" autocomplete="off"
-              [textMask]="obtenerMascaraImporte(8, 2)" (blur)="calcularSubtotal($event)" [readOnly]="soloLectura">
+              [textMask]="mascararImporte(8, 2)" (blur)="calcularSubtotal($event)" [readOnly]="soloLectura">
           </div>
           <div class="form-group has-float-label">
             <label for="idSeguro" class="tamanio-label">% Seguro</label>
@@ -366,10 +333,10 @@
             <label for="idFlete" class="tamanio-label">Flete</label>
             <input id="idFlete" type="text" formControlName="flete" class="form-control form-control-sm number-right"
               style="width: 120px;" autocomplete="off" (blur)="calcularSubtotal($event)" [readOnly]="soloLectura"
-              placeholder="$ 0.00" [textMask]="obtenerMascaraImporte(8, 2)">
+              placeholder="$ 0.00" [textMask]="mascararImporte(8, 2)">
           </div>
           <div class="form-group has-float-label">
-            <label for="idDescuento" class="tamanio-label">% Dto.</label>
+            <label for="idDescuento" class="tamanio-label">% dto.</label>
             <input id="idDescuento" type="number" formControlName="descuento"
               class="form-control form-control-sm number-right" placeholder="% 0.00" style="width: 60px;"
               autocomplete="off" (blur)="calcularSubtotal($event)" [readOnly]="soloLectura">
@@ -378,16 +345,16 @@
             <label for="idRetiro" class="tamanio-label">Retiro</label>
             <input id="idRetiro" type="text" formControlName="importeRetiro"
               class="form-control form-control-sm number-right" placeholder="$ 0.00" style="width: 55px;"
-              autocomplete="off" [textMask]="obtenerMascaraImporte(8, 2)" (blur)="calcularSubtotal($event)"
+              autocomplete="off" [textMask]="mascararImporte(8, 2)" (blur)="calcularSubtotal($event)"
               [readOnly]="soloLectura">
           </div>
           <div class="form-group has-float-label">
             <label for="idEntrega" class="tamanio-label">Entrega</label>
             <input id="idEntrega" type="text" formControlName="importeEntrega"
               class="form-control form-control-sm number-right" placeholder="$ 0.00" style="width: 68px;"
-              autocomplete="off" [textMask]="obtenerMascaraImporte(8, 2)" (blur)="calcularSubtotal($event)"
+              autocomplete="off" [textMask]="mascararImporte(8, 2)" (blur)="calcularSubtotal($event)"
               [readOnly]="soloLectura">
-          </div> -->
+          </div>
           <!-- <div class="form-group has-float-label ">
             <label for="idConcepto" class="tamanio-label">Conceptos Varios</label>
             <mat-select id="idConcepto" class="form-control form-control-sm" formControlName="conceptosVarios"
@@ -398,18 +365,15 @@
                 </div>
               </mat-option>
             </mat-select>
+          </div> -->
+          <div class="form-group ">
+            <button id="idBtnVarios" mat-raised-button color="primary" style="width: 50px;">Varios</button>
           </div>
           <div class="form-group has-float-label">
-            <label for="idImporteConcepto" class="tamanio-label">Precio(Conc.Var.)</label>
-            <input id="idImporteConcepto" type="text" formControlName="importeVentaItemConcepto" placeholder="$ 0.00"
-              class="form-control form-control-sm number-right" style="width: 130px;" autocomplete="off"
-              [textMask]="obtenerMascaraImporte(8, 2)" (blur)="calcularSubtotal($event)">
-          </div> -->
-          <!-- <div class="form-group has-float-label">
             <label for="idSubtotal" class="tamanio-label">Subtotal</label>
             <input id="idSubtotal" type="text" formControlName="importeNetoGravado"
               class="form-control form-control-sm number-right" style="width: 73px;"
-              [textMask]="obtenerMascaraImporte(10, 2)" (blur)="calcularSubtotal($event)" readonly>
+              [textMask]="mascararImporte(10, 2)" (blur)="calcularSubtotal($event)" readonly>
           </div>
           <div class="form-group has-float-label">
             <label for="idAlicuota" class="tamanio-label">Alic. IVA</label>
@@ -420,10 +384,11 @@
               </mat-option>
             </mat-select>
           </div>
-          <button class="btn btn-warning btn-custom margin-left-button" [disabled]="!formularioItem.valid"
-            (click)="agregarItemViaje()">Agregar</button> -->
+          <button class="btn btn-warning btn-custom margin-left-button" [disabled]="!formularioVtaCpteItemFA.valid"
+            (click)="agregarItemViaje()">Agregar</button>
         </div>
       </form>
+      <!--
       <div class="inline">
         <div style="width: 100%; height: 150px; overflow-y: scroll;">
           <table class="table table-bordered table-striped table-condensed">
@@ -475,19 +440,19 @@
         <div class="form-group has-float-label">
           <label for="idCodigo" class="tamanio-label"><b>Importe Neto Gravado</b></label>
           <input id="idCodigo" type="text" formControlName="importeNetoGravado" placeholder="$ 0.00"
-            [textMask]="obtenerMascaraImporte(8, 2)" (blur)="setDecimales(formulario.get('importeNetoGravado'), 2)"
+            [textMask]="mascararImporte(8, 2)" (blur)="setDecimales(formulario.get('importeNetoGravado'), 2)"
             class="form-control input-bold form-control-sm number-right" style="width: 189px;">
         </div>
         <div class="form-group has-float-label">
           <label for="idCodigo" class="tamanio-label"><b>Importe IVA</b></label>
           <input id="idCodigo" type="text" formControlName="importeIva" placeholder="$ 0.00"
-            [textMask]="obtenerMascaraImporte(8, 2)" (blur)="setDecimales(formulario.get('importeIva'), 2)"
+            [textMask]="mascararImporte(8, 2)" (blur)="setDecimales(formulario.get('importeIva'), 2)"
             class="form-control input-bold form-control-sm number-right" style="width: 120px;">
         </div>
         <div class="form-group has-float-label">
           <label for="idCodigo" class="tamanio-label"><b>Importe Total</b></label>
           <input id="idCodigo" type="text" formControlName="importeTotal" placeholder="$ 0.00"
-            [textMask]="obtenerMascaraImporte(8, 2)" (blur)="setDecimales(formulario.get('importeTotal'), 2)"
+            [textMask]="mascararImporte(8, 2)" (blur)="setDecimales(formulario.get('importeTotal'), 2)"
             class="form-control input-bold form-control-sm number-right" style="width: 130px;">
         </div>
       </div> -->
@@ -497,7 +462,7 @@
             <label for="idContraReembolso" class="tamanio-label">ContraReembolso</label>
             <input id="idContraReembolso" type="text" formControlName="importeContraReembolso" placeholder="$ 0.00"
               class="form-control form-control-sm number-right" autocomplete="off" style="width: 140px;"
-              [textMask]="obtenerMascaraImporte(8, 2)"
+              [textMask]="mascararImporte(8, 2)"
               (blur)="setDecimales(formularioCR.get('importeContraReembolso'), 2)">
           </div>
           <div class="form-group has-float-label">
@@ -519,7 +484,7 @@
             <label for="idCodigo" class="tamanio-label">Comisión</label>
             <input id="idCodigo" type="text" formControlName="pComision"
               class="form-control form-control-sm number-right" style="width: 120px;" placeholder="$ 0.00" readonly
-              [textMask]="obtenerMascaraImporte(8, 2)" (blur)="setDecimales(formularioCR.get('pComision'), 2)">
+              [textMask]="mascararImporte(8, 2)" (blur)="setDecimales(formularioCR.get('pComision'), 2)">
           </div>
           <div class="form-group has-float-label">
             <label for="idAlicuotaCR" class="tamanio-label">Alíc. IVA</label>

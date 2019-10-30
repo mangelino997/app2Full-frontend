@@ -61,6 +61,20 @@ import { SeguimientoEstadoSituacionService } from './servicios/seguimiento-estad
 import { SeguimientoVentaComprobanteService } from './servicios/seguimiento-venta-comprobante.service';
 import { SeguimientoViajeRemitoService } from './servicios/seguimiento-viaje-remito.service';
 import { SeguimientoOrdenRecoleccionService } from './servicios/seguimiento-orden-recoleccion.service';
+import { ClienteEventualComponent } from './componentes/cliente-eventual/cliente-eventual.component';
+import { AfipCondicionIvaService } from './servicios/afip-condicion-iva.service';
+import { TipoDocumentoService } from './servicios/tipo-documento.service';
+import { BarrioService } from './servicios/barrio.service';
+import { LocalidadService } from './servicios/localidad.service';
+import { CobradorService } from './servicios/cobrador.service';
+import { ZonaService } from './servicios/zona.service';
+import { RubroService } from './servicios/rubro.service';
+import { SucursalService } from './servicios/sucursal.service';
+import { ClienteService } from './servicios/cliente.service';
+import { ClienteEventual } from './modelos/clienteEventual';
+import { FceMiPymesDialogoComponent } from './componentes/fce-mi-pymes-dialogo/fce-mi-pymes-dialogo.component';
+import { ClienteCuentaBancariaService } from './servicios/cliente-cuenta-bancaria.service';
+import { ClienteVtoPagoService } from './servicios/cliente-vto-pago.service';
 
 const stompConfig: StompConfig = {
   url: 'ws://localhost:8080/jitws/socket',
@@ -88,7 +102,9 @@ const stompConfig: StompConfig = {
     AnularDialogo,
     CombustibleDialogo,
     EfectivoDialogo,
-    RepartoComprobanteComponent
+    RepartoComprobanteComponent,
+    ClienteEventualComponent,
+    FceMiPymesDialogoComponent
   ],
   imports: [
     FormsModule,
@@ -154,6 +170,18 @@ const stompConfig: StompConfig = {
     ViajeRemitoService,
     RepartoComprobanteService,
     VentaComprobanteService,
+    AfipCondicionIvaService,
+    TipoDocumentoService,
+    BarrioService,
+    LocalidadService,
+    CobradorService,
+    ZonaService,
+    RubroService,
+    SucursalService,
+    ClienteService,
+    ClienteEventual,
+    ClienteCuentaBancariaService,
+    ClienteVtoPagoService,
     {
       provide: StompConfig,
       useValue: stompConfig
@@ -172,7 +200,9 @@ const stompConfig: StompConfig = {
     AnularDialogo,
     CombustibleDialogo,
     EfectivoDialogo,
-    RepartoComprobanteComponent
+    RepartoComprobanteComponent,
+    ClienteEventualComponent,
+    FceMiPymesDialogoComponent
   ]
 })
 export class AppModule { }
