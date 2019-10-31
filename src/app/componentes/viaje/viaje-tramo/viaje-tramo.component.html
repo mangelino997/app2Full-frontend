@@ -162,7 +162,7 @@
                     <td mat-cell *matCellDef="let elemento">
                         {{elemento.viajeTarifa? elemento.viajeTarifa.nombre : 'por Remitos'}}</td>
                 </ng-container>
-                <ng-container matColumnDef="destinatario">
+                <!-- <ng-container matColumnDef="destinatario">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>Dador - Destinatario</th>
                     <td mat-cell *matCellDef="let elemento">
                         <button mat-icon-button class="mat-icon-button-table" *ngIf="!elemento.viajeTarifa"
@@ -172,7 +172,7 @@
                             <mat-icon>emoji_transportation</mat-icon>
                         </button>
                     </td>
-                </ng-container>
+                </ng-container> -->
                 <ng-container matColumnDef="unidadNegocio">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>Un. Negocio</th>
                     <td mat-cell *matCellDef="let elemento">
@@ -187,6 +187,12 @@
                 <ng-container matColumnDef="editar" stickyEnd>
                     <th mat-header-cell *matHeaderCellDef>-</th>
                     <td mat-cell *matCellDef="let elemento; let i = index">
+                        <button mat-icon-button class="mat-icon-button-table" *ngIf="!elemento.viajeTarifa"
+                            [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4"
+                            (click)="verDadorDestinatarioDialogo(elemento)" matTooltip="Cargar Dador-Destinatario"
+                            matTooltipPosition="above">
+                            <mat-icon>emoji_transportation</mat-icon>
+                        </button>
                         <button mat-icon-button class="mat-icon-button-table"
                             *ngIf="!soloLectura && !elemento.estaAnulado" (click)="modTramo(i, elemento)"
                             matTooltip="Editar" matTooltipPosition="above">

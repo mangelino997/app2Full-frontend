@@ -41,6 +41,11 @@ import { NormalizarDialogo } from 'src/app/componentes/viaje/normalizar-dialogo.
 import { ViajeCombustibleComponent } from 'src/app/componentes/viaje/viaje-combustible/viaje-combustible.component';
 import { ViajeEfectivoComponent } from 'src/app/componentes/viaje/viaje-efectivo/viaje-efectivo.component';
 import { CommonModule } from '@angular/common';
+import { RemitoDialogoComponent } from 'src/app/componentes/viaje/remito-dialogo/remito-dialogo.component';
+import { ViajeRemitoGS } from 'src/app/modelos/viajeRemitoGS';
+import { Aforo } from 'src/app/modelos/aforo';
+import { AforoComponent } from 'src/app/componentes/aforo/aforo.component';
+import { VentaConfigService } from 'src/app/servicios/venta-config.service';
 
 const routes: Routes = [
   {path: '', component: ViajeComponent}
@@ -58,7 +63,9 @@ const routes: Routes = [
     ViajePeajeComponent,
     DadorDestinatarioDialogo,
     NormalizarDialogo,
-    ListarViajesDialogo
+    ListarViajesDialogo,
+    RemitoDialogoComponent,
+    AforoComponent
   ],
   imports: [
     CommonModule,
@@ -110,12 +117,17 @@ const routes: Routes = [
     ViajeTipoService,
     ViajeTarifaService,
     ViajeTramoClienteService,
-    ClienteService
+    ClienteService,
+    ViajeRemitoGS,
+    Aforo,
+    VentaConfigService
   ],
   entryComponents: [
     DadorDestinatarioDialogo,
     NormalizarDialogo,
-    ListarViajesDialogo
+    ListarViajesDialogo,
+    RemitoDialogoComponent,
+    AforoComponent
   ],
   exports: [RouterModule]
 })
