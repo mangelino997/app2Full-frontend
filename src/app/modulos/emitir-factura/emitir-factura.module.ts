@@ -22,6 +22,8 @@ import { VentaItemConceptoService } from 'src/app/servicios/venta-item-concepto.
 import { AfipAlicuotaIvaService } from 'src/app/servicios/afip-alicuota-iva.service';
 import { VentaComprobante } from 'src/app/modelos/ventaComprobante';
 import { VentaComprobanteItemFA } from 'src/app/modelos/ventaComprobanteItemFA';
+import { EmpresaOrdenVentaService } from 'src/app/servicios/empresa-orden-venta.service';
+import { OrdenVentaTarifaService } from 'src/app/servicios/orden-venta-tarifa.service';
 
 @NgModule({
   declarations: [
@@ -57,7 +59,9 @@ import { VentaComprobanteItemFA } from 'src/app/modelos/ventaComprobanteItemFA';
     VentaItemConceptoService,
     AfipAlicuotaIvaService,
     VentaComprobante,
-    VentaComprobanteItemFA
+    VentaComprobanteItemFA,
+    EmpresaOrdenVentaService,
+    OrdenVentaTarifaService
 
   ]
 })

@@ -46,7 +46,7 @@
             <div class="col-md-6">
               <div class="form-group has-float-label inline">
                 <label for="idItem" class="tamanio-label">Item a Facturar *</label>
-                <mat-select id="idItem" class="form-control form-control-sm" formControlName="afipConcepto"
+                <mat-select id="idItem" class="form-control form-control-sm" [formControl]="itemFactura"
                   [compareWith]="compareFn" (selectionChange)="cambioItem()">
                   <mat-option *ngFor="let item of itemsAFacturar" [value]="item">
                     {{item.nombre}}
@@ -228,7 +228,7 @@
             <div class="form-group has-float-label">
               <label for="idPagoOrigen" class="tamanio-label">Pago en: *</label>
               <mat-select id="idPagoOrigen" [formControl]="formulario.get('pagoEnOrigen')"
-                class="form-control form-control-sm" (selectionChange)="pagoEnOrigen()">
+                class="form-control form-control-sm" (selectionChange)="cambioPagoEn()">
                 <mat-option [value]="true">Origen</mat-option>
                 <mat-option [value]="false">Destino</mat-option>
               </mat-select>
@@ -240,14 +240,14 @@
           <div class="col">
             <div class="form-group has-float-label">
               <label for="idViaje" class="tamanio-label">N° Viaje GS *</label>
-              <input id="idViaje" type="text" [formControl]="numeroViajeGS" [readOnly]="soloLectura" placeholder="00"
-                [textMask]="mascararEnteroSinDecimales(8)" class="form-control form-control-sm number-right">
+              <input id="idViaje" type="text" [formControl]="numeroViajeGS" placeholder="00"
+                [textMask]="mascararEnteroSinDecimales(11)" class="form-control form-control-sm number-right">
             </div>
           </div>
           <div class="col">
             <div class="form-group has-float-label ">
               <label for="idRemito" class="tamanio-label">N° Remito*</label>
-              <input id="idRemito" type="number" formControlName="viajeRemito" [readOnly]="soloLectura" placeholder="00"
+              <input id="idRemito" type="text" formControlName="viajeRemito" [readOnly]="soloLectura" placeholder="00"
                 [textMask]="mascararEnteroSinDecimales(8)" class="form-control form-control-sm number-right"
                 (blur)="cambioRemito()">
             </div>
@@ -257,7 +257,7 @@
               <label for="idBultos" class="tamanio-label">Bultos</label>
               <input id="idBultos" type="text" formControlName="bultos"
                 class="form-control form-control-sm number-right" placeholder="00"
-                [textMask]="mascararEnteroSinDecimales(8)" autocomplete="off" [readOnly]="soloLectura">
+                [textMask]="mascararEnteroSinDecimales(6)" autocomplete="off" [readOnly]="soloLectura">
             </div>
           </div>
           <div class="col">
@@ -274,8 +274,8 @@
               <label for="idKiloAforado" class="tamanio-label">Kg Aforado</label>
               <input id="idKiloAforado" type="text" formControlName="kilosAforadoCampo"
                 class="form-control form-control-sm number-right" placeholder="0.00" autocomplete="off"
-                (blur)="setDecimales(formularioVtaCpteItemFA.get('kilosAforadoCampo'), 2)"
-                [textMask]="mascararEnteroConDecimales(8)" [readOnly]="soloLectura">
+                [textMask]="mascararEnteroConDecimales(8)"
+                (blur)="setDecimales(formularioVtaCpteItemFA.get('kilosAforadoCampo'), 2)" [readOnly]="soloLectura">
             </div>
           </div>
           <div style="width: 60px;">
@@ -284,9 +284,9 @@
           <div class="col">
             <div class="form-group has-float-label">
               <label for="idM3" class="tamanio-label">m3</label>
-              <input id="idM3" type="number" formControlName="m3" class="form-control form-control-sm"
-                placeholder="0.00" (blur)="setDecimales(formularioVtaCpteItemFA.get('m3'), 2)" autocomplete="off"
-                [readOnly]="soloLectura">
+              <input id="idM3" type="text" formControlName="m3" class="form-control form-control-sm number-right"
+                placeholder="0.00" [textMask]="mascararEnteroConDecimales(3)" autocomplete="off"
+                (blur)="setDecimales(formularioVtaCpteItemFA.get('m3'), 2)" [readOnly]="soloLectura">
             </div>
           </div>
           <div class="col-md-3">
@@ -299,63 +299,115 @@
         </div>
         <hr style="margin-top: 10px; margin-bottom: 20px;">
         <div class="row">
-          <div class="form-group has-float-label ">
-            <label for="idTarifaOVta" class="tamanio-label">Orden Vta. *</label>
-            <mat-select id="idTarifaOVta" class="form-control form-control-sm" [formControl]="ordenVenta"
-              style="width: 140px;" [compareWith]="compareFn" (selectionChange)="cambioOVta()">
-              <mat-option *ngFor="let item of ordenesVenta" [value]="item">
-                {{item.nombre}}
-              </mat-option>
-            </mat-select>
+          <div class="col">
+            <div class="form-group has-float-label ">
+              <label for="idTarifaOVta" class="tamanio-label">Orden Vta. *</label>
+              <mat-select id="idTarifaOVta" class="form-control form-control-sm" [formControl]="ordenVenta"
+                [compareWith]="compareFn" (selectionChange)="cambioOrdenVta()">
+                <mat-option *ngFor="let item of ordenesVenta" [value]="item">
+                  {{item.ordenVenta.nombre}}
+                </mat-option>
+                <mat-option value=false>Libre</mat-option>
+              </mat-select>
+            </div>
           </div>
-          <div class="form-group has-float-label ">
-            <label for="idTarifaOVta" class="tamanio-label">Tarifa O.Vta.*</label>
-            <mat-select id="idTarifaOVta" class="form-control form-control-sm" formControlName="ordenVentaTarifa"
-              style="width: 140px;" [compareWith]="compareFn" (selectionChange)="cambioOVta()">
-              <mat-option *ngFor="let item of tarifasOrdenVta" [value]="item">
-                {{item.tipoTarifa.nombre}}
-              </mat-option>
-            </mat-select>
+          <div class="col">
+            <div class="form-group has-float-label ">
+              <label for="idTarifaOVta" class="tamanio-label">Tarifa O.Vta.*</label>
+              <mat-select id="idTarifaOVta" class="form-control form-control-sm" formControlName="ordenVentaTarifa"
+                [compareWith]="compareFn" (selectionChange)="cambioTipoTarifa()">
+                <mat-option *ngFor="let item of tarifasOrdenVta" [value]="item">
+                  {{item.tipoTarifa.nombre}}
+                </mat-option>
+              </mat-select>
+            </div>
           </div>
-          <div class="form-group has-float-label">
-            <label for="idValorDeclarado" class="tamanio-label">Valor Declarado</label>
-            <input id="idValorDeclarado" type="text" formControlName="valorDeclarado" placeholder="0.00"
-              class="form-control form-control-sm number-right" style="width: 125px;" autocomplete="off"
-              [textMask]="mascararImporte(8, 2)" (blur)="calcularSubtotal($event)" [readOnly]="soloLectura">
+          <div class="col" style="min-width: 138px !important;">
+            <div class="form-group has-float-label">
+              <label for="idValorDeclarado" class="tamanio-label">Valor Declarado</label>
+              <input id="idValorDeclarado" type="text" formControlName="valorDeclarado" placeholder="0.00"
+                class="form-control form-control-sm number-right" autocomplete="off" [textMask]="mascararImporte(10, 2)"
+                (blur)="calcularSubtotal($event)" [readOnly]="soloLectura">
+            </div>
           </div>
-          <div class="form-group has-float-label">
-            <label for="idSeguro" class="tamanio-label">% Seguro</label>
-            <input id="idSeguro" type="text" formControlName="importeSeguro"
-              class="form-control form-control-sm number-right" placeholder="% 0.00" style="width: 80px;"
-              (blur)="calcularSubtotal($event)" readonly>
+          <div class="col">
+            <div class="form-group has-float-label">
+              <label for="idSeguro" class="tamanio-label">% Seguro</label>
+              <input id="idSeguro" type="text" formControlName="importeSeguro" [textMask]="mascararPorcentaje()"
+                (blur)="establecerPorcentaje(formularioVtaCpteItemFA.get('importeSeguro'), 2)"
+                class="form-control form-control-sm number-right" placeholder="% 0.00">
+            </div>
+            <!--(blur)="calcularSubtotal($event)"-->
           </div>
-          <div class="form-group has-float-label">
-            <label for="idFlete" class="tamanio-label">Flete</label>
-            <input id="idFlete" type="text" formControlName="flete" class="form-control form-control-sm number-right"
-              style="width: 120px;" autocomplete="off" (blur)="calcularSubtotal($event)" [readOnly]="soloLectura"
-              placeholder="$ 0.00" [textMask]="mascararImporte(8, 2)">
+          <div class="col">
+            <div class="form-group has-float-label">
+              <label for="idFlete" class="tamanio-label">Flete</label>
+              <input id="idFlete" type="text" formControlName="flete" class="form-control form-control-sm number-right"
+                autocomplete="off" (blur)="setDecimales(formularioVtaCpteItemFA.get('flete'), 2)" [readOnly]="soloLectura" placeholder="$ 0.00"
+                [textMask]="mascararImporte(8, 2)"> 
+                <!--(blur)="calcularSubtotal($event)"-->
+            </div>
           </div>
-          <div class="form-group has-float-label">
-            <label for="idDescuento" class="tamanio-label">% dto.</label>
-            <input id="idDescuento" type="number" formControlName="descuento"
-              class="form-control form-control-sm number-right" placeholder="% 0.00" style="width: 60px;"
-              autocomplete="off" (blur)="calcularSubtotal($event)" [readOnly]="soloLectura">
+          <div class="col">
+            <div class="form-group has-float-label">
+              <label for="idDescuento" class="tamanio-label">% dto.</label>
+              <input id="idDescuento" type="text" formControlName="descuentoFlete" [readOnly]="soloLectura"
+                class="form-control form-control-sm number-right" placeholder="% 0.00" autocomplete="off"
+                [textMask]="mascararPorcentaje()"
+                (blur)="establecerPorcentaje(formularioVtaCpteItemFA.get('descuentoFlete'), 2)">
+              <!--(blur)="calcularSubtotal($event)"-->
+            </div>
           </div>
-          <div class="form-group has-float-label">
-            <label for="idRetiro" class="tamanio-label">Retiro</label>
-            <input id="idRetiro" type="text" formControlName="importeRetiro"
-              class="form-control form-control-sm number-right" placeholder="$ 0.00" style="width: 55px;"
-              autocomplete="off" [textMask]="mascararImporte(8, 2)" (blur)="calcularSubtotal($event)"
-              [readOnly]="soloLectura">
+          <div class="col">
+            <div class="form-group has-float-label">
+              <label for="idRetiro" class="tamanio-label">Retiro</label>
+              <input id="idRetiro" type="text" formControlName="importeRetiro"
+                class="form-control form-control-sm number-right" placeholder="$ 0.00" autocomplete="off"
+                [textMask]="mascararImporte(8, 2)" [readOnly]="soloLectura"
+                (blur)="establecerPorcentaje(formularioVtaCpteItemFA.get('importeRetiro'), 2)">
+                <!--(blur)="calcularSubtotal($event)"-->
+            </div>
           </div>
-          <div class="form-group has-float-label">
-            <label for="idEntrega" class="tamanio-label">Entrega</label>
-            <input id="idEntrega" type="text" formControlName="importeEntrega"
-              class="form-control form-control-sm number-right" placeholder="$ 0.00" style="width: 68px;"
-              autocomplete="off" [textMask]="mascararImporte(8, 2)" (blur)="calcularSubtotal($event)"
-              [readOnly]="soloLectura">
+          <div class="col">
+            <div class="form-group has-float-label">
+              <label for="idEntrega" class="tamanio-label">Entrega</label>
+              <input id="idEntrega" type="text" formControlName="importeEntrega"
+                class="form-control form-control-sm number-right" placeholder="$ 0.00" autocomplete="off"
+                [textMask]="mascararImporte(8, 2)" [readOnly]="soloLectura"
+                (blur)="establecerPorcentaje(formularioVtaCpteItemFA.get('importeEntrega'), 2)">
+                <!--(blur)="calcularSubtotal($event)"-->
+            </div>
           </div>
-          <!-- <div class="form-group has-float-label ">
+          <div style="width: 70px;">
+            <button id="idBtnVarios" mat-raised-button color="primary">Varios</button>
+          </div>
+          <div class="col">
+            <div class="form-group has-float-label">
+              <label for="idSubtotal" class="tamanio-label">Subtotal</label>
+              <input id="idSubtotal" type="text" formControlName="importeNetoGravado"
+                class="form-control form-control-sm number-right" [textMask]="mascararImporte(10, 2)"
+                (blur)="calcularSubtotal($event)" readonly>
+            </div>
+          </div>
+          <div class="col">
+            <div class="form-group has-float-label">
+              <label for="idAlicuota" class="tamanio-label">Alic. IVA</label>
+              <mat-select id="idAlicuota" type="number" formControlName="alicuotaIva"
+                class="form-control form-control-sm number-right" (blur)="calcularSubtotal($event)">
+                <mat-option *ngFor="let itemAlicuota of resultadosAlicuotasIva" [value]="itemAlicuota">
+                  {{returnDecimales(itemAlicuota.alicuota, 2)}} %
+                </mat-option>
+              </mat-select>
+            </div>
+          </div>
+          <div style="min-width: 50px !important;">
+            <div class="form-group ">
+              <button class="btn btn-warning btn-custom " [disabled]="!formularioVtaCpteItemFA.valid"
+                (click)="agregarItemViaje()">Agregar</button>
+            </div>
+          </div>
+        </div>
+        <!-- <div class="form-group has-float-label ">
             <label for="idConcepto" class="tamanio-label">Conceptos Varios</label>
             <mat-select id="idConcepto" class="form-control form-control-sm" formControlName="conceptosVarios"
               style="width: 150px;" [compareWith]="compareFn" (selectionChange)="habilitarPrecioCV()">
@@ -366,27 +418,6 @@
               </mat-option>
             </mat-select>
           </div> -->
-          <div class="form-group ">
-            <button id="idBtnVarios" mat-raised-button color="primary" style="width: 50px;">Varios</button>
-          </div>
-          <div class="form-group has-float-label">
-            <label for="idSubtotal" class="tamanio-label">Subtotal</label>
-            <input id="idSubtotal" type="text" formControlName="importeNetoGravado"
-              class="form-control form-control-sm number-right" style="width: 73px;"
-              [textMask]="mascararImporte(10, 2)" (blur)="calcularSubtotal($event)" readonly>
-          </div>
-          <div class="form-group has-float-label">
-            <label for="idAlicuota" class="tamanio-label">Alic. IVA</label>
-            <mat-select id="idAlicuota" type="number" formControlName="alicuotaIva"
-              class="form-control form-control-sm number-right" style="width: 75px;" (blur)="calcularSubtotal($event)">
-              <mat-option *ngFor="let itemAlicuota of resultadosAlicuotasIva" [value]="itemAlicuota">
-                {{returnDecimales(itemAlicuota.alicuota, 2)}} %
-              </mat-option>
-            </mat-select>
-          </div>
-          <button class="btn btn-warning btn-custom margin-left-button" [disabled]="!formularioVtaCpteItemFA.valid"
-            (click)="agregarItemViaje()">Agregar</button>
-        </div>
       </form>
       <!--
       <div class="inline">
