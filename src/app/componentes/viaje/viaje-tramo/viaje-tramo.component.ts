@@ -22,6 +22,7 @@ import { ViajeTramoClienteService } from 'src/app/servicios/viaje-tramo-cliente.
 import { ViajeService } from 'src/app/servicios/viaje.service';
 import { Viaje } from 'src/app/modelos/viaje';
 import { MensajeExcepcion } from 'src/app/modelos/mensaje-excepcion';
+import { RemitoDialogoComponent } from '../remito-dialogo/remito-dialogo.component';
 
 @Component({
   selector: 'app-viaje-tramo',
@@ -73,7 +74,7 @@ export class ViajeTramoComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define las columnas de la tabla
-  public columnas: string[] = ['id', 'fecha', 'tramo', 'km', 'empresa', 'tipoViaje', 'tipoCarga', 'tarifa', 'destinatario', 'unidadNegocio', 'obs', 'editar'];
+  public columnas: string[] = ['id', 'fecha', 'tramo', 'km', 'empresa', 'tipoViaje', 'tipoCarga', 'tarifa', 'unidadNegocio', 'obs', 'editar'];
   //Define la matSort
   @ViewChild(MatSort,{static: false}) sort: MatSort;
   //Constructor
@@ -561,7 +562,7 @@ export class ViajeTramoComponent implements OnInit {
       data: {
         tema: this.appServicio.getTema(),
         viajeTramo: elemento.id,
-        modalidadCarga: elemento.viajeTipo
+        tramo: elemento
       }
     });
     dialogRef.afterClosed().subscribe(viajeTramoClientes => {
@@ -596,6 +597,8 @@ export class DadorDestinatarioDialogo {
   public listaCompleta = new MatTableDataSource([]);
   //Define la lista de clientes
   public resultadosClientes: Array<any> = [];
+  //Define el tramo seleccionado
+  public tramo:string = null;
   //Define la modalidad de carga seleccionada
   public modalidadCarga:boolean;
   //Define las columnas de la tabla
@@ -605,14 +608,19 @@ export class DadorDestinatarioDialogo {
   //Constructor
   constructor(public dialogRef: MatDialogRef<DadorDestinatarioDialogo>, @Inject(MAT_DIALOG_DATA) public data, 
     private toastr: ToastrService, private viajeTramoClienteModelo: ViajeTramoCliente, 
-    private viajeTramoClienteService: ViajeTramoClienteService, private clienteServicio: ClienteService) { }
+    private viajeTramoClienteService: ViajeTramoClienteService, private clienteServicio: ClienteService,
+    public dialog: MatDialog, private appServicio: AppService) { }
   ngOnInit() {
     //Establece el tema
     this.tema = this.data.tema;
     //Establece el formulario
     this.formulario = this.viajeTramoClienteModelo.formulario;
+    let tramo = this.data.tramo.tramo;
+    //Establece el tramo seleccionado
+    this.tramo = tramo.origen.nombre + ', ' + tramo.origen.provincia.nombre 
+      + ' --> ' + tramo.destino.nombre + ', ' + tramo.destino.provincia.nombre;
     //Establece la modalidad de carga
-    this.modalidadCarga = this.data.modalidadCarga.id != 4 ? true : false;
+    this.modalidadCarga = this.data.tramo.viajeTipo.id != 4 ? true : false;
     //Inicializa la tabla
     this.listar(this.data.viajeTramo);
     //Autocompletado Cliente Dador - Buscar por alias
@@ -688,8 +696,19 @@ export class DadorDestinatarioDialogo {
     }
   }
   //Abre el dialogo para cargar remitos
-  public verRemitos(): void {
-    console.log('PASO');
+  public verRemitos(elemento): void {
+    const dialogRef = this.dialog.open(RemitoDialogoComponent, {
+      width: '95%',
+      maxWidth: '95%',
+      data: {
+        tema: this.appServicio.getTema(),
+        tramo: this.tramo,
+        dadorDestinatario: elemento
+      }
+    });
+    dialogRef.afterClosed().subscribe(resultado => {
+      
+    });
   }
   //Define como se muestra los datos en el autcompletado b
   public displayFb(elemento) {
