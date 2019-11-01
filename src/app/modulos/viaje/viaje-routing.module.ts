@@ -44,7 +44,6 @@ import { CommonModule } from '@angular/common';
 import { RemitoDialogoComponent } from 'src/app/componentes/viaje/remito-dialogo/remito-dialogo.component';
 import { ViajeRemitoGS } from 'src/app/modelos/viajeRemitoGS';
 import { Aforo } from 'src/app/modelos/aforo';
-import { AforoComponent } from 'src/app/componentes/aforo/aforo.component';
 import { VentaConfigService } from 'src/app/servicios/venta-config.service';
 
 const routes: Routes = [
@@ -64,8 +63,7 @@ const routes: Routes = [
     DadorDestinatarioDialogo,
     NormalizarDialogo,
     ListarViajesDialogo,
-    RemitoDialogoComponent,
-    AforoComponent
+    RemitoDialogoComponent
   ],
   imports: [
     CommonModule,
@@ -126,8 +124,7 @@ const routes: Routes = [
     DadorDestinatarioDialogo,
     NormalizarDialogo,
     ListarViajesDialogo,
-    RemitoDialogoComponent,
-    AforoComponent
+    RemitoDialogoComponent
   ],
   exports: [RouterModule]
 })
