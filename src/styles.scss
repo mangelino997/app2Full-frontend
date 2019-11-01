@@ -670,3 +670,9 @@ tr.mat-footer-row, tr.mat-row {
 // .mat-sort-header-container {
 //   justify-content: center !important;
 // }
+hr {
+  margin-top: 0px !important;
+  margin-bottom: 1rem;
+  border: 0;
+  border-top: 1px solid rgba(0,0,0,.1);
+}

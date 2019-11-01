@@ -45,6 +45,8 @@ import { RemitoDialogoComponent } from 'src/app/componentes/viaje/remito-dialogo
 import { ViajeRemitoGS } from 'src/app/modelos/viajeRemitoGS';
 import { Aforo } from 'src/app/modelos/aforo';
 import { VentaConfigService } from 'src/app/servicios/venta-config.service';
+import { ViajeTramoClienteRemito } from 'src/app/modelos/viajeTramoClienteRemito';
+import { ViajeTramoClienteRemitoService } from 'src/app/servicios/viaje-tramo-cliente-remito.service';
 
 const routes: Routes = [
   {path: '', component: ViajeComponent}
@@ -118,7 +120,9 @@ const routes: Routes = [
     ClienteService,
     ViajeRemitoGS,
     Aforo,
-    VentaConfigService
+    VentaConfigService,
+    ViajeTramoClienteRemito,
+    ViajeTramoClienteRemitoService
   ],
   entryComponents: [
     DadorDestinatarioDialogo,

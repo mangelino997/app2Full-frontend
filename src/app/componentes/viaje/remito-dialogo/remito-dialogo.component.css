@@ -1,0 +1,10 @@
+.tabla {
+    height: 200px;
+    width: 1920px;
+    overflow: auto;
+}
+.mat-column-editar {
+    min-width: 20px !important;
+    width: 120px !important;
+    padding-right: 0px !important;
+}
