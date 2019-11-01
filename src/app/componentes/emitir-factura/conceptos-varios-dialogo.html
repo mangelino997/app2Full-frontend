@@ -1,0 +1,34 @@
+<div class="padd-20">
+    <div class="row">
+        <div class="col text-center">
+            <h5>Conceptos Varios</h5>
+        </div>
+    </div>
+    <form [formGroup]="formulario">
+        <div class="row justify-content-center">
+            <div class="col-md-4">
+                <div class="form-group has-float-label">
+                    <label for="idConcepto" class="tamanio-label">Concepto</label>
+                    <mat-select id="idConcepto" type="number" formControlName="concepto"
+                        class="form-control form-control-sm number-right">
+                        <mat-option *ngFor="let item of conceptos" [value]="item">
+                            {{item.nombre}}
+                        </mat-option>
+                    </mat-select>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group has-float-label">
+                    <label for="idImporte" class="tamanio-label">Importe</label>
+                    <input id="idImporte" type="text" formControlName="importe"
+                        class="form-control form-control-sm number-right" placeholder="$ 0.00" autocomplete="off"
+                        [textMask]="mascararImporte(8, 2)" (blur)="setDecimales(formulario.get('importe'), 2)">
+                </div>
+            </div>
+        </div>
+        <div class="row justify-content-center">
+            <button mat-raised-button color="primary" [mat-dialog-close]="formulario.value">Aceptar</button>
+            <button class="margin-left-3" mat-raised-button [mat-dialog-close]="">Cancelar</button>
+        </div>
+    </form>
+</div>

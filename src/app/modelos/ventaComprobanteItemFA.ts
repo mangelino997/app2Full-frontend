@@ -41,7 +41,7 @@ export class VentaComprobanteItemFA {
 
             importeExento: new FormControl(),
             provincia: new FormControl(),
-            ordenVentaTarifa: new FormControl(),
+            ordenVentaTarifa: new FormControl('', Validators.required),
         })
     }
 }
