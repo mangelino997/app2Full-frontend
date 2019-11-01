@@ -14,7 +14,6 @@ import { SucursalService } from 'src/app/servicios/sucursal.service';
 import { TipoComprobanteService } from 'src/app/servicios/tipo-comprobante.service';
 import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
 import { ClienteService } from 'src/app/servicios/cliente.service';
-import { ClienteEventualComponent } from 'src/app/componentes/cliente-eventual/cliente-eventual.component';
 import { AfipCondicionIvaService } from 'src/app/servicios/afip-condicion-iva.service';
 import { TipoDocumentoService } from 'src/app/servicios/tipo-documento.service';
 import { ClienteEventual } from 'src/app/modelos/clienteEventual';
@@ -23,7 +22,6 @@ import { LocalidadService } from 'src/app/servicios/localidad.service';
 import { CobradorService } from 'src/app/servicios/cobrador.service';
 import { ZonaService } from 'src/app/servicios/zona.service';
 import { RubroService } from 'src/app/servicios/rubro.service';
-import { AforoComponent } from 'src/app/componentes/aforo/aforo.component';
 import { VentaConfigService } from 'src/app/servicios/venta-config.service';
 import { Aforo } from 'src/app/modelos/aforo';
 import { ViajeRemitoGS } from 'src/app/modelos/viajeRemitoGS';
@@ -31,9 +29,7 @@ import { SucursalClienteService } from 'src/app/servicios/sucursal-cliente.servi
 
 @NgModule({
   declarations: [
-    ViajeRemitoComponent,
-    ClienteEventualComponent,
-    AforoComponent
+    ViajeRemitoComponent
   ],
   imports: [
     CommonModule,
@@ -74,8 +70,6 @@ import { SucursalClienteService } from 'src/app/servicios/sucursal-cliente.servi
     SucursalClienteService
   ],
   entryComponents: [
-    ClienteEventualComponent,
-    AforoComponent,
   ]
 })
 export class ViajeRemitoModule { }
