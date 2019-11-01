@@ -4,9 +4,9 @@ import { CommonModule } from '@angular/common';
 import { EmitirFacturaRoutingModule } from './emitir-factura-routing.module';
 
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
-  MatSelectModule, MatProgressBarModule, MatIconModule, MatButtonModule } from '@angular/material';
+  MatSelectModule, MatProgressBarModule, MatIconModule, MatButtonModule, MatDialogModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { EmitirFacturaComponent } from 'src/app/componentes/emitir-factura/emitir-factura.component';
+import { EmitirFacturaComponent, ConceptosVariosDialogo } from 'src/app/componentes/emitir-factura/emitir-factura.component';
 import { TextMaskModule } from 'angular2-text-mask';
 import { VentaComprobanteService } from 'src/app/servicios/venta-comprobante.service';
 import { ClienteService } from 'src/app/servicios/cliente.service';
@@ -28,6 +28,7 @@ import { OrdenVentaTarifaService } from 'src/app/servicios/orden-venta-tarifa.se
 @NgModule({
   declarations: [
     EmitirFacturaComponent,
+    ConceptosVariosDialogo
   ],
   imports: [
     CommonModule,
@@ -44,6 +45,7 @@ import { OrdenVentaTarifaService } from 'src/app/servicios/orden-venta-tarifa.se
     TextMaskModule,
     MatIconModule,
     MatButtonModule,
+    MatDialogModule
   ],
   providers: [
     VentaComprobanteService,
@@ -61,8 +63,11 @@ import { OrdenVentaTarifaService } from 'src/app/servicios/orden-venta-tarifa.se
     VentaComprobante,
     VentaComprobanteItemFA,
     EmpresaOrdenVentaService,
-    OrdenVentaTarifaService
+    OrdenVentaTarifaService,
 
+  ],
+  entryComponents: [
+    ConceptosVariosDialogo
   ]
 })
 export class EmitirFacturaModule { }

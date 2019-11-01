@@ -79,3 +79,11 @@ tr.planilla-no-seleccionada:hover {
 button {
     width: fit-content !important;
 }
+/* Define el estilo de la tabla */
+.tabla {
+    width: 100% !important;
+    overflow: auto !important;
+}
+.tabla-ancho {
+    width: 1890px !important;
+}
