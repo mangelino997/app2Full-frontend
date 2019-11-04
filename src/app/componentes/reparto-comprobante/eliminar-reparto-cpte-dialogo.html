@@ -1,7 +1,13 @@
 <div class="row justify-content-center padd-20">
     <div class="col-md-12 text-center">
         <h5>¿Está seguro que desea eliminar el comprobante del reparto?</h5>
-        <button mat-raised-button color="accent" (click)="dialogRef.close()">No</button>
-        <button mat-raised-button color="primary" (click)="eliminarCpteReparto()">Si</button>
+        <div class="row justify-content-center">
+            <div style="padding: 2px;">
+                <button mat-raised-button color="accent" (click)="dialogRef.close()">No</button>
+            </div>
+            <div style="padding: 2px;">
+                <button mat-raised-button color="primary" (click)="eliminarCpteReparto()">Si</button>
+            </div>
+        </div>
     </div>
 </div>

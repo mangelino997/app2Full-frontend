@@ -72,16 +72,35 @@ export class EfectivoDialogo implements OnInit {
     //Establece los valores por defecto del formulario viaje efectivo
     this.establecerValoresPorDefecto(1);
     //Obtiene la lista de registros (combustibles reparto) cuando el reparto viene en .data
-    this.data ? this.listarPorReparto(this.data.elemento.id) : '';
+    this.data ? this.listarParaReparto() : '';
   }
   //Establece el id del viaje
   public establecerIdViaje(idViaje) {
     this.ID_VIAJE = idViaje;
   }
-  //Obtiene la lista completa de registros segun el Id del Viaje (CABECERA)
+  //Controla a que metodo debe llamar para obtener la lista (depende si es un viaje o un remito)
   private listar() {
     this.loaderService.show();
+    this.ID_VIAJE? this.listarParaViaje(): this.listarParaReparto();
+    
+  }
+  //Obtiene la lista completa de registros para un viaje
+  private listarParaViaje(){
     this.servicio.listarEfectivos(this.ID_VIAJE).subscribe(
+      res => {
+        this.recargarListaCompleta(res.json());
+        this.loaderService.hide();
+      },
+      err => {
+        let error = err.json();
+        this.toastr.error(error.mensaje);
+        this.loaderService.hide();
+      }
+    );
+  }
+  //Obtiene la lista completa de registros para un reparto
+  private listarParaReparto(){
+    this.servicio.listarEfectivosReparto(this.data.elemento.id).subscribe(
       res => {
         this.recargarListaCompleta(res.json());
         this.loaderService.hide();
@@ -121,19 +140,6 @@ export class EfectivoDialogo implements OnInit {
       this.importeTotal.setValue(this.appServicio.setDecimales('0', 2));
     }
   }
-  //Obtiene los registros por idReparto
-  private listarPorReparto(idReparto) {
-    this.servicio.listarEfectivosReparto(idReparto).subscribe(
-      res => {
-        this.listaCompleta = new MatTableDataSource(res.json());
-        this.listaCompleta.sort = this.sort;
-      },
-      err => {
-        this.toastr.error("Sin registros para mostrar.");
-        this.loaderService.hide();
-      }
-    )
-  }
   //Agrega datos a la tabla de adelanto efectivo
   public agregarEfectivo(): void {
     // this.formularioViajeEfectivo.get('fecha').setValue(this.fechaActual);
@@ -147,7 +153,7 @@ export class EfectivoDialogo implements OnInit {
       res => {
         if (res.status == 201) {
           this.reestablecerFormulario();
-          this.data ? this.listarPorReparto(this.data.elemento.id) : this.listar();
+          this.data ? this.listarParaReparto() : this.listar();
           this.establecerValoresPorDefecto(0);
           document.getElementById('idFechaCajaAE').focus();
           this.toastr.success("Registro agregado con éxito");
@@ -171,7 +177,7 @@ export class EfectivoDialogo implements OnInit {
       res => {
         if (res.status == 200) {
           this.reestablecerFormulario();
-          this.data ? this.listarPorReparto(this.data.elemento.id) : this.listar();
+          this.data ? this.listarParaReparto() : this.listar();
           this.establecerValoresPorDefecto(0);
           this.btnEfectivo = true;
           document.getElementById('idFechaCajaAE').focus();
@@ -249,7 +255,7 @@ export class EfectivoDialogo implements OnInit {
     dialogRef.afterClosed().subscribe(resultado => {
       if (resultado.value.observaciones) {
         this.loaderService.show();
-        elemento.viaje = { id: this.ID_VIAJE };
+        this.ID_VIAJE ? elemento.viaje = { id: this.ID_VIAJE } : elemento.viaje = null;
         elemento.observacionesAnulado = resultado.value.observaciones;
         this.servicio.anularEfectivo(elemento).subscribe(
           res => {

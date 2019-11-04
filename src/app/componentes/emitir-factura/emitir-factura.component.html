@@ -240,14 +240,14 @@
           <div class="col">
             <div class="form-group has-float-label">
               <label for="idViaje" class="tamanio-label">N° Viaje GS *</label>
-              <input id="idViaje" type="text" [formControl]="numeroViajeGS" placeholder="00"
+              <input id="idViaje" type="text" formControlName="viajeRemito" placeholder="00"
                 [textMask]="mascararEnteroSinDecimales(11)" class="form-control form-control-sm number-right">
             </div>
           </div>
           <div class="col">
             <div class="form-group has-float-label ">
               <label for="idRemito" class="tamanio-label">N° Remito*</label>
-              <input id="idRemito" type="text" formControlName="viajeRemito" placeholder="00"
+              <input id="idRemito" type="text" formControlName="numeroRemito" placeholder="00"
                 [textMask]="mascararEnteroSinDecimales(8)" class="form-control form-control-sm number-right">
               <!--(blur)="cambioRemito()" [readOnly]="soloLectura"-->
             </div>
@@ -339,8 +339,8 @@
           <div class="col">
             <div class="form-group has-float-label">
               <label for="idSeguro" class="tamanio-label">% Seguro</label>
-              <input id="idSeguro" type="text" formControlName="importeSeguro" [textMask]="mascararPorcentaje()"
-                (blur)="establecerPorcentaje(formularioVtaCpteItemFA.get('importeSeguro'), 2)"
+              <input id="idSeguro" type="text" formControlName="pSeguro" [textMask]="mascararPorcentaje()"
+                (blur)="establecerPorcentaje(formularioVtaCpteItemFA.get('pSeguro'), 2)"
                 class="form-control form-control-sm number-right" placeholder="% 0.00">
             </div>
             <!--(blur)="calcularSubtotal($event)"-->
@@ -360,7 +360,7 @@
               <label for="idDescuento" class="tamanio-label">% dto.</label>
               <input id="idDescuento" type="text" formControlName="descuentoFlete"
                 class="form-control form-control-sm number-right" placeholder="% 0.00" autocomplete="off"
-                [textMask]="mascararPorcentaje()"
+                [textMask]="mascararPorcentaje()" 
                 (blur)="establecerPorcentaje(formularioVtaCpteItemFA.get('descuentoFlete'), 2)">
               <!--(blur)="calcularSubtotal($event)"-->
               <!--[readOnly]="soloLectura"-->
@@ -423,11 +423,11 @@
           <table mat-table [dataSource]="listaCompletaItems" matSort class="mat-elevation-z1">
             <ng-container matColumnDef="NUMERO_VIAJE">
               <th mat-header-cell *matHeaderCellDef mat-sort-header>N° Viaje</th>
-              <td mat-cell *matCellDef="let elemento" class="number-right">{{elemento.numeroViaje}}</td>
+              <td mat-cell *matCellDef="let elemento" class="number-right">{{elemento.viajeRemito}}</td>
             </ng-container>
             <ng-container matColumnDef="NUMERO_REMITO">
               <th mat-header-cell *matHeaderCellDef mat-sort-header>N° Remito</th>
-              <td mat-cell *matCellDef="let elemento" class="number-right">{{elemento.viajeRemito.id}}</td>
+              <td mat-cell *matCellDef="let elemento" class="number-right">{{elemento.numeroRemito}}</td>
             </ng-container>
             <ng-container matColumnDef="BULTOS">
               <th mat-header-cell *matHeaderCellDef mat-sort-header>Bultos</th>
@@ -436,7 +436,7 @@
             <ng-container matColumnDef="KG_EFECTIVO">
               <th mat-header-cell *matHeaderCellDef mat-sort-header>Kg. Efectivo</th>
               <td mat-cell *matCellDef="let elemento" class="number-right">
-                {{elemento.kilosEfectivo | number: '1.2-2'}}</td> Kg.
+                {{elemento.kilosEfectivo | number: '1.2-2'}}Kg.</td>
             </ng-container>
             <ng-container matColumnDef="VALOR_DECLARADO">
               <th mat-header-cell *matHeaderCellDef mat-sort-header>Valor Declarado</th>
@@ -456,18 +456,20 @@
             <ng-container matColumnDef="ALIC_IVA">
               <th mat-header-cell *matHeaderCellDef mat-sort-header>Alíc. IVA</th>
               <td mat-cell *matCellDef="let elemento" class="number-right">
-                {{elemento.precioUnitarioVenta | number: '1.2-2'}}</td>%
+                {{elemento.alicuotaIva | number: '1.2-2'}}%</td>
             </ng-container>
             <ng-container matColumnDef="SUBTOTAL_IVA">
               <th mat-header-cell *matHeaderCellDef mat-sort-header>Subtotal c/IVA</th>
               <td mat-cell *matCellDef="let elemento" class="number-right">
-                ${{elemento.itcPorLitro | number: '1.2-2'}}
+                ${{calcularSubtotalConIvaElemento(elemento) | number: '1.2-2'}}
               </td>
             </ng-container>
             <ng-container matColumnDef="QUITAR">
               <th mat-header-cell *matHeaderCellDef mat-sort-header>-</th>
               <td mat-cell *matCellDef="let elemento; let i=index">
-                <span (click)="eliminarItem(elemento.importeNetoGravado, elemento.importeIva, i)">quitar</span>
+                <span (click)="eliminarItem(i)"
+                  class="cursor-color-rojo">
+                  quitar</span>
               </td>
             </ng-container>
             <tr mat-header-row *matHeaderRowDef="columnasItems"></tr>
@@ -486,8 +488,9 @@
           <span class="spacer"></span>
           <div class="form-group has-float-label">
             <label for="idCodigo" class="tamanio-label"><b>Imp. No Grav/Exento ($)</b></label>
-            <input id="idCodigo" type="text" formControlName="importeNoGravado" 
-              class="form-control input-bold form-control-sm number-right" placeholder="$ 0.00" style="width: 200px;" readonly>
+            <input id="idCodigo" type="text" formControlName="importeNoGravado"
+              class="form-control input-bold form-control-sm number-right" placeholder="$ 0.00" style="width: 200px;"
+              readonly>
           </div>
           <div class="form-group has-float-label">
             <label for="idCodigo" class="tamanio-label"><b>Imp. Neto Gravado ($)</b></label>
