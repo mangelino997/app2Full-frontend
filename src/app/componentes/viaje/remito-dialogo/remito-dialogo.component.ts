@@ -1,5 +1,5 @@
-import { Component, OnInit, Inject } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA, MatDialog, MatTableDataSource } from '@angular/material';
+import { Component, OnInit, Inject, ViewChild } from '@angular/core';
+import { MatDialogRef, MAT_DIALOG_DATA, MatDialog, MatTableDataSource, MatSort, MatPaginator } from '@angular/material';
 import { FormControl, FormGroup } from '@angular/forms';
 import { FechaService } from 'src/app/servicios/fecha.service';
 import { TipoComprobanteService } from 'src/app/servicios/tipo-comprobante.service';
@@ -33,6 +33,12 @@ export class RemitoDialogoComponent implements OnInit {
   public viajeTarifa:FormControl = new FormControl();
   //Define la lista de tramos (tabla)
   public listaCompleta = new MatTableDataSource([]);
+  //Define el ordenamiento de la lista
+  @ViewChild(MatSort,{static: false}) sort: MatSort;
+  //Define el paginador de la lista
+  @ViewChild(MatPaginator,{static: false}) paginator: MatPaginator;
+  //Activa el boton cancelar
+  public esEditable:boolean = false;
   //Define la fecha actual
   public fechaActual:any;
   //Define las columnas de la tabla
@@ -70,6 +76,8 @@ export class RemitoDialogoComponent implements OnInit {
     let dadorDestinatario = this.data.dadorDestinatario.clienteDador.razonSocial + ' --> ' + this.data.dadorDestinatario.clienteDestinatario.razonSocial;
     this.dadorDestinatario.setValue(dadorDestinatario);
     this.formulario.get('viajeTramoCliente').setValue(this.data.dadorDestinatario);
+    //Obtiene la lista
+    this.listar();
     //Establece valores por defecto
     this.establecerValoresPorDefecto();
   }
@@ -127,21 +135,110 @@ export class RemitoDialogoComponent implements OnInit {
       this.formulario.get('importeCosto').setValue(parseFloat(importe.toString()).toFixed(2));
     }
   }
+  //Obtiene la lista de cliente remitos
+  private listar(): void {
+    this.loaderService.show();
+    this.viajeTramoClienteRemitoService.listar().subscribe(
+      res => {
+        this.listaCompleta = new MatTableDataSource(res.json());
+        this.listaCompleta.sort = this.sort;
+        this.listaCompleta.paginator = this.paginator;
+        this.loaderService.hide();
+      },
+      err => {
+        this.loaderService.hide();
+        this.toastr.error(MensajeExcepcion.NO_LISTO);
+      }
+    );
+  }
   //Agrega un remito
   public agregar(): void {
     this.loaderService.show();
     this.formulario.get('tipoComprobante').enable();
+    this.formulario.get('usuarioAlta').setValue(this.appServicio.getUsuario());
     this.viajeTramoClienteRemitoService.agregar(this.formulario.value).subscribe(
       res => {
         let respuesta = res.json();
         if(respuesta.codigo == 201) {
           this.reestablecerFormulario();
+          this.listar();
           this.toastr.success(MensajeExcepcion.AGREGADO);
         }
         this.loaderService.hide();
       },
       err => {
         this.loaderService.hide();
+      }
+    );
+  }
+  //Actualiza un registro
+  public actualizar(): void {
+    this.loaderService.show();
+    this.formulario.get('tipoComprobante').enable();
+    this.formulario.get('usuarioMod').setValue(this.appServicio.getUsuario());
+    this.viajeTramoClienteRemitoService.actualizar(this.formulario.value).subscribe(
+      res => {
+        let respuesta = res.json();
+        if(respuesta.codigo == 200) {
+          this.reestablecerFormulario();
+          this.listar();
+          this.toastr.success(MensajeExcepcion.ACTUALIZADO);
+        }
+        this.loaderService.hide();
+      },
+      err =>{
+        this.loaderService.hide();
+        this.toastr.error(MensajeExcepcion.NO_ACTUALIZADO);
+      }
+    );
+  }
+  //Carga un registro en formulario para ser actualizado
+  public editar(elemento): void {
+    this.esEditable = true;
+    this.formulario.patchValue(elemento);
+    elemento.puntoVenta ? this.formulario.get('puntoVenta').setValue(this.mostrarCeros(elemento.puntoVenta, '0000', -5)) :
+      this.formulario.get('puntoVenta').reset();
+    elemento.numero ? this.formulario.get('numero').setValue(this.mostrarCeros(elemento.numero, '0000000', -8)) :
+      this.formulario.get('numero').reset();
+    elemento.m3 ? this.formulario.get('m3').setValue(this.appServicio.establecerDecimales(elemento.m3, 2)) :
+      this.formulario.get('m3').reset();
+    elemento.valorDeclarado ? this.formulario.get('valorDeclarado').setValue(this.appServicio.establecerDecimales(elemento.valorDeclarado, 2)) :
+      this.formulario.get('valorDeclarado').reset();
+    elemento.kilosEfectivo ? this.formulario.get('kilosEfectivo').setValue(this.appServicio.establecerDecimales(elemento.kilosEfectivo, 2)) :
+      this.formulario.get('kilosEfectivo').reset();
+    elemento.kilosAforado ? this.formulario.get('kilosAforado').setValue(this.appServicio.establecerDecimales(elemento.kilosAforado, 2)) :
+      this.formulario.get('kilosAforado').reset();
+    elemento.precioUnitario ? this.formulario.get('precioUnitario').setValue(this.appServicio.establecerDecimales(elemento.precioUnitario, 2)) :
+      this.formulario.get('precioUnitario').reset();
+    elemento.importeCosto ? this.formulario.get('importeCosto').setValue(this.appServicio.establecerDecimales(elemento.importeCosto, 2)) :
+      this.formulario.get('importeCosto').reset();
+    elemento.importeRetiro ? this.formulario.get('importeRetiro').setValue(this.appServicio.establecerDecimales(elemento.importeRetiro, 2)) :
+      this.formulario.get('importeRetiro').reset();
+    elemento.importeEntrega ? this.formulario.get('importeEntrega').setValue(this.appServicio.establecerDecimales(elemento.importeEntrega, 2)) :
+      this.formulario.get('importeEntrega').reset();
+    elemento.importeFlete ? this.formulario.get('importeFlete').setValue(this.appServicio.establecerDecimales(elemento.importeFlete, 2)) :
+      this.formulario.get('importeFlete').reset();
+  }
+  public cancelar(): void {
+    this.esEditable = false;
+    this.reestablecerFormulario();
+  }
+  //Elimina un registro
+  public eliminar(id): void {
+    this.loaderService.show();
+    this.viajeTramoClienteRemitoService.eliminar(id).subscribe(
+      res => {
+        let respuesta = res.json();
+        if(respuesta.codigo == 200) {
+          this.reestablecerFormulario();
+          this.listar();
+          this.toastr.success(MensajeExcepcion.ELIMINADO);
+        }
+        this.loaderService.hide();
+      },
+      err => {
+        this.loaderService.hide();
+        this.toastr.error(MensajeExcepcion.NO_ACTUALIZADO);
       }
     );
   }
@@ -166,6 +263,7 @@ export class RemitoDialogoComponent implements OnInit {
   }
   //Reestablece los campos
   private reestablecerFormulario(): void {
+    this.esEditable = false;
     this.formulario.reset();
     this.establecerTipoComprobantePorDefecto();
     this.formulario.get('fecha').setValue(this.fechaActual);
@@ -200,9 +298,20 @@ export class RemitoDialogoComponent implements OnInit {
       formulario.setValue(this.appServicio.establecerDecimales(valor, cantidad));
     }
   }
+  public establecerDecimalesTabla(valor, decimales) {
+    return parseFloat(valor).toFixed(decimales);
+  }
   //Establece la cantidad de ceros correspondientes a la izquierda del numero
   public establecerCerosIzq(elemento, string, cantidad) {
     elemento.setValue((string + elemento.value).slice(cantidad));
+  }
+  //Define como se muestra los datos con ceros a la izquierda
+  public mostrarCeros(elemento, string, cantidad) {
+    if (elemento != undefined) {
+      return elemento ? (string + elemento).slice(cantidad) : elemento;
+    } else {
+      return elemento;
+    }
   }
   //Funcion para comparar y mostrar elemento de campo select
   public compareFn = this.compararFn.bind(this);

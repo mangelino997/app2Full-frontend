@@ -17,7 +17,7 @@ export class MensajeExcepcion {
 
     public static NO_ELIMINADO = "No se pudo eliminar el registro";
 
-    public static NO_LISTO = "No se obtener la lista de registros";
+    public static NO_LISTO = "No se pudo obtener la lista de registros";
 
     public static SIN_REGISTROS = "Sin registros";
 
