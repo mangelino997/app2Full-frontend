@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject, ViewChild } from '@angular/core';
+import { Component, OnInit, Inject, ViewChild, ElementRef } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialog, MatTableDataSource, MatSort, MatPaginator } from '@angular/material';
 import { FormControl, FormGroup } from '@angular/forms';
 import { FechaService } from 'src/app/servicios/fecha.service';
@@ -37,6 +37,8 @@ export class RemitoDialogoComponent implements OnInit {
   @ViewChild(MatSort,{static: false}) sort: MatSort;
   //Define el paginador de la lista
   @ViewChild(MatPaginator,{static: false}) paginator: MatPaginator;
+  //Define el campo fecha para focus
+  @ViewChild('fecha', {static: false}) fecha : ElementRef;
   //Activa el boton cancelar
   public esEditable:boolean = false;
   //Define la fecha actual
@@ -267,6 +269,8 @@ export class RemitoDialogoComponent implements OnInit {
     this.formulario.reset();
     this.establecerTipoComprobantePorDefecto();
     this.formulario.get('fecha').setValue(this.fechaActual);
+    this.formulario.get('viajeTramoCliente').setValue(this.data.dadorDestinatario);
+    this.fecha.nativeElement.focus();
   }
   //Obtiene la mascara de importes
   public mascararImporte(intLimite, decimalLimite) {
