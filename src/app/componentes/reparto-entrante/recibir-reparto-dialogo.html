@@ -16,7 +16,7 @@
                     <div class="form-group has-float-label">
                         <label for="idFechaRegreso">Fecha Regreso *</label>
                         <input id="idFechaRegreso" type="date" class="form-control form-control-sm"
-                            formControlName="fechaRegreso" (blur)="verificarFechaRegreso()">
+                            formControlName="fechaRegreso" (blur)="verificarFechaRegreso()" required>
                     </div>
                 </div>
             </div>
@@ -26,15 +26,17 @@
                         <label for="idHoraRegreso">Hora Regreso *</label>
                         <input id="idHoraRegreso" type="text" [textMask]="{mask: mascararHora()}"
                             class="form-control form-control-sm" formControlName="horaRegreso" placeholder="00:00 hs"
-                            (blur)="desenmascararHora(formulario.get('horaRegreso'))">
+                            (blur)="desenmascararHora(formulario.get('horaRegreso'))" required>
                     </div>
                 </div>
             </div>
             <br>
             <div class="row justify-content-center">
-                <div class="col-md-6 text-center">
+                <div style="padding: 2px;">
                     <button mat-raised-button color="accent" [mat-dialog-close]="">Cancelar</button>
-                    <button mat-raised-button color="primary" (click)="recibirReparto()">Recibir Reparto</button>
+                </div>
+                <div style="padding: 2px;">
+                    <button mat-raised-button color="primary" (click)="recibirReparto()" [disabled]="!formulario.valid">Recibir Reparto</button>
                 </div>
             </div>
             <div class="row" *ngIf="show">

@@ -764,8 +764,21 @@ export class EmitirFacturaComponent implements OnInit {
     let importeTotal = Number(this.formulario.get('importeNetoGravado').value) + Number(this.formulario.get('importeIva').value);
     this.formulario.get('importeTotal').setValue(this.appService.establecerDecimales(importeTotal, 2));
   }
-  //eliminar un item del Array item-viaje 
-  public eliminarItem(indice) {
+  //Abre un dialogo para quitar item
+  public quitarItemDialogo(indice) {
+    const dialogRef = this.dialog.open(QuitarItemDialogo, {
+      width: '50%',
+      maxWidth: '50%',
+      data: {
+      }
+    });
+    dialogRef.afterClosed().subscribe(resultado => {
+      console.log(resultado);
+      resultado ? this.quitarItem(indice) : '';
+    })
+  }
+  //Elimina un item de los agregados a la lista
+  private quitarItem(indice){
     this.listaItemAgregados.splice(indice, 1);
     this.listaCompletaItems = new MatTableDataSource(this.listaItemAgregados);
     this.listaCompletaItems.sort = this.sort;
@@ -1362,6 +1375,8 @@ export class EmitirFacturaComponent implements OnInit {
 
 }
 
+
+
 //Componente Conceptos Varios
 @Component({
   selector: 'conceptos-varios-dialogo',
@@ -1405,6 +1420,27 @@ export class ConceptosVariosDialogo {
   public setDecimales(formulario, cantidad) {
     let valor = formulario.value;
     valor ? formulario.setValue(this.appService.establecerDecimales(valor, cantidad)) : '';
+  }
+  onNoClick(): void {
+    this.dialogRef.close();
+  }
+}
+//Componente Quitar Item Dialogo
+@Component({
+  selector: 'quitar-item-dialogo',
+  templateUrl: 'quitar-item-dialogo.html',
+})
+export class QuitarItemDialogo {
+  //Define el check
+  public check: boolean = false;
+  //Define un formulario para validaciones de campos
+  public formulario: FormGroup;
+  //Define la lista completa de registros
+  public listaCompleta: any = null;
+  constructor(public dialogRef: MatDialogRef<TotalConceptoDialogo>, @Inject(MAT_DIALOG_DATA) public data) { }
+  ngOnInit() {
+    this.formulario = new FormGroup({});
+    this.listaCompleta = this.data.items;
   }
   onNoClick(): void {
     this.dialogRef.close();
