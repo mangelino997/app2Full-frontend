@@ -24,6 +24,7 @@ import { VentaComprobante } from 'src/app/modelos/ventaComprobante';
 import { VentaComprobanteItemFA } from 'src/app/modelos/ventaComprobanteItemFA';
 import { EmpresaOrdenVentaService } from 'src/app/servicios/empresa-orden-venta.service';
 import { OrdenVentaTarifaService } from 'src/app/servicios/orden-venta-tarifa.service';
+import { TramoService } from 'src/app/servicios/tramo.service';
 
 @NgModule({
   declarations: [
@@ -65,11 +66,13 @@ import { OrdenVentaTarifaService } from 'src/app/servicios/orden-venta-tarifa.se
     VentaComprobanteItemFA,
     EmpresaOrdenVentaService,
     OrdenVentaTarifaService,
+    TramoService
 
   ],
   entryComponents: [
     ConceptosVariosDialogo,
-    QuitarItemDialogo
+    QuitarItemDialogo,
+    
   ]
 })
 export class EmitirFacturaModule { }

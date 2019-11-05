@@ -139,6 +139,7 @@ export class RepartoEntranteComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe(result => {
       document.getElementById('idTipoViaje').focus();
+      this.cambioTipoViaje();
     });
   }
 }
@@ -203,7 +204,7 @@ export class RecibirRepartoDialogo {
         this.dialogRef.close();
       },
       err => {
-        this.toastr.error(err.json().mensaje);
+        this.toastr.error(err.json().message);
         this.loaderService.hide();
         this.dialogRef.close();
       }

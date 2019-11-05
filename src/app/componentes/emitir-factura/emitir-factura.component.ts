@@ -32,6 +32,9 @@ import { FceMiPymesDialogoComponent } from '../fce-mi-pymes-dialogo/fce-mi-pymes
 import { EmpresaOrdenVentaService } from 'src/app/servicios/empresa-orden-venta.service';
 import { OrdenVentaTarifaService } from 'src/app/servicios/orden-venta-tarifa.service';
 import { element } from 'protractor';
+import { ListaRemitoDialogoComponent } from './lista-remito-dialogo/lista-remito-dialogo.component';
+import { ConfirmarDialogo } from '../actualizacion-precios/actualizacion-precios.component';
+import { ConfirmarDialogoComponent } from '../confirmar-dialogo/confirmar-dialogo.component';
 
 @Component({
   selector: 'app-emitir-factura',
@@ -59,7 +62,7 @@ export class EmitirFacturaComponent implements OnInit {
   //Define la lista de items a facturar
   public itemsAFacturar = [];
   //Define la lista de resultados de busqueda para Reminentes y Destinatarios
-  public reminentes = [];
+  public remitentes = [];
   public destinatarios = [];
   //Define la lista de resultados de sucursales para el Remitente y Destinatario
   public sucursalesRemitente = [];
@@ -116,8 +119,6 @@ export class EmitirFacturaComponent implements OnInit {
   //Define la lista de Alicuotas Afip Iva que estan activas
   public afipAlicuotasIva = [];
   public resultadosAlicuotasIvaCR = [];
-  //Define el autocompletado para las busquedas
-  public autocompletado: FormControl = new FormControl();
   //Define el campo puntoVenta (el de solo lectura) como un formControl
   public puntoVenta: FormControl = new FormControl();
   //Define el campo viajeRemito (el de solo lectura) como un formControl
@@ -181,8 +182,7 @@ export class EmitirFacturaComponent implements OnInit {
     this.formulario.get('clienteRemitente').valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
         this.clienteService.listarActivosPorAlias(data).subscribe(res => {
-          console.log(res.json());
-          this.reminentes = res.json();
+          this.remitentes = res.json();
         })
       }
     });
@@ -258,17 +258,14 @@ export class EmitirFacturaComponent implements OnInit {
   public listarAlicuotaIva() {
     this.alicuotasIvaService.listarActivas().subscribe(
       res => {
-        console.log(res.json());
         this.afipAlicuotasIva = res.json();
         this.resultadosAlicuotasIvaCR = res.json();
-        this.establecerAlicuotaIva();
       }
     );
   }
   //Establece alicuota iva por defecto
   private establecerAlicuotaIva() {
     this.afipAlicuotasIva.forEach(elemento => {
-      console.log(elemento);
       if (elemento.id == 5) {
         this.formularioVtaCpteItemFA.get('afipAlicuotaIva').setValue(elemento);
         this.formularioVtaCpteItemFA.get('alicuotaIva').setValue(elemento.alicuota);
@@ -276,35 +273,21 @@ export class EmitirFacturaComponent implements OnInit {
       }
     })
   }
-  //Reestablece el formulario completo
-  public reestablecerFormulario() {
-    this.autocompletado.setValue(undefined);
-    this.formulario.reset();
-    this.vaciarListas();
-    this.establecerValoresPorDefecto();
-    setTimeout(function () {
-      document.getElementById('idTipoComprobante').focus();
-    }, 20);
-    //Deshabilita campos
-    // this.formularioVtaCpteItemFA.get('viajeRemito').disable();
-    // this.formularioVtaCpteItemFA.get('ordenVenta').disable();
-    // this.formularioVtaCpteItemFA.get('conceptosVarios').disable();
-    // this.formularioVtaCpteItemFA.get('importeVentaItemConcepto').disable();
-    // this.formularioVtaCpteItemFA.get('alicuotaIva').disable();
-  }
   //Limpia las listas
   private vaciarListas() {
-    this.reminentes = [];
+    this.remitentes = [];
     this.destinatarios = [];
+    this.listaItemAgregados = [];
     this.sucursalesRemitente = [];
     this.sucursalesDestinatario = [];
     this.resultadosRemitos = [];
+    this.listaCompletaItems = new MatTableDataSource([]);
     this.listaRemitos = new MatTableDataSource([]);
   }
   //Establece valores por defecto
   private establecerValoresPorDefecto() {
-    this.soloLectura = true;
     this.btnFCE = false;
+    this.establecerAlicuotaIva();
     this.formulario.get('pagoEnOrigen').setValue(true);
     this.formulario.get('empresa').setValue(this.appService.getEmpresa());
     this.formulario.get('sucursal').setValue(this.appService.getUsuario().sucursal);
@@ -385,26 +368,31 @@ export class EmitirFacturaComponent implements OnInit {
   }
   //Maneja el cambio en el combo Items
   public cambioItem() {
-    //this.resetearItem(); // ? consultar si queda
-    console.log(this.itemFactura.value);
-    this.formulario.get('afipConcepto').setValue(this.itemFactura.value.afipConcepto);
-    this.formularioVtaCpteItemFA.get('ventaTipoItem').setValue(this.itemFactura.value);
-    // switch (this.itemFactura.value.id) {
-    //   case 4: //el item con id=4 es Contrareembolso
-    //     this.reestablecerformularioVtaCpteItemFAViaje();
-    //     break;
-    //   case 1:
-    //   case 2:
-    //     this.reestablecerFormularioCR();
-    //     this.resetearItem();
-    //     this.abrirDialogoTramo();
-    //     this.manejarItems();
-    //     break;
-    //   case 4:
-    //   case 5:
-    //     this.manejarItems();
-    //     break;
-    // }
+    //Controlo si ya habia un item seleccionado y abro el modal de ser así
+    this.formulario.value.afipConcepto ? this.abrirConfirmarDialogo() : this.manejoCambioItem();
+  }
+  //Operaciones a aplicar con el cambio de item a facturar
+  private manejoCambioItem() {
+    //Guardo el item a facturar seleccionado
+    let itemFactura = this.itemFactura.value;
+    //Reuso el reestablecerFormulario
+    this.reestablecerFormulario();
+    //Si el item a facturar es un Remito (general/dador de carga) se establecen campos a solo lectura
+    this.itemFactura.setValue(itemFactura);
+    itemFactura.id == 1 || itemFactura.id == 2 ? this.soloLectura = true : this.soloLectura = false;
+    this.formulario.get('afipConcepto').setValue(itemFactura.afipConcepto);
+    this.formularioVtaCpteItemFA.get('ventaTipoItem').setValue(itemFactura);
+  }
+  //Abre modal para confirmar cambios en campos de seleccion (item, tipoCpt, )
+  public abrirConfirmarDialogo() {
+    const dialogRef = this.dialog.open(ConfirmarDialogoComponent, {
+      width: '50%',
+      maxWidth: '50%',
+      data: {}
+    });
+    dialogRef.afterClosed().subscribe(resultado => {
+      resultado ? this.manejoCambioItem() : document.getElementById('idRemitente').focus();
+    })
   }
   //Valida el tipo y numero documento, luego setea datos para mostrar y obtiene el listado de sucursales por Remitente
   public cambioRemitente() {
@@ -552,7 +540,6 @@ export class EmitirFacturaComponent implements OnInit {
   }
   //Establece el punto de venta, letra, numero, codigoAfip
   public cambioPagoEn() {
-    console.log(this.formulario.value.pagoEnOrigen);
     if (this.formulario.value.pagoEnOrigen == true) {
       document.getElementById('Remitente').className = "border has-float-label pagaSeleccionado";
       document.getElementById('Destinatario').className = "border has-float-label";
@@ -625,6 +612,21 @@ export class EmitirFacturaComponent implements OnInit {
     dialogRef.afterClosed().subscribe(resultado => {
       console.log(resultado);
       resultado ? this.formulario.get('fechaVtoPago').setValue(resultado) : '';
+    });
+  }
+  //Abre un modal para listar Remitos
+  public abrirListaRemitoDialogo(): void {
+    let esRemitoGeneral;
+    //itemFactura.value.id == 1 es Remito Gral. GS
+    this.itemFactura.value.id == 1 ? esRemitoGeneral = true : esRemitoGeneral = false;
+    const dialogRef = this.dialog.open(ListaRemitoDialogoComponent, {
+      width: '1200px',
+      data: {
+        esRemitoGeneral: esRemitoGeneral
+      }
+    });
+    dialogRef.afterClosed().subscribe(resultado => {
+
     });
   }
   //Abre un modal para agregar un aforo
@@ -778,7 +780,7 @@ export class EmitirFacturaComponent implements OnInit {
     })
   }
   //Elimina un item de los agregados a la lista
-  private quitarItem(indice){
+  private quitarItem(indice) {
     this.listaItemAgregados.splice(indice, 1);
     this.listaCompletaItems = new MatTableDataSource(this.listaItemAgregados);
     this.listaCompletaItems.sort = this.sort;
@@ -786,11 +788,16 @@ export class EmitirFacturaComponent implements OnInit {
     this.formulario.get('importeNetoGravado').reset();
     this.formulario.get('importeIva').reset();
     this.formulario.get('importeTotal').reset();
-    this.reestablecerformularioVtaCpteItemFA();
-    if (this.listaItemAgregados.length == 0) {
-      this.itemFactura.enable();
+    this.itemFactura.enable();
+    //Si Item a facturar es remito carga general - Viaje G.S.
+    if (this.listaItemAgregados.length == 0 && this.itemFactura.value.id == 1) {
+      this.reestablecerformularioVtaCpteItemFA();
+      this.abrirListaRemitoDialogo();
+    } else if (this.listaItemAgregados.length == 0) {
+      this.reestablecerformularioVtaCpteItemFA();
       document.getElementById('idItem').focus();
     } else {
+      this.itemFactura.disable();
       this.calcularImportesTotales();
     }
   }
@@ -816,17 +823,43 @@ export class EmitirFacturaComponent implements OnInit {
       }
     }
   }
+  //Reestablece el formulario cuando cambia el item a facturar
+  private reestablecerFormulario() {
+    //Guardo por si existen datos ya cargados
+    let puntoVenta = this.formulario.value.puntoVenta;
+    let fechaEmision = this.formulario.value.fechaEmision;
+    let tipoComprobante = this.formulario.value.tipoComprobante;
+    //Vacio formularios y listas
+    this.vaciarListas();
+    this.contador.reset();
+    this.formulario.reset();
+    this.puntoVenta.reset();
+    this.ordenVenta.reset();
+    this.formularioRemitente.reset();
+    this.formularioDestinatario.reset();
+    this.formularioVtaCpteItemFA.reset();
+    //Reestablezco valores y controlo campos precargados
+    fechaEmision ? this.formulario.get('fechaEmision').setValue(fechaEmision) : '';
+    puntoVenta ? [this.formulario.get('puntoVenta').setValue(puntoVenta), this.cambioPuntoVenta()] : '';
+    tipoComprobante ? [this.formulario.get('tipoComprobante').setValue(tipoComprobante), this.cambioFecha()] : '';
+    this.establecerValoresPorDefecto();
+    //Establezco el foco
+    puntoVenta && fechaEmision && tipoComprobante ? document.getElementById('idRemitente').focus() :
+      setTimeout(function () {
+        document.getElementById('idTipoComprobante').focus();
+      }, 20);
+  }
   //Reestablecer formulario item-viaje
   public reestablecerformularioVtaCpteItemFA() {
-    if (this.listaItemAgregados.length > 0) {
-      this.itemFactura.disable();
-    } else {
-      this.itemFactura.enable();
-      this.itemFactura.reset();
-      // this.formulario.get('clienteRemitente').reset();
-      // this.formulario.get('clienteDestinatario').reset();
-      // this.formulario.get('pagoEnOrigen').reset();
-    }
+    // if (this.listaItemAgregados.length > 0) {
+    //   this.itemFactura.disable();
+    // } else {
+    //   this.itemFactura.enable();
+    //   this.itemFactura.reset();
+    //   // this.formulario.get('clienteRemitente').reset();
+    //   // this.formulario.get('clienteDestinatario').reset();
+    //   // this.formulario.get('pagoEnOrigen').reset();
+    // }
     let numeroViaje = this.formularioVtaCpteItemFA.get('viajeRemito').value;
     let numeroRemito = this.formularioVtaCpteItemFA.get('numeroRemito').value;
     this.formularioVtaCpteItemFA.reset();
@@ -926,20 +959,6 @@ export class EmitirFacturaComponent implements OnInit {
 
 
 
-
-
-  //Con cada click sobre la lista "Item *" se debe resetear 
-  private resetearItem() {
-    this.formulario.get('rem').reset();
-    this.formulario.get('clienteRemitente').setValue(null);
-    this.formulario.get('des').reset();
-    this.formulario.get('clienteDestinatario').setValue(null);
-    this.formulario.get('clienteDestinatario').reset();
-    this.formulario.get('pagoEnOrigen').reset();
-    this.formulario.get('letra').reset();
-    this.formulario.get('numero').reset();
-    this.formulario.get('codigoAfip').reset();
-  }
   //Maneja los cambios cuando el item seleccionado es Contrareembolso
   // private manejarContrareembolso() {
   //   this.soloLecturaCR = false;

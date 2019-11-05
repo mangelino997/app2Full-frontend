@@ -76,7 +76,7 @@ import { FceMiPymesDialogoComponent } from './componentes/fce-mi-pymes-dialogo/f
 import { ClienteCuentaBancariaService } from './servicios/cliente-cuenta-bancaria.service';
 import { ClienteVtoPagoService } from './servicios/cliente-vto-pago.service';
 import { AforoComponent } from 'src/app/componentes/aforo/aforo.component';
-import { ListaRemitosDialogoComponent } from './componentes/emitir-factura/lista-remitos-dialogo/lista-remitos-dialogo.component';
+import { ListaRemitoDialogoComponent } from './componentes/emitir-factura/lista-remito-dialogo/lista-remito-dialogo.component';
 
 const stompConfig: StompConfig = {
   url: 'ws://localhost:8080/jitws/socket',
@@ -108,7 +108,8 @@ const stompConfig: StompConfig = {
     ClienteEventualComponent,
     FceMiPymesDialogoComponent,
     AforoComponent,
-    ListaRemitosDialogoComponent
+    ListaRemitoDialogoComponent
+    // ListaRemitoDialogoComponent
   ],
   imports: [
     FormsModule,
@@ -207,7 +208,8 @@ const stompConfig: StompConfig = {
     RepartoComprobanteComponent,
     ClienteEventualComponent,
     FceMiPymesDialogoComponent,
-    AforoComponent
-  ]
+    AforoComponent,
+    ListaRemitoDialogoComponent
+    ]
 })
 export class AppModule { }

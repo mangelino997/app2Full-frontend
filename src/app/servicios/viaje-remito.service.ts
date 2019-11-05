@@ -78,6 +78,8 @@ export class ViajeRemitoService {
   public listarPorNumero(numero) {
     return this.http.get(this.url + '/listarPorNumero/' + numero, this.options);
   }
+  
+  
   //Obtiene una lista de remitos pendientes por sucursal
   public listarPendientesPorSucursal(idSucursal) {
     return this.http.get(this.url + '/listarPendientesPorSucursal/' + idSucursal, this.options);
@@ -130,6 +132,10 @@ export class ViajeRemitoService {
   //Actualiza un registro
   public actualizar(elemento) {
     return this.http.put(this.url, elemento, this.options);
+  }
+  //Obtiene un listado por numero
+  public listarPorViajeYEstado(elemento) {
+    return this.http.put(this.url + '/listarPorViajeYEstado', elemento, this.options);
   }
   //Elimina un registro
   public eliminar(id) {
