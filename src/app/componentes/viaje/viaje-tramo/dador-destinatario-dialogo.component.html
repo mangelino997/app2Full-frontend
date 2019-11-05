@@ -64,6 +64,11 @@
                                         matTooltipPosition="above">
                                         <mat-icon>unarchive</mat-icon>
                                     </button>
+                                    <button mat-icon-button class="mat-icon-button-table" *ngIf="!modalidadCarga"
+                                        (click)="verVacioFacturado(elemento)" matTooltip="Valorizar Vacio Facturado"
+                                        matTooltipPosition="above">
+                                        <mat-icon>unarchive</mat-icon>
+                                    </button>
                                 </td>
                             </ng-container>
                             <ng-container matColumnDef="eliminar">
@@ -89,8 +94,8 @@
     <div class="row">
         <div class="col text-center">
             <button mat-raised-button (click)="onNoClick()">Cerrar</button>
-            <button mat-raised-button color="primary" [mat-dialog-close]="listaCompleta.data"
-                style="margin-left: 5px">Aceptar</button>
+            <!-- <button mat-raised-button color="primary" [mat-dialog-close]="listaCompleta.data"
+                style="margin-left: 5px">Aceptar</button> -->
         </div>
     </div>
 </div>
