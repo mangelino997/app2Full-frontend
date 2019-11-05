@@ -48,9 +48,17 @@ export class ViajeTramoClienteRemitoService {
   public listar() {
     return this.http.get(this.url, this.options);
   }
+  //Obtiene por viaje tramo cliente
+  public obtenerPorViajeTramoCliente(idViajeTramoCliente) {
+    return this.http.get(this.url + '/obtenerPorViajeTramoCliente/' + idViajeTramoCliente, this.options);
+  }
   //Agrega un registro
   public agregar(elemento) {
     return this.http.post(this.url, elemento, this.options);
+  }
+  //Agrega un registro de vacio facturado
+  public agregarVacioFacturado(elemento) {
+    return this.http.post(this.url + '/agregarVacioFacturado', elemento, this.options);
   }
   //Actualiza un registro
   public actualizar(elemento) {

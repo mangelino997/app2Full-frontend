@@ -31,6 +31,8 @@ export class RemitoDialogoComponent implements OnInit {
   public viajesTarifasCostoTramoFalse: Array<any> = [];
   //Defiene viaje tarifa
   public viajeTarifa:FormControl = new FormControl();
+  //Define la tarifa seleccionada en el tramo
+  public tarifa:any;
   //Define la lista de tramos (tabla)
   public listaCompleta = new MatTableDataSource([]);
   //Define el ordenamiento de la lista
@@ -78,6 +80,12 @@ export class RemitoDialogoComponent implements OnInit {
     let dadorDestinatario = this.data.dadorDestinatario.clienteDador.razonSocial + ' --> ' + this.data.dadorDestinatario.clienteDestinatario.razonSocial;
     this.dadorDestinatario.setValue(dadorDestinatario);
     this.formulario.get('viajeTramoCliente').setValue(this.data.dadorDestinatario);
+    //Establece la tarifa seleccionada en el tramo
+    this.tarifa = this.data.viajeTarifa;
+    if(this.tarifa.id != 0) {
+      this.formulario.get('viajeTarifa').setValue(this.tarifa);
+      this.formulario.get('importeCosto').setValue(this.data.importeCosto);
+    }
     //Obtiene la lista
     this.listar();
     //Establece valores por defecto
@@ -324,6 +332,7 @@ export class RemitoDialogoComponent implements OnInit {
       return a.id === b.id;
     }
   }
+  //Cierra el dialogo
   public cerrar(): void {
     this.dialogRef.close();
   }

@@ -1,0 +1,63 @@
+<div class="container-fluid padd-20">
+    <form [formGroup]="formulario">
+        <div class="row">
+            <div class="col text-center">
+                <h5>Valorización de Vacio Facturado</h5>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group has-float-label">
+                    <label for="idTramo" class="tamanio-label">Tramo</label>
+                    <input id="idTramo" type="text" [formControl]="tramo" autocomplete="off"
+                        class="form-control form-control-sm" readonly>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group has-float-label">
+                    <label for="idDadorDestinatario" class="tamanio-label">Dador de Carga - Destinatario</label>
+                    <input id="idDadorDestinatario" type="text" [formControl]="dadorDestinatario" autocomplete="off"
+                        class="form-control form-control-sm" readonly>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+                <div class="form-group has-float-label">
+                    <label for="idFecha" class="tamanio-label">Fecha *</label>
+                    <input #fecha id="idFecha" type="date" formControlName="fecha" autocomplete="off"
+                        class="form-control form-control-sm">
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group has-float-label">
+                    <label for="idImporteRetiro" class="tamanio-label">Flete por Retiro</label>
+                    <input id="idImporteRetiro" [textMask]="mascararImporte(10, 2)" type="text" formControlName="importeRetiro"
+                        autocomplete="off" class="form-control form-control-sm number-right" 
+                        (blur)="establecerDecimales(formulario.get('importeRetiro'), 2)" placeholder="$ 0.00">
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group has-float-label">
+                    <label for="idImporteEntrega" class="tamanio-label">Flete por Entrega</label>
+                    <input id="idImporteEntrega" [textMask]="mascararImporte(10, 2)" type="text" formControlName="importeEntrega"
+                        autocomplete="off" class="form-control form-control-sm number-right" 
+                        (blur)="establecerDecimales(formulario.get('importeEntrega'), 2)" placeholder="$ 0.00">
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group has-float-label">
+                    <label for="idImporteFlete" class="tamanio-label">Flete a Facturar</label>
+                    <input id="idImporteFlete" [textMask]="mascararImporte(10, 2)" type="text" formControlName="importeFlete"
+                        autocomplete="off" class="form-control form-control-sm number-right" 
+                        (blur)="establecerDecimales(formulario.get('importeFlete'), 2)" placeholder="$ 0.00">
+                </div>
+            </div>
+        </div>
+        <div class="row justify-content-center">
+            <button mat-raised-button color="primary" (click)="agregar()" *ngIf="!show">Valorizar</button>
+            <button class="margin-left-3" mat-raised-button (click)="cerrar()" *ngIf="!show">Cerrar</button>
+            <mat-progress-bar mode="indeterminate" *ngIf="show"></mat-progress-bar>
+        </div>
+    </form>
+</div>

@@ -9,6 +9,8 @@ export class MensajeExcepcion {
 
     public static AGREGADO = "Registro agregado con éxito";
 
+    public static NO_AGREGADO = "No se pudo agregar el registro";
+
     public static ACTUALIZADO = "Registro actualizado con éxito";
 
     public static NO_ACTUALIZADO = "No se pudo actualizar el registro";
@@ -20,6 +22,10 @@ export class MensajeExcepcion {
     public static NO_LISTO = "No se pudo obtener la lista de registros";
 
     public static SIN_REGISTROS = "Sin registros";
+
+    public static VALORIZADO = "Registro valorizado con éxito";
+
+    public static NO_VALORIZADO = "No se pudo valorizar el registro";
 
 
     /*

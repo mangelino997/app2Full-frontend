@@ -47,6 +47,7 @@ import { Aforo } from 'src/app/modelos/aforo';
 import { VentaConfigService } from 'src/app/servicios/venta-config.service';
 import { ViajeTramoClienteRemito } from 'src/app/modelos/viajeTramoClienteRemito';
 import { ViajeTramoClienteRemitoService } from 'src/app/servicios/viaje-tramo-cliente-remito.service';
+import { VacioFacturadoDialogoComponent } from 'src/app/componentes/viaje/vacio-facturado-dialogo/vacio-facturado-dialogo.component';
 
 const routes: Routes = [
   {path: '', component: ViajeComponent}
@@ -65,7 +66,8 @@ const routes: Routes = [
     DadorDestinatarioDialogo,
     NormalizarDialogo,
     ListarViajesDialogo,
-    RemitoDialogoComponent
+    RemitoDialogoComponent,
+    VacioFacturadoDialogoComponent
   ],
   imports: [
     CommonModule,
@@ -128,7 +130,8 @@ const routes: Routes = [
     DadorDestinatarioDialogo,
     NormalizarDialogo,
     ListarViajesDialogo,
-    RemitoDialogoComponent
+    RemitoDialogoComponent,
+    VacioFacturadoDialogoComponent
   ],
   exports: [RouterModule]
 })

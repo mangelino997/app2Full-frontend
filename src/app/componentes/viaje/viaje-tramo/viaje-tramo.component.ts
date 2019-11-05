@@ -23,6 +23,7 @@ import { ViajeService } from 'src/app/servicios/viaje.service';
 import { Viaje } from 'src/app/modelos/viaje';
 import { MensajeExcepcion } from 'src/app/modelos/mensaje-excepcion';
 import { RemitoDialogoComponent } from '../remito-dialogo/remito-dialogo.component';
+import { VacioFacturadoDialogoComponent } from '../vacio-facturado-dialogo/vacio-facturado-dialogo.component';
 
 @Component({
   selector: 'app-viaje-tramo',
@@ -49,12 +50,8 @@ export class ViajeTramoComponent implements OnInit {
   public viajesTarifasCostoTramoTrue: Array<any> = [];
   //Define la lista de tramos (tabla)
   public listaCompleta = new MatTableDataSource([]);
-  //Define el numero de orden del tramo
-  public numeroOrden: number;
   //Define si los campos son de solo lectura
   public soloLectura: boolean = false;
-  //Define si los campos 'cantidad' y 'precioUnitario' son de solo lectura
-  public soloLecturaPrecioCantidad: boolean = false;
   //Define el indice del tramo para las modificaciones
   public indiceTramo: number;
   //Define si muestra el boton agregar tramo o actualizar tramo
@@ -104,8 +101,6 @@ export class ViajeTramoComponent implements OnInit {
         })
       }
     })
-    //Establece el numero de orden del tramo por defecto en cero
-    this.numeroOrden = 0;
     //Limpia el formulario y las listas
     this.reestablecerFormulario();
     //Obtiene la lista de empresas
@@ -181,27 +176,31 @@ export class ViajeTramoComponent implements OnInit {
     return this.appServicio.mascararKm(intLimite);
   }
   //Establece el tipo de viaje (Propio o Tercero)
-  public establecerTipoViaje(tipoViaje, editar): void {
-    this.tipoViaje = tipoViaje;
+  public establecerTipoViaje(): void {
     let viajeTarifa = this.formularioViajeTramo.get('viajeTarifa').value;
     let modalidadCarga = this.formularioViajeTramo.get('viajeTipo').value;
     let km = this.formularioViajeTramo.get('km').value;
-    if (this.tipoViaje != null && viajeTarifa && modalidadCarga && km) {
-      if (viajeTarifa.id == 1) {
-        if (this.tipoViaje) {
-          let importe = km * modalidadCarga.costoPorKmPropio;
-          this.formularioViajeTramo.get('importeCosto').setValue(parseFloat(this.appServicio.establecerDecimales(importe, 3)));
-          this.soloLecturaPrecioCantidad = true;
-          this.formularioViajeTramo.get('costoKm').setValue(modalidadCarga.costoPorKmPropio);
+    if (viajeTarifa && modalidadCarga && km) {
+      if(this.tipoViaje) {
+        //VIAJE PROPIO
+        switch(viajeTarifa.id) {
+          case 1:
+            let importe = km * modalidadCarga.costoPorKmPropio;
+            this.formularioViajeTramo.get('importeCosto').setValue(parseFloat(this.appServicio.establecerDecimales(importe, 3)));
+            this.formularioViajeTramo.get('costoKm').setValue(modalidadCarga.costoPorKmPropio);
+            this.formularioViajeTramo.get('importeCosto').disable();
+            break;
+          case 5:
+            this.formularioViajeTramo.get('importeCosto').enable();
+            this.formularioViajeTramo.get('importeCosto').reset();
+            break;
+          case 0:
+            this.formularioViajeTramo.get('importeCosto').disable();
+            this.formularioViajeTramo.get('importeCosto').reset();
+            break;
         }
-        // else {
-        //   //Viaje Tercero
-        // }
       } else {
-        this.soloLecturaPrecioCantidad = false;
-        if(!editar) {
-          this.formularioViajeTramo.get('importeCosto').reset();
-        }
+        //VIAJE TERCERO
       }
     }
   }
@@ -272,7 +271,7 @@ export class ViajeTramoComponent implements OnInit {
   //Establece el estado de tipo de carga al seleccionar una modalidad de carga
   public establecerEstadoTipoCarga(editar): void {
     let modalidadCarga = this.formularioViajeTramo.get('viajeTipo').value;
-    if (modalidadCarga.id == 3) {
+    if (modalidadCarga.id == 3 || modalidadCarga.id == 4) {
       this.formularioViajeTramo.get('viajeTipoCarga').setValue(this.viajesTiposCargas[0]);
       this.formularioViajeTramo.get('viajeTipoCarga').disable();
       this.mostrarPorRemitos = false;
@@ -280,7 +279,7 @@ export class ViajeTramoComponent implements OnInit {
       this.formularioViajeTramo.get('viajeTipoCarga').enable();
       this.mostrarPorRemitos = true;
     }
-    this.establecerTipoViaje(this.tipoViaje, editar);
+    this.establecerTipoViaje();
   }
   //Calcula el importe a partir de cantidad/km y precio unitario
   // public calcularImporte(formulario, form, cant): void {
@@ -303,9 +302,8 @@ export class ViajeTramoComponent implements OnInit {
     this.formularioViaje.enable();
     this.formularioViajeTramo.enable();
     let usuario = this.appServicio.getUsuario();
-    this.numeroOrden++;
     this.formularioViajeTramo.get('fechaAlta').setValue(this.fechaActual);
-    this.formularioViajeTramo.get('numeroOrden').setValue(this.numeroOrden);
+    this.formularioViajeTramo.get('numeroOrden').setValue(1);
     this.formularioViajeTramo.get('usuarioAlta').setValue(usuario);
     if (this.listaCompleta.data.length > 0) {
       this.agregar();
@@ -527,7 +525,6 @@ export class ViajeTramoComponent implements OnInit {
   //Finalizar
   public finalizar() {
     this.ID_VIAJE = 0;
-    this.numeroOrden = 0;
     this.reestablecerFormulario();
     this.establecerValoresPorDefecto();
     this.establecerViajeTarifaPorDefecto();
@@ -562,7 +559,9 @@ export class ViajeTramoComponent implements OnInit {
       data: {
         tema: this.appServicio.getTema(),
         viajeTramo: elemento.id,
-        tramo: elemento
+        tramo: elemento,
+        viajeTarifa: elemento.viajeTarifa,
+        importeCosto: elemento.importeCosto
       }
     });
     dialogRef.afterClosed().subscribe(viajeTramoClientes => {
@@ -703,7 +702,25 @@ export class DadorDestinatarioDialogo {
       data: {
         tema: this.appServicio.getTema(),
         tramo: this.tramo,
-        dadorDestinatario: elemento
+        dadorDestinatario: elemento,
+        viajeTarifa: this.data.viajeTarifa,
+        importeCosto: this.data.importeCosto
+      }
+    });
+    dialogRef.afterClosed().subscribe(resultado => {
+      
+    });
+  }
+  //Abre el dialogo para valorizar vacio facturado
+  public verVacioFacturado(elemento): void {
+    const dialogRef = this.dialog.open(VacioFacturadoDialogoComponent, {
+      width: '95%',
+      maxWidth: '95%',
+      data: {
+        tema: this.appServicio.getTema(),
+        tramo: this.tramo,
+        dadorDestinatario: elemento,
+        viajeTarifa: this.data.viajeTarifa
       }
     });
     dialogRef.afterClosed().subscribe(resultado => {
