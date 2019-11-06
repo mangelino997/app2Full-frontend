@@ -53,10 +53,10 @@ export class VentaComprobante {
 
             moneda: new FormControl(),
             monedaCotizacion: new FormControl(),
-            ventaComprobanteItemCR: new FormControl(),
-            ventaComprobanteItemND: new FormControl(),
-            ventaComprobanteItemNC: new FormControl(),
-            ventaComprobanteItemFA: new FormControl(),
+            ventaComprobanteItemCR: new FormControl([], ),
+            ventaComprobanteItemND: new FormControl([], ),
+            ventaComprobanteItemNC: new FormControl([], ),
+            ventaComprobanteItemFA: new FormControl([], ),
 
         })
     }

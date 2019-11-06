@@ -327,7 +327,9 @@ export class DeduccionPersonalTablaComponent implements OnInit {
   public eliminar(id) {
     const dialogRef = this.dialog.open(ConfirmarDialogoComponent, {
       width: '60%',
-      data: {}
+      data: {
+        question: {id: 1}
+      }
     });
     dialogRef.afterClosed().subscribe(result => {
       if (result) {

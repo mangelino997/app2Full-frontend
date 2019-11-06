@@ -18,7 +18,7 @@ export class VentaComprobanteItemFA {
             numeroRemito: new FormControl(),
             bultos: new FormControl(),
             kilosEfectivo: new FormControl(),
-            kilosAforadoCampo: new FormControl(),
+            kilosAforado: new FormControl(),
             m3: new FormControl(),
             descripcionCarga: new FormControl('', Validators.required),
             valorDeclarado: new FormControl(),

@@ -176,7 +176,8 @@ export class ViajePeajeComponent implements OnInit {
       width: '60%',
       maxWidth: '60%',
       data: {
-        tema: this.appService.getTema()
+        tema: this.appService.getTema(),
+        question: {id: 1}
       }
     });
     dialogRef.afterClosed().subscribe(resultado => {

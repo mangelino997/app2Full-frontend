@@ -277,10 +277,10 @@
           <div class="col">
             <div class="form-group has-float-label">
               <label for="idKiloAforado" class="tamanio-label">Kg Aforado</label>
-              <input id="idKiloAforado" type="text" formControlName="kilosAforadoCampo"
+              <input id="idKiloAforado" type="text" formControlName="kilosAforado"
                 class="form-control form-control-sm number-right" placeholder="0.00" autocomplete="off"
                 [textMask]="mascararEnteroConDecimales(8)" [readOnly]="soloLectura"
-                (blur)="setDecimales(formularioVtaCpteItemFA.get('kilosAforadoCampo'), 2)">
+                (blur)="setDecimales(formularioVtaCpteItemFA.get('kilosAforado'), 2)">
               <!--[readOnly]="soloLectura"-->
             </div>
           </div>
@@ -410,7 +410,7 @@
               <mat-select id="idAlicuota" type="number" formControlName="afipAlicuotaIva"
                 class="form-control form-control-sm number-right" (selectionChange)="cambioAfipAlicuotaIva()">
                 <mat-option *ngFor="let item of afipAlicuotasIva" [value]="item">
-                  {{returnDecimales(item.alicuota, 2)}} %
+                  {{item.alicuota | number: '1.2-2'}} %
                 </mat-option>
               </mat-select>
             </div>
@@ -483,38 +483,66 @@
       </div>
       <br>
       <div class="row">
+        <div>
+          <button class="btn btn-info btn-custom margin-left-button" style="min-width: fit-content;"
+            (click)="abrirConfirmarDialogo(3)">
+            Agregar Otro Remito</button>
+        </div>
+      </div>
+      <br>
+      <div class="row">
         <div class="inline">
-          <div class="form-group has-float-label">
-            <label for="idTotalItems" class="tamanio-label">Total Items</label>
-            <input id="idTotalItems" type="text" [formControl]="contador"
-              class="form-control form-control-sm number-right " readonly placeholder="00" style="width: 96px;">
+          <div class="col-md-1">
+            <div class="form-group has-float-label">
+              <label for="idTotalItems" class="tamanio-label">Items</label>
+              <input id="idTotalItems" type="text" [formControl]="contador"
+                class="form-control form-control-sm number-right " readonly placeholder="00">
+            </div>
           </div>
-          <span class="spacer"></span>
-          <div class="form-group has-float-label">
-            <label for="idCodigo" class="tamanio-label"><b>Imp. No Grav/Exento ($)</b></label>
-            <input id="idCodigo" type="text" formControlName="importeNoGravado"
-              class="form-control input-bold form-control-sm number-right" placeholder="$ 0.00" style="width: 200px;"
-              readonly>
+          <button class="btn btn-info btn-custom margin-left-button" style="min-width: fit-content;"
+            (click)="abrirCRDialogo()">ContraReembolso</button>
+          <button class="btn btn-info btn-custom margin-left-button" style="min-width: fit-content;"
+            (click)="abrirTotalCarga()" [disabled]="listaCompletaItems.data.length == 0">Totales de Carga</button>
+          <button class="btn btn-info btn-custom margin-left-button" style="min-width: fit-content;"
+            (click)="abrirTotalConcepto()" [disabled]="listaCompletaItems.data.length == 0">Totales por
+            Concepto</button>
+          <button class="btn btn-info btn-custom margin-left-button" style="min-width: fit-content;"
+            (click)="abrirObervacion()">Observaciones</button>
+          <div class="col-md-2">
+            <div class="form-group has-float-label">
+              <label for="idCodigo" class="tamanio-label"><b>Imp.No Grav/Exento($)</b></label>
+              <input id="idCodigo" type="text" formControlName="importeNoGravado"
+                class="form-control input-bold form-control-sm number-right" placeholder="$ 0.00" readonly>
+            </div>
           </div>
-          <div class="form-group has-float-label">
-            <label for="idCodigo" class="tamanio-label"><b>Imp. Neto Gravado ($)</b></label>
-            <input id="idCodigo" type="text" formControlName="importeNetoGravado" placeholder="$ 0.00"
-              [textMask]="mascararImporte(8, 2)" (blur)="setDecimales(formulario.get('importeNetoGravado'), 2)"
-              class="form-control input-bold form-control-sm number-right" style="width: 189px;" readonly>
+          <div class="col-md-2">
+            <div class="form-group has-float-label">
+              <label for="idCodigo" class="tamanio-label"><b>Imp.Neto Gravado($)</b></label>
+              <input id="idCodigo" type="text" formControlName="importeNetoGravado" placeholder="$ 0.00"
+                [textMask]="mascararImporte(8, 2)" (blur)="setDecimales(formulario.get('importeNetoGravado'), 2)"
+                class="form-control input-bold form-control-sm number-right" readonly>
+            </div>
           </div>
-          <div class="form-group has-float-label">
-            <label for="idCodigo" class="tamanio-label"><b>Imp. IVA ($)</b></label>
-            <input id="idCodigo" type="text" formControlName="importeIva" placeholder="$ 0.00"
-              [textMask]="mascararImporte(8, 2)" (blur)="setDecimales(formulario.get('importeIva'), 2)"
-              class="form-control input-bold form-control-sm number-right" style="width: 120px;" readonly>
+          <div class="col">
+            <div class="form-group has-float-label">
+              <label for="idCodigo" class="tamanio-label"><b>Imp.IVA($)</b></label>
+              <input id="idCodigo" type="text" formControlName="importeIva" placeholder="$ 0.00"
+                [textMask]="mascararImporte(8, 2)" (blur)="setDecimales(formulario.get('importeIva'), 2)"
+                class="form-control input-bold form-control-sm number-right" readonly>
+            </div>
           </div>
-          <div class="form-group has-float-label">
-            <label for="idCodigo" class="tamanio-label"><b>Imp. Total ($)</b></label>
-            <input id="idCodigo" type="text" formControlName="importeTotal" placeholder="$ 0.00"
-              [textMask]="mascararImporte(8, 2)" (blur)="setDecimales(formulario.get('importeTotal'), 2)"
-              class="form-control input-bold form-control-sm number-right" style="width: 130px;" readonly>
+          <div class="col">
+            <div class="form-group has-float-label">
+              <label for="idCodigo" class="tamanio-label"><b>Imp. Total($)</b></label>
+              <input id="idCodigo" type="text" formControlName="importeTotal" placeholder="$ 0.00"
+                [textMask]="mascararImporte(8, 2)" (blur)="setDecimales(formulario.get('importeTotal'), 2)"
+                class="form-control input-bold form-control-sm number-right" readonly>
+            </div>
           </div>
         </div>
+      </div>
+      <div class="row justify-content-end">
+        <button class="btn btn-primary" type="button" style="min-width: fit-content;">Grabar</button>
       </div>
       <!-- <div class="form-group has-float-label ">
             <label for="idConcepto" class="tamanio-label">Conceptos Varios</label>
@@ -577,7 +605,7 @@
           <button class="btn btn-primary" type="button" style="width: 130px;" (click)="emitirFactura()">Emitir</button>
         </div>
       </form> -->
-    <div class="inline" style="margin-top: 10px; margin-bottom: 20px;">
+    <!-- <div class="inline" style="margin-top: 10px; margin-bottom: 20px;">
       <button class="btn btn-info btn-custom margin-left-button" style="width: 130px;">ContraReembolso</button>
       <button class="btn btn-info btn-custom margin-left-button" style="width: 125px;"
         (click)="abrirTotalCarga()">Totales de Carga</button>
@@ -585,7 +613,7 @@
         (click)="abrirTotalConcepto()">Totales por Concepto</button>
       <button class="btn btn-info btn-custom margin-left-button" style="width: 112px;"
         (click)="abrirObervacion()">Observaciones</button>
-    </div>
+    </div> -->
     <!-- </form> -->
   </div>
 </div>

@@ -592,7 +592,9 @@ export class OrdenVentaComponent implements OnInit {
   public eliminar(id, opcion) {
     const dialogRef = this.dialog.open(ConfirmarDialogoComponent, {
       width: '500px',
-      data: {},
+      data: {
+        question: {id: 1}
+      },
     });
     dialogRef.afterClosed().subscribe(resultado => {
       if (resultado) {
@@ -665,7 +667,8 @@ export class OrdenVentaComponent implements OnInit {
         data: {
           formulario: null,
           porEscala: null,
-          ordenVenta: null
+          ordenVenta: null,
+          question: {id: 1}
         },
       });
       dialogRef.afterClosed().subscribe(result => {

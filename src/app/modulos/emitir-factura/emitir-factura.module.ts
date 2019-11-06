@@ -72,7 +72,6 @@ import { TramoService } from 'src/app/servicios/tramo.service';
   entryComponents: [
     ConceptosVariosDialogo,
     QuitarItemDialogo,
-    
   ]
 })
 export class EmitirFacturaModule { }

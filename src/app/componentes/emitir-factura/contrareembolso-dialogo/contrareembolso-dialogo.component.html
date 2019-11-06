@@ -1,0 +1,54 @@
+<div class="row justify-content-center padd-20">
+    <h5>Contrareembolso</h5>
+    <div class="col-md-12 text-center">
+        <form [formGroup]="formulario">
+            <div class="row justify-content-center">
+                <div class="col-md-2">
+                    <div class="form-group has-float-label">
+                        <label for="idImporteContrareembolso" class="tamanio-label">Imp. Contrareembolso</label>
+                        <input id="idImporteContrareembolso" type="text" formControlName="importeContraReembolso" placeholder="$0.00"
+                            [textMask]="mascararImporte(8, 2)" class="form-control form-control-sm number-right"
+                            (blur)="setDecimales(formulario.get('importeContraReembolso'), 2)">
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group has-float-label ">
+                        <label for="idComision" class="tamanio-label">% Comisión</label>
+                        <input id="idComision" type="text" formControlName="pComision" placeholder="0.00%"
+                            [textMask]="mascararPorcentaje()" class="form-control form-control-sm number-right" 
+                            (blur)="calcularComision()">
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group has-float-label">
+                        <label for="idComision" class="tamanio-label">Comisión</label>
+                        <input id="idComision" type="text" formControlName="comision" placeholder="$0.00"
+                            [textMask]="mascararImporte(8, 2)" class="form-control form-control-sm number-right"
+                            (blur)="setDecimales(formulario.get('comision'), 2)" readonly>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group has-float-label">
+                        <label for="idAlicuota" class="tamanio-label">Alic. IVA</label>
+                        <mat-select id="idAlicuota" type="number" formControlName="afipAlicuotaIva"
+                            class="form-control form-control-sm number-right">
+                            <mat-option *ngFor="let item of afipAlicuotasIva" [value]="item">
+                                {{item.alicuota | number: '1.2-2'}} %
+                            </mat-option>
+                        </mat-select>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <div class="row justify-content-center">
+                <div class="col-md-1">
+                    <button id="idBoton" mat-raised-button color="primary" [mat-dialog-close]="formulario.value">Agregar</button>
+                </div>
+                <div class="col-md-1">
+                    <button id="idBoton" mat-raised-button color="secondary"
+                        [mat-dialog-close]="null">Cerrar</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
