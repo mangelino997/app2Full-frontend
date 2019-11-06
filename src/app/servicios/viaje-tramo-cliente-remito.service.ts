@@ -44,13 +44,17 @@ export class ViajeTramoClienteRemitoService {
   public obtenerSiguienteId() {
     return this.http.get(this.url + '/obtenerSiguienteId', this.options);
   }
+  //Obtiene por viaje tramo cliente
+  public obtenerPorViajeTramoCliente(idViajeTramoCliente) {
+    return this.http.get(this.url + '/obtenerPorViajeTramoCliente/' + idViajeTramoCliente, this.options);
+  }
   //Obtiene la lista de registros
   public listar() {
     return this.http.get(this.url, this.options);
   }
-  //Obtiene por viaje tramo cliente
-  public obtenerPorViajeTramoCliente(idViajeTramoCliente) {
-    return this.http.get(this.url + '/obtenerPorViajeTramoCliente/' + idViajeTramoCliente, this.options);
+  //Obtiene la lista de registros por viaje tramo cliente
+  public listarPorViajeTramoCliente(idViajeTramoCliente) {
+    return this.http.get(this.url + '/listarPorViajeTramoCliente/' + idViajeTramoCliente, this.options);
   }
   //Agrega un registro
   public agregar(elemento) {
