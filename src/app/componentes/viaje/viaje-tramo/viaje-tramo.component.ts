@@ -24,6 +24,7 @@ import { Viaje } from 'src/app/modelos/viaje';
 import { MensajeExcepcion } from 'src/app/modelos/mensaje-excepcion';
 import { RemitoDialogoComponent } from '../remito-dialogo/remito-dialogo.component';
 import { VacioFacturadoDialogoComponent } from '../vacio-facturado-dialogo/vacio-facturado-dialogo.component';
+import { ConfirmarDialogoComponent } from '../../confirmar-dialogo/confirmar-dialogo.component';
 
 @Component({
   selector: 'app-viaje-tramo',
@@ -61,11 +62,11 @@ export class ViajeTramoComponent implements OnInit {
   //Define la pestaña seleccionada
   public indiceSeleccionado: number = 1;
   //Define el id del viaje actual
-  public ID_VIAJE:number;
+  public ID_VIAJE: number;
   //Define la fecha actual
-  public fechaActual:any;
+  public fechaActual: any;
   //Define si mostrar por remitos en tarifa
-  public mostrarPorRemitos:boolean = true;
+  public mostrarPorRemitos: boolean = true;
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service
@@ -73,7 +74,7 @@ export class ViajeTramoComponent implements OnInit {
   //Define las columnas de la tabla
   public columnas: string[] = ['id', 'fecha', 'tramo', 'km', 'empresa', 'tipoViaje', 'tipoCarga', 'tarifa', 'unidadNegocio', 'obs', 'editar'];
   //Define la matSort
-  @ViewChild(MatSort,{static: false}) sort: MatSort;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
   //Constructor
   constructor(
     private viajeTramoModelo: ViajeTramo, private viajeServicio: ViajeService, private viajeModelo: Viaje,
@@ -181,9 +182,9 @@ export class ViajeTramoComponent implements OnInit {
     let modalidadCarga = this.formularioViajeTramo.get('viajeTipo').value;
     let km = this.formularioViajeTramo.get('km').value;
     if (viajeTarifa && modalidadCarga && km) {
-      if(this.tipoViaje) {
+      if (this.tipoViaje) {
         //VIAJE PROPIO
-        switch(viajeTarifa.id) {
+        switch (viajeTarifa.id) {
           case 1:
             let importe = km * modalidadCarga.costoPorKmPropio;
             this.formularioViajeTramo.get('importeCosto').setValue(parseFloat(this.appServicio.establecerDecimales(importe, 3)));
@@ -308,7 +309,7 @@ export class ViajeTramoComponent implements OnInit {
     if (this.listaCompleta.data.length > 0) {
       this.agregar();
     } else {
-      if(this.formularioViajeTramo.get('viajeTarifa').value.id == 0) {
+      if (this.formularioViajeTramo.get('viajeTarifa').value.id == 0) {
         this.formularioViajeTramo.get('viajeTarifa').reset();
       }
       let tramos = [];
@@ -340,7 +341,7 @@ export class ViajeTramoComponent implements OnInit {
   }
   //Agrega un registro en viajeTramos
   public agregar() {
-    if(this.formularioViajeTramo.get('viajeTarifa').value.id == 0) {
+    if (this.formularioViajeTramo.get('viajeTarifa').value.id == 0) {
       this.formularioViajeTramo.get('viajeTarifa').reset();
     }
     this.formularioViajeTramo.get('viaje').setValue({ id: this.ID_VIAJE });
@@ -374,7 +375,7 @@ export class ViajeTramoComponent implements OnInit {
     this.formularioViajeTramo.value.importe = parseFloat(this.formularioViajeTramo.value.importe);
     this.formularioViajeTramo.value.precioUnitario = parseFloat(this.formularioViajeTramo.value.precioUnitario);
     this.formularioViajeTramo.value.viaje = { id: this.ID_VIAJE };
-    if(this.formularioViajeTramo.get('viajeTarifa').value.id == 0) {
+    if (this.formularioViajeTramo.get('viajeTarifa').value.id == 0) {
       this.formularioViajeTramo.get('viajeTarifa').reset();
     }
     this.servicio.actualizar(this.formularioViajeTramo.value).subscribe(
@@ -402,14 +403,14 @@ export class ViajeTramoComponent implements OnInit {
   public modTramo(indice, elemento): void {
     this.indiceTramo = indice;
     this.btnTramo = false;
-    if(elemento.importeCosto) {
+    if (elemento.importeCosto) {
       elemento.importeCosto = this.appServicio.establecerDecimales(elemento.importeCosto.toString(), 2);
     }
     this.formularioViajeTramo.patchValue(elemento);
-    this.formularioViajeTramo.get('viaje').setValue({id: this.ID_VIAJE});
+    this.formularioViajeTramo.get('viaje').setValue({ id: this.ID_VIAJE });
     this.establecerEstadoTipoCarga(true);
-    if(!elemento.viajeTarifa) {
-      this.formularioViajeTramo.get('viajeTarifa').setValue({id:0});
+    if (!elemento.viajeTarifa) {
+      this.formularioViajeTramo.get('viajeTarifa').setValue({ id: 0 });
     }
   }
   //Elimina un tramo de la tabla por indice
@@ -417,23 +418,32 @@ export class ViajeTramoComponent implements OnInit {
     if (this.listaCompleta.data.length == 1) {
       this.toastr.error("El viaje debe tener un tramo");
     } else {
-      this.loaderService.show();
-      this.servicio.eliminar(elemento.id).subscribe(
-        res => {
-          let respuesta = res.json();
-          this.listar();
+      const dialogRef = this.dialog.open(ConfirmarDialogoComponent, {
+        width: '50%',
+        maxWidth: '50%',
+        data: {}
+      });
+      dialogRef.afterClosed().subscribe(resultado => {
+        if(resultado) {
+          this.loaderService.show();
+          this.servicio.eliminar(elemento.id).subscribe(
+            res => {
+              let respuesta = res.json();
+              this.listar();
+              this.establecerValoresPorDefecto();
+              this.establecerViajeTarifaPorDefecto();
+              this.toastr.success(respuesta.mensaje);
+              this.loaderService.hide();
+            },
+            err => {
+              this.toastr.error("No se pudo eliminar el registro");
+              this.loaderService.hide();
+            });
           this.establecerValoresPorDefecto();
           this.establecerViajeTarifaPorDefecto();
-          this.toastr.success(respuesta.mensaje);
-          this.loaderService.hide();
-        },
-        err => {
-          this.toastr.error("No se pudo eliminar el registro");
-          this.loaderService.hide();
-        });
-      this.establecerValoresPorDefecto();
-      this.establecerViajeTarifaPorDefecto();
-      this.resultadosTramos = [];
+          this.resultadosTramos = [];
+        }
+      });
     }
     document.getElementById('idTramoFecha').focus();
   }
@@ -455,7 +465,7 @@ export class ViajeTramoComponent implements OnInit {
     this.establecerValoresPorDefecto();
     this.establecerViajeTarifaPorDefecto();
     this.convertirListaAMatTable(lista);
-    this.formularioViajeTramo.get('viaje').setValue({id: idViaje});
+    this.formularioViajeTramo.get('viaje').setValue({ id: idViaje });
     this.establecerViajeCabecera(idViaje);
     this.establecerCamposSoloLectura(pestaniaViaje);
     this.listar();
@@ -565,7 +575,7 @@ export class ViajeTramoComponent implements OnInit {
       }
     });
     dialogRef.afterClosed().subscribe(viajeTramoClientes => {
-      
+
     });
   }
   //Abre un dialogo para ver las observaciones
@@ -597,16 +607,18 @@ export class DadorDestinatarioDialogo {
   //Define la lista de clientes
   public resultadosClientes: Array<any> = [];
   //Define el tramo seleccionado
-  public tramo:string = null;
+  public tramo: string = null;
   //Define la modalidad de carga seleccionada
-  public modalidadCarga:boolean;
+  public modalidadCarga: boolean;
   //Define las columnas de la tabla
   public columnas: string[] = ['dador', 'destinatario', 'remitos', 'eliminar'];
+  //Define muestra de progress dialog
+  public show: boolean = false;
   //Define la matSort
-  @ViewChild(MatSort,{static: false}) sort: MatSort;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
   //Constructor
-  constructor(public dialogRef: MatDialogRef<DadorDestinatarioDialogo>, @Inject(MAT_DIALOG_DATA) public data, 
-    private toastr: ToastrService, private viajeTramoClienteModelo: ViajeTramoCliente, 
+  constructor(public dialogRef: MatDialogRef<DadorDestinatarioDialogo>, @Inject(MAT_DIALOG_DATA) public data,
+    private toastr: ToastrService, private viajeTramoClienteModelo: ViajeTramoCliente,
     private viajeTramoClienteService: ViajeTramoClienteService, private clienteServicio: ClienteService,
     public dialog: MatDialog, private appServicio: AppService) { }
   ngOnInit() {
@@ -616,7 +628,7 @@ export class DadorDestinatarioDialogo {
     this.formulario = this.viajeTramoClienteModelo.formulario;
     let tramo = this.data.tramo.tramo;
     //Establece el tramo seleccionado
-    this.tramo = tramo.origen.nombre + ', ' + tramo.origen.provincia.nombre 
+    this.tramo = tramo.origen.nombre + ', ' + tramo.origen.provincia.nombre
       + ' --> ' + tramo.destino.nombre + ', ' + tramo.destino.provincia.nombre;
     //Establece la modalidad de carga
     this.modalidadCarga = this.data.tramo.viajeTipo.id != 4 ? true : false;
@@ -644,14 +656,17 @@ export class DadorDestinatarioDialogo {
   }
   //Establece la tabla de dadores y destinatarios
   private listar(idViajeTramo) {
-    if(idViajeTramo) {
+    if (idViajeTramo) {
+      this.show = true;
       this.viajeTramoClienteService.listarPorViajeTramo(idViajeTramo).subscribe(
         res => {
           this.listaCompleta = new MatTableDataSource(res.json());
           this.listaCompleta.sort = this.sort;
+          this.show = false;
         },
         err => {
           this.toastr.error(err.json().message);
+          this.show = false;
         }
       );
     }
@@ -664,7 +679,8 @@ export class DadorDestinatarioDialogo {
   }
   //Agrega el dador y el destinatario a la tabla
   public agregarDadorDestinatario(): void {
-    this.formulario.get('viajeTramo').setValue({id: this.data.viajeTramo});
+    this.show = true;
+    this.formulario.get('viajeTramo').setValue({ id: this.data.viajeTramo });
     this.viajeTramoClienteService.agregar(this.formulario.value).subscribe(
       res => {
         this.formulario.reset();
@@ -672,26 +688,39 @@ export class DadorDestinatarioDialogo {
         this.toastr.success(MensajeExcepcion.AGREGADO);
         document.getElementById('idTramoDadorCarga').focus();
         this.listar(this.data.viajeTramo);
+        this.show = false;
       },
       err => {
-
+        this.show = false;
       }
     );
   }
   //Elimina un dador-destinatario de la tabla
   public eliminarDadorDestinatario(elemento): void {
-    if (elemento.id) {
-      this.viajeTramoClienteService.eliminar(elemento.id).subscribe(
-        res => {
-          this.resultadosClientes = [];
-          this.toastr.success(MensajeExcepcion.ELIMINADO);
-          document.getElementById('idTramoDadorCarga').focus();
-          this.listar(this.data.viajeTramo);
-        },
-        err => {
-          this.toastr.error(MensajeExcepcion.NO_ELIMINADO);
+    if (elemento) {
+      const dialogRef = this.dialog.open(ConfirmarDialogoComponent, {
+        width: '50%',
+        maxWidth: '50%',
+        data: {}
+      });
+      dialogRef.afterClosed().subscribe(resultado => {
+        if (resultado) {
+          this.show = true;
+          this.viajeTramoClienteService.eliminar(elemento.id).subscribe(
+            res => {
+              this.resultadosClientes = [];
+              this.toastr.success(MensajeExcepcion.ELIMINADO);
+              document.getElementById('idTramoDadorCarga').focus();
+              this.show = false;
+              this.listar(this.data.viajeTramo);
+            },
+            err => {
+              this.toastr.error(MensajeExcepcion.NO_ELIMINADO);
+              this.show = false;
+            }
+          );
         }
-      )
+      });
     }
   }
   //Abre el dialogo para cargar remitos
@@ -708,7 +737,7 @@ export class DadorDestinatarioDialogo {
       }
     });
     dialogRef.afterClosed().subscribe(resultado => {
-      
+
     });
   }
   //Abre el dialogo para valorizar vacio facturado
@@ -724,7 +753,7 @@ export class DadorDestinatarioDialogo {
       }
     });
     dialogRef.afterClosed().subscribe(resultado => {
-      
+
     });
   }
   //Define como se muestra los datos en el autcompletado b

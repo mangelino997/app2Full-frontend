@@ -11,9 +11,6 @@ import { ViajeTarifaService } from 'src/app/servicios/viaje-tarifa.service';
 import { ViajeTramoClienteRemito } from 'src/app/modelos/viajeTramoClienteRemito';
 import { ViajeTramoClienteRemitoService } from 'src/app/servicios/viaje-tramo-cliente-remito.service';
 import { MensajeExcepcion } from 'src/app/modelos/mensaje-excepcion';
-import { Subscription } from 'rxjs';
-import { LoaderService } from 'src/app/servicios/loader.service';
-import { LoaderState } from 'src/app/modelos/loader';
 
 @Component({
   selector: 'app-remito-dialogo',
@@ -47,10 +44,8 @@ export class RemitoDialogoComponent implements OnInit {
   public fechaActual:any;
   //Define las columnas de la tabla
   public columnas: string[] = ['id', 'tipoComprobante', 'puntoVenta', 'letra', 'numero', 'bultos', 'm3', 'kgEfectivo', 'valorDeclarado', 'facturado', 'editar'];
-  //Define la subscripcion a loader.service
-  private subscription: Subscription;
   //Define el mostrar del circulo de progreso
-  public show = false;
+  public show:boolean = false;
   //Define el formulario de remito
   public formulario:FormGroup;
   //Define el formulario de aforar
@@ -60,14 +55,9 @@ export class RemitoDialogoComponent implements OnInit {
     private toastr: ToastrService, private appServicio: AppService, private viajeTramoClienteRemito: ViajeTramoClienteRemito, 
     private fechaServicio: FechaService, private tipoComprobanteServicio: TipoComprobanteService,
     public dialog: MatDialog, private aforo: Aforo, private viajeTarifaServicio: ViajeTarifaService,
-    private viajeTramoClienteRemitoService: ViajeTramoClienteRemitoService, private loaderService: LoaderService) { }
+    private viajeTramoClienteRemitoService: ViajeTramoClienteRemitoService) { }
   //Al incializarse el componente
   ngOnInit() {
-    //Establece la subscripcion a loader
-    this.subscription = this.loaderService.loaderState
-      .subscribe((state: LoaderState) => {
-        this.show = state.show;
-      });
     //Crea el formulario remito
     this.formulario = this.viajeTramoClienteRemito.formulario;
     this.formulario.reset();
@@ -81,15 +71,19 @@ export class RemitoDialogoComponent implements OnInit {
     this.dadorDestinatario.setValue(dadorDestinatario);
     this.formulario.get('viajeTramoCliente').setValue(this.data.dadorDestinatario);
     //Establece la tarifa seleccionada en el tramo
+    this.establecerTarifa();
+    //Obtiene la lista
+    this.listarPorViajeTramoCliente(this.data.dadorDestinatario.id);
+    //Establece valores por defecto
+    this.establecerValoresPorDefecto();
+  }
+  //Establece la tarifa segun el viaje tarifa seleccionada en tramo
+  private establecerTarifa(): void {
     this.tarifa = this.data.viajeTarifa;
-    if(this.tarifa.id != 0) {
+    if(this.tarifa) {
       this.formulario.get('viajeTarifa').setValue(this.tarifa);
       this.formulario.get('importeCosto').setValue(this.data.importeCosto);
     }
-    //Obtiene la lista
-    this.listar();
-    //Establece valores por defecto
-    this.establecerValoresPorDefecto();
   }
   //Establece valores por defecto
   private establecerValoresPorDefecto(): void {
@@ -99,33 +93,46 @@ export class RemitoDialogoComponent implements OnInit {
   }
   //Obtiene la fecha actual
   private obtenerFecha(): void {
-    this.fechaServicio.obtenerFecha().subscribe(res => {
-      this.fechaActual = res.json();
-      this.formulario.get('fecha').setValue(this.fechaActual);
-    });
+    this.show = true;
+    this.fechaServicio.obtenerFecha().subscribe(
+      res => {
+        this.fechaActual = res.json();
+        this.formulario.get('fecha').setValue(this.fechaActual);
+        this.show = false;
+      },
+      err => {
+        this.show = false;
+      }
+    );
   }
   //Obtiene el listado de tipos comprobantes
   private listarTiposComprobantes(): void {
+    this.show = true;
     this.tipoComprobanteServicio.listarActivosIngresoCarga().subscribe(
       res => {
         this.tiposComprobantes = res.json();
         this.establecerTipoComprobantePorDefecto();
+        this.show = false;
       },
       err => {
         let error = err.json();
         this.toastr.error(error.mensaje);
+        this.show = false;
       }
     );
   }
   //Obtiene el listado de viajes tarifas
   private listarViajesTarifasCostoTramoFalse() {
+    this.show = true;
     this.viajeTarifaServicio.listarPorCostoTramoFalse().subscribe(
       res => {
         this.viajesTarifasCostoTramoFalse = res.json();
+        this.show = false;
       },
       err => {
         let error = err.json();
         this.toastr.error(error.mensaje);
+        this.show = false;
       }
     );
   }
@@ -146,24 +153,24 @@ export class RemitoDialogoComponent implements OnInit {
     }
   }
   //Obtiene la lista de cliente remitos
-  private listar(): void {
-    this.loaderService.show();
-    this.viajeTramoClienteRemitoService.listar().subscribe(
+  private listarPorViajeTramoCliente(idViajeTramoCliente): void {
+    this.show = true;
+    this.viajeTramoClienteRemitoService.listarPorViajeTramoCliente(idViajeTramoCliente).subscribe(
       res => {
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
         this.listaCompleta.paginator = this.paginator;
-        this.loaderService.hide();
+        this.show = false;
       },
       err => {
-        this.loaderService.hide();
+        this.show = false;
         this.toastr.error(MensajeExcepcion.NO_LISTO);
       }
     );
   }
   //Agrega un remito
   public agregar(): void {
-    this.loaderService.show();
+    this.show = true;
     this.formulario.get('tipoComprobante').enable();
     this.formulario.get('usuarioAlta').setValue(this.appServicio.getUsuario());
     this.viajeTramoClienteRemitoService.agregar(this.formulario.value).subscribe(
@@ -171,19 +178,19 @@ export class RemitoDialogoComponent implements OnInit {
         let respuesta = res.json();
         if(respuesta.codigo == 201) {
           this.reestablecerFormulario();
-          this.listar();
+          this.listarPorViajeTramoCliente(this.data.dadorDestinatario.id);
           this.toastr.success(MensajeExcepcion.AGREGADO);
         }
-        this.loaderService.hide();
+        this.show = false;
       },
       err => {
-        this.loaderService.hide();
+        this.show = false;
       }
     );
   }
   //Actualiza un registro
   public actualizar(): void {
-    this.loaderService.show();
+    this.show = true;
     this.formulario.get('tipoComprobante').enable();
     this.formulario.get('usuarioMod').setValue(this.appServicio.getUsuario());
     this.viajeTramoClienteRemitoService.actualizar(this.formulario.value).subscribe(
@@ -191,13 +198,13 @@ export class RemitoDialogoComponent implements OnInit {
         let respuesta = res.json();
         if(respuesta.codigo == 200) {
           this.reestablecerFormulario();
-          this.listar();
+          this.listarPorViajeTramoCliente(this.data.dadorDestinatario.id);
           this.toastr.success(MensajeExcepcion.ACTUALIZADO);
         }
-        this.loaderService.hide();
+        this.show = false;
       },
       err =>{
-        this.loaderService.hide();
+        this.show = false;
         this.toastr.error(MensajeExcepcion.NO_ACTUALIZADO);
       }
     );
@@ -235,19 +242,19 @@ export class RemitoDialogoComponent implements OnInit {
   }
   //Elimina un registro
   public eliminar(id): void {
-    this.loaderService.show();
+    this.show = true;
     this.viajeTramoClienteRemitoService.eliminar(id).subscribe(
       res => {
         let respuesta = res.json();
         if(respuesta.codigo == 200) {
           this.reestablecerFormulario();
-          this.listar();
+          this.listarPorViajeTramoCliente(this.data.dadorDestinatario.id);
           this.toastr.success(MensajeExcepcion.ELIMINADO);
         }
-        this.loaderService.hide();
+        this.show = false;
       },
       err => {
-        this.loaderService.hide();
+        this.show = false;
         this.toastr.error(MensajeExcepcion.NO_ACTUALIZADO);
       }
     );
@@ -275,6 +282,7 @@ export class RemitoDialogoComponent implements OnInit {
   private reestablecerFormulario(): void {
     this.esEditable = false;
     this.formulario.reset();
+    this.establecerTarifa();
     this.establecerTipoComprobantePorDefecto();
     this.formulario.get('fecha').setValue(this.fechaActual);
     this.formulario.get('viajeTramoCliente').setValue(this.data.dadorDestinatario);
