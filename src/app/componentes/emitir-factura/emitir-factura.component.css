@@ -18,20 +18,11 @@ input {
 hr {
     border-top: 1px solid rgba(0,0,0,.8);
 }
-.table-condensed>thead>tr>th, .table-condensed>tbody>tr>th, .table-condensed>tfoot>tr>th, .table-condensed>thead>tr>td, .table-condensed>tbody>tr>td, .table-condensed>tfoot>tr>td{
-    padding: 0px;
-}
 .row {
     display: flex;
     flex-wrap: wrap;
     margin-right: 0px;
     margin-left: 0px;
-}
-th {
-    /* position: -webkit-sticky; */
-    position: sticky;
-    top: 0; 
-    background-color: #FFF;
 }
 .col-md-12 {
     position: relative;
@@ -63,9 +54,9 @@ th {
     line-height:1;
     padding:0 1px
 }
-.btn {
+/* .btn {
     font-size: 15px !important;
-}
+} */
 .pagaSeleccionado {
     box-shadow: 3px 6px 14px rgba(0, 0, 0, 1);
 }
@@ -86,4 +77,12 @@ button {
 }
 .tabla-ancho {
     width: 1890px !important;
+}
+/*Define el estilo para los radio buttons del modal Observaciones - Nota Impresion Comprobante */
+.example-radio-group {
+    display: flex;
+    flex-direction: column;
+}
+.mat-radio-button {
+    padding: 5px !important;
 }

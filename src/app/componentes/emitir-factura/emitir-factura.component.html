@@ -228,7 +228,7 @@
             <div class="form-group has-float-label">
               <label for="idPagoOrigen" class="tamanio-label">Pago en: *</label>
               <mat-select id="idPagoOrigen" [formControl]="formulario.get('pagoEnOrigen')"
-                class="form-control form-control-sm" (selectionChange)="cambioPagoEn()">
+                class="form-control form-control-sm" (selectionChange)="cambioPagoEnOrigen()">
                 <mat-option [value]="true">Origen</mat-option>
                 <mat-option [value]="false">Destino</mat-option>
               </mat-select>
@@ -243,7 +243,7 @@
               <label for="idViaje" class="tamanio-label">N° Viaje GS</label>
               <input id="idViaje" type="text" formControlName="viajeRemito" placeholder="00"
                 [textMask]="mascararEnteroSinDecimales(11)" class="form-control form-control-sm number-right"
-                [readOnly]="soloLectura">
+                [readOnly]="listaCompletaItems.data.length > 0">
             </div>
           </div>
           <div class="col">
@@ -344,7 +344,7 @@
             <div class="form-group has-float-label">
               <label for="idSeguro" class="tamanio-label">% Seguro</label>
               <input id="idSeguro" type="text" formControlName="pSeguro" [textMask]="mascararPorcentaje()"
-                (blur)="establecerPorcentaje(formularioVtaCpteItemFA.get('pSeguro'), 2)"
+                (blur)="establecerPorcentaje(formularioVtaCpteItemFA.get('pSeguro'), 2)" [readOnly]="formularioVtaCpteItemFA.value.ordenVentaTarifa"
                 class="form-control form-control-sm number-right" placeholder="% 0.00">
             </div>
             <!--(blur)="calcularSubtotal($event)"-->
@@ -392,7 +392,7 @@
               <!--[readOnly]="soloLectura"-->
             </div>
           </div>
-          <div style="width: 70px;">
+          <div style="width: 60px;">
             <button id="idBtnVarios" mat-raised-button color="primary" (click)="abrirConceptosVarios()"
               [disabled]="soloLectura">Varios</button>
           </div>
@@ -484,8 +484,8 @@
       <br>
       <div class="row">
         <div>
-          <button class="btn btn-info btn-custom margin-left-button" style="min-width: fit-content;"
-            (click)="abrirConfirmarDialogo(3)">
+          <button class="btn btn-info btn-custom margin-left-button" style="min-width: fit-content;" 
+            (click)="abrirConfirmarDialogo('¿Quiere agregar otro Remito?')" [disabled]="btnRemito">
             Agregar Otro Remito</button>
         </div>
       </div>
@@ -502,20 +502,20 @@
           <button class="btn btn-info btn-custom margin-left-button" style="min-width: fit-content;"
             (click)="abrirCRDialogo()">ContraReembolso</button>
           <button class="btn btn-info btn-custom margin-left-button" style="min-width: fit-content;"
-            (click)="abrirTotalCarga()" [disabled]="listaCompletaItems.data.length == 0">Totales de Carga</button>
+            (click)="abrirTotalCargaDialogo()" [disabled]="listaCompletaItems.data.length == 0">Totales de Carga</button>
           <button class="btn btn-info btn-custom margin-left-button" style="min-width: fit-content;"
-            (click)="abrirTotalConcepto()" [disabled]="listaCompletaItems.data.length == 0">Totales por
+            (click)="abrirTotalConceptoDialogo()" [disabled]="listaCompletaItems.data.length == 0">Totales por
             Concepto</button>
           <button class="btn btn-info btn-custom margin-left-button" style="min-width: fit-content;"
-            (click)="abrirObervacion()">Observaciones</button>
-          <div class="col-md-2">
+            (click)="abrirObervacionDialogo()" [disabled]="!formulario.value.cliente">Observaciones</button>
+          <div style="width: 180px;">
             <div class="form-group has-float-label">
               <label for="idCodigo" class="tamanio-label"><b>Imp.No Grav/Exento($)</b></label>
               <input id="idCodigo" type="text" formControlName="importeNoGravado"
                 class="form-control input-bold form-control-sm number-right" placeholder="$ 0.00" readonly>
             </div>
           </div>
-          <div class="col-md-2">
+          <div style="width: 170px;">
             <div class="form-group has-float-label">
               <label for="idCodigo" class="tamanio-label"><b>Imp.Neto Gravado($)</b></label>
               <input id="idCodigo" type="text" formControlName="importeNetoGravado" placeholder="$ 0.00"
@@ -542,7 +542,7 @@
         </div>
       </div>
       <div class="row justify-content-end">
-        <button class="btn btn-primary" type="button" style="min-width: fit-content;">Grabar</button>
+        <button class="btn btn-primary" type="button" style="min-width: fit-content;" (click)="verFactura()">Grabar</button>
       </div>
       <!-- <div class="form-group has-float-label ">
             <label for="idConcepto" class="tamanio-label">Conceptos Varios</label>

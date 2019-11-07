@@ -1,35 +1,47 @@
-<div class="row">
-    <div class="col-md-12">
-        <form [formGroup]="formulario">
-            <h5 class="text-center">Nota de Impresión de Comprobante</h5>
-            <br>
-            <div class="row justify-content-center">
-                <div class="col-md-6">
-                    <table class="table table-bordered table-striped table-sm">
-                        <thead>
-                          <tr>
-                            <th class="text-center" style="width:50%" scope="col">Observación</th>
-                            <!-- <th class="text-center" style="width:50%" scope="col">Añadir a Factura</th> -->
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr >
-                            <td align="center">
-                              <span>{{observacion}}</span>
-                            </td>
-                            <!-- <td align="center">
-                                <mat-checkbox class="checkNotBoxSelected" id="check" (change)="agregarObs($event)"></mat-checkbox>
-                            </td> -->
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
+<div class="row padd-20">
+  <div class="col-md-12">
+    <form [formGroup]="formulario">
+      <h5 class="text-center">Observaciones</h5>
+      <div class="row justify-content-center">
+        <div class="col-md-10">
+          <div class="form-group has-float-label">
+            <label for="idNotaImpCliente" class="tamanio-label">Del Cliente</label>
+            <input id="idNotaImpCliente" type="text" formControlName="notaImpresionComprobanteCliente"
+              class="form-control form-control-sm" readonly>
+          </div>
+        </div>
+      </div>
+      <div class="row justify-content-center">
+        <div class="col-md-10">
+          <div class="row">
+            <div class="col-md-1">
+              <mat-radio-group aria-labelledby="example-radio-group-label" class=""
+                [formControl]="notaImpCpteSeleccionada">
+                <mat-radio-button [value]="formulario.value.notaImpresionComprobanteGral1"></mat-radio-button>
+                <mat-radio-button [value]="formulario.value.notaImpresionComprobanteGral2"></mat-radio-button>
+              </mat-radio-group>
             </div>
-            <div class="row">
-                <div class="col-md-12 text-center">
-                    <button mat-raised-button  color="accent" [mat-dialog-close]="check">Cerrar</button>
-                </div>
+            <div class="col-md-11">
+              <div class="form-group has-float-label">
+                <label for="idNotaImpGeneral1" class="tamanio-label">General 1</label>
+                <input id="idNotaImpGeneral1" type="text" formControlName="notaImpresionComprobanteGral1"
+                  class="form-control form-control-sm">
+              </div>
+              <div class="form-group has-float-label">
+                <label for="idNotaImpGeneral2" class="tamanio-label">General 2</label>
+                <input id="idNotaImpGeneral2" type="text" formControlName="notaImpresionComprobanteGral2"
+                  class="form-control form-control-sm">
+              </div>
             </div>
-        </form>
-    </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12 text-center">
+          <button mat-raised-button color="accent" [mat-dialog-close]="null">Cerrar</button>
+          <button mat-raised-button color="primary" [mat-dialog-close]="notaImpCpteSeleccionada.value">Aceptar</button>
+        </div>
+      </div>
+    </form>
   </div>
+</div>

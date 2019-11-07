@@ -4,9 +4,9 @@ import { CommonModule } from '@angular/common';
 import { EmitirFacturaRoutingModule } from './emitir-factura-routing.module';
 
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
-  MatSelectModule, MatProgressBarModule, MatIconModule, MatButtonModule, MatDialogModule } from '@angular/material';
+  MatSelectModule, MatProgressBarModule, MatIconModule, MatButtonModule, MatDialogModule, MatRadioModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { EmitirFacturaComponent, ConceptosVariosDialogo, QuitarItemDialogo } from 'src/app/componentes/emitir-factura/emitir-factura.component';
+import { EmitirFacturaComponent, ConceptosVariosDialogo, QuitarItemDialogo, ObservacionDialogo } from 'src/app/componentes/emitir-factura/emitir-factura.component';
 import { TextMaskModule } from 'angular2-text-mask';
 import { VentaComprobanteService } from 'src/app/servicios/venta-comprobante.service';
 import { ClienteService } from 'src/app/servicios/cliente.service';
@@ -25,12 +25,15 @@ import { VentaComprobanteItemFA } from 'src/app/modelos/ventaComprobanteItemFA';
 import { EmpresaOrdenVentaService } from 'src/app/servicios/empresa-orden-venta.service';
 import { OrdenVentaTarifaService } from 'src/app/servicios/orden-venta-tarifa.service';
 import { TramoService } from 'src/app/servicios/tramo.service';
+import { VentaConfigService } from 'src/app/servicios/venta-config.service';
+import { AfipCaeService } from 'src/app/servicios/afip-cae.service';
 
 @NgModule({
   declarations: [
     EmitirFacturaComponent,
     ConceptosVariosDialogo,
-    QuitarItemDialogo
+    QuitarItemDialogo,
+    ObservacionDialogo
   ],
   imports: [
     CommonModule,
@@ -47,7 +50,8 @@ import { TramoService } from 'src/app/servicios/tramo.service';
     TextMaskModule,
     MatIconModule,
     MatButtonModule,
-    MatDialogModule
+    MatDialogModule,
+    MatRadioModule
   ],
   providers: [
     VentaComprobanteService,
@@ -66,12 +70,15 @@ import { TramoService } from 'src/app/servicios/tramo.service';
     VentaComprobanteItemFA,
     EmpresaOrdenVentaService,
     OrdenVentaTarifaService,
-    TramoService
+    TramoService,
+    VentaConfigService,
+    AfipCaeService
 
   ],
   entryComponents: [
     ConceptosVariosDialogo,
     QuitarItemDialogo,
+    ObservacionDialogo
   ]
 })
 export class EmitirFacturaModule { }

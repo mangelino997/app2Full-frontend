@@ -5,18 +5,18 @@ import { Observable, Subscription, Subject } from 'rxjs';
 import { Message } from '@stomp/stompjs';
 import { StompService } from '@stomp/ng2-stompjs';
 
-@Injectable({
-  providedIn: 'root'
-})
-export class MonedaCotizacionService {
+@Injectable()
+export class AfipCaeService {
   //Define la ruta al servicio web
-  private ruta: string = "/monedacotizacion";
+  private ruta: string = "/afipcaea";
   //Define la url base
   private url: string = null;
   //Define la url para subcripcion a socket
   private topic: string = null;
   //Define el headers y token de autenticacion
   private options = null;
+  //Define la lista obtenida por nombre
+  private listaPorNombre = null;
   //Define la subcripcion
   private subcripcion: Subscription;
   //Define el mensaje de respuesta a la subcripcion
@@ -46,17 +46,21 @@ export class MonedaCotizacionService {
   public obtenerSiguienteId() {
     return this.http.get(this.url + '/obtenerSiguienteId', this.options);
   }
-  //Obtiene la ultima cotizacion por moneda
-  public obtenerRecientePorMoneda(idMoneda) {
-    return this.http.get(this.url + '/obtenerRecientePorMoneda/' + idMoneda, this.options);
-  }
   //Obtiene la lista de registros
   public listar() {
     return this.http.get(this.url, this.options);
   }
-  //Obtiene un registros por nombre
-  public listarPorMoneda(id) {
-    return this.http.get(this.url + '/listarPorMoneda/' + id, this.options);
+  //Obtiene un listado de anios (actual+15)
+  public listarAnios() {
+    return this.http.get(this.url + '/listarAnios', this.options);
+  }
+  //Obtiene un registro por empresa, anio, mes y quincena
+  public obtenerPorEmpresaYPeriodoOrden(idEmpresa, anio, idMes, idQuincena) {
+    return this.http.get(this.url + '/obtenerPorEmpresaYPeriodoOrden/' + idEmpresa + '/' + anio + '/' + idMes + '/' + idQuincena, this.options);
+  }
+  //Obtiene un listado por empresa y anio
+  public listarPorEmpresaYAnio(idEmpresa, anio) {
+    return this.http.get(this.url + '/listarPorEmpresaYAnio/' + idEmpresa + '/' + anio, this.options);
   }
   //Agrega un registro
   public agregar(elemento) {

@@ -20,25 +20,25 @@
                     <ng-container matColumnDef="KILOS_EFECTIVO">
                         <th mat-header-cell *matHeaderCellDef mat-sort-header>Kg. Efectivo</th>
                         <td mat-cell *matCellDef="let elemento" class="number-right">
-                            {{elemento.kilosEfectivo ? (elemento.kilosEfectivo | number: '1.2-2') + ' Kg.' : ''}} 
+                            {{elemento.kilosEfectivo ? (elemento.kilosEfectivo | number: '1.2-2') + ' Kg.' : '-'}} 
                         </td>
                     </ng-container>
                     <ng-container matColumnDef="KILOS_AFORADO">
                         <th mat-header-cell *matHeaderCellDef mat-sort-header>Kg. Aforado</th>
                         <td mat-cell *matCellDef="let elemento" class="number-right">
-                            {{elemento.kilosAforado? (elemento.kilosAforado | number: '1.2-2') + ' Kg.' : ''}}
+                            {{elemento.kilosAforado? (elemento.kilosAforado | number: '1.2-2') + ' Kg.' : '-'}}
                         </td>
                     </ng-container>
                     <ng-container matColumnDef="M3">
                         <th mat-header-cell *matHeaderCellDef mat-sort-header>m3</th>
                         <td mat-cell *matCellDef="let elemento" class="number-right">
-                            {{elemento.m3? (elemento.m3 | number: '1.2-2') + ' m3' : ''}}
+                            {{elemento.m3? (elemento.m3 | number: '1.2-2') + ' m3' : '-'}}
                         </td>
                     </ng-container>
                     <ng-container matColumnDef="VALOR_DECLARADO">
                         <th mat-header-cell *matHeaderCellDef mat-sort-header>Valor Declarado</th>
                         <td mat-cell *matCellDef="let elemento" class="number-right">
-                            {{elemento.valorDeclarado? '$' + (elemento.valorDeclarado | number: '1.2-2') : ''}}</td>
+                            {{elemento.valorDeclarado? '$' + (elemento.valorDeclarado | number: '1.2-2') : '-'}}</td>
                     </ng-container>
                     <tr mat-header-row *matHeaderRowDef="columnas"></tr>
                     <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
