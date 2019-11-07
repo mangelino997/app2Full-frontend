@@ -33,6 +33,7 @@ import { MensajeExcepcion } from 'src/app/modelos/mensaje-excepcion';
 import { ClienteVtoPago } from 'src/app/modelos/clienteVtoPago';
 import { ClienteCuentaBancariaService } from 'src/app/servicios/cliente-cuenta-bancaria.service';
 import { ClienteVtoPagoService } from 'src/app/servicios/cliente-vto-pago.service';
+import { ConfirmarDialogoComponent } from '../confirmar-dialogo/confirmar-dialogo.component';
 
 @Component({
   selector: 'app-cliente',
@@ -767,6 +768,37 @@ export class ClienteComponent implements OnInit {
   }
   //Elimina un registro
   private eliminar() {
+    const dialogRef = this.dialog.open(ConfirmarDialogoComponent, {
+      width: '50%',
+      maxWidth: '50%',
+      data: {
+        mensaje: '¿Está seguro de eliminar el registro?'
+      }
+    });
+    dialogRef.afterClosed().subscribe(resultado => {
+      if(resultado) {
+        this.loaderService.show();
+        let id = this.formulario.get('id').value;
+        this.servicio.eliminar(id).subscribe(
+          res => {
+            let respuesta = res.json();
+            if(respuesta.codigo == 200) {
+              this.reestablecerFormulario(respuesta.id);
+              this.establecerValoresPorDefecto();
+              this.establecerSituacionCliente();
+              this.establecerCondicionVenta();
+              document.getElementById('idAutocompletado').focus();
+              this.toastr.success(MensajeExcepcion.ELIMINADO);
+            }
+            this.loaderService.hide();
+          },
+          err => {
+            this.toastr.error(MensajeExcepcion.NO_ELIMINADO);
+            this.loaderService.hide();
+          }
+        );
+      }
+    });
   }
   //Reestablece el formulario
   private reestablecerFormulario(id) {

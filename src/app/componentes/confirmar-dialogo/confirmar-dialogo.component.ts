@@ -7,6 +7,8 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
   styleUrls: ['./confirmar-dialogo.component.css']
 })
 export class ConfirmarDialogoComponent implements OnInit {
+  //Define el mensaje
+  public mensaje:string = '¿Está seguro de eliminar el registro?';
   //Constructor
   constructor(public dialog: MatDialog,
     public dialogRef: MatDialogRef<ConfirmarDialogoComponent>, @Inject(MAT_DIALOG_DATA) public data) {
@@ -14,5 +16,7 @@ export class ConfirmarDialogoComponent implements OnInit {
   }
   //Al inicializarse el componente
   ngOnInit() {
+    //Establece el mensaje
+    this.mensaje = this.data.mensaje;
   }
 }
