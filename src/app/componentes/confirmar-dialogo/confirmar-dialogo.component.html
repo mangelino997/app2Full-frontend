@@ -1,8 +1,6 @@
 <div class="row justify-content-center padd-20">
   <div class="col-md-12 text-center" >
-    <h5 *ngIf="data.question.id == 1">¿Está seguro de eliminar el registro?</h5>
-    <h5 *ngIf="data.question.id == 2">¿Está seguro de cambiar el Item?</h5>
-    <h5 *ngIf="data.question.id == 3">¿Quiere agregar otro Remito?</h5>
+    <h5>{{mensaje}}</h5>
     <button mat-raised-button [mat-dialog-close]="false">No</button>
     <button class="margin-left-3" mat-raised-button color="primary" [mat-dialog-close]="true">Si</button>
   </div>
