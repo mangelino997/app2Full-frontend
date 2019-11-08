@@ -15,7 +15,7 @@ import { GuardiaService } from './servicios/guardia.service';
 
 //Modulos
 import { MatMenuModule, MatDividerModule, MatIconModule, MatToolbarModule, MatDialogModule, 
-  MatSelectModule, MatProgressSpinnerModule, MatCardModule, MatTableModule, MatButtonModule, MatPaginatorIntl, MatProgressBarModule, MatTreeModule, MatAutocompleteModule } from '@angular/material';
+  MatSelectModule, MatProgressSpinnerModule, MatCardModule, MatTableModule, MatButtonModule, MatPaginatorIntl, MatProgressBarModule, MatTreeModule, MatAutocompleteModule, MatCheckboxModule } from '@angular/material';
 import { ReporteService } from './servicios/reporte.service';
 import { HttpModule } from '@angular/http';
 
@@ -139,6 +139,7 @@ const stompConfig: StompConfig = {
     PdfViewerModule,
     MatAutocompleteModule,
     TextMaskModule,
+    MatCheckboxModule,
     ToastrModule.forRoot({
       timeOut: 4000,
       positionClass: 'toast-bottom-right',

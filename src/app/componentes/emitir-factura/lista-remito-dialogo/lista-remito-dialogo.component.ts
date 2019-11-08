@@ -9,6 +9,8 @@ import { Subscription } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
 import { ObservacionesDialogo } from '../../observaciones-dialogo/observaciones-dialogo.component';
 import { TramoService } from 'src/app/servicios/tramo.service';
+import { ViajeTramoService } from 'src/app/servicios/viajea-tramo.service';
+import { ViajeTramoRemitoService } from 'src/app/servicios/viaje-tramo-remito.service';
 
 @Component({
   selector: 'app-lista-remito-dialogo',
@@ -23,21 +25,22 @@ export class ListaRemitoDialogoComponent implements OnInit {
   public listaCompleta = new MatTableDataSource([]);
   //Define la lista de Tramos
   public listaTramos: Array<any> = [];
+  //Define el elemento seleccionado en el check-box como un FormControl y lo inicializa con valor por defecto
+  public elementoSeleccionado: FormControl = new FormControl({id: 0},);
   //Define las columnas de la tabla
   public columnas: string[] = ['NUMERO_VIAJE', 'CHOFER', 'TRAMO', 'NUMERO_REMITO', 'FECHA', 'BULTOS', 'KG_EFECTIVO', 'VALOR_DECLARADO',
-    'REMITENTE', 'DESTINATARIO', 'SUC_ENTREGA', 'OBSERVACIONES'];
+    'REMITENTE', 'DESTINATARIO', 'SUC_ENTREGA', 'OBSERVACIONES', 'CHECK'];
   //Define la matSort
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service
   private subscription: Subscription;
-  constructor(private appService: AppService, private service: ViajeRemitoService, private loaderService: LoaderService, public dialog: MatDialog,
+  constructor(private appService: AppService, private service: ViajeTramoRemitoService, private loaderService: LoaderService, public dialog: MatDialog,
     public dialogRef: MatDialogRef<ListaRemitoDialogoComponent>, @Inject(MAT_DIALOG_DATA) public data, private toastr: ToastrService,
     private tramoService: TramoService) {
     this.dialogRef.disableClose = true;
   }
-
   ngOnInit() {
     //Establece la subscripcion a loader
     this.subscription = this.loaderService.loaderState
@@ -47,8 +50,8 @@ export class ListaRemitoDialogoComponent implements OnInit {
     /*Define los campos del formulario y validaciones si es un Remito General -G.S*/
     if (this.data.esRemitoGeneral) {
       this.formularioFiltro = new FormGroup({
-        numeroViaje: new FormControl('', Validators.required),
-        numeroRemito: new FormControl('', Validators.required),
+        numeroViaje: new FormControl(),
+        numeroRemito: new FormControl(),
         estado: new FormControl(true)
       })
     } else { /*Define los campos del formulario y validaciones si es Dador de Carga*/
@@ -72,14 +75,18 @@ export class ListaRemitoDialogoComponent implements OnInit {
       }
     )
   }
+  //Maneja el cambio en el input 'N° de Viaje'
+  public cambioNumeroViaje(){
+    this.formularioFiltro.value.numeroRemito? this.formularioFiltro.get('numeroRemito').reset() : '';
+  }
   //Obtiene los registros mediante el formulario de filtro
   public filtrar() {
     this.loaderService.show();
     console.log(this.formularioFiltro.value);
     this.service.listarPorViajeYEstado(this.formularioFiltro.value).subscribe(
       res => {
-        console.log(res.json());
-        this.listaCompleta = new MatTableDataSource(res.json());
+        let respuesta= res.json();
+        this.listaCompleta = new MatTableDataSource(respuesta);
         this.listaCompleta.sort = this.sort;
         this.loaderService.hide();
       },
@@ -111,6 +118,11 @@ export class ListaRemitoDialogoComponent implements OnInit {
     if (a != null && b != null) {
       return a.id === b.id;
     }
+  }
+  //
+  public cambioCheck(elemento){
+    console.log(elemento, this.elementoSeleccionado.value);
+    this.elementoSeleccionado.setValue(elemento);
   }
   //Establece control para lista remitos con checkbox
   // get controlRemitos() {

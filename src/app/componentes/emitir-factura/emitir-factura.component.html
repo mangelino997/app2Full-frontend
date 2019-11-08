@@ -56,7 +56,6 @@
             </div>
             <div class="col-md-3">
               <button id="idBtnFCE" mat-raised-button color="primary" (click)="abrirFCEMiPyMEs()">FCE MiPyMEs</button>
-              <!--[disabled]="!btnFCE"-->
             </div>
           </div>
         </div>
@@ -236,7 +235,7 @@
           </div>
           <div style="width: 70px;">
             <button id="idBtnGS" mat-raised-button color="primary" (click)="abrirListaRemitoDialogo()"
-              [disabled]="soloLectura">G.S</button>
+              [disabled]="!btnGS">G.S</button>
           </div>
           <div class="col">
             <div class="form-group has-float-label">
@@ -261,7 +260,6 @@
               <input id="idBultos" type="text" formControlName="bultos"
                 class="form-control form-control-sm number-right" placeholder="00"
                 [textMask]="mascararEnteroSinDecimales(6)" autocomplete="off" [readOnly]="soloLectura">
-              <!--[readOnly]="soloLectura"-->
             </div>
           </div>
           <div class="col">
@@ -271,7 +269,6 @@
                 class="form-control form-control-sm number-right" autocomplete="off" placeholder="0.00"
                 [textMask]="mascararEnteroConDecimales(8)" [readOnly]="soloLectura"
                 (blur)="setDecimales(formularioVtaCpteItemFA.get('kilosEfectivo'), 2)">
-              <!--[readOnly]="soloLectura"-->
             </div>
           </div>
           <div class="col">
@@ -281,12 +278,13 @@
                 class="form-control form-control-sm number-right" placeholder="0.00" autocomplete="off"
                 [textMask]="mascararEnteroConDecimales(8)" [readOnly]="soloLectura"
                 (blur)="setDecimales(formularioVtaCpteItemFA.get('kilosAforado'), 2)">
-              <!--[readOnly]="soloLectura"-->
             </div>
           </div>
-          <div style="width: 60px;">
-            <button class="btn btn-secondary btn-custom" (click)="abrirAforoDialogo()"
-              [disabled]="soloLectura">Aforar</button>
+          <div style="width: 60px; margin-left: 2px; margin-right: 2px;">
+            <div class="form-group ">
+              <button id="idBtnAforar" mat-raised-button color="primary" (click)="abrirAforoDialogo()"
+                [disabled]="soloLectura">Aforar</button>
+            </div>
           </div>
           <div class="col">
             <div class="form-group has-float-label">
@@ -294,7 +292,6 @@
               <input id="idM3" type="text" formControlName="m3" class="form-control form-control-sm number-right"
                 placeholder="0.00" [textMask]="mascararEnteroConDecimales(3)" autocomplete="off"
                 (blur)="setDecimales(formularioVtaCpteItemFA.get('m3'), 2)" [readOnly]="soloLectura">
-              <!--[readOnly]="soloLectura"-->
             </div>
           </div>
           <div class="col-md-3">
@@ -307,7 +304,7 @@
         </div>
         <hr style="margin-top: 10px; margin-bottom: 20px;">
         <div class="row">
-          <div class="col">
+          <div class="big-input-item">
             <div class="form-group has-float-label ">
               <label for="idTarifaOVta" class="tamanio-label">Orden Vta. *</label>
               <mat-select id="idTarifaOVta" class="form-control form-control-sm" [formControl]="ordenVenta"
@@ -319,7 +316,7 @@
               </mat-select>
             </div>
           </div>
-          <div class="col">
+          <div class="big-input-item">
             <div class="form-group has-float-label ">
               <label for="idTarifaOVta" class="tamanio-label">Tarifa O.Vta.*</label>
               <mat-select id="idTarifaOVta" class="form-control form-control-sm" formControlName="ordenVentaTarifa"
@@ -330,36 +327,35 @@
               </mat-select>
             </div>
           </div>
-          <div class="col" style="min-width: 138px !important;">
+          <div class="big-input-item">
             <div class="form-group has-float-label">
               <label for="idValorDeclarado" class="tamanio-label">Valor Declarado</label>
               <input id="idValorDeclarado" type="text" formControlName="valorDeclarado" placeholder="0.00"
                 class="form-control form-control-sm number-right" autocomplete="off" [textMask]="mascararImporte(10, 2)"
                 (blur)="setDecimales(formularioVtaCpteItemFA.get('valorDeclarado'), 2)">
               <!--(blur)="calcularSubtotal($event)"-->
-              <!--[readOnly]="soloLectura"-->
             </div>
           </div>
-          <div class="col">
+          <div class="small-input-item">
             <div class="form-group has-float-label">
               <label for="idSeguro" class="tamanio-label">% Seguro</label>
               <input id="idSeguro" type="text" formControlName="pSeguro" [textMask]="mascararPorcentaje()"
-                (blur)="establecerPorcentaje(formularioVtaCpteItemFA.get('pSeguro'), 2)" [readOnly]="formularioVtaCpteItemFA.value.ordenVentaTarifa"
+                (blur)="establecerPorcentaje(formularioVtaCpteItemFA.get('pSeguro'), 2)"
+                [readOnly]="formularioVtaCpteItemFA.value.ordenVentaTarifa"
                 class="form-control form-control-sm number-right" placeholder="% 0.00">
             </div>
             <!--(blur)="calcularSubtotal($event)"-->
           </div>
-          <div class="col">
+          <div class="small-input-item">
             <div class="form-group has-float-label">
               <label for="idFlete" class="tamanio-label">Flete</label>
               <input id="idFlete" type="text" formControlName="flete" class="form-control form-control-sm number-right"
                 autocomplete="off" (blur)="setDecimales(formularioVtaCpteItemFA.get('flete'), 2)" placeholder="$ 0.00"
                 [textMask]="mascararImporte(8, 2)">
               <!--(blur)="calcularSubtotal($event)"-->
-              <!--[readOnly]="soloLectura"-->
             </div>
           </div>
-          <div class="col">
+          <div class="small-input-item">
             <div class="form-group has-float-label">
               <label for="idDescuento" class="tamanio-label">% dto.</label>
               <input id="idDescuento" type="text" formControlName="descuentoFlete"
@@ -367,10 +363,9 @@
                 [textMask]="mascararPorcentaje()"
                 (blur)="establecerPorcentaje(formularioVtaCpteItemFA.get('descuentoFlete'), 2)">
               <!--(blur)="calcularSubtotal($event)"-->
-              <!--[readOnly]="soloLectura"-->
             </div>
           </div>
-          <div class="col">
+          <div class="small-input-item">
             <div class="form-group has-float-label">
               <label for="idRetiro" class="tamanio-label">Retiro</label>
               <input id="idRetiro" type="text" formControlName="importeRetiro"
@@ -378,10 +373,9 @@
                 [textMask]="mascararImporte(8, 2)" [readOnly]="soloLectura"
                 (blur)="setDecimales(formularioVtaCpteItemFA.get('importeRetiro'), 2)">
               <!--(blur)="calcularSubtotal($event)"-->
-              <!--[readOnly]="soloLectura"-->
             </div>
           </div>
-          <div class="col">
+          <div class="small-input-item">
             <div class="form-group has-float-label">
               <label for="idEntrega" class="tamanio-label">Entrega</label>
               <input id="idEntrega" type="text" formControlName="importeEntrega"
@@ -389,14 +383,15 @@
                 [textMask]="mascararImporte(8, 2)" [readOnly]="soloLectura"
                 (blur)="setDecimales(formularioVtaCpteItemFA.get('importeEntrega'), 2)">
               <!--(blur)="calcularSubtotal($event)"-->
-              <!--[readOnly]="soloLectura"-->
             </div>
           </div>
-          <div style="width: 60px;">
-            <button id="idBtnVarios" mat-raised-button color="primary" (click)="abrirConceptosVarios()"
-              [disabled]="soloLectura">Varios</button>
+          <div style="width: 70px; margin-left: 2px; margin-right: 2px;">
+            <div class="form-group ">
+              <button id="idBtnVarios" mat-raised-button color="primary" (click)="abrirConceptosVarios()"
+                [disabled]="soloLectura">Varios</button>
+            </div>
           </div>
-          <div class="col">
+          <div class="small-input-item">
             <div class="form-group has-float-label">
               <label for="idSubtotal" class="tamanio-label">Subtotal</label>
               <input id="idSubtotal" type="text" formControlName="importeNetoGravado"
@@ -404,7 +399,7 @@
                 (blur)="calcularSubtotal()" readonly>
             </div>
           </div>
-          <div class="col">
+          <div class="small-input-item">
             <div class="form-group has-float-label">
               <label for="idAlicuota" class="tamanio-label">Alic. IVA</label>
               <mat-select id="idAlicuota" type="number" formControlName="afipAlicuotaIva"
@@ -415,7 +410,7 @@
               </mat-select>
             </div>
           </div>
-          <div style="min-width: 50px !important;">
+          <div style="width: 50px !important; margin-left: 2px; margin-right: 2px;">
             <div class="form-group ">
               <button class="btn btn-warning btn-custom " [disabled]="!formularioVtaCpteItemFA.valid"
                 (click)="agregarItem()">Agregar</button>
@@ -484,7 +479,7 @@
       <br>
       <div class="row">
         <div>
-          <button class="btn btn-info btn-custom margin-left-button" style="min-width: fit-content;" 
+          <button class="btn btn-info btn-custom margin-left-button" style="min-width: fit-content;"
             (click)="abrirConfirmarDialogo('¿Quiere agregar otro Remito?')" [disabled]="btnRemito">
             Agregar Otro Remito</button>
         </div>
@@ -502,7 +497,8 @@
           <button class="btn btn-info btn-custom margin-left-button" style="min-width: fit-content;"
             (click)="abrirCRDialogo()">ContraReembolso</button>
           <button class="btn btn-info btn-custom margin-left-button" style="min-width: fit-content;"
-            (click)="abrirTotalCargaDialogo()" [disabled]="listaCompletaItems.data.length == 0">Totales de Carga</button>
+            (click)="abrirTotalCargaDialogo()" [disabled]="listaCompletaItems.data.length == 0">Totales de
+            Carga</button>
           <button class="btn btn-info btn-custom margin-left-button" style="min-width: fit-content;"
             (click)="abrirTotalConceptoDialogo()" [disabled]="listaCompletaItems.data.length == 0">Totales por
             Concepto</button>
@@ -542,7 +538,8 @@
         </div>
       </div>
       <div class="row justify-content-end">
-        <button class="btn btn-primary" type="button" style="min-width: fit-content;" (click)="verFactura()">Grabar</button>
+        <button class="btn btn-primary" type="button" style="min-width: fit-content;"
+          (click)="verFactura()">Grabar</button>
       </div>
       <!-- <div class="form-group has-float-label ">
             <label for="idConcepto" class="tamanio-label">Conceptos Varios</label>

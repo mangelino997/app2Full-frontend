@@ -86,3 +86,16 @@ button {
 .mat-radio-button {
     padding: 5px !important;
 }
+/*Define el estilo para el ancho y margen en los inputs del formulario items FA 
+    la primera clase para campos pequeños
+    la segunda clase para campos mas grandes (select)*/
+.small-input-item {
+    width: 90px;
+    margin-left: 2px;
+    margin-right: 2px;
+}
+.big-input-item {
+    width: 130px;
+    margin-left: 2px;
+    margin-right: 2px;
+}

@@ -6,9 +6,9 @@ import { Message } from '@stomp/stompjs';
 import { StompService } from '@stomp/ng2-stompjs';
 
 @Injectable()
-export class ViajeTramoService {
+export class ViajeTramoRemitoService {
   //Define la ruta al servicio web
-  private ruta: string = "/viajetramo";
+  private ruta: string = "/viajetramoremito";
   //Define la url base
   private url: string = null;
   //Define la url para subcripcion a socket
@@ -46,13 +46,17 @@ export class ViajeTramoService {
   public obtenerSiguienteId() {
     return this.http.get(this.url + '/obtenerSiguienteId', this.options);
   }
-  //Obtiene los tramos por id de tipoItem (1=propio/2=tercero)
-  public listarTramos(id) {
-    return this.http.get(this.url + '/listarTramos/' + id, this.options);
-  }
   //Obtiene la lista de registros
   public listar() {
     return this.http.get(this.url, this.options);
+  }
+  //Obtiene una lista por viajeRemito
+  public listarPorViajeRemito(idViajeRemito) {
+    return this.http.get(this.url + '/listarPorViajeRemito/' + idViajeRemito, this.options);
+  }
+  //Obtiene un listado por viaje y estado
+  public listarPorViajeYEstado(elemento) {
+    return this.http.put(this.url + '/listarPorViajeYEstado', elemento, this.options);
   }
   //Agrega un registro
   public agregar(elemento) {
@@ -67,3 +71,5 @@ export class ViajeTramoService {
     return this.http.delete(this.url + '/' + id, this.options);
   }
 }
+
+

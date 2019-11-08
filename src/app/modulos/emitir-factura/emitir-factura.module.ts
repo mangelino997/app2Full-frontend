@@ -3,8 +3,10 @@ import { CommonModule } from '@angular/common';
 
 import { EmitirFacturaRoutingModule } from './emitir-factura-routing.module';
 
-import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
-  MatSelectModule, MatProgressBarModule, MatIconModule, MatButtonModule, MatDialogModule, MatRadioModule } from '@angular/material';
+import {
+  MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule,
+  MatSelectModule, MatProgressBarModule, MatIconModule, MatButtonModule, MatDialogModule, MatRadioModule, MatCheckboxModule
+} from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { EmitirFacturaComponent, ConceptosVariosDialogo, QuitarItemDialogo, ObservacionDialogo } from 'src/app/componentes/emitir-factura/emitir-factura.component';
 import { TextMaskModule } from 'angular2-text-mask';
@@ -27,6 +29,7 @@ import { OrdenVentaTarifaService } from 'src/app/servicios/orden-venta-tarifa.se
 import { TramoService } from 'src/app/servicios/tramo.service';
 import { VentaConfigService } from 'src/app/servicios/venta-config.service';
 import { AfipCaeService } from 'src/app/servicios/afip-cae.service';
+import { ViajeTramoRemitoService } from 'src/app/servicios/viaje-tramo-remito.service';
 
 @NgModule({
   declarations: [
@@ -51,7 +54,8 @@ import { AfipCaeService } from 'src/app/servicios/afip-cae.service';
     MatIconModule,
     MatButtonModule,
     MatDialogModule,
-    MatRadioModule
+    MatRadioModule,
+    MatCheckboxModule
   ],
   providers: [
     VentaComprobanteService,
@@ -72,7 +76,9 @@ import { AfipCaeService } from 'src/app/servicios/afip-cae.service';
     OrdenVentaTarifaService,
     TramoService,
     VentaConfigService,
-    AfipCaeService
+    AfipCaeService,
+    ViajeTramoRemitoService
+    
 
   ],
   entryComponents: [
