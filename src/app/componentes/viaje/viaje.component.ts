@@ -93,8 +93,6 @@ export class ViajeComponent implements OnInit {
   public resultadosPersonales: Array<any> = [];
   //Define la lista de resultados de proveedores
   public resultadosProveedores: Array<any> = [];
-  //Define el tipo de viaje (Propio o Tercero)
-  public tipoViaje: FormControl = new FormControl();
   //Define el nombre del usuario logueado
   public usuarioNombre: FormControl = new FormControl();
   //Define la lista de sucursales
@@ -351,7 +349,6 @@ export class ViajeComponent implements OnInit {
     let sucursal = this.appService.getUsuario().sucursal;
     let empresa = this.appService.getEmpresa();
     this.usuarioNombre.setValue(usuario.nombre);
-    this.tipoViaje.setValue(true);
     this.formularioViaje.get('esViajePropio').setValue(true);
     this.formularioViaje.get('esRemolquePropio').setValue(true);
     this.formularioViaje.get('sucursal').setValue(sucursal);
@@ -617,7 +614,6 @@ export class ViajeComponent implements OnInit {
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
-    // this.appService.setViajeCabecera(elemento);
     this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
     this.formularioViaje.patchValue(elemento);
     this.establecerValoresPorDefecto();

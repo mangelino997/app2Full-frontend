@@ -115,19 +115,6 @@ export class ViajeEfectivoComponent implements OnInit {
       this.importeTotal.setValue(this.appServicio.setDecimales('0', 2));
     }
   }
-  //Obtiene los registros por idReparto
-  private listarPorReparto(idReparto) {
-    this.servicio.listarEfectivosReparto(idReparto).subscribe(
-      res => {
-        this.listaCompleta = new MatTableDataSource(res.json());
-        this.listaCompleta.sort = this.sort;
-      },
-      err => {
-        this.toastr.error("Sin registros para mostrar.");
-        this.loaderService.hide();
-      }
-    )
-  }
   //Agrega datos a la tabla de adelanto efectivo
   public agregarEfectivo(): void {
     this.formularioViajeEfectivo.get('fecha').setValue(this.fechaActual);
@@ -180,7 +167,6 @@ export class ViajeEfectivoComponent implements OnInit {
     let mensajeNulo = " no puede estar vacio.";
     let mensajeInexistente = " no es un registro válido.";
     let mensajeLongitud = " excedió su longitud.";
-
     var respuesta = err;
     if (respuesta.codigo == 5001) {
       this.toastr.error("Fallo al sincronizar.");

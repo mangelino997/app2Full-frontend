@@ -62,6 +62,9 @@ export class VacioFacturadoDialogoComponent implements OnInit {
         let respuesta = res.json();
         if(respuesta.id != 0) {
           this.formulario.patchValue(respuesta);
+          this.establecerDecimales(this.formulario.get('importeRetiro'), 2);
+          this.establecerDecimales(this.formulario.get('importeEntrega'), 2);
+          this.establecerDecimales(this.formulario.get('importeFlete'), 2);
         }
         this.show = false;
       },

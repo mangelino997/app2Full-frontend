@@ -121,9 +121,6 @@ export class ViajeRemitoGSComponent implements OnInit {
             }
             this.establecerRemitos(this.remitos);
           } 
-          // else {
-          //   this.toastr.warning("Remitos inexistentes");
-          // }
           this.loaderService.hide();
         },
         err => {
