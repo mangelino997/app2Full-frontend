@@ -25,8 +25,10 @@ export class ListaRemitoDialogoComponent implements OnInit {
   public listaCompleta = new MatTableDataSource([]);
   //Define la lista de Tramos
   public listaTramos: Array<any> = [];
+  //Define la lista de Remitos seleccionados
+  public listaRemitoSeleccionados: Array<any> = [];
   //Define el elemento seleccionado en el check-box como un FormControl y lo inicializa con valor por defecto
-  public elementoSeleccionado: FormControl = new FormControl({id: 0},);
+  public elementoSeleccionado: FormControl = new FormControl({ id: 0 });
   //Define las columnas de la tabla
   public columnas: string[] = ['NUMERO_VIAJE', 'CHOFER', 'TRAMO', 'NUMERO_REMITO', 'FECHA', 'BULTOS', 'KG_EFECTIVO', 'VALOR_DECLARADO',
     'REMITENTE', 'DESTINATARIO', 'SUC_ENTREGA', 'OBSERVACIONES', 'CHECK'];
@@ -60,6 +62,23 @@ export class ListaRemitoDialogoComponent implements OnInit {
         tramo: new FormControl(),
         estado: new FormControl(true)
       })
+    }
+    //Maneja el data que proviene al abrir el modal
+    this.controlDataModal();
+  }
+  //Maneja el data que recibe el modal al abrirse
+  private controlDataModal() {
+    console.log(this.data);
+    if (this.data.configuracionModalRemitos.formularioFiltro) {
+      this.formularioFiltro.patchValue(this.data.configuracionModalRemitos.formularioFiltro);
+      this.formularioFiltro.disable();
+      this.listaCompleta.data.forEach(element => {
+        this.remitoAsignado(element) ? element.mostrarCheck = false : element.mostrarCheck = true;
+      });
+      this.listaCompleta = new MatTableDataSource(this.data.configuracionModalRemitos.listaCompletaRemitos);
+      this.listaCompleta.sort = this.sort;
+      console.log(this.listaCompleta.data);
+    } else {
       //Obtiene la lista de Tramos
       this.listarTramos();
     }
@@ -76,18 +95,15 @@ export class ListaRemitoDialogoComponent implements OnInit {
     )
   }
   //Maneja el cambio en el input 'N° de Viaje'
-  public cambioNumeroViaje(){
-    this.formularioFiltro.value.numeroRemito? this.formularioFiltro.get('numeroRemito').reset() : '';
+  public cambioNumeroViaje() {
+    this.formularioFiltro.value.numeroRemito ? this.formularioFiltro.get('numeroRemito').reset() : '';
   }
   //Obtiene los registros mediante el formulario de filtro
   public filtrar() {
     this.loaderService.show();
-    console.log(this.formularioFiltro.value);
     this.service.listarPorViajeYEstado(this.formularioFiltro.value).subscribe(
       res => {
-        let respuesta= res.json();
-        this.listaCompleta = new MatTableDataSource(respuesta);
-        this.listaCompleta.sort = this.sort;
+        this.asignarAtributoChecked(res.json());
         this.loaderService.hide();
       },
       err => {
@@ -95,6 +111,19 @@ export class ListaRemitoDialogoComponent implements OnInit {
         this.loaderService.hide();
       }
     )
+  }
+  //Agrga a cada registro el atributo 'checked' para controlarlo en la vista
+  private asignarAtributoChecked(registros) {
+    registros.forEach(elemento => {
+      elemento.checked = false;
+      elemento.mostrarCheck = true;
+    });
+    this.data.configuracionModalRemitos.formularioFiltro = this.formularioFiltro.value;
+    this.data.configuracionModalRemitos.listaCompletaRemitos = registros;
+    this.listaCompleta = new MatTableDataSource(registros);
+    this.listaCompleta.sort = this.sort;
+    console.log(this.data);
+
   }
   //Abre un dialogo para ver las observaciones
   public verObservacionesDialogo(elemento): void {
@@ -119,10 +148,36 @@ export class ListaRemitoDialogoComponent implements OnInit {
       return a.id === b.id;
     }
   }
-  //
-  public cambioCheck(elemento){
-    console.log(elemento, this.elementoSeleccionado.value);
-    this.elementoSeleccionado.setValue(elemento);
+  //Controla el cambio los check-box
+  public cambioCheck(elemento, indice, event) {
+    event.checked ?
+      this.controlCheck(elemento) : this.listaCompleta.data[indice].checked = false;
+    console.log(this.listaCompleta.data, this.data.listaItemsAsignados);
+    this.data.configuracionModalRemitos.listaCompletaRemitos = this.listaCompleta.data;
+  }
+  //Controla que un solo checkbox puede estar en true a la vez. recibe el id del elemento checkeado = true
+  private controlCheck(elementoSeleccionado) {
+    this.listaCompleta.data.forEach(elemento => {
+      elemento.id == elementoSeleccionado.id ? elemento.checked = true : elemento.checked = false;
+    })
+    this.data.remitoSeleccionado = elementoSeleccionado;
+  }
+  //Limpia formularioFiltro, listaCompleta y el data del modal
+  public limpiarConfiguracion() {
+    this.formularioFiltro.reset();
+    this.listaCompleta = new MatTableDataSource([]);
+    this.data.configuracionModalRemitos.listaCompletaRemitos = [];
+    this.data.configuracionModalRemitos.formularioFiltro = [];
+    console.log(this.data);
+  }
+  //Controla los remitos que ya fueron asignados a la Factura principal. Si fueron asignados, no se muestra el check-box
+  public remitoAsignado(elemento){
+    let resultado = false;
+    this.data.listaItemsAsignados.forEach(element => {
+      element.id == elemento.id ? resultado = true : resultado= false;
+      console.log(elemento.id, element.id, resultado);
+    });
+    return resultado;
   }
   //Establece control para lista remitos con checkbox
   // get controlRemitos() {

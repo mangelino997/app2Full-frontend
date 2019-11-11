@@ -8,14 +8,14 @@
                         <label for="idViaje" class="tamanio-label">N° Viaje</label>
                         <input id="idViaje" type="text" formControlName="numeroViaje" placeholder="00"
                             [textMask]="mascararEnteroSinDecimales(11)" (blur)="cambioNumeroViaje()"
-                            class="form-control form-control-sm number-right">
+                            class="form-control form-control-sm number-right" [disabled]="">
                     </div>
                 </div>
                 <div class="col-md-2" *ngIf="data.esRemitoGeneral">
                     <div class="form-group has-float-label ">
                         <label for="idRemito" class="tamanio-label">N° Remito*</label>
                         <input id="idRemito" type="text" formControlName="numeroRemito" placeholder="00"
-                            [textMask]="mascararEnteroSinDecimales(8)"
+                            [textMask]="mascararEnteroSinDecimales(8)" [disabled]=""
                             class="form-control form-control-sm number-right">
                     </div>
                 </div>
@@ -44,9 +44,13 @@
                     </div>
                 </div>
                 <div class="col-md-1">
-                    <button id="idBotonPlanCuenta" mat-raised-button color="primary"
+                    <button id="idBotonConsultar" mat-raised-button color="primary"
                         [disabled]="!formularioFiltro.value.numeroViaje && !formularioFiltro.value.numeroRemito"
                         (click)="filtrar()">Consultar</button>
+                </div>
+                <div class="col-md-1">
+                    <button id="idBotonLimpiar" mat-raised-button color="primary"
+                        [disabled]="listaCompleta.data.length == 0" (click)="limpiarConfiguracion()">Limpiar</button>
                 </div>
             </div>
             <div class="row">
@@ -56,12 +60,14 @@
                             <ng-container matColumnDef="NUMERO_VIAJE">
                                 <th mat-header-cell *matHeaderCellDef mat-sort-header>N° Viaje</th>
                                 <td mat-cell *matCellDef="let elemento" class="number-right">
-                                    {{elemento.viaje}}
+                                    {{elemento.viajeTramo.viaje.id}}
                                 </td>
                             </ng-container>
                             <ng-container matColumnDef="CHOFER">
                                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Chofer</th>
-                                <td mat-cell *matCellDef="let elemento">{{elemento.numeroRemito}}
+                                <td mat-cell *matCellDef="let elemento">
+                                    {{elemento.viajeTramo.viaje.esViajePropio? 
+                                        elemento.viajeTramo.viaje.personal.alias : elemento.viajeTramo.viaje.choferProveedor.alias}}
                                 </td>
                             </ng-container>
                             <ng-container matColumnDef="TRAMO">
@@ -131,9 +137,13 @@
                             </ng-container>
                             <ng-container matColumnDef="CHECK">
                                 <th mat-header-cell *matHeaderCellDef mat-sort-header>-</th>
-                                <td mat-cell *matCellDef="let elemento">
-                                    <mat-checkbox class="cursor-color" [checked]="elemento.id == elementoSeleccionado.value.id" (change)="cambioCheck(elemento)">
-                                    </mat-checkbox >
+                                <td mat-cell *matCellDef="let elemento; let i = index">
+                                    <mat-checkbox class="cursor-color" [checked]="elemento.checked"
+                                        (change)="cambioCheck(elemento, i, $event)" *ngIf="elemento.mostrarCheck">
+                                    </mat-checkbox>
+                                    <span *ngIf="!elemento.mostrarCheck">
+                                        asignado
+                                    </span>
                                 </td>
                             </ng-container>
                             <tr mat-header-row *matHeaderRowDef="columnas"></tr>
@@ -145,7 +155,7 @@
             <br>
             <div class="row justify-content-center">
                 <div class="col-md-1">
-                    <button id="idBoton" mat-raised-button color="primary" [mat-dialog-close]="elementoSeleccionado.value"
+                    <button id="idBoton" mat-raised-button color="primary" [mat-dialog-close]="data"
                         *ngIf="!show">Aceptar</button>
                 </div>
                 <div class="col-md-1">

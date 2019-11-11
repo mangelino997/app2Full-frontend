@@ -332,8 +332,8 @@
               <label for="idValorDeclarado" class="tamanio-label">Valor Declarado</label>
               <input id="idValorDeclarado" type="text" formControlName="valorDeclarado" placeholder="0.00"
                 class="form-control form-control-sm number-right" autocomplete="off" [textMask]="mascararImporte(10, 2)"
-                (blur)="setDecimales(formularioVtaCpteItemFA.get('valorDeclarado'), 2)">
-              <!--(blur)="calcularSubtotal($event)"-->
+                (blur)="calcularSubtotal()">
+              <!--(blur)="calcularSubtotal($event)" setDecimales(formularioVtaCpteItemFA.get('valorDeclarado'), 2)-->
             </div>
           </div>
           <div class="small-input-item">
