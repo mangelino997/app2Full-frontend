@@ -98,8 +98,7 @@
                                 <div class="form-group has-float-label">
                                     <label for="idEsPropio" class="tamanio-label-titulo">Tipo de Viaje *</label>
                                     <mat-select id="idEsPropio" class="form-control form-control-sm"
-                                        [formControl]="formularioViaje.get('esViajePropio')"
-                                        (selectionChange)="cambioTipoViaje()">
+                                        formControlName="esViajePropio" (selectionChange)="cambioTipoViaje()">
                                         <mat-option [value]="false">Tercerizado</mat-option>
                                         <mat-option [value]="true">Propio</mat-option>
                                     </mat-select>
@@ -110,8 +109,7 @@
                                     <label for="idEsRemolquePropio" class="tamanio-label-titulo">Tipo de Remolque
                                         *</label>
                                     <mat-select id="idEsRemolquePropio" class="form-control form-control-sm"
-                                        [formControl]="formularioViaje.get('esRemolquePropio')"
-                                        (selectionChange)="cambioTipoRemolque()">
+                                        formControlName="esRemolquePropio" (selectionChange)="cambioTipoRemolque()">
                                         <mat-option [value]="false">Tercerizado</mat-option>
                                         <mat-option [value]="true">Propio</mat-option>
                                     </mat-select>
@@ -141,7 +139,7 @@
                                 <div class="form-group has-float-label">
                                     <label for="idVehiculo" class="tamanio-label-titulo">Vehículo *</label>
                                     <input id="idVehiculo" class="form-control form-control-sm" type="text"
-                                        [formControl]="tipoViaje.value ? formularioViaje.get('vehiculo') : formularioViaje.get('vehiculoProveedor')"
+                                        [formControl]="formularioViaje.get('esViajePropio').value ? formularioViaje.get('vehiculo') : formularioViaje.get('vehiculoProveedor')"
                                         [matAutocomplete]="autoVehiculo" autocomplete="off"
                                         [readonly]="soloLectura"
                                         placeholder="Buscar por Dominio o Tipo/Marca Vehículo">
@@ -188,7 +186,7 @@
                                 <div class="form-group has-float-label">
                                     <label for="idPersonal" class="tamanio-label-titulo">Chofer *</label>
                                     <input id="idPersonal" class="form-control form-control-sm" type="text"
-                                        [formControl]="tipoViaje.value ? formularioViaje.get('personal') : formularioViaje.get('choferProveedor')"
+                                        [formControl]="formularioViaje.get('esViajePropio').value ? formularioViaje.get('personal') : formularioViaje.get('choferProveedor')"
                                         [matAutocomplete]="autoChofer" autocomplete="off"
                                         [readonly]="soloLectura"
                                         placeholder="Buscar por N° Legajo, Nombre o Num. Doc.">

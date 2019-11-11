@@ -126,20 +126,6 @@ export class ViajeCombustibleComponent implements OnInit {
       this.totalUrea.setValue(this.appService.setDecimales('0.00', 2));
     }
   }
-  //Obtiene los registros, para mostrar en la tabla, por idReparto
-  private listarPorReparto(idReparto) {
-    this.servicio.listarCombustiblesReparto(idReparto).subscribe(
-      res => {
-        this.listaCompleta = new MatTableDataSource(res.json());
-        this.listaCompleta.sort = this.sort;
-        this.calcularTotalLitros();
-      },
-      err => {
-        this.toastr.error("Sin registros para mostrar.");
-        this.loaderService.hide();
-      }
-    )
-  }
   //Obtiene el listado de insumos
   private listarInsumos() {
     this.insumoProductoServicio.listarCombustibles().subscribe(
@@ -243,7 +229,6 @@ export class ViajeCombustibleComponent implements OnInit {
     let mensajeNulo = " no puede estar vacio.";
     let mensajeInexistente = " no es un registro válido.";
     let mensajeLongitud = " excedió su longitud.";
-
     var respuesta = err;
     if (respuesta.codigo == 5001) {
       this.toastr.error("Fallo al sincronizar.");
@@ -400,7 +385,6 @@ export class ViajeCombustibleComponent implements OnInit {
     this.establecerIdViaje(idViaje);
     this.formularioViajeCombustible.get('viaje').setValue({ id: idViaje });
     this.establecerCamposSoloLectura(pestaniaViaje);
-    // this.listar();
   }
   //Establece los campos solo lectura
   public establecerCamposSoloLectura(indice): void {

@@ -57,8 +57,6 @@ export class ViajeTramoComponent implements OnInit {
   public indiceTramo: number;
   //Define si muestra el boton agregar tramo o actualizar tramo
   public btnTramo: boolean = true;
-  //Define el tipo de viaje
-  public tipoViaje: boolean = true;
   //Define la pestaña seleccionada
   public indiceSeleccionado: number = 1;
   //Define el id del viaje actual
@@ -126,7 +124,6 @@ export class ViajeTramoComponent implements OnInit {
         this.convertirListaAMatTable(tramos);
         this.emitirTramos(tramos, this.ID_VIAJE);
         this.loaderService.hide();
-
       },
       err => {
         let error = err.json();
@@ -182,26 +179,21 @@ export class ViajeTramoComponent implements OnInit {
     let modalidadCarga = this.formularioViajeTramo.get('viajeTipo').value;
     let km = this.formularioViajeTramo.get('km').value;
     if (viajeTarifa && modalidadCarga && km) {
-      if (this.tipoViaje) {
-        //VIAJE PROPIO
-        switch (viajeTarifa.id) {
-          case 1:
-            let importe = km * modalidadCarga.costoPorKmPropio;
-            this.formularioViajeTramo.get('importeCosto').setValue(parseFloat(this.appServicio.establecerDecimales(importe, 3)));
-            this.formularioViajeTramo.get('costoKm').setValue(modalidadCarga.costoPorKmPropio);
-            this.formularioViajeTramo.get('importeCosto').disable();
-            break;
-          case 5:
-            this.formularioViajeTramo.get('importeCosto').enable();
-            this.formularioViajeTramo.get('importeCosto').reset();
-            break;
-          case 0:
-            this.formularioViajeTramo.get('importeCosto').disable();
-            this.formularioViajeTramo.get('importeCosto').reset();
-            break;
-        }
-      } else {
-        //VIAJE TERCERO
+      switch (viajeTarifa.id) {
+        case 1:
+          let importe = km * modalidadCarga.costoPorKmPropio;
+          this.formularioViajeTramo.get('importeCosto').setValue(parseFloat(this.appServicio.establecerDecimales(importe, 3)));
+          this.formularioViajeTramo.get('costoKm').setValue(modalidadCarga.costoPorKmPropio);
+          this.formularioViajeTramo.get('importeCosto').disable();
+          break;
+        case 5:
+          this.formularioViajeTramo.get('importeCosto').enable();
+          this.formularioViajeTramo.get('importeCosto').reset();
+          break;
+        case 0:
+          this.formularioViajeTramo.get('importeCosto').disable();
+          this.formularioViajeTramo.get('importeCosto').reset();
+          break;
       }
     }
   }
@@ -282,21 +274,6 @@ export class ViajeTramoComponent implements OnInit {
     }
     this.establecerTipoViaje();
   }
-  //Calcula el importe a partir de cantidad/km y precio unitario
-  // public calcularImporte(formulario, form, cant): void {
-  //   if (!this.soloLecturaPrecioCantidad) {
-  //     if (form && cant) {
-  //       this.desenmascararImporte(form, cant);
-  //     }
-  //     let cantidad = formulario.get('cantidad').value;
-  //     let precioUnitario = formulario.get('precioUnitario').value;
-  //     formulario.get('precioUnitario').setValue(parseFloat(precioUnitario).toFixed(cant));
-  //     if (cantidad != null && precioUnitario != null) {
-  //       let importe = cantidad * precioUnitario;
-  //       formulario.get('importe').setValue(this.appServicio.establecerDecimales(importe, 2));
-  //     }
-  //   }
-  // }
   //Agrega primero un Viaje y luego un viajeTramo (cuando listaCompleta esta vacia)
   public agregarTramo(): void {
     this.loaderService.show();
@@ -424,7 +401,7 @@ export class ViajeTramoComponent implements OnInit {
         data: {}
       });
       dialogRef.afterClosed().subscribe(resultado => {
-        if(resultado) {
+        if (resultado) {
           this.loaderService.show();
           this.servicio.eliminar(elemento.id).subscribe(
             res => {
@@ -556,7 +533,7 @@ export class ViajeTramoComponent implements OnInit {
   public displayFn(elemento) {
     if (elemento != undefined) {
       return elemento.origen ? elemento.origen.nombre + ', ' + elemento.origen.provincia.nombre +
-        ' ---> ' + elemento.destino.nombre + ', ' + elemento.destino.provincia.nombre : elemento;
+        ' --> ' + elemento.destino.nombre + ', ' + elemento.destino.provincia.nombre : elemento;
     } else {
       return elemento;
     }
@@ -736,9 +713,7 @@ export class DadorDestinatarioDialogo {
         importeCosto: this.data.importeCosto
       }
     });
-    dialogRef.afterClosed().subscribe(resultado => {
-
-    });
+    dialogRef.afterClosed().subscribe(resultado => { });
   }
   //Abre el dialogo para valorizar vacio facturado
   public verVacioFacturado(elemento): void {
@@ -752,9 +727,7 @@ export class DadorDestinatarioDialogo {
         viajeTarifa: this.data.viajeTarifa
       }
     });
-    dialogRef.afterClosed().subscribe(resultado => {
-
-    });
+    dialogRef.afterClosed().subscribe(resultado => { });
   }
   //Define como se muestra los datos en el autcompletado b
   public displayFb(elemento) {

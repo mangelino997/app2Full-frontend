@@ -203,7 +203,6 @@ export class ViajeInsumoComponent implements OnInit {
         this.loaderService.hide();
       }
     );
-
   }
   //Modifica un Insumo de la tabla por indice
   public modInsumo(indice): void {
