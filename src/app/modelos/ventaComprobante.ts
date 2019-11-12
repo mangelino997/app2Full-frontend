@@ -56,7 +56,7 @@ export class VentaComprobante {
             ventaComprobanteItemCR: new FormControl([], ),
             ventaComprobanteItemND: new FormControl([], ),
             ventaComprobanteItemNC: new FormControl([], ),
-            ventaComprobanteItemFA: new FormControl([], ),
+            ventaComprobanteItemFAs: new FormControl([], ),
 
         })
     }

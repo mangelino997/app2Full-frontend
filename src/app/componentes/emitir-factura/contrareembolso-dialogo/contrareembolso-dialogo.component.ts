@@ -28,6 +28,8 @@ export class ContrareembolsoDialogoComponent implements OnInit {
       pComision: new FormControl(),
       comision: new FormControl(),
       afipAlicuotaIva: new FormControl(),
+      // ordenVenta: new FormControl(,),
+
     })
     //Si en el data viene un CR ya cargado lo setea
     this.data.ventaComprobanteItemCR.length > 0 ? [this.formulario.patchValue(this.data.ventaComprobanteItemCR[0]), this.cambioPComision()] : '';

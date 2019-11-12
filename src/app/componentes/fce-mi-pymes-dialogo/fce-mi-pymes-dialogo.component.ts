@@ -54,26 +54,20 @@ export class FceMiPymesDialogoComponent implements OnInit {
   private listarCuentaBancaria() {
     this.clienteCuentaBancariaService.listarPorClienteYEmpresa(this.data.cliente.id, this.appService.getEmpresa().id).subscribe(
       res => {
-        console.log(res.json());
         let respuesta = res.json();
         respuesta.length > 0 ? this.formulario.get('cbu').setValue(respuesta[0].cuentaBancaria.cbu) : '';
       },
-      err => {
-        this.toastr.error(err.json().mensaje);
-      }
+      err => {this.toastr.error(err.json().mensaje);}
     )
   }
   //Carga la lista de vto. pagos
   private listarVtoPagos() {
     this.clienteVtoPagoService.listarPorClienteYEmpresa(this.data.cliente.id, this.appService.getEmpresa().id).subscribe(
       res => {
-        console.log(res.json());
         let respuesta = res.json();
         respuesta.length > 0 ? this.generarListaCompleta(respuesta) : '';
       },
-      err => {
-        this.toastr.error(err.json().mensaje);
-      }
+      err => {this.toastr.error(err.json().mensaje);}
     )
   }
   //Genera la lista completa solo con los atributos necesarios
@@ -91,7 +85,6 @@ export class FceMiPymesDialogoComponent implements OnInit {
     resultado[0].octubre ? listaFiltradaPorMes.push({ mes: 'OCTUBRE', fechaPago: resultado[0].octubre }) : '';
     resultado[0].noviembre ? listaFiltradaPorMes.push({ mes: 'NOVIEMBRE', fechaPago: resultado[0].noviembre }) : '';
     resultado[0].diciembre ? listaFiltradaPorMes.push({ mes: 'DICIEMBRE', fechaPago: resultado[0].diciembre }) : '';
-
     this.formulario.get('diasFechaFactura').setValue(resultado[0].diasFechaFactura);
     this.listaCompleta = new MatTableDataSource(listaFiltradaPorMes);
     this.listaCompleta.sort = this.sort;
@@ -108,6 +101,8 @@ export class FceMiPymesDialogoComponent implements OnInit {
   }
   //Cierra el dialogo
   public closeDialog() {
-    this.dialogRef.close(this.data.fechaVtoPago);
+    let fechaVtoPago;
+    this.data.fechaVtoPago? fechaVtoPago = this.data.fechaVtoPago : fechaVtoPago = this.formulario.value.fechaVtoPago;
+    this.dialogRef.close(fechaVtoPago);
   }
 }
