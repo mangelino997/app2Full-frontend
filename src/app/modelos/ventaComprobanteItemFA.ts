@@ -26,19 +26,15 @@ export class VentaComprobanteItemFA {
             importeSeguro: new FormControl(),
             flete: new FormControl(),
             descuentoFlete: new FormControl(),
-
             importeFlete: new FormControl(),
             importeRetiro: new FormControl(),
             importeEntrega: new FormControl(),
             ventaItemConcepto: new FormControl(),
             importeVentaItemConcepto: new FormControl(),
-
             importeNetoGravado: new FormControl(),
             afipAlicuotaIva: new FormControl(),
-            alicuotaIva: new FormControl(),
             importeIva: new FormControl(),
             importeNoGravado: new FormControl(),
-
             importeExento: new FormControl(),
             provincia: new FormControl(),
             ordenVentaTarifa: new FormControl('', Validators.required),

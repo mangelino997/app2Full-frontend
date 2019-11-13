@@ -6,7 +6,7 @@
                 <div class="col-md-2">
                     <div class="form-group has-float-label">
                         <label for="idViaje" class="tamanio-label">N° Viaje</label>
-                        <input id="idViaje" type="text" formControlName="numeroViaje" placeholder="00"
+                        <input id="idViaje" type="text" formControlName="idViaje" placeholder="00"
                             [textMask]="mascararEnteroSinDecimales(11)" (blur)="cambioNumeroViaje()"
                             class="form-control form-control-sm number-right" [disabled]="">
                     </div>
@@ -14,7 +14,7 @@
                 <div class="col-md-2" *ngIf="data.esRemitoGeneral">
                     <div class="form-group has-float-label ">
                         <label for="idRemito" class="tamanio-label">N° Remito*</label>
-                        <input id="idRemito" type="text" formControlName="numeroRemito" placeholder="00"
+                        <input id="idRemito" type="text" formControlName="idRemito" placeholder="00"
                             [textMask]="mascararEnteroSinDecimales(8)" [disabled]=""
                             class="form-control form-control-sm number-right">
                     </div>
@@ -22,22 +22,24 @@
                 <div class="col-md-3" *ngIf="!data.esRemitoGeneral">
                     <div class="form-group has-float-label">
                         <label for="idTramoRG" class="tamanio-label">Tramo</label>
-                        <mat-select id="idTramoRG" class="form-control form-control-sm" formControlName="tramo"
+                        <mat-select id="idTramoRG" class="form-control form-control-sm" formControlName="idRemito"
                             [compareWith]="compareFn">
-                            <mat-option *ngFor="let item of listaTramos" [value]="item">
+                            <mat-option *ngFor="let item of listaTramos" [value]="item.id">
                                 {{item.origen.nombre}},
                                 {{item.origen.provincia.nombre}} ->
                                 {{item.destino.nombre}},
                                 {{item.destino.provincia.nombre}}
                                 ({{item.km}}km)
                             </mat-option>
+                            <mat-option value="0">TODOS</mat-option>
                         </mat-select>
                     </div>
                 </div>
                 <div class="col-md-2">
                     <div class="form-group has-float-label">
                         <label for="idPagoOrigen" class="tamanio-label">Estado</label>
-                        <mat-select id="idPagoOrigen" formControlName="estado" class="form-control form-control-sm">
+                        <mat-select id="idPagoOrigen" formControlName="estaFacturado"
+                            class="form-control form-control-sm">
                             <mat-option [value]="true">Facturado</mat-option>
                             <mat-option [value]="false">Pendientes</mat-option>
                         </mat-select>
@@ -45,7 +47,7 @@
                 </div>
                 <div class="col-md-3">
                     <button id="idBotonConsultar" mat-raised-button color="primary" style="min-width: fit-content;"
-                        [disabled]="!formularioFiltro.value.numeroViaje && !formularioFiltro.value.numeroRemito"
+                        [disabled]="!formularioFiltro.value.idViaje && !formularioFiltro.value.idRemito"
                         (click)="filtrar()">Consultar</button>
                     <button id="idBotonLimpiar" mat-raised-button color="primary" style="min-width: fit-content;"
                         [disabled]="listaCompleta.data.length == 0" (click)="limpiarConfiguracion()">Limpiar</button>

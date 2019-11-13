@@ -4,6 +4,7 @@ import { AfipAlicuotaIvaService } from 'src/app/servicios/afip-alicuota-iva.serv
 import { FormGroup, FormControl } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material';
 import { ToastrService } from 'ngx-toastr';
+import { VentaComprobanteItemCR } from 'src/app/modelos/ventaComprobanteItemCR';
 
 @Component({
   selector: 'app-contrareembolso-dialogo',
@@ -11,28 +12,21 @@ import { ToastrService } from 'ngx-toastr';
   styleUrls: ['./contrareembolso-dialogo.component.css']
 })
 export class ContrareembolsoDialogoComponent implements OnInit {
-
   //Define un formulario para validaciones de campos
   public formulario: FormGroup;
   //Define la lista de Alicuotas Afip Iva que estan activas
   public afipAlicuotasIva = [];
   constructor(private appService: AppService, private alicuotasIvaService: AfipAlicuotaIvaService, public dialog: MatDialog,
-    public dialogRef: MatDialogRef<ContrareembolsoDialogoComponent>, @Inject(MAT_DIALOG_DATA) public data, private toastr: ToastrService) {
+    public dialogRef: MatDialogRef<ContrareembolsoDialogoComponent>, @Inject(MAT_DIALOG_DATA) public data, private toastr: ToastrService,
+    private modelo: VentaComprobanteItemCR) {
     this.dialogRef.disableClose = true;
   }
   ngOnInit() {
     //Define el formulario y sus validaciones
-    this.formulario = new FormGroup({
-      ventaComprobante: new FormControl(),
-      importeContraReembolso: new FormControl(),
-      pComision: new FormControl(),
-      comision: new FormControl(),
-      afipAlicuotaIva: new FormControl(),
-      // ordenVenta: new FormControl(,),
-
-    })
+    this.formulario = this.modelo.formulario;
     //Si en el data viene un CR ya cargado lo setea
-    this.data.ventaComprobanteItemCR.length > 0 ? [this.formulario.patchValue(this.data.ventaComprobanteItemCR[0]), this.cambioPComision()] : '';
+    this.data.ventaComprobanteItemCR.length > 0 ?
+      [this.formulario.patchValue(this.data.ventaComprobanteItemCR[0]), this.cambioPComision()] : '';
     //Obtiene la lista de Alicuotas Iva
     this.listarAlicuotaIva();
   }
@@ -61,11 +55,21 @@ export class ContrareembolsoDialogoComponent implements OnInit {
   //Calcula el valor de la Comision
   public calcularComision() {
     this.establecerPorcentaje(this.formulario.get('pComision'), 2);
-    let importeCR = Number(this.formulario.value.importeContraReembolso);
+    let importe = Number(this.formulario.value.importeContraReembolso);
     let pComision = Number(this.formulario.value.pComision);
-    let comision = importeCR + importeCR * (pComision / 100);
-    this.formulario.get('comision').setValue(this.appService.establecerDecimales(comision, 2));
-    this.formulario.get('comision').disable();
+    this.formulario.get('afipAlicuotaIva').enable();
+    let afipAlicuotaIva = this.formulario.value.afipAlicuotaIva;
+    let importeComision = importe * (pComision / 100);
+    let importeIva = importeComision * (afipAlicuotaIva.alicuota / 100);
+    let importeNtoGravado = importeComision + importeIva;
+    this.formulario.get('importeIva').setValue(this.appService.establecerDecimales(importeIva, 2));
+    this.formulario.get('importeNetoGravado').setValue(this.appService.establecerDecimales(importeNtoGravado, 2));
+    this.formulario.get('afipAlicuotaIva').disable();
+  }
+  //Cierra el modal y envía el formulario de contrareembolso
+  public enviarContrareembolso(){
+    this.formulario.enable();
+    this.dialogRef.close(this.formulario.value);
   }
   //Obtiene la mascara de importe
   public mascararImporte(intLimite, decimalLimite) {

@@ -6,15 +6,17 @@ import { Message } from '@stomp/stompjs';
 import { StompService } from '@stomp/ng2-stompjs';
 
 @Injectable()
-export class ViajeTramoClienteRemitoService {
+export class VentaContrareembolsoService {
   //Define la ruta al servicio web
-  private ruta:string = "/viajetramoclienteremito";
+  private ruta:string = "/ventacontrareembolso";
   //Define la url base
   private url:string = null;
   //Define la url para subcripcion a socket
   private topic:string = null;
   //Define el headers y token de autenticacion
   private options = null;
+  //Define la lista obtenida por nombre
+  private listaPorNombre = null;
   //Define la subcripcion
   private subcripcion: Subscription;
   //Define el mensaje de respuesta a la subcripcion
@@ -44,29 +46,13 @@ export class ViajeTramoClienteRemitoService {
   public obtenerSiguienteId() {
     return this.http.get(this.url + '/obtenerSiguienteId', this.options);
   }
-  //Obtiene por viaje tramo cliente
-  public obtenerPorViajeTramoCliente(idViajeTramoCliente) {
-    return this.http.get(this.url + '/obtenerPorViajeTramoCliente/' + idViajeTramoCliente, this.options);
-  }
   //Obtiene la lista de registros
   public listar() {
     return this.http.get(this.url, this.options);
   }
-  //Obtiene la lista de registros por viaje tramo cliente
-  public listarPorViajeTramoCliente(idViajeTramoCliente) {
-    return this.http.get(this.url + '/listarPorViajeTramoCliente/' + idViajeTramoCliente, this.options);
-  }
   //Agrega un registro
   public agregar(elemento) {
     return this.http.post(this.url, elemento, this.options);
-  }
-  //Agrega un registro de vacio facturado
-  public agregarVacioFacturado(elemento) {
-    return this.http.post(this.url + '/agregarVacioFacturado', elemento, this.options);
-  }
-  //Obtiene la lista de registros por viaje y estado
-  public listarPorViajeYEstado(elemento) {
-    return this.http.put(this.url + '/listarPorViajeYEstado', elemento, this.options);
   }
   //Actualiza un registro
   public actualizar(elemento) {

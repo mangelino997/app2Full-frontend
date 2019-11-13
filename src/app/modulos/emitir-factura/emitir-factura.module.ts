@@ -17,8 +17,6 @@ import { PuntoVentaService } from 'src/app/servicios/punto-venta.service';
 import { TipoComprobanteService } from 'src/app/servicios/tipo-comprobante.service';
 import { AfipComprobanteService } from 'src/app/servicios/afip-comprobante.service';
 import { VentaTipoItemService } from 'src/app/servicios/venta-tipo-item.service';
-import { ViajeRemitoService } from 'src/app/servicios/viaje-remito.service';
-import { OrdenVentaService } from 'src/app/servicios/orden-venta.service';
 import { OrdenVentaEscalaService } from 'src/app/servicios/orden-venta-escala.service';
 import { VentaItemConceptoService } from 'src/app/servicios/venta-item-concepto.service';
 import { AfipAlicuotaIvaService } from 'src/app/servicios/afip-alicuota-iva.service';
@@ -30,6 +28,8 @@ import { TramoService } from 'src/app/servicios/tramo.service';
 import { VentaConfigService } from 'src/app/servicios/venta-config.service';
 import { AfipCaeService } from 'src/app/servicios/afip-cae.service';
 import { ViajeTramoRemitoService } from 'src/app/servicios/viaje-tramo-remito.service';
+import { VentaComprobanteItemCR } from 'src/app/modelos/ventaComprobanteItemCR';
+import { ViajeTramoClienteRemitoService } from 'src/app/servicios/viaje-tramo-cliente-remito.service';
 
 @NgModule({
   declarations: [
@@ -65,19 +65,19 @@ import { ViajeTramoRemitoService } from 'src/app/servicios/viaje-tramo-remito.se
     TipoComprobanteService,
     AfipComprobanteService,
     VentaTipoItemService,
-    ViajeRemitoService,
-    OrdenVentaService,
     OrdenVentaEscalaService,
     VentaItemConceptoService,
     AfipAlicuotaIvaService,
     VentaComprobante,
     VentaComprobanteItemFA,
+    VentaComprobanteItemCR,
     EmpresaOrdenVentaService,
     OrdenVentaTarifaService,
     TramoService,
     VentaConfigService,
     AfipCaeService,
-    ViajeTramoRemitoService
+    ViajeTramoRemitoService,
+    ViajeTramoClienteRemitoService
     
 
   ],

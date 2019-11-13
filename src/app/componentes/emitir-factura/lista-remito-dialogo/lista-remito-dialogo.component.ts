@@ -2,15 +2,14 @@ import { Component, OnInit, ViewChild, Inject } from '@angular/core';
 import { AppService } from 'src/app/servicios/app.service';
 import { FormGroup, FormControl, Validators, FormArray } from '@angular/forms';
 import { MatSort, MatTableDataSource, MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material';
-import { ViajeRemitoService } from 'src/app/servicios/viaje-remito.service';
 import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
 import { ObservacionesDialogo } from '../../observaciones-dialogo/observaciones-dialogo.component';
 import { TramoService } from 'src/app/servicios/tramo.service';
-import { ViajeTramoService } from 'src/app/servicios/viajea-tramo.service';
 import { ViajeTramoRemitoService } from 'src/app/servicios/viaje-tramo-remito.service';
+import { ViajeTramoClienteRemitoService } from 'src/app/servicios/viaje-tramo-cliente-remito.service';
 
 @Component({
   selector: 'app-lista-remito-dialogo',
@@ -38,9 +37,9 @@ export class ListaRemitoDialogoComponent implements OnInit {
   public show = false;
   //Define la subscripcion a loader.service
   private subscription: Subscription;
-  constructor(private appService: AppService, private service: ViajeTramoRemitoService, private loaderService: LoaderService, public dialog: MatDialog,
+  constructor(private appService: AppService, private serviceRemitoGeneral: ViajeTramoRemitoService, private loaderService: LoaderService, public dialog: MatDialog,
     public dialogRef: MatDialogRef<ListaRemitoDialogoComponent>, @Inject(MAT_DIALOG_DATA) public data, private toastr: ToastrService,
-    private tramoService: TramoService) {
+    private tramoService: TramoService, private serviceNoEsRemitoGeneral: ViajeTramoClienteRemitoService) {
     this.dialogRef.disableClose = true;
   }
   ngOnInit() {
@@ -49,19 +48,22 @@ export class ListaRemitoDialogoComponent implements OnInit {
       .subscribe((state: LoaderState) => {
         this.show = state.show;
       });
-    /*Define los campos del formulario y validaciones si es un Remito General -G.S*/
     if (this.data.esRemitoGeneral) {
+      /*Define los campos del formulario y validaciones si es un Remito General -G.S*/
       this.formularioFiltro = new FormGroup({
-        numeroViaje: new FormControl(),
-        numeroRemito: new FormControl(),
-        estado: new FormControl(true)
+        idViaje: new FormControl(),
+        idRemito: new FormControl(),
+        estaFacturado: new FormControl(true)
       })
-    } else { /*Define los campos del formulario y validaciones si es Dador de Carga*/
+    } else {
+      /*Define los campos del formulario y validaciones si es Dador de Carga*/
       this.formularioFiltro = new FormGroup({
-        numeroViaje: new FormControl('', Validators.required),
-        tramo: new FormControl(),
-        estado: new FormControl(true)
+        idViaje: new FormControl('', Validators.required),
+        idRemito: new FormControl(),
+        estaFacturado: new FormControl(true)
       })
+      //Obtiene la lista de Tramos
+      this.listarTramos();
     }
     //Maneja el data que proviene al abrir el modal
     this.controlDataModal();
@@ -77,8 +79,6 @@ export class ListaRemitoDialogoComponent implements OnInit {
       });
       this.listaCompleta = new MatTableDataSource(this.data.configuracionModalRemitos.listaCompletaRemitos);
       this.listaCompleta.sort = this.sort;
-    } else {
-      this.listarTramos();//Obtiene la lista de Tramos
     }
   }
   //Carga la lista de Tramos
@@ -94,21 +94,37 @@ export class ListaRemitoDialogoComponent implements OnInit {
   }
   //Maneja el cambio en el input 'N° de Viaje'
   public cambioNumeroViaje() {
-    this.formularioFiltro.value.numeroRemito ? this.formularioFiltro.get('numeroRemito').reset() : '';
+    this.formularioFiltro.value.idRemito ? this.formularioFiltro.get('idRemito').reset() : '';
   }
   //Obtiene los registros mediante el formulario de filtro
   public filtrar() {
     this.loaderService.show();
-    this.service.listarPorViajeYEstado(this.formularioFiltro.value).subscribe(
-      res => {
-        this.asignarAtributoChecked(res.json());
-        this.loaderService.hide();
-      },
-      err => {
-        this.toastr.error(err.json().message);
-        this.loaderService.hide();
-      }
-    )
+    console.log(this.formularioFiltro.value);
+    if (this.data.esRemitoGeneral) {
+      this.serviceRemitoGeneral.listarPorViajeYEstado(this.formularioFiltro.value).subscribe(
+        res => {
+          console.log(res.json());
+          this.asignarAtributoChecked(res.json());
+          this.loaderService.hide();
+        },
+        err => {
+          this.toastr.error(err.json().message);
+          this.loaderService.hide();
+        }
+      )
+    } else {
+      this.serviceNoEsRemitoGeneral.listarPorViajeYEstado(this.formularioFiltro.value).subscribe(
+        res => {
+          console.log(res.json());
+          this.asignarAtributoChecked(res.json());
+          this.loaderService.hide();
+        },
+        err => {
+          this.toastr.error(err.json().message);
+          this.loaderService.hide();
+        }
+      )
+    }
   }
   //Agrga a cada registro el atributo 'checked' para controlarlo en la vista
   private asignarAtributoChecked(registros) {
@@ -120,7 +136,6 @@ export class ListaRemitoDialogoComponent implements OnInit {
     this.data.configuracionModalRemitos.listaCompletaRemitos = registros;
     this.listaCompleta = new MatTableDataSource(registros);
     this.listaCompleta.sort = this.sort;
-
   }
   //Abre un dialogo para ver las observaciones
   public verObservacionesDialogo(elemento): void {
@@ -169,7 +184,7 @@ export class ListaRemitoDialogoComponent implements OnInit {
   public remitoAsignado(elemento) {
     let resultado = false;
     this.data.listaItemsAsignados.forEach(element => {
-      if(resultado == false)
+      if (resultado == false)
         element.id == elemento.id ? resultado = true : resultado = false;
     });
     return resultado;

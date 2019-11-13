@@ -80,6 +80,7 @@ import { ListaRemitoDialogoComponent } from './componentes/emitir-factura/lista-
 import { ContrareembolsoDialogoComponent } from './componentes/emitir-factura/contrareembolso-dialogo/contrareembolso-dialogo.component';
 import { TotalesCargaDialogoComponent } from './componentes/emitir-factura/totales-carga-dialogo/totales-carga-dialogo.component';
 import { TotalesConceptoDialogoComponent } from './componentes/emitir-factura/totales-concepto-dialogo/totales-concepto-dialogo.component';
+import { ViajeTramoRemitoService } from './servicios/viaje-tramo-remito.service';
 
 const stompConfig: StompConfig = {
   url: 'ws://localhost:8080/jitws/socket',

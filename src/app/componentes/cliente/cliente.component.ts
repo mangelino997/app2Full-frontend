@@ -160,7 +160,6 @@ export class ClienteComponent implements OnInit {
               this.resultados = res.json();
             },
             err => {
-              console.log('PASO');
             });
         }
       }

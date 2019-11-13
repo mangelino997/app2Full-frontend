@@ -404,7 +404,7 @@
             <div class="form-group has-float-label">
               <label for="idAlicuota" class="tamanio-label">Alic. IVA</label>
               <mat-select id="idAlicuota" type="number" formControlName="afipAlicuotaIva"
-                class="form-control form-control-sm number-right" (selectionChange)="cambioAfipAlicuotaIva()">
+                class="form-control form-control-sm number-right" (selectionChange)="calcularImporteIva()">
                 <mat-option *ngFor="let item of afipAlicuotasIva" [value]="item">
                   {{item.alicuota | number: '1.2-2'}} %
                 </mat-option>
@@ -460,7 +460,7 @@
             <ng-container matColumnDef="ALIC_IVA">
               <th mat-header-cell *matHeaderCellDef mat-sort-header>Alíc. IVA</th>
               <td mat-cell *matCellDef="let elemento" class="number-right">
-                {{elemento.alicuotaIva | number: '1.2-2'}}%</td>
+                {{elemento.afipAlicuotaIva.alicuota | number: '1.2-2'}}%</td>
             </ng-container>
             <ng-container matColumnDef="SUBTOTAL_IVA">
               <th mat-header-cell *matHeaderCellDef mat-sort-header>Subtotal c/IVA</th>
