@@ -329,7 +329,9 @@
                   <div class="row">
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
-                        <label for="idCompaniaSeguro" class="tamanio-label">Compañía de Seguro</label>
+                        <label for="idCompaniaSeguro" class="tamanio-label">
+                          Compañía de Seguro {{formulario.get('esSeguroPropio').value ? '*' : ''}}
+                        </label>
                         <input id="idCompaniaSeguro" class="form-control form-control-sm" type="text" matInput
                           [formControl]="formulario.get('companiaSeguro')" [matAutocomplete]="autoCompaniaSeguro"
                           autocomplete="off" [readonly]="soloLectura"
@@ -345,7 +347,9 @@
                     </div>
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
-                        <label for="idNumeroPoliza" class="tamanio-label">N° de Póliza</label>
+                        <label for="idNumeroPoliza" class="tamanio-label">
+                          N° de Póliza {{formulario.get('esSeguroPropio').value ? '*' : ''}}
+                        </label>
                         <input id="idNumeroPoliza" type="number" formControlName="numeroPolizaSeguro" autocomplete="off"
                           class="form-control form-control-sm number-right" maxlength="20"
                           [required]="formulario.get('esSeguroPropio') ? true : false" [readonly]="soloLectura">
@@ -353,7 +357,9 @@
                     </div>
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
-                        <label for="idVencimiento" class="tamanio-label">Vencimiento</label>
+                        <label for="idVencimiento" class="tamanio-label">
+                          Vencimiento {{formulario.get('esSeguroPropio').value ? '*' : ''}}
+                        </label>
                         <input id="idVencimiento" type="date" formControlName="vencimientoPolizaSeguro"
                           autocomplete="off" class="form-control form-control-sm"
                           [required]="formulario.get('esSeguroPropio') ? true : false" [readonly]="soloLectura">

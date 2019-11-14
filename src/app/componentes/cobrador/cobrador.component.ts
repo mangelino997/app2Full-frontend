@@ -218,7 +218,7 @@ export class CobradorComponent implements OnInit {
   public validarPatron(patron, campo) {
     let valor = this.formulario.get(campo).value;
     if (valor != undefined && valor != null && valor != '') {
-      var patronVerificador = new RegExp(patron);
+      let patronVerificador = new RegExp(patron);
       if (!patronVerificador.test(valor)) {
         if (campo == 'correoElectronico') {
           document.getElementById("labelCorreoelectronico").classList.add('label-error');
@@ -249,7 +249,7 @@ export class CobradorComponent implements OnInit {
     this.formulario.get('usuarioAlta').setValue(this.appService.getUsuario());
     this.servicio.agregar(cobrador).subscribe(
       res => {
-        var respuesta = res.json();
+        let respuesta = res.json();
         if (respuesta.codigo == 201) {
           this.reestablecerFormulario(respuesta.id);
           document.getElementById('idNombre').focus();
@@ -258,7 +258,7 @@ export class CobradorComponent implements OnInit {
         }
       },
       err => {
-        var respuesta = err.json();
+        let respuesta = err.json();
         this.lanzarError(respuesta);
         this.loaderService.hide();
       }
@@ -267,18 +267,21 @@ export class CobradorComponent implements OnInit {
   //Actualiza un registro
   private actualizar(cobrador) {
     this.loaderService.show();
+    let esClienteEventual = this.formulario.value.porDefectoClienteEventual;
     this.servicio.actualizar(cobrador).subscribe(
       res => {
-        var respuesta = res.json();
-        if (respuesta.codigo == 200) {
+        let respuesta = res.json();
+        if (res.status == 200) {
           this.reestablecerFormulario(undefined);
           document.getElementById('idAutocompletado').focus();
-          this.toastr.success(respuesta.mensaje);
+          this.toastr.success("Registro actualizado con éxito.");
+          esClienteEventual != respuesta.porDefectoClienteEventual ?
+            this.toastr.warning("El cobrador pasó a ser por defecto cliente eventual.") : '';
         }
         this.loaderService.hide();
       },
       err => {
-        var respuesta = err.json();
+        let respuesta = err.json();
         this.lanzarError(respuesta);
         this.loaderService.hide();
       }
@@ -355,7 +358,7 @@ export class CobradorComponent implements OnInit {
   }
   //Maneja los evento al presionar una tacla (para pestanias y opciones)
   public manejarEvento(keycode) {
-    var indice = this.indiceSeleccionado;
+    let indice = this.indiceSeleccionado;
     if (keycode == 113) {
       if (indice < this.pestanias.length) {
         this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre);

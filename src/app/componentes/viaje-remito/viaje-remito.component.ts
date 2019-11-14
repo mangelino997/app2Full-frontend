@@ -426,6 +426,23 @@ export class ViajeRemitoComponent implements OnInit {
   }
   //Elimina un registro
   private eliminar() {
+    this.loaderService.show();
+    this.servicio.eliminar(this.formulario.value.id).subscribe(
+      res => {
+        let respuesta = res.json();
+        if (respuesta.codigo == 200) {
+          this.reestablecerFormulario(undefined);
+          this.establecerTipoComprobantePorDefecto();
+          document.getElementById('idAutocompletado').focus();
+          this.toastr.success(respuesta.mensaje);
+          this.loaderService.hide();
+        }
+      },
+      err => {
+        this.lanzarError(err);
+        this.loaderService.hide();
+      }
+    );
   }
   //Verifica si se selecciono un elemento del autocompletado
   public verificarSeleccion(valor): void {
@@ -519,7 +536,7 @@ export class ViajeRemitoComponent implements OnInit {
       if (resultado) {
         this.formularioAforar.patchValue(resultado);
         this.formulario.get('kilosAforado').setValue(this.appService.setDecimales(resultado.kiloAforadoTotal, 2));
-      }else{
+      } else {
         this.formularioAforar.reset();
         this.formulario.get('kilosAforado').setValue(this.appService.setDecimales('0.00', 2));
       }

@@ -214,8 +214,9 @@ export class PersonalFamiliarComponent implements OnInit {
   //Vacia la lista de resultados de autocompletados
   private vaciarListas() {
     this.resultados = [];
-    this.resultadosLocalidades = [];
     this.resultadosPersonal = [];
+    this.resultadosLocalidades = [];
+    this.listaCompleta = new MatTableDataSource([]);
   }
   //Habilita o deshabilita los campos select dependiendo de la pestania actual
   private establecerEstadoCampos(estado) {

@@ -19,9 +19,8 @@
               <input id="idAutocompletado" class="form-control form-control-sm color-busqueda" type="text" matInput
                 [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off"
                 (blur)="verificarSeleccion(autocompletado)">
-              <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)">
-                <mat-option *ngFor="let item of resultados" [value]="item"
-                  (onSelectionChange)="cambioAutocompletado(item)">
+              <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)" (optionSelected)="cambioAutocompletado()">
+                <mat-option *ngFor="let item of resultados" [value]="item">
                   {{item.categoria.nombre}} - {{item.mes.nombre}}/{{item.anio}} - $ {{mostrarDecimales(item.basico, 2)}}
                 </mat-option>
               </mat-autocomplete>
@@ -52,7 +51,7 @@
             <div class="form-group has-float-label">
               <label for="idAnio" class="tamanio-label">Año</label>
               <mat-select id="idAnio" class="form-control form-control-sm number-right" formControlName="anio"
-                [compareWith]="compareFn">
+                [compareWith]="compareF">
                 <mat-option *ngFor="let itemAnio of anios" [value]="itemAnio">
                   {{itemAnio}}
                 </mat-option>

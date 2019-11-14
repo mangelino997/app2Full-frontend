@@ -256,7 +256,7 @@
                     </div>
                     <div class="col-md-1">
                         <button id="idBoton" *ngIf="!show" mat-raised-button color="primary" formnovalidate
-                            (click)="listarPorPersonal()">
+                            [disabled]="!formularioFiltro.valid" (click)="listarPorPersonal()">
                             Buscar
                         </button>
                     </div>

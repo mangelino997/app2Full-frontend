@@ -124,7 +124,8 @@ export class CategoriaComponent implements OnInit {
     }
   }
   //Establece el formulario al seleccionar elemento del autocompletado
-  public cambioAutocompletado(elemento) {
+  public cambioAutocompletado() {
+    let elemento = this.autocompletado.value;
     this.formulario.setValue(elemento);
     this.formulario.get('adicionalBasicoVacaciones').setValue(elemento.adicionalBasicoVacaciones.toFixed(2));
     this.formulario.get('topeBasicoAdelantos').setValue(elemento.topeBasicoAdelantos.toFixed(2));
@@ -219,7 +220,7 @@ export class CategoriaComponent implements OnInit {
     this.establecerValoresPorDefecto();
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
-        var respuesta = res.json();
+        let respuesta = res.json();
         if (respuesta.codigo == 201) {
           this.reestablecerFormulario(respuesta.id);
           document.getElementById('idNombre').focus();
@@ -228,11 +229,13 @@ export class CategoriaComponent implements OnInit {
         }
       },
       err => {
-        var respuesta = err.json();
+        let respuesta = err.json();
         if (respuesta.codigo == 11002) {
           document.getElementById("labelNombre").classList.add('label-error');
           document.getElementById("idNombre").classList.add('is-invalid');
           document.getElementById("idNombre").focus();
+          this.toastr.error(respuesta.mensaje);
+        } else {
           this.toastr.error(respuesta.mensaje);
         }
         this.loaderService.hide();
@@ -244,7 +247,7 @@ export class CategoriaComponent implements OnInit {
     this.loaderService.show();
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
-        var respuesta = res.json();
+        let respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario(undefined);
           document.getElementById('idAutocompletado').focus();
@@ -253,19 +256,37 @@ export class CategoriaComponent implements OnInit {
         }
       },
       err => {
-        var respuesta = err.json();
+        let respuesta = err.json();
         if (respuesta.codigo == 11002) {
           document.getElementById("labelNombre").classList.add('label-error');
           document.getElementById("idNombre").classList.add('is-invalid');
           document.getElementById("idNombre").focus();
           this.toastr.error(respuesta.mensaje);
+        } else {
+          this.toastr.error(respuesta.mensaje);
         }
         this.loaderService.hide();
       }
-    );
+    )
   }
   //Elimina un registro
   private eliminar() {
+    this.loaderService.show();
+    this.servicio.eliminar(this.formulario.value.id).subscribe(
+      res => {
+        let respuesta = res.json();
+        if (respuesta.codigo == 200) {
+          this.reestablecerFormulario(undefined);
+          document.getElementById('idAutocompletado').focus();
+          this.toastr.success(respuesta.mensaje);
+          this.loaderService.hide();
+        }
+      },
+      err => {
+        this.toastr.error(err.json().mensaje);
+        this.loaderService.hide();
+      }
+    )
   }
   //Reestablece los campos formularios
   private reestablecerFormulario(id) {
@@ -287,13 +308,13 @@ export class CategoriaComponent implements OnInit {
   public activarConsultar(elemento) {
     this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
     this.autocompletado.setValue(elemento);
-    this.cambioAutocompletado(elemento);
+    this.cambioAutocompletado();
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
     this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
     this.autocompletado.setValue(elemento);
-    this.cambioAutocompletado(elemento);
+    this.cambioAutocompletado();
   }
   //Formatea el valor del autocompletado
   public displayFn(elemento) {
@@ -305,7 +326,7 @@ export class CategoriaComponent implements OnInit {
   }
   //Maneja los evento al presionar una tacla (para pestanias y opciones)
   public manejarEvento(keycode) {
-    var indice = this.indiceSeleccionado;
+    let indice = this.indiceSeleccionado;
     if (keycode == 113) {
       if (indice < this.pestanias.length) {
         this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre, 0);

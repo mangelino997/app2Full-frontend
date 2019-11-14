@@ -363,8 +363,10 @@ export class PersonalComponent implements OnInit {
   private obtenerPorId(id) {
     this.servicio.obtenerPorId(id).subscribe(
       res => {
-        let elemento = res.json();
-        this.establecerFotoYPdfs(elemento);
+        if(res.text() != ""){
+          let elemento = res.json();
+          this.establecerFotoYPdfs(elemento);
+        }
       },
       err => {
       }
@@ -879,7 +881,7 @@ export class PersonalComponent implements OnInit {
       const reader = new FileReader();
       reader.onload = e => {
         let pdf = {
-          id: this.formulario.get(campo + '.id').value ? this.formulario.get(campo + '.id').value : null,
+          id: this.formulario.get(campo + ".id").value ? this.formulario.get(campo + ".id").value : null,
           nombre: file.name,
           datos: reader.result
         }
@@ -898,9 +900,6 @@ export class PersonalComponent implements OnInit {
     } else {
       this.formulario.get(campo + '.nombre').setValue('');
       this.formulario.get(campo + '.datos').setValue('');
-      // if (campo == 'foto') {
-      //   this.obtenerFotoPorDefecto();
-      // }
     }
   }
   //Obtiene el pdf para mostrarlo

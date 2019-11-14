@@ -290,7 +290,6 @@ export class EmitirFacturaComponent implements OnInit {
       // this.toastr.success("Fecha válida.");
       document.getElementById('idItem').focus();
     } else {
-      console.log(this.fechaActual, '-15',this.formulario.value.fechaEmision, this.fechaActual, '+1' );
       this.toastr.error("Fecha para FeCAEA no es válido. Se establece fecha actual.");
       this.formulario.get('fechaEmision').setValue(this.fechaActual);
       document.getElementById('idFechaEmision').focus();
@@ -302,7 +301,6 @@ export class EmitirFacturaComponent implements OnInit {
       // this.toastr.success("Fecha válida.");
       document.getElementById('idItem').focus();
     } else {
-      console.log(this.fechaActual, '-5',this.formulario.value.fechaEmision, this.fechaActual, '+1' );
       this.toastr.error("Fecha para no es válido. Se establece fecha actual.");
       this.formulario.get('fechaEmision').setValue(this.fechaActual);
       document.getElementById('idFechaEmision').focus();
@@ -475,8 +473,7 @@ export class EmitirFacturaComponent implements OnInit {
           this.sucursalesDestinatario = res.json();
           this.sucursalesDestinatario.length > 0 ? this.formulario.get('sucursalClienteDes').setValue(this.sucursalesDestinatario[0]) : '';
         }
-      },
-      err => { this.toastr.error(err.json().mensaje); }
+      }, err => { this.toastr.error(err.json().mensaje); }
     );
   }
   //Validad el numero de documento
@@ -546,7 +543,8 @@ export class EmitirFacturaComponent implements OnInit {
       this.formulario.get('cliente').setValue(this.formulario.get('clienteDestinatario').value);
     }
     this.controlCamposPorCliente();
-    this.itemFactura.value.id != 1 ? [this.formularioVtaCpteItemFA.enable(), this.ordenVenta.enable(), this.reestablecerformularioVtaCpteItemFA()] : '';
+    this.itemFactura.value.id != 1 ?
+      [this.formularioVtaCpteItemFA.enable(), this.ordenVenta.enable(), this.reestablecerformularioVtaCpteItemFA()] : '';
 
   }
   //Controla campos segun datos del Cliente que paga - Sale del metodo 'cambioPagoEnOrigen'
@@ -1096,8 +1094,7 @@ export class ConceptosVariosDialogo {
     this.ventaItemConceptoService.listar().subscribe(
       res => {
         this.conceptos = res.json();
-      },
-      err => { this.toastr.error(err.json().mensaje); }
+      },err => { this.toastr.error(err.json().mensaje); }
     )
   }
   //Obtiene la mascara de importe
@@ -1236,8 +1233,6 @@ export class ViajeDialogo {
 export class ObservacionDialogo {
   //Define la notaImpresionComprobante seleccionada
   public notaImpCpteSeleccionada: FormControl = new FormControl();
-  //Define el check
-  // public check: boolean = false;
   //Define un formulario para validaciones de campos
   public formulario: FormGroup;
   constructor(public dialogRef: MatDialogRef<ObservacionDialogo>, @Inject(MAT_DIALOG_DATA) public data, public dialog: MatDialog,

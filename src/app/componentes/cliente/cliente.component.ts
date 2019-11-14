@@ -134,6 +134,7 @@ export class ClienteComponent implements OnInit {
       .subscribe(
         res => {
           this.pestanias = res.json();
+          this.pestanias.splice(3, 1);
           this.activeLink = this.pestanias[0].nombre;
         },
         err => {
@@ -684,9 +685,9 @@ export class ClienteComponent implements OnInit {
       case 3:
         this.actualizar();
         break;
-      case 4:
-        this.eliminar();
-        break;
+      // case 4:
+      //   this.eliminar();
+      //   break;
       default:
         break;
     }
@@ -725,7 +726,7 @@ export class ClienteComponent implements OnInit {
     this.formulario.get('clienteCuentasBancarias').setValue(this.cuentasBancarias.data);
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
-        var respuesta = res.json();
+        let respuesta = res.json();
         if (respuesta.codigo == 201) {
           this.reestablecerFormulario(respuesta.id);
           this.establecerValoresPorDefecto();
@@ -751,7 +752,7 @@ export class ClienteComponent implements OnInit {
     this.formulario.get('clienteVtosPagos').setValue(null);
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
-        var respuesta = res.json();
+        let respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario(undefined);
           document.getElementById('idAutocompletado').focus();
@@ -766,39 +767,39 @@ export class ClienteComponent implements OnInit {
     );
   }
   //Elimina un registro
-  private eliminar() {
-    const dialogRef = this.dialog.open(ConfirmarDialogoComponent, {
-      width: '50%',
-      maxWidth: '50%',
-      data: {
-        mensaje: '¿Está seguro de eliminar el registro?'
-      }
-    });
-    dialogRef.afterClosed().subscribe(resultado => {
-      if(resultado) {
-        this.loaderService.show();
-        let id = this.formulario.get('id').value;
-        this.servicio.eliminar(id).subscribe(
-          res => {
-            let respuesta = res.json();
-            if(respuesta.codigo == 200) {
-              this.reestablecerFormulario(respuesta.id);
-              this.establecerValoresPorDefecto();
-              this.establecerSituacionCliente();
-              this.establecerCondicionVenta();
-              document.getElementById('idAutocompletado').focus();
-              this.toastr.success(MensajeExcepcion.ELIMINADO);
-            }
-            this.loaderService.hide();
-          },
-          err => {
-            this.toastr.error(MensajeExcepcion.NO_ELIMINADO);
-            this.loaderService.hide();
-          }
-        );
-      }
-    });
-  }
+  // private eliminar() {
+  //   const dialogRef = this.dialog.open(ConfirmarDialogoComponent, {
+  //     width: '50%',
+  //     maxWidth: '50%',
+  //     data: {
+  //       mensaje: '¿Está seguro de eliminar el registro?'
+  //     }
+  //   });
+  //   dialogRef.afterClosed().subscribe(resultado => {
+  //     if(resultado) {
+  //       this.loaderService.show();
+  //       let id = this.formulario.get('id').value;
+  //       this.servicio.eliminar(id).subscribe(
+  //         res => {
+  //           let respuesta = res.json();
+  //           if(respuesta.codigo == 200) {
+  //             this.reestablecerFormulario(respuesta.id);
+  //             this.establecerValoresPorDefecto();
+  //             this.establecerSituacionCliente();
+  //             this.establecerCondicionVenta();
+  //             document.getElementById('idAutocompletado').focus();
+  //             this.toastr.success(MensajeExcepcion.ELIMINADO);
+  //           }
+  //           this.loaderService.hide();
+  //         },
+  //         err => {
+  //           this.toastr.error(MensajeExcepcion.NO_ELIMINADO);
+  //           this.loaderService.hide();
+  //         }
+  //       );
+  //     }
+  //   });
+  // }
   //Reestablece el formulario
   private reestablecerFormulario(id) {
     this.formulario.reset();
@@ -815,7 +816,7 @@ export class ClienteComponent implements OnInit {
   }
   //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
   private lanzarError(err) {
-    var respuesta = err;
+    let respuesta = err;
     if (respuesta.codigo == 11006) {
       document.getElementById("labelRazonSocial").classList.add('label-error');
       document.getElementById("idRazonSocial").classList.add('is-invalid');
@@ -845,7 +846,7 @@ export class ClienteComponent implements OnInit {
   public validarPatron(patron, campo) {
     let valor = this.formulario.get(campo).value;
     if (valor != undefined && valor != null && valor != '') {
-      var patronVerificador = new RegExp(patron);
+      let patronVerificador = new RegExp(patron);
       if (!patronVerificador.test(valor)) {
         if (campo == 'sitioWeb') {
           document.getElementById("labelSitioWeb").classList.add('label-error');
@@ -1076,8 +1077,8 @@ export class ClienteComponent implements OnInit {
   }
   //Maneja los evento al presionar una tacla (para pestanias y opciones)
   public manejarEvento(keycode) {
-    var indice = this.indiceSeleccionado;
-    var opcion = this.opcionSeleccionada;
+    let indice = this.indiceSeleccionado;
+    let opcion = this.opcionSeleccionada;
     if (keycode == 113) {
       if (indice < this.pestanias.length) {
         this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre, true);

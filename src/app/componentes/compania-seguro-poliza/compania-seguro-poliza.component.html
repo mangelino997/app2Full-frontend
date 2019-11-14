@@ -163,7 +163,7 @@
                   (click)="abrirReporte()">Reporte</button></th>
               <td mat-cell *matCellDef="let elemento">
                 <button mat-icon-button class="mat-icon-button-table" (click)="activarConsultar(elemento)"
-                  matTooltip="Consultar" matTooltipPosition="above">
+                  matTooltip="Consultar" matTooltipPosition="above" *ngIf="indiceSeleccionado == 5">
                   <mat-icon>search</mat-icon>
                 </button>
                 <button mat-icon-button class="mat-icon-button-table margin-left-3"

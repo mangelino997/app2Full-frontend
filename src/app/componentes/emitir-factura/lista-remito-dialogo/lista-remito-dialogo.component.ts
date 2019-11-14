@@ -99,11 +99,9 @@ export class ListaRemitoDialogoComponent implements OnInit {
   //Obtiene los registros mediante el formulario de filtro
   public filtrar() {
     this.loaderService.show();
-    console.log(this.formularioFiltro.value);
     if (this.data.esRemitoGeneral) {
       this.serviceRemitoGeneral.listarPorViajeYEstado(this.formularioFiltro.value).subscribe(
         res => {
-          console.log(res.json());
           this.asignarAtributoChecked(res.json());
           this.loaderService.hide();
         },
@@ -115,7 +113,6 @@ export class ListaRemitoDialogoComponent implements OnInit {
     } else {
       this.serviceNoEsRemitoGeneral.listarPorViajeYEstado(this.formularioFiltro.value).subscribe(
         res => {
-          console.log(res.json());
           this.asignarAtributoChecked(res.json());
           this.loaderService.hide();
         },

@@ -80,7 +80,7 @@ export class BasicoCategoriaComponent implements OnInit {
       if (typeof data == 'string' && data.length > 2) {
         this.servicio.listarPorCategoriaNombre(data).subscribe(res => {
           this.resultados = res;
-        })
+        }, err => {})
       }
     })
   }
@@ -136,8 +136,9 @@ export class BasicoCategoriaComponent implements OnInit {
     );
   }
   //Establece el formulario al seleccionar elemento del autocompletado
-  public cambioAutocompletado(elemento) {
-    this.formulario.setValue(elemento);
+  public cambioAutocompletado() {
+    let elemento = this.autocompletado.value;
+    this.formulario.patchValue(elemento);
     this.formulario.get('basico').setValue(this.appService.establecerDecimales(this.formulario.get('basico').value, 2));
   }
   //Establecer campos en disabled
@@ -350,19 +351,19 @@ export class BasicoCategoriaComponent implements OnInit {
   public activarConsultar(elemento) {
     this.seleccionarPestania(2, this.pestanias[1].nombre);
     this.autocompletado.setValue(elemento);
-    this.cambioAutocompletado(elemento);
+    this.cambioAutocompletado();
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
     this.seleccionarPestania(3, this.pestanias[2].nombre);
     this.autocompletado.setValue(elemento);
-    this.cambioAutocompletado(elemento);
+    this.cambioAutocompletado();
   }
   //Formatea el valor del autocompletado
   public displayFn(elemento) {
     if (elemento != undefined) {
-      return elemento.categoria ? elemento.categoria.nombre + ' - ' +
-        elemento.mes.nombre + '/' + elemento.anio + ' - $ ' + this.appService.establecerDecimales(elemento.basico, 2) : elemento;
+      return elemento.categoria.nombre;
+      // elemento.categoria.nombre + ' - ' + elemento.mes.nombre + '/' + elemento.anio + ' - $ ' + this.appService.establecerDecimales(elemento.basico, 2) : elemento;
     } else {
       return elemento;
     }
@@ -372,6 +373,13 @@ export class BasicoCategoriaComponent implements OnInit {
   private compararFn(a, b) {
     if (a != null && b != null) {
       return a.id === b.id;
+    }
+  }
+  //Define el mostrado de datos y comparacion en campo select de Año
+  public compareF = this.compararF.bind(this);
+  private compararF(a, b) {
+    if (a != null && b != null) {
+      return a === b;
     }
   }
   //Maneja los evento al presionar una tacla (para pestanias y opciones)

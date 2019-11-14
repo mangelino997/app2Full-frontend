@@ -42,10 +42,10 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
   public formulario: FormGroup;
   //Define la lista completa de registros
   public listaCompleta = new MatTableDataSource([]);
-  //Define el autocompletado
-  public autocompletado: FormControl = new FormControl();
   //Define empresa para las busquedas
   public empresaBusqueda: FormControl = new FormControl();
+  //Define el objeto 'pdf' como un formControl
+  public objetoPdf: FormControl = new FormControl();
   //Define la lista de resultados de busqueda
   public resultados: Array<any> = [];
   //Define la lista de resultados de busqueda companias seguros
@@ -99,6 +99,8 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
     this.loaderService.show();
     //Define el formulario y validaciones
     this.formulario = this.companiaSeguroPolizaModelo.formulario;
+    //Define el objeto 'pdf' y sus campos
+    this.objetoPdf.setValue(this.companiaSeguroPolizaModelo.formulario.get('pdf').value);
     //Autocompletado Compania Seguro - Buscar por nombre
     this.formulario.get('companiaSeguro').valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
@@ -155,7 +157,6 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
   //Establece valores al seleccionar una pestania
   public seleccionarPestania(id, nombre, opcion) {
     if (opcion == 0) {
-      this.autocompletado.setValue(undefined);
       this.empresaBusqueda.setValue(undefined);
       this.vaciarListas();
     }
@@ -311,17 +312,20 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
   }
   //Establece los datos de la poliza seleccionada
   public establecerPoliza(): void {
+    this.formulario.reset();
     let poliza = this.poliza.value;
-    if (!poliza.pdf) {
-      poliza.pdf = this.companiaSeguroPolizaModelo.formulario.get('pdf');
+    if (poliza.pdf) {
+      this.formulario.patchValue(poliza);
+      this.obtenerPDF();
+    } else {
+      poliza.pdf = this.objetoPdf.value;
+      this.formulario.patchValue(poliza);
       this.obtenerPDF();
     }
-    this.formulario.patchValue(poliza);
   }
   //Reestablece los campos formularios
   private reestablecerFormulario(id) {
     this.empresaBusqueda.setValue(undefined);
-    this.autocompletado.setValue(undefined);
     this.formulario.reset();
     this.poliza.reset();
     this.vaciarListas();
@@ -346,12 +350,21 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
     this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
-    this.obtenerPorId(elemento.id);
+    this.establecerElemento(elemento);
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
     this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
-    this.obtenerPorId(elemento.id);
+    this.establecerElemento(elemento);
+  }
+  //Establece elemento a formulario y controles
+  private establecerElemento(elemento) {
+    let pdf = elemento.pdf;
+    !pdf ? elemento.pdf = this.objetoPdf.value : '';
+    this.formulario.patchValue(elemento);
+    this.listarPorCompaniaSeguroYEmpresa();
+    this.poliza.patchValue(elemento);
+    pdf ? this.obtenerPorId(elemento.id) : '';
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarEliminar(elemento) {
@@ -360,18 +373,9 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
   }
   //Establece la foto y pdf (activar consultar/actualizar)
   private establecerPdf(elemento): void {
-    this.autocompletado.setValue(elemento);
+    console.log(elemento);
     if (elemento.pdf) {
-
       this.formulario.get('pdf.datos').setValue(atob(elemento.pdf.datos));
-    }
-  }
-  //Muestra en la pestania buscar,actualizar,eliminar y listar el elemento seleccionado de listar
-  public activarVer(elemento) {
-    if (elemento.pdf) {
-      elemento.pdf = this.companiaSeguroPolizaModelo.formulario.get('pdf');
-      this.obtenerPDF();
-      this.verPDF();
     }
   }
   //Obtiene la mascara de enteros CON decimales
@@ -428,8 +432,8 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
   }
   //Obtiene el pdf para mostrarlo
   public obtenerPDF() {
-    if (this.formulario.get('pdf.id').value) {
-      this.pdfServicio.obtenerPorId(this.formulario.get('pdf.id').value).subscribe(res => {
+    if (this.formulario.value.pdf.id) {
+      this.pdfServicio.obtenerPorId(this.formulario.value.pdf.id).subscribe(res => {
         let resultado = res.json();
         let pdf = {
           id: resultado.id,

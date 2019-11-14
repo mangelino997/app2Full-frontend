@@ -96,15 +96,16 @@ export class VencimientosChoferesComponent implements OnInit {
       .subscribe(
         res => {
           this.pestanias = res.json();
+          this.pestanias.splice(3, 1);
+          this.pestanias.splice(0, 1);
           this.activeLink = this.pestanias[0].nombre;
         },
-        err => {
-        }
+        err => {}
       );
     //Define el Formulario
     this.formulario = this.personal.formulario;
     //Establece los valores de la primera pestania activa
-    this.seleccionarPestania(1, 'Actualizar');
+    this.seleccionarPestania(1, 'Consultar');
     //Obtiene la lista de tipos de documentos
     this.listarTiposDocumentos();
     //Deshabilita los campos de es chofer y es chofer larga distancia 
