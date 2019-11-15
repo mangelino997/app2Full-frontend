@@ -8,7 +8,6 @@ export class Vehiculo {
     public formulario: FormGroup;
     //define el formulario de la clase PDf
     public pdfFormulario: FormGroup;
-    
     //constructor
     constructor(private pdf: Pdf) {
         // crear el formulario para la seccion de modulos

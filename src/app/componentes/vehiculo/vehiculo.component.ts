@@ -20,6 +20,7 @@ import { CompaniaSeguroService } from 'src/app/servicios/compania-seguro.service
 import { PdfService } from 'src/app/servicios/pdf.service';
 import { PdfDialogoComponent } from '../pdf-dialogo/pdf-dialogo.component';
 import { ReporteService } from 'src/app/servicios/reporte.service';
+import { ChoferProveedorService } from 'src/app/servicios/chofer-proveedor.service';
 
 @Component({
   selector: 'app-vehiculo',
@@ -180,8 +181,6 @@ export class VehiculoComponent implements OnInit {
     this.listarMarcasVehiculos();
     //Obtiene la lista de empresas
     this.listarEmpresas();
-    //Obtiene la lista completa de registros
-    // this.listar();
     //Obtiene la lista de Compania de Seguro
     this.listarCompaniasSeguroPorEmpresa();
   }
@@ -210,7 +209,7 @@ export class VehiculoComponent implements OnInit {
       res => {
         this.loaderService.hide();
         let elemento = res.json();
-        this.formulario.setValue(elemento);
+        this.formulario.patchValue(elemento);
         this.establecerFotoYPdfs(elemento);
       },
       err => {
@@ -218,7 +217,7 @@ export class VehiculoComponent implements OnInit {
       }
     );
   }
-  //Establece la foto y pdf (activar consultar/actualizar)
+  //Establece la foto y pdf (actilet consultar/actualizar)
   private establecerFotoYPdfs(elemento): void {
     this.autocompletado.setValue(elemento);
     if (elemento.pdfTitulo) {
@@ -292,12 +291,12 @@ export class VehiculoComponent implements OnInit {
   //Vacia la lista de resultados de autocompletados
   private vaciarLista() {
     this.resultados = [];
-    this.resultadosVehiculosRemolques = [];
-    this.resultadosLocalidades = [];
-    this.resultadosCompaniasSegurosPolizas = [];
-    this.resultadosPersonales = [];
     this.companiasSeguros = [];
+    this.resultadosPersonales = [];
+    this.resultadosLocalidades = [];
     this.companiasSegurosPolizas = [];
+    this.resultadosVehiculosRemolques = [];
+    this.resultadosCompaniasSegurosPolizas = [];
     this.listaCompleta = new MatTableDataSource([]);
   }
   //Establece selects solo lectura
@@ -457,11 +456,9 @@ export class VehiculoComponent implements OnInit {
         .subscribe(
           res => {
             this.loaderService.hide();
-            this.configuracionesVehiculos = res.json();
-          },
-          err => {
-            this.loaderService.hide();
-          }
+            res.json().length > 0 ? this.configuracionesVehiculos = res.json() :
+              this.toastr.error("Sin registros en Lista de Configuraciones para el Tipo y Marca de Vehículo.");
+          }, err => { this.loaderService.hide(); }
         )
     } else {
       this.loaderService.hide();
@@ -474,15 +471,13 @@ export class VehiculoComponent implements OnInit {
     this.formulario.get('usuarioAlta').setValue(this.appService.getUsuario());
     this.servicio.agregar(this.formulario.value).then(
       res => {
-        var respuesta = res.json();
+        let respuesta = res.json();
         if (res.status == 201) {
           respuesta.then(data => {
             this.reestablecerFormulario(data.id);
             document.getElementById('idTipoVehiculo').focus();
             this.toastr.success(data.mensaje);
-          },
-            err => {
-            })
+          }, err => { })
         } else {
           respuesta.then(err => {
             this.toastr.error(err.mensaje);
@@ -491,7 +486,7 @@ export class VehiculoComponent implements OnInit {
         this.loaderService.hide();
       },
       err => {
-        var error = err.json();
+        let error = err.json();
         //11017 el de domimio, 11018 numero interno (duplicado)
         if (error.codigo == 11017) {
           document.getElementById("labelDominio").classList.add('label-error');
@@ -527,7 +522,7 @@ export class VehiculoComponent implements OnInit {
         this.loaderService.hide();
       },
       err => {
-        var respuesta = err.json();
+        let respuesta = err.json();
         if (respuesta.codigo == 11017) {
           document.getElementById("labelDominio").classList.add('label-error');
           document.getElementById("idDominio").classList.add('is-invalid');
@@ -730,7 +725,7 @@ export class VehiculoComponent implements OnInit {
   }
   //Maneja los evento al presionar una tacla (para pestanias y opciones)
   public manejarEvento(keycode) {
-    var indice = this.indiceSeleccionado;
+    let indice = this.indiceSeleccionado;
     if (keycode == 113) {
       if (indice < this.pestanias.length) {
         this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre);

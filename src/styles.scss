@@ -676,3 +676,8 @@ hr {
   border: 0;
   border-top: 1px solid rgba(0,0,0,.1);
 }
+//Define el estilo para el boton 'Close (X)' en campos donde se adjunta foto o pdf
+#btn-close {
+  margin-left: 4px;
+  margin-right: 4px;
+}

@@ -20,7 +20,7 @@
                 type="text" matInput [formControl]="autocompletado" [matAutocomplete]="auto"
                 (blur)="verificarSeleccion(autocompletado)">
               <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayF.bind(this)"
-                (optionSelected)="establecerAutocompletado()">
+                (optionSelected)="cambioAutocompletado()">
                 <mat-option *ngFor="let item of resultados" [value]="item">
                   {{item.alias}}
                 </mat-option>
@@ -128,25 +128,52 @@
             </div>
           </div>
         </div>
-        <div class="row">
-          <div class="col-md-4">
-            <div class="form-group has-float-label">
-              <label for="idPrecioUnitarioVenta" class="tamanio-label">Precio Unitario de Venta</label>
-              <input id="idPrecioUnitarioVenta" type="text" formControlName="precioUnitarioVenta"
-                class="form-control form-control-sm number-right" [textMask]="mascararImporte(10, 2)"
-                (blur)="establecerDecimales(formulario.get('precioUnitarioVenta'), 2)" [readonly]="soloLectura"
-                placeholder="$ 0.00">
+        <div *ngIf="indiceSeleccionado == 2">
+          <br>
+          <mat-divider></mat-divider>
+          <br>
+          <div class="row" >
+            <div class="col-md-4">
+              <div class="form-group has-float-label">
+                <label for="idPrecioUnViaje" class="tamanio-label">Precio Unitario Viaje</label>
+                <input id="idPrecioUnViaje" type="text" formControlName="precioUnitarioViaje" autocomplete="off"
+                  placeholder="$ 0.00" [textMask]="mascararImporte(8, 2)"
+                  class="form-control form-control-sm number-right" [readonly]="soloLectura" maxlength="45"
+                  (blur)="establecerDecimales(formulario.get('precioUnitarioViaje'), 2)">
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group has-float-label">
+                <label for="idPrecioUnVenta" class="tamanio-label">Precio Unitario de Venta</label>
+                <input id="idPrecioUnVenta" type="text" formControlName="precioUnitarioVenta" autocomplete="off"
+                  placeholder="$ 0.00" [textMask]="mascararImporte(8, 2)"
+                  class="form-control form-control-sm number-right" [readonly]="soloLectura" maxlength="45"
+                  (blur)="establecerDecimales(formulario.get('precioUnitarioVenta'), 2)">
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group has-float-label">
+                <label for="idCoeficienteITC" class="tamanio-label">ITC por Litro</label>
+                <input id="idCoeficienteITC" type="text" formControlName="itcPorLitro" autocomplete="off"
+                  placeholder="00.0000" [textMask]="mascararCoeficiente(2)"
+                  class="form-control form-control-sm number-right" [readonly]="soloLectura" maxlength="45"
+                  (blur)="establecerDecimales(formulario.get('itcPorLitro'), 4)">
+              </div>
             </div>
           </div>
-          <div class="col-md-4">
-            <div class="form-group has-float-label">
-              <label for="idCoeficienteITC" class="tamanio-label">Coeficiente ITC</label>
-              <input id="idCoeficienteITC" type="text" formControlName="coeficienteITC"
-                class="form-control form-control-sm number-right" [textMask]="obtenerMascaraEnteroConDecimales(10)"
-                (blur)="establecerDecimales(formulario.get('coeficienteITC'), 2)" [readonly]="soloLectura"
-                placeholder="$ 0.00">
+          <div class="row" >
+            <div class="col"></div>
+            <div class="col-md-4">
+              <div class="form-group has-float-label">
+                <label for="idCoeficienteITCNeto" class="tamanio-label">ITC Neto (%)</label>
+                <input id="idCoeficienteITCNeto" type="text" formControlName="itcNeto" autocomplete="off"
+                  [textMask]="mascararPorcentaje()" class="form-control form-control-sm number-right"
+                  [readonly]="soloLectura" maxlength="45" placeholder="% 00.00"
+                  (blur)="establecerPorcentaje(formulario.get('itcNeto'), 2)">
+              </div>
             </div>
           </div>
+
         </div>
         <button id="idBoton" *ngIf="mostrarBoton && !show" mat-raised-button color="primary" formnovalidate
           (click)="accion(indiceSeleccionado)" [disabled]="!formulario.valid">
@@ -192,7 +219,8 @@
             </div>
           </div>
           <div class="col-md-2">
-            <button id="idBoton" mat-raised-button color="primary" formnovalidate (click)="listarPorRubroYMarcaLista()">
+            <button id="idBoton" mat-raised-button color="primary" [disabled]="!formularioFiltro.valid" formnovalidate
+              (click)="listarPorRubroYMarcaLista()">
               Buscar
             </button>
           </div>

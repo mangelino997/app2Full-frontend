@@ -10,6 +10,7 @@ import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
 import { AppService } from 'src/app/servicios/app.service';
 import { ReporteService } from 'src/app/servicios/reporte.service';
+import { Localidad } from 'src/app/modelos/localidad';
 
 @Component({
   selector: 'app-localidad',
@@ -46,7 +47,7 @@ export class LocalidadComponent implements OnInit {
   //Define las columnas de la tabla
   public columnas: string[] = ['ID', 'NOMBRE', 'CODIGO_POSTAL', 'PROVINCIA', 'EDITAR'];
   //Define la matSort
-  @ViewChild(MatSort, { static: false }) sort: MatSort;
+  @ViewChild(MatSort, { static: true }) sort: MatSort;
   //Define la paginacion
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Define el mostrar del circulo de progreso
@@ -54,7 +55,7 @@ export class LocalidadComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Constructor
-  constructor(private servicio: LocalidadService, private subopcionPestaniaService: SubopcionPestaniaService,
+  constructor(private servicio: LocalidadService, private modelo: Localidad, private subopcionPestaniaService: SubopcionPestaniaService,
     private provinciaServicio: ProvinciaService, private appService: AppService, private toastr: ToastrService,
     private loaderService: LoaderService, private reporteServicio: ReporteService) {
     //Obtiene la lista de pestania por rol y subopcion
@@ -84,15 +85,11 @@ export class LocalidadComponent implements OnInit {
         this.show = state.show;
       });
     //Define los campos para validaciones
-    this.formulario = new FormGroup({
-      id: new FormControl(),
-      version: new FormControl(),
-      nombre: new FormControl('', [Validators.required, Validators.maxLength(45)]),
-      codigoPostal: new FormControl('', [Validators.min(1), Validators.maxLength(10)]),
-      provincia: new FormControl('', Validators.required)
-    });
+    this.formulario = this.modelo.formulario;
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar', 0);
+    //Obtiene la lista de provincias
+    this.listarProvincias();
     //Autocompletado Provincia - Buscar por nombre
     this.formulario.get('provincia').valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
@@ -101,8 +98,6 @@ export class LocalidadComponent implements OnInit {
         })
       }
     })
-    //Obtiene la lista de provincias
-    this.listarProvincias();
   }
   //Habilita o deshabilita los campos select dependiendo de la pestania actual
   private establecerEstadoCampos(estado) {
@@ -126,6 +121,7 @@ export class LocalidadComponent implements OnInit {
   public vaciarListas() {
     this.resultados = [];
     this.resultadosProvincias = [];
+    this.listaCompleta = new MatTableDataSource([]);
   }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
@@ -139,14 +135,9 @@ export class LocalidadComponent implements OnInit {
   };
   //Establece valores al seleccionar una pestania
   public seleccionarPestania(id, nombre, opcion) {
-    this.reestablecerFormulario('');
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    this.listaCompleta = null;
-    if (opcion == 0) {
-      this.autocompletado.setValue(undefined);
-      this.resultados = [];
-    }
+    this.reestablecerFormulario(undefined);
     switch (id) {
       case 1:
         this.obtenerSiguienteId();
@@ -222,6 +213,8 @@ export class LocalidadComponent implements OnInit {
           document.getElementById("idNombre").classList.add('is-invalid');
           document.getElementById("idNombre").focus();
           this.toastr.error(respuesta.mensaje);
+        } else {
+          this.toastr.error(respuesta.mensaje);
         }
         this.loaderService.hide();
       }
@@ -246,6 +239,8 @@ export class LocalidadComponent implements OnInit {
           document.getElementById("labelNombre").classList.add('label-error');
           document.getElementById("idNombre").classList.add('is-invalid');
           document.getElementById("idNombre").focus();
+          this.toastr.error(respuesta.mensaje);
+        } else {
           this.toastr.error(respuesta.mensaje);
         }
         this.loaderService.hide();
@@ -273,6 +268,8 @@ export class LocalidadComponent implements OnInit {
           document.getElementById("idNombre").classList.add('is-invalid');
           document.getElementById("idNombre").focus();
           this.toastr.error(respuesta.mensaje);
+        } else {
+          this.toastr.error(respuesta.mensaje);
         }
         this.loaderService.hide();
       }
@@ -281,8 +278,8 @@ export class LocalidadComponent implements OnInit {
   //Reestablece el formulario
   private reestablecerFormulario(id) {
     this.formulario.reset();
+    this.autocompletado.reset();
     this.formulario.get('id').setValue(id);
-    this.autocompletado.setValue(undefined);
     this.vaciarListas();
   }
   //Obtiene la lista de localidades por provincia
@@ -298,6 +295,7 @@ export class LocalidadComponent implements OnInit {
         this.loaderService.hide();
       },
       err => {
+        this.toastr.error(err.json().mensaje);
         this.loaderService.hide();
       }
     );

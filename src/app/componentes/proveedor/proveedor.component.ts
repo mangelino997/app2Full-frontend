@@ -232,7 +232,7 @@ export class ProveedorComponent implements OnInit {
           nombre: resultado.nombre
         }
         elemento.planCuentaCompra = planCuenta;
-        if(this.indiceSeleccionado == 3) {
+        if (this.indiceSeleccionado == 3) {
           elemento.proveedor = {
             id: this.formulario.get('id').value,
             version: this.formulario.get('version').value
@@ -248,7 +248,7 @@ export class ProveedorComponent implements OnInit {
     this.proveedorCuentaContableService.actualizar(elemento).subscribe(
       res => {
         let respuesta = res.json();
-        if(respuesta.codigo == 200) {
+        if (respuesta.codigo == 200) {
           this.toastr.success(MensajeExcepcion.ACTUALIZADO);
         }
         this.loaderService.hide();
@@ -262,7 +262,7 @@ export class ProveedorComponent implements OnInit {
   //Elimina la cuenta contable de la empresa
   public eliminarPlanCuenta(elemento) {
     const id = elemento.id;
-    if(this.indiceSeleccionado == 3) {
+    if (this.indiceSeleccionado == 3) {
       this.eliminarCuentaContablePorId(id);
     }
     elemento.planCuentaCompra = null;
@@ -273,7 +273,7 @@ export class ProveedorComponent implements OnInit {
     this.proveedorCuentaContableService.eliminar(id).subscribe(
       res => {
         let respuesta = res.json();
-        if(respuesta.codigo == 200) {
+        if (respuesta.codigo == 200) {
           this.toastr.success(MensajeExcepcion.ELIMINADO);
         }
         this.loaderService.hide();
@@ -618,6 +618,11 @@ export class ProveedorComponent implements OnInit {
           break;
       }
     }
+  }
+  //Verifica que el CBU sea de 22 carácteres obligatorios
+  public verificarCBU() {
+    let elemento = this.formulario.value.numeroCBU;
+    elemento.length < 22 ? [this.toastr.error("El N° de CBU debe ser de 22 carácteres."), this.formulario.get('numeroCBU').reset()] : '';
   }
   //Verifica si se selecciono un elemento del autocompletado
   public verificarSeleccion(valor): void {

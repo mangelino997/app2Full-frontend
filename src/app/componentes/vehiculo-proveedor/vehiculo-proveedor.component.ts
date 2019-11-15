@@ -163,9 +163,11 @@ export class VehiculoProveedorComponent implements OnInit {
     let proveedor = this.formulario.get('proveedor').value;
     this.servicio.listarPorProveedor(proveedor.id).subscribe(
       res => {
-        this.listaCompleta = new MatTableDataSource(res.json());
+        let respuesta = res.json();
+        this.listaCompleta = new MatTableDataSource(respuesta);
         this.listaCompleta.sort = this.sort;
         this.listaCompleta.paginator = this.paginator;
+        respuesta.length == 0? this.toastr.error("Sin registros para mostrar.") : '';
         this.loaderService.hide();
       },
       err => {
@@ -176,12 +178,13 @@ export class VehiculoProveedorComponent implements OnInit {
     );
   }
   //Vacia la lista de resultados de autocompletados
-  private vaciarLista() {
+  private vaciarListas() {
     this.resultados = [];
     this.resultadosProveedores = [];
     this.resultadosChoferesProveedores = [];
     this.resultadosVehiculosRemolques = [];
     this.resultadosCompaniasSeguros = [];
+    this.listaCompleta = new MatTableDataSource([]);
   }
   //Habilita o deshabilita los campos select dependiendo de la pestania actual
   private establecerEstadoCampos(estado) {
@@ -228,7 +231,6 @@ export class VehiculoProveedorComponent implements OnInit {
         this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
         break;
       case 5:
-        this.listaCompleta = new MatTableDataSource([]);
         setTimeout(function () {
           document.getElementById('idProveedor').focus();
         }, 20);
@@ -263,22 +265,6 @@ export class VehiculoProveedorComponent implements OnInit {
       }
     );
   }
-  //Obtiene el listado de registros
-  private listar() {
-    this.loaderService.show();
-    this.servicio.listar().subscribe(
-      res => {
-        this.listaCompleta = new MatTableDataSource(res.json());
-        this.listaCompleta.sort = this.sort;
-        this.loaderService.hide();
-      },
-      err => {
-        let error = err.json();
-        this.toastr.error(error.mensaje);
-        this.loaderService.hide();
-      }
-    );
-  }
   //Agrega un registro
   private agregar() {
     this.loaderService.show();
@@ -286,7 +272,7 @@ export class VehiculoProveedorComponent implements OnInit {
     this.formulario.get('usuarioAlta').setValue(this.appService.getUsuario());
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
-        var respuesta = res.json();
+        let respuesta = res.json();
         if (respuesta.codigo == 201) {
           this.reestablecerFormulario(respuesta.id);
           document.getElementById('idProveedor').focus();
@@ -295,13 +281,13 @@ export class VehiculoProveedorComponent implements OnInit {
         }
       },
       err => {
-        var respuesta = err.json();
-        if (respuesta.codigo == 11017) {
+        let error = err.json();
+        if (error.codigo == 11017) {
           document.getElementById("labelDominio").classList.add('label-error');
           document.getElementById("idDominio").classList.add('is-invalid');
           document.getElementById("idDominio").focus();
         }
-        this.toastr.error(respuesta.mensaje);
+        this.toastr.error(error.mensaje);
         this.loaderService.hide();
       }
     );
@@ -312,7 +298,7 @@ export class VehiculoProveedorComponent implements OnInit {
     this.formulario.get('usuarioMod').setValue(this.appService.getUsuario());
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
-        var respuesta = res.json();
+        let respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario('');
           document.getElementById('idAutocompletado').focus();
@@ -321,13 +307,13 @@ export class VehiculoProveedorComponent implements OnInit {
         }
       },
       err => {
-        var respuesta = err.json();
-        if (respuesta.codigo == 11017) {
+        let error = err.json();
+        if (error.codigo == 11017) {
           document.getElementById("labelDominio").classList.add('label-error');
           document.getElementById("idDominio").classList.add('is-invalid');
           document.getElementById("idDominio").focus();
         }
-        this.toastr.error(respuesta.mensaje);
+        this.toastr.error(error.mensaje);
         this.loaderService.hide();
       }
     );
@@ -335,24 +321,25 @@ export class VehiculoProveedorComponent implements OnInit {
   //Elimina un registro
   private eliminar() {
     this.loaderService.show();
-    let formulario = this.formulario.value;
-    this.servicio.eliminar(formulario.id).subscribe(
+    this.servicio.eliminar(this.formulario.value.id).subscribe(
       res => {
-        var respuesta = res.json();
+        let respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario(null);
-          document.getElementById('idNombre').focus();
           this.toastr.success(respuesta.mensaje);
+          document.getElementById('idAutocompletado').focus();
         }
         this.loaderService.hide();
       },
       err => {
-        var respuesta = err.json();
-        if (respuesta.codigo == 500) {
+        let error = err.json();
+        if (error.codigo == 500) {
           document.getElementById("labelNombre").classList.add('label-error');
-          document.getElementById("idNombre").classList.add('is-invalid');
-          document.getElementById("idNombre").focus();
-          this.toastr.error(respuesta.mensaje);
+          document.getElementById("idAutocompletado").classList.add('is-invalid');
+          document.getElementById("idAutocompletado").focus();
+          this.toastr.error(error.mensaje);
+        } else{
+          this.toastr.error(error.mensaje);
         }
         this.loaderService.hide();
       }
@@ -384,7 +371,7 @@ export class VehiculoProveedorComponent implements OnInit {
     this.formulario.reset();
     this.formulario.get('id').setValue(id);
     this.autocompletado.setValue(undefined);
-    this.vaciarLista();
+    this.vaciarListas();
   }
   //Manejo de colores de campos y labels
   public cambioCampo(id, label) {
@@ -436,7 +423,7 @@ export class VehiculoProveedorComponent implements OnInit {
   }
   //Maneja los evento al presionar una tacla (para pestanias y opciones)
   public manejarEvento(keycode) {
-    var indice = this.indiceSeleccionado;
+    let indice = this.indiceSeleccionado;
     if (keycode == 113) {
       if (indice < this.pestanias.length) {
         this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre);

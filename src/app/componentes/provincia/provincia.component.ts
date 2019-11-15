@@ -51,7 +51,7 @@ export class ProvinciaComponent implements OnInit {
   //Define las columnas de la tabla
   public columnas: string[] = ['ID', 'NOMBRE', 'CODIGO_IIBB', 'CODIGO_AFIP', 'EDITAR'];
   //Define la matSort
-  @ViewChild(MatSort, { static: false }) sort: MatSort;
+  @ViewChild(MatSort, { static: true }) sort: MatSort;
   //Define la paginacion
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Constructor
@@ -104,6 +104,7 @@ export class ProvinciaComponent implements OnInit {
     this.resultados = [];
     this.resultadosPaises = [];
     this.listaCompleta = new MatTableDataSource([]);
+    this.listaCompleta.sort = this.sort;
   }
   //Carga la lista de paises
   private listarPaises() {

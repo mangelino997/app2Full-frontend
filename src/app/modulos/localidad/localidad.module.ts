@@ -12,6 +12,7 @@ import { LocalidadService } from 'src/app/servicios/localidad.service';
 import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
 import { ProvinciaService } from 'src/app/servicios/provincia.service';
 import { ReporteDialogoComponent } from 'src/app/componentes/reporte-dialogo/reporte-dialogo.component';
+import { Localidad } from 'src/app/modelos/localidad';
 
 @NgModule({
   declarations: [
@@ -39,6 +40,7 @@ import { ReporteDialogoComponent } from 'src/app/componentes/reporte-dialogo/rep
   ],
   providers: [
     LocalidadService,
+    Localidad,
     SubopcionPestaniaService,
     ProvinciaService
   ],
