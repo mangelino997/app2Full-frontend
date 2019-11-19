@@ -208,7 +208,7 @@ export class ContactoBancoComponent implements OnInit {
     let sucursalBanco = this.formulario.value.sucursalBanco;
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
-        var respuesta = res.json();
+        let respuesta = res.json();
         if (respuesta.codigo == 201) {
           this.reestablecerFormulario();
           this.formulario.get('sucursalBanco').setValue(sucursalBanco);
@@ -229,7 +229,7 @@ export class ContactoBancoComponent implements OnInit {
     this.formulario.get('usuarioMod').setValue(this.appServicio.getUsuario());
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
-        var respuesta = res.json();
+        let respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario();
           document.getElementById('idSucursalBanco').focus();
@@ -249,7 +249,7 @@ export class ContactoBancoComponent implements OnInit {
     let formulario = this.formulario.value;
     this.servicio.eliminar(formulario.id).subscribe(
       res => {
-        var respuesta = res.json();
+        let respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario();
           document.getElementById('idNombre').focus();
@@ -258,7 +258,7 @@ export class ContactoBancoComponent implements OnInit {
         this.loaderService.hide();
       },
       err => {
-        var respuesta = err.json();
+        let respuesta = err.json();
         if (respuesta.codigo == 500) {
           document.getElementById("labelNombre").classList.add('label-error');
           document.getElementById("idNombre").classList.add('is-invalid');
@@ -277,7 +277,7 @@ export class ContactoBancoComponent implements OnInit {
   }
   //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
   private lanzarError(err) {
-    var respuesta = err.json();
+    let respuesta = err.json();
     if (respuesta.codigo == 11003) {
       document.getElementById("labelCorreoelectronico").classList.add('label-error');
       document.getElementById("idCorreoelectronico").classList.add('is-invalid');
@@ -294,7 +294,7 @@ export class ContactoBancoComponent implements OnInit {
   public validarPatron(patron, campo) {
     let valor = this.formulario.get(campo).value;
     if (valor != undefined && valor != null && valor != '') {
-      var patronVerificador = new RegExp(patron);
+      let patronVerificador = new RegExp(patron);
       if (!patronVerificador.test(valor)) {
         if (campo == 'telefonoFijo') {
           document.getElementById("labelTelefonoFijo").classList.add('label-error');
@@ -359,7 +359,7 @@ export class ContactoBancoComponent implements OnInit {
   }
   //Maneja los evento al presionar una tacla (para pestanias y opciones)
   public manejarEvento(keycode) {
-    var indice = this.indiceSeleccionado;
+    let indice = this.indiceSeleccionado;
     if (keycode == 113) {
       if (indice < this.pestanias.length) {
         this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre);

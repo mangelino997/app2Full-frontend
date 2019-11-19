@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject, ViewChild } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { EmpresaService } from 'src/app/servicios/empresa.service';
@@ -6,7 +6,7 @@ import { ActualizacionPrecios } from 'src/app/modelos/actualizacionPrecios';
 import { OrdenVentaService } from 'src/app/servicios/orden-venta.service';
 import { OrdenVentaTramoService } from 'src/app/servicios/orden-venta-tramo.service';
 import { OrdenVentaEscalaService } from 'src/app/servicios/orden-venta-escala.service';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatTableDataSource, MatSort, MatPaginator } from '@angular/material';
 import { ClienteService } from 'src/app/servicios/cliente.service';
 import { AppService } from 'src/app/servicios/app.service';
 import { LoaderService } from 'src/app/servicios/loader.service';
@@ -41,8 +41,6 @@ export class ActualizacionPreciosComponent implements OnInit {
   public pestanias: Array<any> = [];
   //Define un formulario para validaciones de campos
   public formulario: FormGroup;
-  //Define la lista completa de registros
-  public listaCompleta: Array<any> = [];
   //Define la lista completa de registros (ordenes de venta) filtrados por la fecha de precio desde
   public listaFiltrada: Array<any> = [];
   //Define la lista completa de registros
@@ -67,13 +65,21 @@ export class ActualizacionPreciosComponent implements OnInit {
   public resultadosLocalidades: Array<any> = [];
   //Define la mascara de porcentaje
   public porcentajeMascara: any;
+
+  //Define la lista completa de registros
+  public listaCompleta = new MatTableDataSource([]);
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service
   private subscription: Subscription;
+  //Define las columnas de la tabla
+  public columnas: string[] = ['ID', 'NOMBRE', 'VENDEDOR', 'P_SEGURO', 'P_COM_CR', 'ACTIVA', 'OBS', 'CHECK'];
+  //Define la matSort
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
+  //Define la paginacion
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Constructor
-  constructor(private actualizacionPrecios: ActualizacionPrecios,
-    private clienteService: ClienteService, private appService: AppService,
+  constructor(private actualizacionPrecios: ActualizacionPrecios, private clienteService: ClienteService, private appService: AppService,
     private ordenVentaTramoServicio: OrdenVentaTramoService, private ordenVentaEscalaServicio: OrdenVentaEscalaService,
     private empresaServicio: EmpresaService, private ordenVentaServicio: OrdenVentaService,
     private toastr: ToastrService, public dialog: MatDialog, private loaderService: LoaderService) {
@@ -116,14 +122,12 @@ export class ActualizacionPreciosComponent implements OnInit {
     this.empresaServicio.listar().subscribe(
       res => {
         this.empresas = res.json();
-      },
-      err => {
-      }
+      }, err => { this.toastr.error(err.json().message) }
     );
   }
   //Realiza el cambio de campo a buscar
   public cambioDeCampo() {
-    this.reestablecerFormulario(undefined);
+    this.reestablecerFormulario();
     if (this.buscarPor.value == 0) {
       this.buscarPorCliente = true;
     } else {
@@ -134,65 +138,52 @@ export class ActualizacionPreciosComponent implements OnInit {
   //Carga la Tabla 
   public cargarTabla(opcion, id) {
     this.loaderService.show();
-    this.listaCompleta = [];
+    this.listaCompleta = new MatTableDataSource([]);
     if (opcion == 0) {
       this.ordenVentaServicio.listarPorCliente(id).subscribe(
         res => {
-          this.listaCompleta = res.json();
+          this.listaCompleta = new MatTableDataSource(res.json());
+          this.listaCompleta.sort = this.sort;
+          this.listaCompleta.paginator = this.paginator;
           this.loaderService.hide();
-        },
-        err => {
-          this.loaderService.hide();
-        }
+        }, err => { this.loaderService.hide(); }
       );
     } else {
       this.ordenVentaServicio.listarPorEmpresa(this.empresa.value.id).subscribe(
         res => {
-          this.listaCompleta = res.json();
+          this.listaCompleta = new MatTableDataSource(res.json());
+          this.listaCompleta.sort = this.sort;
+          this.listaCompleta.paginator = this.paginator;
           this.loaderService.hide();
-        },
-        err => {
-          this.loaderService.hide();
-        }
+        }, err => { this.loaderService.hide(); }
       );
     }
   }
   //Controla el cambio de estilos al seleccionar una orden Venta de la tabla
   public seleccionOrdenVta(indice, idOrdenVta) {
-    let fila = 'fila' + indice;
-    this.indiceSeleccionado = indice;
     this.idOrdenVta = idOrdenVta;
-    let filaSeleccionada = document.getElementsByClassName('ordenVta-seleccionada');
-    for (let i = 0; i < filaSeleccionada.length; i++) {
-      filaSeleccionada[i].className = "ordenVta-no-seleccionada";
-    }
-    document.getElementById(fila).className = "ordenVta-seleccionada";
     this.buscarPorOrdenPrecios(indice);
   }
   //Busca los datos segun la Orden seleccionada
   public buscarPorOrdenPrecios(indice) {
     this.ordenVenta = [];
-    this.porEscala = this.listaCompleta[indice].tipoTarifa.porEscala;
+    this.porEscala = this.listaCompleta.data[indice].tipoTarifa.porEscala;
     this.indiceSeleccionado = indice;
-    if (this.listaCompleta[indice].tipoTarifa.porEscala == true) {
-      this.ordenVentaEscalaServicio.listarFechasPorOrdenVenta(this.listaCompleta[indice].id).subscribe(
+    if (this.listaCompleta.data[indice].tipoTarifa.porEscala == true) {
+      this.ordenVentaEscalaServicio.listarFechasPorOrdenVenta(this.listaCompleta.data[indice].id).subscribe(
         res => {
           this.ordenVenta = res.json();
           this.formulario.get('fechaDesde').setValue(this.ordenVenta[0].preciosDesde);
           this.filtrarPorPrecioDesde();
-        },
-        err => {
-        }
+        }, err => { this.toastr.error(err.json().message) }
       );
     } else {
-      this.ordenVentaTramoServicio.listarFechasPorOrdenVenta(this.listaCompleta[indice].id).subscribe(
+      this.ordenVentaTramoServicio.listarFechasPorOrdenVenta(this.listaCompleta.data[indice].id).subscribe(
         res => {
           this.ordenVenta = res.json();
           this.formulario.get('fechaDesde').setValue(this.ordenVenta[0].preciosDesde);
           this.filtrarPorPrecioDesde();
-        },
-        err => {
-        }
+        }, err => { this.toastr.error(err.json().message) }
       );
     }
   }
@@ -203,8 +194,7 @@ export class ActualizacionPreciosComponent implements OnInit {
       res => {
         let respuesta = res.json();
         this.listaFiltrada = respuesta;
-        // this.openListaPrecioDialogo();
-      }
+      }, err => { this.toastr.error(err.json().message) }
     );
   }
   //Modal Lista de Precios para determinada Fecha
@@ -226,7 +216,6 @@ export class ActualizacionPreciosComponent implements OnInit {
     const dialogRef = this.dialog.open(ConfirmarDialogo, {
       width: '1100px',
       data: {
-        // formulario: this.ordenVenta, 
         formulario: this.listaFiltrada,
         porEscala: this.porEscala,
         ordenVenta: this.listaCompleta[this.indiceSeleccionado]
@@ -234,7 +223,7 @@ export class ActualizacionPreciosComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe(result => {
       if (result == 1) {
-        this.reestablecerFormulario(undefined);
+        this.reestablecerFormulario();
         this.buscarPor.setValue(0);
         this.buscarPorCliente = true;
         document.getElementById('idBuscarPor').focus();
@@ -242,15 +231,19 @@ export class ActualizacionPreciosComponent implements OnInit {
     });
   }
   //Reestablece el formulario
-  private reestablecerFormulario(id) {
-    this.listaCompleta = [];
-    this.listaFiltrada = [];
+  private reestablecerFormulario() {
+    this.vaciarListas();
     this.formulario.reset();
+    this.autocompletado.reset();
     this.formulario.get('precioDesde').setValue(null);
     this.formulario.get('porcentaje').setValue(null);
     this.empresa.setValue(this.appService.getEmpresa());
     this.empresa.disable();
-    this.autocompletado.setValue(null);
+  }
+  //Vacía las listas
+  private vaciarListas() {
+    this.listaFiltrada = [];
+    this.listaCompleta = new MatTableDataSource([]);
   }
   //Realiza la actualizacion del precio de la orden seleccionada
   public aplicarActualizacion() {
@@ -402,6 +395,12 @@ export class ActualizacionPreciosComponent implements OnInit {
   public returnDecimales(valor: number, cantidad: number) {
     return this.appService.setDecimales(valor, cantidad);
   }
+  //Controla el cambio los check-box
+  public cambioCheck(elemento, indice, event) {
+    // event.checked ?
+    //   this.controlCheck(elemento) : this.listaCompleta.data[indice].checked = false;
+    // this.data.configuracionModalRemitos.listaCompletaRemitos = this.listaCompleta.data;
+  }
 }
 //Componente Lista de Precios
 @Component({
@@ -473,7 +472,7 @@ export class ConfirmarDialogo {
     if (this.porEscala == true) {
       this.ordenVentaEscalaServicio.agregarLista(this.formulario).subscribe(
         res => {
-          var respuesta = res.json();
+          let respuesta = res.json();
           if (respuesta.codigo == 201) {
             document.getElementById('idBuscarPor').focus();
             this.toastr.success(respuesta.mensaje);
@@ -481,7 +480,7 @@ export class ConfirmarDialogo {
           }
         },
         err => {
-          var respuesta = err.json();
+          let respuesta = err.json();
           if (respuesta.codigo == 11002) {
             document.getElementById("labelNombre").classList.add('label-error');
             document.getElementById("idNombre").classList.add('is-invalid');
@@ -494,7 +493,7 @@ export class ConfirmarDialogo {
     } else {
       this.ordenVentaTramoServicio.agregarLista(this.formulario).subscribe(
         res => {
-          var respuesta = res.json();
+          let respuesta = res.json();
           if (respuesta.codigo == 201) {
             document.getElementById('idBuscarPor').focus();
             this.toastr.success(respuesta.mensaje);
@@ -502,7 +501,7 @@ export class ConfirmarDialogo {
           }
         },
         err => {
-          var respuesta = err.json();
+          let respuesta = err.json();
           if (respuesta.codigo == 11002) {
             document.getElementById("labelNombre").classList.add('label-error');
             document.getElementById("idNombre").classList.add('is-invalid');

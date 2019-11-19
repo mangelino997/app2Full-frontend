@@ -20,7 +20,7 @@
                 [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off"
                 (blur)="verificarSeleccion(autocompletado)">
               <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)"
-                (optionSelected)="establecerFormulario()">
+                (optionSelected)="cambioAutocompletado()">
                 <mat-option *ngFor="let item of resultados" [value]="item">
                   {{item.razonSocial}}
                 </mat-option>

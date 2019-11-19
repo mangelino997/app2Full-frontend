@@ -363,7 +363,7 @@ export class PersonalComponent implements OnInit {
   private obtenerPorId(id) {
     this.servicio.obtenerPorId(id).subscribe(
       res => {
-        if(res.text() != ""){
+        if (res.text() != "") {
           let elemento = res.json();
           this.establecerFotoYPdfs(elemento);
         }
@@ -651,7 +651,7 @@ export class PersonalComponent implements OnInit {
     this.formulario.get('esMensualizado').setValue(true);
     this.servicio.agregar(this.formulario.value).then(
       res => {
-        var respuesta = res.json();
+        let respuesta = res.json();
         if (res.status == 201) {
           respuesta.then(data => {
             this.reestablecerFormulario(data.id);
@@ -686,7 +686,7 @@ export class PersonalComponent implements OnInit {
     this.formulario.get('esMensualizado').setValue(true);
     this.servicio.actualizar(this.formulario.value).then(
       res => {
-        var respuesta = res.json();
+        let respuesta = res.json();
         if (res.status == 200) {
           respuesta.then(data => {
             this.reestablecerFormulario(undefined);
@@ -737,34 +737,32 @@ export class PersonalComponent implements OnInit {
   }
   //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
   private lanzarError(err) {
-    var respuesta = err;
-    try {
-      if (respuesta.codigo == 11010) {
-        document.getElementById("labelNumeroDocumento").classList.add('label-error');
-        document.getElementById("idNumeroDocumento").classList.add('is-invalid');
-        document.getElementById("idNumeroDocumento").focus();
-      } else if (respuesta.codigo == 11012) {
-        document.getElementById("labelCuil").classList.add('label-error');
-        document.getElementById("idCuil").classList.add('is-invalid');
-        document.getElementById("idCuil").focus();
-      } else if (respuesta.codigo == 11013) {
-        document.getElementById("labelTelefonoFijo").classList.add('label-error');
-        document.getElementById("idTelefonoFijo").classList.add('is-invalid');
-        document.getElementById("idTelefonoFijo").focus();
-      } else if (respuesta.codigo == 11014) {
-        document.getElementById("labelTelefonoMovil").classList.add('label-error');
-        document.getElementById("idTelefonoMovil").classList.add('is-invalid');
-        document.getElementById("idTelefonoMovil").focus();
-      } else if (respuesta.codigo == 11003) {
-        document.getElementById("labelCorreoelectronico").classList.add('label-error');
-        document.getElementById("idCorreoelectronico").classList.add('is-invalid');
-        document.getElementById("idCorreoelectronico").focus();
-      } else if (respuesta.codigo == 11015) {
-        document.getElementById("labelTelefonoMovilEmpresa").classList.add('label-error');
-        document.getElementById("idTelefonoMovilEmpresa").classList.add('is-invalid');
-        document.getElementById("idTelefonoMovilEmpresa").focus();
-      }
-    } catch (e) { }
+    let respuesta = err;
+    if (respuesta.codigo == 11010) {
+      document.getElementById("labelNumeroDocumento").classList.add('label-error');
+      document.getElementById("idNumeroDocumento").classList.add('is-invalid');
+      document.getElementById("idNumeroDocumento").focus();
+    } else if (respuesta.codigo == 11012) {
+      document.getElementById("labelCuil").classList.add('label-error');
+      document.getElementById("idCuil").classList.add('is-invalid');
+      document.getElementById("idCuil").focus();
+    } else if (respuesta.codigo == 11013) {
+      document.getElementById("labelTelefonoFijo").classList.add('label-error');
+      document.getElementById("idTelefonoFijo").classList.add('is-invalid');
+      document.getElementById("idTelefonoFijo").focus();
+    } else if (respuesta.codigo == 11014) {
+      document.getElementById("labelTelefonoMovil").classList.add('label-error');
+      document.getElementById("idTelefonoMovil").classList.add('is-invalid');
+      document.getElementById("idTelefonoMovil").focus();
+    } else if (respuesta.codigo == 11003) {
+      document.getElementById("labelCorreoelectronico").classList.add('label-error');
+      document.getElementById("idCorreoelectronico").classList.add('is-invalid');
+      document.getElementById("idCorreoelectronico").focus();
+    } else if (respuesta.codigo == 11015) {
+      document.getElementById("labelTelefonoMovilEmpresa").classList.add('label-error');
+      document.getElementById("idTelefonoMovilEmpresa").classList.add('is-invalid');
+      document.getElementById("idTelefonoMovilEmpresa").focus();
+    }
     this.toastr.error(respuesta.mensaje);
   }
   //Manejo de colores de campos y labels
@@ -776,7 +774,7 @@ export class PersonalComponent implements OnInit {
   public validarPatron(patron, campo) {
     let valor = this.formulario.get(campo).value;
     if (valor != undefined && valor != null && valor != '') {
-      var patronVerificador = new RegExp(patron);
+      let patronVerificador = new RegExp(patron);
       if (!patronVerificador.test(valor)) {
         if (campo == 'telefonoFijo') {
           document.getElementById("labelTelefonoFijo").classList.add('label-error');
@@ -1003,7 +1001,7 @@ export class PersonalComponent implements OnInit {
     this.obtenerPorId(elemento.id);
     this.autocompletado.setValue(elemento);
   }
-  //Establece la foto y pdf (activar consultar/actualizar)
+  //Establece la foto y pdf (actilet consultar/actualizar)
   private establecerFotoYPdfs(elemento): void {
     elemento.foto ? elemento.foto.datos = atob(elemento.foto.datos) : '';
     elemento.pdfLicConducir ? elemento.pdfLicConducir.datos = atob(elemento.pdfLicConducir.datos) : '';
@@ -1090,8 +1088,8 @@ export class PersonalComponent implements OnInit {
   }
   //Maneja los evento al presionar una tacla (para pestanias y opciones)
   public manejarEvento(keycode) {
-    var indice = this.indiceSeleccionado;
-    var opcion = this.opcionSeleccionada;
+    let indice = this.indiceSeleccionado;
+    let opcion = this.opcionSeleccionada;
     if (keycode == 113) {
       if (indice < this.pestanias.length) {
         this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre);

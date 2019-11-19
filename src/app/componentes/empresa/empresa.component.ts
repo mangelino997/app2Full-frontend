@@ -121,14 +121,15 @@ export class EmpresaComponent implements OnInit {
     return this.appService.mascararEnteros(limite);
   }
   //Establece el formulario al seleccionar item de autocompletado
-  public establecerFormulario(): void {
-    this.formulario.setValue(this.autocompletado.value);
+  public cambioAutocompletado(): void {
+    this.formulario.patchValue(this.autocompletado.value);
   }
   //Vacia la lista de resultados de autocompletados
   private vaciarListas() {
     this.resultados = [];
     this.resultadosBarrios = [];
     this.resultadosLocalidades = [];
+    this.listaCompleta = new MatTableDataSource([]);
   }
   //Obtiene el listado de condiciones de iva
   private listarCondicionesIva() {
@@ -236,7 +237,7 @@ export class EmpresaComponent implements OnInit {
     this.formulario.get('id').setValue(null);
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
-        var respuesta = res.json();
+        let respuesta = res.json();
         if (respuesta.codigo == 201) {
           this.reestablecerFormulario(respuesta.id);
           document.getElementById('idRazonSocial').focus();
@@ -255,7 +256,7 @@ export class EmpresaComponent implements OnInit {
     this.loaderService.show();
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
-        var respuesta = res.json();
+        let respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario(undefined);
           document.getElementById('idAutocompletado').focus();
@@ -278,7 +279,7 @@ export class EmpresaComponent implements OnInit {
   }
   //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
   private lanzarError(err) {
-    var respuesta = err;
+    let respuesta = err;
     if (respuesta.codigo == 11006) {
       document.getElementById("labelRazonSocial").classList.add('label-error');
       document.getElementById("idRazonSocial").classList.add('is-invalid');
@@ -352,7 +353,7 @@ export class EmpresaComponent implements OnInit {
   }
   //Maneja los evento al presionar una tacla (para pestanias y opciones)
   public manejarEvento(keycode) {
-    var indice = this.indiceSeleccionado;
+    let indice = this.indiceSeleccionado;
     if (keycode == 113) {
       if (indice < this.pestanias.length) {
         this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre);
@@ -376,7 +377,7 @@ export class EmpresaComponent implements OnInit {
       },
     });
     dialogRef.afterClosed().subscribe(result => {
-      // var listaSocioDedudas= result;
+      // let listaSocioDedudas= result;
     });
   }
   //Prepara los datos para exportar

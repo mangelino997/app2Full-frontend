@@ -74,14 +74,14 @@ export class ViajeTipoComponent implements OnInit {
   }
   //Al inicializarse el componente
   ngOnInit() {
-    this.formulario = this.viajeTipo.formulario;
-    //Establece los valores de la primera pestania activa
-    this.seleccionarPestania(1, 'Agregar', 0);
     //Establece la subscripcion a loader
     this.subscription = this.loaderService.loaderState
       .subscribe((state: LoaderState) => {
         this.show = state.show;
       });
+    this.formulario = this.viajeTipo.formulario;
+    //Establece los valores de la primera pestania activa
+    this.seleccionarPestania(1, 'Agregar', 0);
   }
   //Establece el formulario
   public establecerFormulario(): void {
@@ -102,13 +102,9 @@ export class ViajeTipoComponent implements OnInit {
   };
   //Establece valores al seleccionar una pestania
   public seleccionarPestania(id, nombre, opcion) {
-    this.reestablecerFormulario('');
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    if (opcion == 0) {
-      this.autocompletado.setValue(undefined);
-      this.resultados = [];
-    }
+    this.reestablecerFormulario(undefined);
     switch (id) {
       case 1:
         this.obtenerSiguienteId();
@@ -179,7 +175,7 @@ export class ViajeTipoComponent implements OnInit {
     this.formulario.get('id').setValue(null);
     this.viajeTipoServicio.agregar(this.formulario.value).subscribe(
       res => {
-        var respuesta = res.json();
+        let respuesta = res.json();
         if (respuesta.codigo == 201) {
           this.reestablecerFormulario(respuesta.id);
           document.getElementById('idNombre').focus();
@@ -188,12 +184,14 @@ export class ViajeTipoComponent implements OnInit {
         }
       },
       err => {
-        var respuesta = err.json();
-        if (respuesta.codigo == 11002) {
+        let error = err.json();
+        if (error.codigo == 11002) {
           document.getElementById("labelNombre").classList.add('label-error');
           document.getElementById("idNombre").classList.add('is-invalid');
           document.getElementById("idNombre").focus();
-          this.toastr.error(respuesta.mensaje);
+          this.toastr.error(error.mensaje);
+        } else {
+          this.toastr.error(error.mensaje);
         }
         this.loaderService.hide();
       }
@@ -204,7 +202,7 @@ export class ViajeTipoComponent implements OnInit {
     this.loaderService.show();
     this.viajeTipoServicio.actualizar(this.formulario.value).subscribe(
       res => {
-        var respuesta = res.json();
+        let respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario('');
           document.getElementById('idAutocompletado').focus();
@@ -213,12 +211,14 @@ export class ViajeTipoComponent implements OnInit {
         }
       },
       err => {
-        var respuesta = err.json();
-        if (respuesta.codigo == 11002) {
+        let error = err.json();
+        if (error.codigo == 11002) {
           document.getElementById("labelNombre").classList.add('label-error');
           document.getElementById("idNombre").classList.add('is-invalid');
           document.getElementById("idNombre").focus();
-          this.toastr.error(respuesta.mensaje);
+          this.toastr.error(error.mensaje);
+        } else {
+          this.toastr.error(error.mensaje);
         }
         this.loaderService.hide();
       }
@@ -230,7 +230,7 @@ export class ViajeTipoComponent implements OnInit {
     let formulario = this.formulario.value;
     this.viajeTipoServicio.eliminar(formulario.id).subscribe(
       res => {
-        var respuesta = res.json();
+        let respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario(null);
           document.getElementById('idNombre').focus();
@@ -239,12 +239,14 @@ export class ViajeTipoComponent implements OnInit {
         this.loaderService.hide();
       },
       err => {
-        var respuesta = err.json();
-        if (respuesta.codigo == 500) {
+        let error = err.json();
+        if (error.codigo == 500) {
           document.getElementById("labelNombre").classList.add('label-error');
           document.getElementById("idNombre").classList.add('is-invalid');
           document.getElementById("idNombre").focus();
-          this.toastr.error(respuesta.mensaje);
+          this.toastr.error(error.mensaje);
+        } else {
+          this.toastr.error(error.mensaje);
         }
         this.loaderService.hide();
       }
@@ -258,10 +260,15 @@ export class ViajeTipoComponent implements OnInit {
   }
   //Reestablece el formulario
   private reestablecerFormulario(id) {
+    this.vaciarListas();
     this.formulario.reset();
+    this.autocompletado.reset();
     this.formulario.get('id').setValue(id);
-    this.autocompletado.setValue(undefined);
+  }
+  //Vacía las listas
+  private vaciarListas() {
     this.resultados = [];
+    this.listaCompleta = new MatTableDataSource([]);
   }
   //Manejo de colores de campos y labels
   public cambioCampo(id, label) {
@@ -297,7 +304,7 @@ export class ViajeTipoComponent implements OnInit {
   }
   //Maneja los evento al presionar una tacla (para pestanias y opciones)
   public manejarEvento(keycode) {
-    var indice = this.indiceSeleccionado;
+    let indice = this.indiceSeleccionado;
     if (keycode == 113) {
       if (indice < this.pestanias.length) {
         this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre, 0);

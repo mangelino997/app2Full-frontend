@@ -404,7 +404,7 @@ export class VehiculoComponent implements OnInit {
       });
   }
   //Obtiene el listado de registros por filtro
-  public listar() {
+  public listarVehiculosFiltro() {
     this.loaderService.show();
     let tipoVehiculo = this.formularioListar.get('tipoVehiculo').value;
     let marcaVehiculo = this.formularioListar.get('marcaVehiculo').value;
@@ -420,6 +420,7 @@ export class VehiculoComponent implements OnInit {
         this.loaderService.hide();
       },
       err => {
+        this.toastr.error(err.json().message);
         this.loaderService.hide();
       });
   }

@@ -177,7 +177,7 @@ export class ViajePeajeComponent implements OnInit {
       maxWidth: '60%',
       data: {
         tema: this.appService.getTema(),
-        question: {id: 1}
+        mensaje: "¿Está seguro de eliminar el peaje?"
       }
     });
     dialogRef.afterClosed().subscribe(resultado => {
