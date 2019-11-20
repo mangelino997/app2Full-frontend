@@ -1,26 +1,26 @@
 <div class="container-fluid padd-20">
-    <form [formGroup]="formulario">
-        <div class="row">
-            <div class="col text-center">
-                <h5>Remito Cliente Dador de Carga</h5>
+    <div class="row">
+        <div class="col text-center">
+            <h5>Remito Cliente Dador de Carga</h5>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group has-float-label">
+                <label for="idTramo" class="tamanio-label">Tramo</label>
+                <input id="idTramo" type="text" [formControl]="tramo" autocomplete="off"
+                    class="form-control form-control-sm" readonly>
             </div>
         </div>
-        <div class="row">
-            <div class="col-md-6">
-                <div class="form-group has-float-label">
-                    <label for="idTramo" class="tamanio-label">Tramo</label>
-                    <input id="idTramo" type="text" [formControl]="tramo" autocomplete="off"
-                        class="form-control form-control-sm" readonly>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="form-group has-float-label">
-                    <label for="idDadorDestinatario" class="tamanio-label">Dador de Carga - Destinatario</label>
-                    <input id="idDadorDestinatario" type="text" [formControl]="dadorDestinatario" autocomplete="off"
-                        class="form-control form-control-sm" readonly>
-                </div>
+        <div class="col-md-6">
+            <div class="form-group has-float-label">
+                <label for="idDadorDestinatario" class="tamanio-label">Dador de Carga - Destinatario</label>
+                <input id="idDadorDestinatario" type="text" [formControl]="dadorDestinatario" autocomplete="off"
+                    class="form-control form-control-sm" readonly>
             </div>
         </div>
+    </div>
+    <form [formGroup]="formulario" *ngIf="!soloLectura">
         <div class="row">
             <div class="col-md-2">
                 <div class="form-group has-float-label">
@@ -91,20 +91,20 @@
             </div>
             <div class="col-md-2">
                 <div class="form-group has-float-label">
-                    <label for="idKilosEfectivo" class="tamanio-label">Kg Efectivo</label>
-                    <input id="idKilosEfectivo" [textMask]="mascararEnterosConDecimales(8)" type="text"
-                        formControlName="kilosEfectivo" autocomplete="off"
+                    <label for="idKgEfectivo" class="tamanio-label">Kg Efectivo</label>
+                    <input id="idKgEfectivo" [textMask]="mascararEnterosConDecimales(8)" type="text"
+                        formControlName="kgEfectivo" autocomplete="off"
                         class="form-control form-control-sm number-right" [readonly]="soloLectura"
-                        (blur)="establecerDecimales(formulario.get('kilosEfectivo'), 2)" placeholder="0.00">
+                        (blur)="establecerDecimales(formulario.get('kgEfectivo'), 2)" placeholder="0.00">
                 </div>
             </div>
             <div class="col-md-2">
                 <div class="form-group has-float-label">
-                    <label for="idKilosAforado" class="tamanio-label">Kg Aforado</label>
-                    <input id="idKilosAforado" [textMask]="mascararEnterosConDecimales(8)" type="text"
-                        formControlName="kilosAforado" autocomplete="off"
-                        class="form-control form-control-sm number-right" [readonly]="soloLectura"
-                        (blur)="establecerDecimales(formulario.get('kilosAforado'), 2)" placeholder="0.00">
+                    <label for="idKgAforado" class="tamanio-label">Kg Aforado</label>
+                    <input id="idKgAforado" [textMask]="mascararEnterosConDecimales(8)" type="text"
+                        formControlName="kgAforado" autocomplete="off" class="form-control form-control-sm number-right"
+                        [readonly]="soloLectura" (blur)="establecerDecimales(formulario.get('kgAforado'), 2)"
+                        placeholder="0.00">
                 </div>
             </div>
             <div class="col-md-2">
@@ -118,7 +118,8 @@
                     <label for="idViajeTarifa" class="tamanio-label">Tarifa (costo) *</label>
                     <mat-select id="idViajeTarifa" class="form-control form-control-sm" formControlName="viajeTarifa"
                         [compareWith]="compareFn">
-                        <mat-option *ngFor="let itemViajeTarifa of viajesTarifasCostoTramoFalse" [value]="itemViajeTarifa">
+                        <mat-option *ngFor="let itemViajeTarifa of viajesTarifasCostoTramoFalse"
+                            [value]="itemViajeTarifa">
                             {{itemViajeTarifa.nombre}}
                         </mat-option>
                     </mat-select>
@@ -135,16 +136,18 @@
             <div class="col-md-3">
                 <div class="form-group has-float-label">
                     <label for="idPrecioUnitario" class="tamanio-label">Precio Unitario *</label>
-                    <input id="idPrecioUnitario" [textMask]="mascararImporte(8, 2)" type="text" formControlName="precioUnitario"
-                        autocomplete="off" class="form-control form-control-sm number-right" 
-                        (blur)="calcularImporte()" placeholder="$ 0.00">
+                    <input id="idPrecioUnitario" [textMask]="mascararImporte(8, 2)" type="text"
+                        formControlName="precioUnitario" autocomplete="off"
+                        class="form-control form-control-sm number-right" (blur)="calcularImporte()"
+                        placeholder="$ 0.00">
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="form-group has-float-label">
                     <label for="idImporte" class="tamanio-label">Importe *</label>
                     <input id="idImporte" [textMask]="mascararImporte(8, 2)" type="text" formControlName="importeCosto"
-                        autocomplete="off" class="form-control form-control-sm number-right" readonly placeholder="$ 0.00">
+                        autocomplete="off" class="form-control form-control-sm number-right" readonly
+                        placeholder="$ 0.00">
                 </div>
             </div>
         </div>
@@ -153,24 +156,27 @@
             <div class="col-md-4">
                 <div class="form-group has-float-label">
                     <label for="idImporteRetiro" class="tamanio-label">Flete por Retiro</label>
-                    <input id="idImporteRetiro" [textMask]="mascararImporte(10, 2)" type="text" formControlName="importeRetiro"
-                        autocomplete="off" class="form-control form-control-sm number-right" 
+                    <input id="idImporteRetiro" [textMask]="mascararImporte(10, 2)" type="text"
+                        formControlName="importeRetiro" autocomplete="off"
+                        class="form-control form-control-sm number-right"
                         (blur)="establecerDecimales(formulario.get('importeRetiro'), 2)" placeholder="$ 0.00">
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="form-group has-float-label">
                     <label for="idImporteEntrega" class="tamanio-label">Flete por Entrega</label>
-                    <input id="idImporteEntrega" [textMask]="mascararImporte(10, 2)" type="text" formControlName="importeEntrega"
-                        autocomplete="off" class="form-control form-control-sm number-right" 
+                    <input id="idImporteEntrega" [textMask]="mascararImporte(10, 2)" type="text"
+                        formControlName="importeEntrega" autocomplete="off"
+                        class="form-control form-control-sm number-right"
                         (blur)="establecerDecimales(formulario.get('importeEntrega'), 2)" placeholder="$ 0.00">
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="form-group has-float-label">
                     <label for="idImporteFlete" class="tamanio-label">Flete a Facturar</label>
-                    <input id="idImporteFlete" [textMask]="mascararImporte(10, 2)" type="text" formControlName="importeFlete"
-                        autocomplete="off" class="form-control form-control-sm number-right" 
+                    <input id="idImporteFlete" [textMask]="mascararImporte(10, 2)" type="text"
+                        formControlName="importeFlete" autocomplete="off"
+                        class="form-control form-control-sm number-right"
                         (blur)="establecerDecimales(formulario.get('importeFlete'), 2)" placeholder="$ 0.00">
                 </div>
             </div>
@@ -185,79 +191,89 @@
                 </div>
             </div>
             <div class="col-md-2">
-                <button mat-raised-button color="primary" (click)="agregar()" [disabled]="!formulario.valid" *ngIf="!esEditable">Agregar</button>
-                <button mat-raised-button color="primary" (click)="actualizar()" [disabled]="!formulario.valid" *ngIf="esEditable">Actualizar</button>
-                <button mat-raised-button (click)="cancelar()" [disabled]="!esEditable" class="margin-left-3">Cancelar</button>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col">
-                <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
-                    <ng-container matColumnDef="id" sticky>
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
-                        <td mat-cell *matCellDef="let elemento">{{elemento.id}}</td>
-                    </ng-container>
-                    <ng-container matColumnDef="tipoComprobante">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Tipo Cpte.</th>
-                        <td mat-cell *matCellDef="let elemento">{{elemento.tipoComprobante.nombre}}</td>
-                    </ng-container>
-                    <ng-container matColumnDef="puntoVenta">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Punto Venta</th>
-                        <td class="number-right" mat-cell *matCellDef="let elemento">{{mostrarCeros(elemento.puntoVenta, '0000', -5)}}</td>
-                    </ng-container>
-                    <ng-container matColumnDef="letra">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Letra</th>
-                        <td mat-cell *matCellDef="let elemento">{{elemento.letra}}</td>
-                    </ng-container>
-                    <ng-container matColumnDef="numero">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header>N° Comprobante</th>
-                        <td class="number-right" mat-cell *matCellDef="let elemento">{{mostrarCeros(elemento.numero, '0000000', -8)}}</td>
-                    </ng-container>
-                    <ng-container matColumnDef="bultos">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Bultos</th>
-                        <td class="number-right" mat-cell *matCellDef="let elemento">{{elemento.bultos}}</td>
-                    </ng-container>
-                    <ng-container matColumnDef="m3">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header>m3</th>
-                        <td class="number-right" mat-cell *matCellDef="let elemento">{{elemento.m3 ? establecerDecimalesTabla(elemento.m3, 2) + ' m3' : '0.00 m3'}}</td>
-                    </ng-container>
-                    <ng-container matColumnDef="kgEfectivo">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header>kg Efectivo</th>
-                        <td class="number-right" mat-cell *matCellDef="let elemento">{{elemento.kilosEfectivo ? establecerDecimalesTabla(elemento.kilosEfectivo, 2) + ' kg' : '0.00 kg'}}</td>
-                    </ng-container>
-                    <ng-container matColumnDef="valorDeclarado">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Valor Declarado</th>
-                        <td class="number-right" mat-cell *matCellDef="let elemento">$ {{elemento.valorDeclarado ? establecerDecimalesTabla(elemento.valorDeclarado, 2) : '0.00'}}</td>
-                    </ng-container>
-                    <ng-container matColumnDef="facturado">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Facturado</th>
-                        <td mat-cell *matCellDef="let elemento">{{elemento.estaFacturado ? 'Si' : 'No'}}</td>
-                    </ng-container>
-                    <ng-container matColumnDef="editar" stickyEnd>
-                        <th mat-header-cell *matHeaderCellDef>-</th>
-                        <td mat-cell *matCellDef="let elemento">
-                            <button mat-icon-button class="mat-icon-button-table margin-left-3" (click)="editar(elemento)"
-                                matTooltip="Editar" matTooltipPosition="above" [disabled]="esEditable">
-                                <mat-icon>edit</mat-icon>
-                            </button>
-                            <button mat-icon-button class="mat-icon-button-table margin-left-3" (click)="eliminar(elemento.id)" 
-                                matTooltip="Eliminar" matTooltipPosition="above" [disabled]="esEditable">
-                                <mat-icon>close</mat-icon>
-                            </button>
-                        </td>
-                    </ng-container>
-                    <tr mat-header-row *matHeaderRowDef="columnas"></tr>
-                    <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
-                </table>
-                <mat-paginator [pageSizeOptions]="[5]" showFirstLastButtons></mat-paginator>
-            </div>
-        </div>
-        <br>
-        <div class="row">
-            <div class="col text-center">
-                <button mat-raised-button (click)="cerrar()" *ngIf="!show">Cerrar</button>
-                <mat-progress-bar mode="indeterminate" *ngIf="show"></mat-progress-bar>
+                <button mat-raised-button color="primary" (click)="agregar()" [disabled]="!formulario.valid"
+                    *ngIf="!esEditable">Agregar</button>
+                <button mat-raised-button color="primary" (click)="actualizar()" [disabled]="!formulario.valid"
+                    *ngIf="esEditable">Actualizar</button>
+                <button mat-raised-button (click)="cancelar()" [disabled]="!esEditable"
+                    class="margin-left-3">Cancelar</button>
             </div>
         </div>
     </form>
+    <div class="row">
+        <div class="col">
+            <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
+                <ng-container matColumnDef="id" sticky>
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
+                    <td mat-cell *matCellDef="let elemento">{{elemento.id}}</td>
+                </ng-container>
+                <ng-container matColumnDef="tipoComprobante">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Tipo Cpte.</th>
+                    <td mat-cell *matCellDef="let elemento">{{elemento.tipoComprobante.nombre}}</td>
+                </ng-container>
+                <ng-container matColumnDef="puntoVenta">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Punto Venta</th>
+                    <td class="number-right" mat-cell *matCellDef="let elemento">
+                        {{mostrarCeros(elemento.puntoVenta, '0000', -5)}}</td>
+                </ng-container>
+                <ng-container matColumnDef="letra">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Letra</th>
+                    <td mat-cell *matCellDef="let elemento">{{elemento.letra}}</td>
+                </ng-container>
+                <ng-container matColumnDef="numero">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>N° Comprobante</th>
+                    <td class="number-right" mat-cell *matCellDef="let elemento">
+                        {{mostrarCeros(elemento.numero, '0000000', -8)}}</td>
+                </ng-container>
+                <ng-container matColumnDef="bultos">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Bultos</th>
+                    <td class="number-right" mat-cell *matCellDef="let elemento">{{elemento.bultos}}</td>
+                </ng-container>
+                <ng-container matColumnDef="m3">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>m3</th>
+                    <td class="number-right" mat-cell *matCellDef="let elemento">
+                        {{elemento.m3 ? establecerDecimalesTabla(elemento.m3, 2) + ' m3' : '0.00 m3'}}</td>
+                </ng-container>
+                <ng-container matColumnDef="kgEfectivo">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>kg Efectivo</th>
+                    <td class="number-right" mat-cell *matCellDef="let elemento">
+                        {{elemento.kgEfectivo ? establecerDecimalesTabla(elemento.kgEfectivo, 2) + ' kg' : '0.00 kg'}}
+                    </td>
+                </ng-container>
+                <ng-container matColumnDef="valorDeclarado">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Valor Declarado</th>
+                    <td class="number-right" mat-cell *matCellDef="let elemento">$
+                        {{elemento.valorDeclarado ? establecerDecimalesTabla(elemento.valorDeclarado, 2) : '0.00'}}</td>
+                </ng-container>
+                <ng-container matColumnDef="facturado">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Facturado</th>
+                    <td mat-cell *matCellDef="let elemento">{{elemento.estaFacturado ? 'Si' : 'No'}}</td>
+                </ng-container>
+                <ng-container matColumnDef="editar" stickyEnd>
+                    <th mat-header-cell *matHeaderCellDef>-</th>
+                    <td mat-cell *matCellDef="let elemento">
+                        <button mat-icon-button class="mat-icon-button-table margin-left-3" (click)="editar(elemento)"
+                            matTooltip="Editar" matTooltipPosition="above" [disabled]="esEditable">
+                            <mat-icon>edit</mat-icon>
+                        </button>
+                        <button mat-icon-button class="mat-icon-button-table margin-left-3"
+                            (click)="eliminar(elemento.id)" matTooltip="Eliminar" matTooltipPosition="above"
+                            [disabled]="esEditable">
+                            <mat-icon>close</mat-icon>
+                        </button>
+                    </td>
+                </ng-container>
+                <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+                <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
+            </table>
+            <mat-paginator [pageSizeOptions]="[5]" showFirstLastButtons></mat-paginator>
+        </div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="col text-center">
+            <button mat-raised-button (click)="cerrar()" *ngIf="!show">Cerrar</button>
+            <mat-progress-bar mode="indeterminate" *ngIf="show"></mat-progress-bar>
+        </div>
+    </div>
 </div>
