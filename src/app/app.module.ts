@@ -80,7 +80,7 @@ import { ListaRemitoDialogoComponent } from './componentes/emitir-factura/lista-
 import { ContrareembolsoDialogoComponent } from './componentes/emitir-factura/contrareembolso-dialogo/contrareembolso-dialogo.component';
 import { TotalesCargaDialogoComponent } from './componentes/emitir-factura/totales-carga-dialogo/totales-carga-dialogo.component';
 import { TotalesConceptoDialogoComponent } from './componentes/emitir-factura/totales-concepto-dialogo/totales-concepto-dialogo.component';
-import { ViajeTramoRemitoService } from './servicios/viaje-tramo-remito.service';
+import { UsuariosActivosDialogoComponent } from './componentes/empresa/usuarios-activos-dialogo/usuarios-activos.component';
 
 const stompConfig: StompConfig = {
   url: 'ws://localhost:8080/jitws/socket',
@@ -115,7 +115,8 @@ const stompConfig: StompConfig = {
     ListaRemitoDialogoComponent,
     ContrareembolsoDialogoComponent,
     TotalesCargaDialogoComponent,
-    TotalesConceptoDialogoComponent
+    TotalesConceptoDialogoComponent,
+    UsuariosActivosDialogoComponent
     // ListaRemitoDialogoComponent
   ],
   imports: [
@@ -221,7 +222,8 @@ const stompConfig: StompConfig = {
     ListaRemitoDialogoComponent,
     ContrareembolsoDialogoComponent,
     TotalesCargaDialogoComponent,
-    TotalesConceptoDialogoComponent
+    TotalesConceptoDialogoComponent,
+    UsuariosActivosDialogoComponent
     ]
 })
 export class AppModule { }

@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { EmpresaService } from '../../servicios/empresa.service';
 import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { BarrioService } from '../../servicios/barrio.service';
@@ -8,13 +8,13 @@ import { AppService } from '../../servicios/app.service';
 import { FormGroup, FormControl } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { Empresa } from 'src/app/modelos/empresa';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatPaginator } from '@angular/material';
-import { UsuarioService } from 'src/app/servicios/usuario.service';
+import { MatDialog, MatPaginator } from '@angular/material';
 import { MatSort, MatTableDataSource } from '@angular/material';
 import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
 import { ReporteService } from 'src/app/servicios/reporte.service';
+import { UsuariosActivosDialogoComponent } from './usuarios-activos-dialogo/usuarios-activos.component';
 
 @Component({
   selector: 'app-empresa',
@@ -63,8 +63,7 @@ export class EmpresaComponent implements OnInit {
   private subscription: Subscription;
   //Constructor
   constructor(private servicio: EmpresaService, private subopcionPestaniaService: SubopcionPestaniaService,
-    private appService: AppService, private toastr: ToastrService,
-    private barrioServicio: BarrioService, private localidadServicio: LocalidadService,
+    private appService: AppService, private toastr: ToastrService, private barrioServicio: BarrioService, private localidadServicio: LocalidadService,
     private afipCondicionIvaServicio: AfipCondicionIvaService, private empresaModelo: Empresa, public dialog: MatDialog,
     private loaderService: LoaderService, private reporteServicio: ReporteService) {
     //Obtiene la lista de pestania por rol y subopcion
@@ -72,6 +71,7 @@ export class EmpresaComponent implements OnInit {
       .subscribe(
         res => {
           this.pestanias = res.json();
+          this.pestanias.splice(3, 1);
           this.activeLink = this.pestanias[0].nombre;
         },
         err => {
@@ -202,6 +202,7 @@ export class EmpresaComponent implements OnInit {
         this.actualizar();
         break;
       case 4:
+        this.eliminar();
         break;
       default:
         break;
@@ -270,12 +271,31 @@ export class EmpresaComponent implements OnInit {
       }
     );
   }
+  //Actualiza un registro
+  private eliminar() {
+    this.loaderService.show();
+    this.servicio.eliminar(this.formulario.value.id).subscribe(
+      res => {
+        let respuesta = res.json();
+        if (respuesta.codigo == 200) {
+          this.reestablecerFormulario(undefined);
+          document.getElementById('idAutocompletado').focus();
+          this.toastr.success(respuesta.mensaje);
+        }
+        this.loaderService.hide();
+      },
+      err => {
+        this.lanzarError(err.json());
+        this.loaderService.hide();
+      }
+    );
+  }
   //Reestablece el formulario
   private reestablecerFormulario(id) {
-    this.formulario.reset();
-    this.formulario.get('id').setValue(id);
-    this.autocompletado.setValue(undefined);
     this.vaciarListas();
+    this.formulario.reset();
+    this.autocompletado.reset();
+    this.formulario.get('id').setValue(id);
   }
   //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
   private lanzarError(err) {
@@ -370,7 +390,7 @@ export class EmpresaComponent implements OnInit {
   }
   //Abre un Modal con la lista de Usuarios de la Empresa seleccionada
   public verActivos(empresa) {
-    const dialogRef = this.dialog.open(ListaUsuariosDialogo, {
+    const dialogRef = this.dialog.open(UsuariosActivosDialogoComponent, {
       width: '1400px',
       data: {
         empresa: empresa
@@ -412,59 +432,4 @@ export class EmpresaComponent implements OnInit {
     }
     this.reporteServicio.abrirDialogo(datos);
   }
-}
-
-//Componente Lista de Usuarios Dialogo
-@Component({
-  selector: 'lista-usuarios-dialogo',
-  templateUrl: 'lista-usuarios-dialogo.html',
-})
-export class ListaUsuariosDialogo {
-  //Define la empresa 
-  public empresa = null;
-  //Define la lista de usuarios activos de la empresa
-  public listaUsuarios: Array<any> = [];
-  //Define el mostrar del circulo de progreso
-  public show = false;
-  //Define la subscripcion a loader.service
-  private subscription: Subscription;
-  //Constructor
-  constructor(public dialogRef: MatDialogRef<ListaUsuariosDialogo>, @Inject(MAT_DIALOG_DATA) public data,
-    private usuarioServicio: UsuarioService, private toastr: ToastrService, private loaderService: LoaderService) { }
-  //Al inicializarse el componente
-  ngOnInit() {
-    //Establece la subscripcion a loader
-    this.subscription = this.loaderService.loaderState
-      .subscribe((state: LoaderState) => {
-        this.show = state.show;
-      });
-    this.empresa = this.data.empresa;
-    //Obtiene la lista de usuarios por empresa
-    this.listarPorEmpresa(this.empresa);
-  }
-  //Obtiene la lista de usuarios por empresa
-  private listarPorEmpresa(empresa): void {
-    this.loaderService.show();
-    this.usuarioServicio.listarPorEmpresa(empresa.id).subscribe(
-      res => {
-        this.listaUsuarios = res.json();
-        this.loaderService.hide();
-      },
-      err => {
-        this.toastr.error(err.json().mensaje);
-        this.loaderService.hide();
-      }
-    );
-  }
-  //Cierra el dialogo
-  onNoClick(): void {
-    this.dialogRef.close();
-  }
-  //Verifica si se selecciono un elemento del autocompletado
-  public verificarSeleccion(valor): void {
-    if (typeof valor.value != 'object') {
-      valor.setValue(null);
-    }
-  }
-
 }

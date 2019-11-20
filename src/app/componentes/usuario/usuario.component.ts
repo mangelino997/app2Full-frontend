@@ -70,9 +70,7 @@ export class UsuarioComponent implements OnInit {
         res => {
           this.pestanias = res.json();
           this.activeLink = this.pestanias[0].nombre;
-        },
-        err => {
-        }
+        },err => {err.json().mensaje}
       );
     //Autocompletado - Buscar por nombre
     this.autocompletado.valueChanges.subscribe(data => {
@@ -85,6 +83,11 @@ export class UsuarioComponent implements OnInit {
   }
   //Al iniciarse el componente
   ngOnInit() {
+    //Establece la subscripcion a loader
+    this.subscription = this.loaderService.loaderState
+      .subscribe((state: LoaderState) => {
+        this.show = state.show;
+      });
     //Define los campos para validaciones
     this.formulario = this.usuario.formulario;
     //Establece los valores de la primera pestania activa
@@ -93,11 +96,6 @@ export class UsuarioComponent implements OnInit {
     this.listarRoles();
     //Obtiene la lista de sucursales
     this.listarSucursales();
-    //Establece la subscripcion a loader
-    this.subscription = this.loaderService.loaderState
-      .subscribe((state: LoaderState) => {
-        this.show = state.show;
-      });
   }
   //Obtiene la lista de roles
   private listarRoles() {
@@ -187,14 +185,13 @@ export class UsuarioComponent implements OnInit {
       res => {
         this.formulario.get('id').setValue(res.json());
       },
-      err => {
-      }
+      err => { this.toastr.error(err.json().mensaje); }
     );
   }
   //Obtiene el listado de registros
   private listar() {
     this.loaderService.show();
-    this.servicio.listarPorEmpresa(this.appService.getEmpresa().id).subscribe(
+    this.servicio.listar().subscribe(
       res => {
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
@@ -212,12 +209,10 @@ export class UsuarioComponent implements OnInit {
     this.loaderService.show();
     this.formulario.get('id').setValue(null);
     let rolSecundario = this.formulario.get('rolSecundario').value;
-    if (rolSecundario == '0') {
-      this.formulario.get('rolSecundario').setValue(null);
-    }
+    rolSecundario == '0' ? this.formulario.get('rolSecundario').setValue(null) : '';
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
-        var respuesta = res.json();
+        let respuesta = res.json();
         if (respuesta.codigo == 201) {
           this.reestablecerFormulario(respuesta.id);
           this.passwordRepeat.reset();
@@ -227,29 +222,26 @@ export class UsuarioComponent implements OnInit {
         }
       },
       err => {
-        var respuesta = err.json();
-        if (respuesta.codigo == 11002) {
+        let error = err.json();
+        if (error.codigo == 11002) {
           document.getElementById("labelNombre").classList.add('label-error');
           document.getElementById("idNombre").classList.add('is-invalid');
           document.getElementById("idNombre").focus();
-          this.toastr.error(respuesta.mensaje);
+          this.toastr.error(error.mensaje);
         } else {
-          this.toastr.error(respuesta.mensaje);
+          this.toastr.error(error.mensaje);
         }
         this.loaderService.hide();
-      }
-    );
+      });
   }
   //Actualiza un registro
   private actualizar() {
     this.loaderService.show();
     let rolSecundario = this.formulario.get('rolSecundario').value;
-    if (rolSecundario == '0') {
-      this.formulario.get('rolSecundario').setValue(null);
-    }
+    rolSecundario == '0' ? this.formulario.get('rolSecundario').setValue(null) : '';
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
-        var respuesta = res.json();
+        let respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario(undefined);
           document.getElementById('idAutocompletado').focus();
@@ -258,14 +250,14 @@ export class UsuarioComponent implements OnInit {
         }
       },
       err => {
-        var respuesta = err.json();
-        if (respuesta.codigo == 11002) {
+        let error = err.json();
+        if (error.codigo == 11002) {
           document.getElementById("labelNombre").classList.add('label-error');
           document.getElementById("idNombre").classList.add('is-invalid');
           document.getElementById("idNombre").focus();
-          this.toastr.error(respuesta.mensaje);
+          this.toastr.error(error.mensaje);
         } else {
-          this.toastr.error(respuesta.mensaje);
+          this.toastr.error(error.mensaje);
         }
         this.loaderService.hide();
       }
@@ -273,6 +265,21 @@ export class UsuarioComponent implements OnInit {
   }
   //Elimina un registro
   private eliminar() {
+    this.loaderService.show();
+    this.servicio.eliminar(this.formulario.value).subscribe(
+      res => {
+        let respuesta = res.json();
+        if (respuesta.codigo == 200) {
+          this.reestablecerFormulario(undefined);
+          document.getElementById('idAutocompletado').focus();
+          this.toastr.success(respuesta.mensaje);
+        }
+        this.loaderService.hide();
+      }, err => {
+        this.toastr.error(err.json().mensaje);
+        this.loaderService.hide();
+      }
+    );
   }
   //Verifica si se selecciono un elemento del autocompletado
   public verificarSeleccion(valor): void {
@@ -320,10 +327,15 @@ export class UsuarioComponent implements OnInit {
   }
   //Reestablece el formulario
   private reestablecerFormulario(id) {
+    this.vaciarListas();
     this.formulario.reset();
-    this.formulario.get('id').setValue(id);
     this.autocompletado.reset();
+    this.formulario.get('id').setValue(id);
+  }
+  //Vacía las listas
+  private vaciarListas() {
     this.resultados = [];
+    this.listaCompleta = new MatTableDataSource([]);
   }
   //Manejo de colores de campos y labels
   public cambioCampo(id, label) {
@@ -359,7 +371,7 @@ export class UsuarioComponent implements OnInit {
   }
   //Maneja los evento al presionar una tacla (para pestanias y opciones)
   public manejarEvento(keycode) {
-    var indice = this.indiceSeleccionado;
+    let indice = this.indiceSeleccionado;
     if (keycode == 113) {
       if (indice < this.pestanias.length) {
         this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre);

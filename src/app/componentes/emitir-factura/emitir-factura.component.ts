@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject, Pipe, ViewChild } from '@angular/core';
+import { Component, OnInit, Inject, ViewChild } from '@angular/core';
 import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
@@ -141,7 +141,9 @@ export class EmitirFacturaComponent implements OnInit {
       condicionVenta: new FormControl(),
       tipoYNumeroDocumento: new FormControl()
     });
-    this.reestablecerFormulario();
+    console.log(this.appService.getEmpresa());
+    //Reestablece el formulario ('true' para limpiar todo, 'false' para mantener campos generales)
+    this.reestablecerFormulario(true);
     //Obtiene la lista de tipos de comprobante
     this.listarTiposComprobante();
     //Obtiene la lista de puntos de venta 
@@ -287,7 +289,6 @@ export class EmitirFacturaComponent implements OnInit {
   //Controla el rango valido para la fecha de emision cuando el punto de venta es feCAEA
   private verificarFechaFeCAEA() {
     if (this.formulario.value.fechaEmision >= this.generarFecha(-15) && this.formulario.value.fechaEmision <= this.generarFecha(+1)) {
-      // this.toastr.success("Fecha válida.");
       document.getElementById('idItem').focus();
     } else {
       this.toastr.error("Fecha para FeCAEA no es válido. Se establece fecha actual.");
@@ -298,7 +299,6 @@ export class EmitirFacturaComponent implements OnInit {
   //Controla el rango valido para la fecha de emision cuando el punto de venta no es feCAEA
   private verificarFechaNoFeCAEA() {
     if (this.formulario.value.fechaEmision >= this.generarFecha(-5) && this.formulario.value.fechaEmision <= this.generarFecha(+1)) {
-      // this.toastr.success("Fecha válida.");
       document.getElementById('idItem').focus();
     } else {
       this.toastr.error("Fecha para no es válido. Se establece fecha actual.");
@@ -308,7 +308,8 @@ export class EmitirFacturaComponent implements OnInit {
   }  //Genera y retorna una fecha segun los parametros que recibe (dias - puede ser + ó -)
   private generarFecha(dias) {
     let fechaActual = new Date();
-    let fechaGenerada = fechaActual.getFullYear() + '-' + (fechaActual.getMonth() + 1) + '-' + (fechaActual.getDate() + dias); //Al mes se le debe sumar 1
+    let date = fechaActual.getDate() + dias;
+    let fechaGenerada = fechaActual.getFullYear() + '-' + (fechaActual.getMonth() + 1) + '-' + (date < '10' ? '0' + date : date); //Al mes se le debe sumar 1
     return fechaGenerada;
   }
 
@@ -337,7 +338,7 @@ export class EmitirFacturaComponent implements OnInit {
   }
   //Operaciones a aplicar con el cambio de item a facturar
   private manejoCambioItem() {
-    this.reestablecerFormulario(); //Reuso el reestablecerFormulario
+    this.reestablecerFormulario(false); //Reuso el reestablecerFormulario
     this.itemReserva.setValue(this.itemFactura.value); //Guardo el item a facturar seleccionado
     this.itemFactura.setValue(this.itemReserva.value);//Si el item a facturar es un Remito (general/dador de carga) se establecen campos a solo lectura
     this.itemFactura.value.id == 1 || this.itemFactura.value.id == 2 ?
@@ -415,6 +416,7 @@ export class EmitirFacturaComponent implements OnInit {
   }
   //Completa el input "porcentaje" segun la Orden Venta seleccionada 
   public cambioOrdenVta() {
+    console.log(this.ordenVenta.value);
     //Con cada cambio limpia los campos 'Tarifa' - 'pSeguro'
     this.formularioVtaCpteItemFA.get('pSeguro').reset();
     this.formularioVtaCpteItemFA.get('ordenVentaTarifa').reset()
@@ -595,7 +597,9 @@ export class EmitirFacturaComponent implements OnInit {
   //Abre un modal para listar Remitos
   public abrirListaRemitoDialogo(): void {
     let esRemitoGeneral;
-    this.itemFactura.value.id == 1 ? esRemitoGeneral = true : esRemitoGeneral = false;//itemFactura.value.id == 1 es Remito Gral. GS
+
+    /* itemFactura.value.id == 1 es Remito Gral. GS */
+    this.itemFactura.value.id == 1 ? esRemitoGeneral = true : esRemitoGeneral = false;
     const dialogRef = this.dialog.open(ListaRemitoDialogoComponent, {
       width: '1200px',
       data: {
@@ -605,27 +609,29 @@ export class EmitirFacturaComponent implements OnInit {
       }
     });
     dialogRef.afterClosed().subscribe(resultado => {
+      console.log(resultado);
       resultado ? this.controlarRemitoSeleccionado(resultado) : '';
     });
   }
   //Controla los campos cuando se selecciona un Remito del modal abrirListaRemitoDialogo
   private controlarRemitoSeleccionado(resultado) {
+    console.log(resultado);
     if (resultado.configuracionModalRemitos.formularioFiltro) {
-      let numeroViaje = resultado.configuracionModalRemitos.formularioFiltro.numeroViaje;
-      let numeroRemito = resultado.configuracionModalRemitos.formularioFiltro.numeroRemito;
-      this.establecerValoresRemitoSeleccionado(resultado.remitoSeleccionado, numeroViaje, numeroRemito);
+      let idViaje = resultado.configuracionModalRemitos.formularioFiltro.idViaje;
+      let idRemito = resultado.configuracionModalRemitos.formularioFiltro.idRemito;
+      this.establecerValoresRemitoSeleccionado(resultado.remitoSeleccionado, idViaje, idRemito);
       this.configuracionModalRemitos.setValue(resultado.configuracionModalRemitos);
     }
   }
   /* Establece los valores del remito seleccionado en modal
    a los campos correspondientes del formulario vta cpte item FA */
-  private establecerValoresRemitoSeleccionado(remitoSeleccionado, numeroViaje, numeroRemito) {
+  private establecerValoresRemitoSeleccionado(remitoSeleccionado, idViaje, idRemito) {
     this.ordenVenta.enable();
     this.formularioVtaCpteItemFA.enable();
-    this.viajeRemito.setValue(numeroViaje);
+    this.viajeRemito.setValue(idViaje);
     this.formularioVtaCpteItemFA.get('id').setValue(remitoSeleccionado.id); //con ello controlo los remitos asignados
     this.formularioVtaCpteItemFA.get('viajeRemito').setValue(remitoSeleccionado);
-    this.formularioVtaCpteItemFA.get('numeroRemito').setValue(numeroRemito);
+    this.formularioVtaCpteItemFA.get('numeroRemito').setValue(idRemito);
     this.formularioVtaCpteItemFA.get('bultos').setValue(remitoSeleccionado.viajeRemito.bultos);
     this.formularioVtaCpteItemFA.get('kilosEfectivo').setValue(this.appService.establecerDecimales(remitoSeleccionado.viajeRemito.kilosEfectivo.toString(), 2));
     this.formularioVtaCpteItemFA.get('kilosAforado').setValue(this.appService.establecerDecimales(remitoSeleccionado.viajeRemito.kilosAforado.toString(), 2));
@@ -633,7 +639,9 @@ export class EmitirFacturaComponent implements OnInit {
     this.formularioVtaCpteItemFA.get('valorDeclarado').setValue(this.appService.establecerDecimales(remitoSeleccionado.viajeRemito.valorDeclarado.toString(), 2));
     this.formularioVtaCpteItemFA.get('importeRetiro').setValue(this.appService.establecerDecimales(remitoSeleccionado.viajeRemito.importeRetiro.toString(), 2));
     this.formularioVtaCpteItemFA.get('importeEntrega').setValue(this.appService.establecerDecimales(remitoSeleccionado.viajeRemito.importeEntrega.toString(), 2));
-    if (this.itemFactura.value.id == 1) {
+
+    /* Pregunta si el item es Remito Carga Gral. y si no hay items cargados en la lista de items */
+    if (this.itemFactura.value.id == 1 && this.listaCompletaItems.data.length == 0) {
       this.formulario.get('clienteRemitente').setValue(remitoSeleccionado.viajeRemito.clienteRemitente);
       this.cambioRemitente();
       this.formulario.get('clienteDestinatario').setValue(remitoSeleccionado.viajeRemito.clienteDestinatario);
@@ -745,8 +753,12 @@ export class EmitirFacturaComponent implements OnInit {
   }
   //Agrega a un Array el item e impacta en la tabla
   public agregarItem() {
-    this.formularioVtaCpteItemFA.get('ordenVentaTarifa').setValue({ id: this.formularioVtaCpteItemFA.value.ordenVentaTarifa.id });
-    this.formularioVtaCpteItemFA.get('provincia').setValue(this.formulario.get('cliente').value.localidad.provincia); //Guarda el idProvincia del Remitente
+    this.formularioVtaCpteItemFA.enable();
+    this.formularioVtaCpteItemFA.get('ordenVentaTarifa').setValue(
+      this.ordenVenta.value == 'false' ?  null : { id: this.formularioVtaCpteItemFA.value.ordenVentaTarifa.id });
+
+    /* Guarda el idProvincia del Remitente */
+    this.formularioVtaCpteItemFA.get('provincia').setValue(this.formulario.get('cliente').value.localidad.provincia); 
     this.listaCompletaItems.data.push(this.formularioVtaCpteItemFA.value);
     this.listaCompletaItems.sort = this.sort;
     this.contador.setValue(this.contador.value + 1);
@@ -835,11 +847,13 @@ export class EmitirFacturaComponent implements OnInit {
     }
   }
   //Reestablece el formulario cuando cambia el item a facturar
-  private reestablecerFormulario() {
+  private reestablecerFormulario(limpiarTodo) {
+    let puntoVenta;
+    let fechaEmision;
+    let tipoComprobante;
     //Guardo por si existen datos ya cargados
-    let puntoVenta = this.formulario.value.puntoVenta;
-    let fechaEmision = this.formulario.value.fechaEmision;
-    let tipoComprobante = this.formulario.value.tipoComprobante;
+    !limpiarTodo ? [puntoVenta = this.formulario.value.puntoVenta, fechaEmision = this.formulario.value.fechaEmision,
+    tipoComprobante = this.formulario.value.tipoComprobante] : '';
     //Vacio formularios y listas
     this.vaciarListas();
     this.contador.reset();
@@ -1036,7 +1050,7 @@ export class EmitirFacturaComponent implements OnInit {
           let respuesta = res.json();
           if (res.status == 201) {
             this.toastr.success(respuesta.mensaje);
-            this.reestablecerFormulario();
+            this.reestablecerFormulario(false);
           }
           this.loaderService.hide();
         },
@@ -1094,7 +1108,7 @@ export class ConceptosVariosDialogo {
     this.ventaItemConceptoService.listar().subscribe(
       res => {
         this.conceptos = res.json();
-      },err => { this.toastr.error(err.json().mensaje); }
+      }, err => { this.toastr.error(err.json().mensaje); }
     )
   }
   //Obtiene la mascara de importe

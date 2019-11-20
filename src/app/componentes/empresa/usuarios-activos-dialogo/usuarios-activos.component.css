@@ -1,0 +1,7 @@
+.tabla {
+    width: 100% !important;
+    overflow: auto !important;
+}
+.tabla-ancho {
+    width: 1280px !important;
+}

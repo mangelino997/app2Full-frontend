@@ -142,6 +142,7 @@ export class ActualizacionPreciosComponent implements OnInit {
     if (opcion == 0) {
       this.ordenVentaServicio.listarPorCliente(id).subscribe(
         res => {
+          console.log(res.json());
           this.listaCompleta = new MatTableDataSource(res.json());
           this.listaCompleta.sort = this.sort;
           this.listaCompleta.paginator = this.paginator;
@@ -151,6 +152,8 @@ export class ActualizacionPreciosComponent implements OnInit {
     } else {
       this.ordenVentaServicio.listarPorEmpresa(this.empresa.value.id).subscribe(
         res => {
+          console.log(res.json());
+
           this.listaCompleta = new MatTableDataSource(res.json());
           this.listaCompleta.sort = this.sort;
           this.listaCompleta.paginator = this.paginator;

@@ -30,7 +30,7 @@ import { UsuarioEmpresa } from 'src/app/modelos/usuarioEmpresa';
   ],
   providers: [
     UsuarioEmpresaService,
-    UsuarioEmpresa
+    UsuarioEmpresa,
   ]
 })
 export class UsuarioEmpresaModule { }

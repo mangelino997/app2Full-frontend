@@ -9,6 +9,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RolComponent } from 'src/app/componentes/rol/rol.component';
 import { RolService } from 'src/app/servicios/rol.service';
 import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
+import { Rol } from 'src/app/modelos/rol';
 
 @NgModule({
   declarations: [
@@ -30,6 +31,7 @@ import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.s
     MatIconModule
   ],
   providers: [
+    Rol,
     RolService,
     SubopcionPestaniaService
   ]

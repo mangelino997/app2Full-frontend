@@ -6,7 +6,7 @@ import { EmpresaRoutingModule } from './empresa-routing.module';
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
   MatSelectModule, MatProgressBarModule, MatButtonModule, MatIconModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { EmpresaComponent, ListaUsuariosDialogo } from 'src/app/componentes/empresa/empresa.component';
+import { EmpresaComponent } from 'src/app/componentes/empresa/empresa.component';
 import { TextMaskModule } from 'angular2-text-mask';
 import { EmpresaService } from 'src/app/servicios/empresa.service';
 import { Empresa } from 'src/app/modelos/empresa';
@@ -19,7 +19,6 @@ import { UsuarioService } from 'src/app/servicios/usuario.service';
 @NgModule({
   declarations: [
     EmpresaComponent,
-    ListaUsuariosDialogo
   ],
   imports: [
     CommonModule,
@@ -47,7 +46,7 @@ import { UsuarioService } from 'src/app/servicios/usuario.service';
     UsuarioService
   ],
   entryComponents: [
-    ListaUsuariosDialogo
+    
   ]
 })
 export class EmpresaModule { }

@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { RolService } from '../../servicios/rol.service';
 import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { FormGroup, FormControl } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
@@ -9,6 +9,7 @@ import { Subscription } from 'rxjs';
 import { AppService } from 'src/app/servicios/app.service';
 import { MatSort, MatTableDataSource, MatPaginator } from '@angular/material';
 import { ReporteService } from 'src/app/servicios/reporte.service';
+import { Rol } from 'src/app/modelos/rol';
 
 @Component({
   selector: 'app-rol',
@@ -51,7 +52,7 @@ export class RolComponent implements OnInit {
   //Define la paginacion
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Constructor
-  constructor(private servicio: RolService, private subopcionPestaniaService: SubopcionPestaniaService,
+  constructor(private servicio: RolService, private subopcionPestaniaService: SubopcionPestaniaService, private modelo: Rol,
     private appService: AppService, private toastr: ToastrService, private loaderService: LoaderService,
     private reporteServicio: ReporteService) {
     //Obtiene la lista de pestania por rol y subopcion
@@ -81,15 +82,9 @@ export class RolComponent implements OnInit {
         this.show = state.show;
       });
     //Define los campos para validaciones
-    this.formulario = new FormGroup({
-      id: new FormControl(),
-      version: new FormControl(),
-      nombre: new FormControl('', [Validators.required, Validators.maxLength(45)]),
-      rolSecundarioDTO: new FormControl(),
-      esDesarrollador: new FormControl()
-    });
+    this.formulario = this.modelo.formulario;
     //Establece los valores de la primera pestania activa
-    this.seleccionarPestania(1, 'Agregar', 0);
+    this.seleccionarPestania(1, 'Agregar');
     //Obtiene la lista completa de registros
     this.listar();
   }
@@ -109,14 +104,10 @@ export class RolComponent implements OnInit {
     }, 20);
   };
   //Establece valores al seleccionar una pestania
-  public seleccionarPestania(id, nombre, opcion) {
-    this.reestablecerFormulario('');
+  public seleccionarPestania(id, nombre) {
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    if (opcion == 0) {
-      this.autocompletado.setValue(undefined);
-      this.resultados = [];
-    }
+    this.reestablecerFormulario(undefined);
     switch (id) {
       case 1:
         this.obtenerSiguienteId();
@@ -169,8 +160,9 @@ export class RolComponent implements OnInit {
     this.loaderService.show();
     this.servicio.listar().subscribe(
       res => {
-        this.roles = res.json();
-        this.listaCompleta = new MatTableDataSource(res.json());
+        let respuesta = res.json();
+        this.roles = respuesta;
+        this.listaCompleta = new MatTableDataSource(respuesta);
         this.listaCompleta.sort = this.sort;
         this.loaderService.hide();
       },
@@ -263,10 +255,16 @@ export class RolComponent implements OnInit {
   }
   //Reestablece el formulario
   private reestablecerFormulario(id) {
+    this.vaciarListas();
     this.formulario.reset();
+    this.autocompletado.reset();
     this.formulario.get('id').setValue(id);
-    this.autocompletado.setValue(undefined);
+    this.listar();
+  }
+  //Vacía las listas
+  private vaciarListas() {
     this.resultados = [];
+    this.listaCompleta = new MatTableDataSource([]);
   }
   //Manejo de colores de campos y labels
   public cambioCampo(id, label) {
@@ -275,13 +273,13 @@ export class RolComponent implements OnInit {
   };
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
-    this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
+    this.seleccionarPestania(2, this.pestanias[1].nombre);
     this.autocompletado.setValue(elemento);
     this.formulario.patchValue(elemento);
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
-    this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
+    this.seleccionarPestania(3, this.pestanias[2].nombre);
     this.autocompletado.setValue(elemento);
     this.formulario.patchValue(elemento);
   }
@@ -305,9 +303,9 @@ export class RolComponent implements OnInit {
     var indice = this.indiceSeleccionado;
     if (keycode == 113) {
       if (indice < this.pestanias.length) {
-        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre, 0);
+        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre);
       } else {
-        this.seleccionarPestania(1, this.pestanias[0].nombre, 0);
+        this.seleccionarPestania(1, this.pestanias[0].nombre);
       }
     }
   }

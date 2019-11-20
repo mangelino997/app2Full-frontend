@@ -55,7 +55,7 @@
               </div>
             </div>
             <div class="col-md-3">
-              <button id="idBtnFCE" mat-raised-button color="primary" (click)="abrirFCEMiPyMEs()" [disabled]="!formulario.value.cliente">FCE MiPyMEs</button>
+              <button id="idBtnFCE" mat-raised-button color="primary" (click)="abrirFCEMiPyMEs()" [disabled]="!formulario.value.cliente || btnFCE">FCE MiPyMEs</button>
             </div>
           </div>
         </div>
@@ -319,7 +319,7 @@
           </div>
           <div class="big-input-item">
             <div class="form-group has-float-label ">
-              <label for="idTarifaOVta" class="tamanio-label">Tarifa O.Vta.*</label>
+              <label for="idTarifaOVta" class="tamanio-label">Tarifa O.Vta. <span *ngIf="ordenVenta.value">*</span></label>
               <mat-select id="idTarifaOVta" class="form-control form-control-sm" formControlName="ordenVentaTarifa"
                 [compareWith]="compareFn" (selectionChange)="cambioTipoTarifa()">
                 <mat-option *ngFor="let item of tarifasOrdenVta" [value]="item">
@@ -352,7 +352,7 @@
               <label for="idFlete" class="tamanio-label">Flete</label>
               <input id="idFlete" type="text" formControlName="flete" class="form-control form-control-sm number-right"
                 autocomplete="off" (blur)="setDecimales(formularioVtaCpteItemFA.get('flete'), 2)" placeholder="$ 0.00"
-                [textMask]="mascararImporte(8, 2)">
+                [textMask]="mascararImporte(8, 2)" (blur)="calcularSubtotal()">
               <!--(blur)="calcularSubtotal($event)"-->
             </div>
           </div>

@@ -9,6 +9,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { UsuarioEmpresasComponent } from 'src/app/componentes/usuario-empresas/usuario-empresas.component';
 import { UsuarioEmpresaService } from 'src/app/servicios/usuario-empresa.service';
 import { UsuarioService } from 'src/app/servicios/usuario.service';
+import { UsuarioEmpresa } from 'src/app/modelos/usuarioEmpresa';
 
 @NgModule({
   declarations: [
@@ -32,7 +33,8 @@ import { UsuarioService } from 'src/app/servicios/usuario.service';
   ],
   providers: [
     UsuarioEmpresaService,
-    UsuarioService
+    UsuarioService,
+    UsuarioEmpresa
   ]
 })
 export class UsuarioEmpresasModule { }
