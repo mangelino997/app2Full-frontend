@@ -107,6 +107,7 @@ export class ViajeGastoComponent implements OnInit {
   }
   //Agrega datos a la tabla de gastos
   public agregarGasto(): void {
+    this.loaderService.show();
     this.formularioViajeGasto.get('tipoComprobante').setValue({ id: 19 });
     let usuario = this.appComponent.getUsuario();
     this.formularioViajeGasto.get('sucursal').setValue(usuario.sucursal);
@@ -132,9 +133,9 @@ export class ViajeGastoComponent implements OnInit {
   }
   //Modifica los datos del Gasto
   public modificarGasto(): void {
+    this.loaderService.show();
     let usuarioMod = this.appService.getUsuario();
     this.formularioViajeGasto.value.usuarioMod = usuarioMod;
-    this.formularioViajeGasto.value.viaje = { id: this.ID_VIAJE };
     this.servicio.actualizar(this.formularioViajeGasto.value).subscribe(
       res => {
         if (res.status == 200) {
@@ -325,7 +326,7 @@ export class ViajeGastoComponent implements OnInit {
   public reestablecerFormulario(): void {
     this.vaciarListas();
     this.formularioViajeGasto.reset();
-    this.formularioViajeGasto.value.viaje = this.ID_VIAJE;
+    this.formularioViajeGasto.get('viaje').setValue({id: this.ID_VIAJE});
     this.btnGasto = true;
   }
   //Funcion para comparar y mostrar elemento de campo select

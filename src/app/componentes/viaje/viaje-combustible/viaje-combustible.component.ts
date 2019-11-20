@@ -14,6 +14,7 @@ import { ViajeCombustible } from 'src/app/modelos/viajeCombustible';
 import { AnularDialogo } from '../anular-dialogo.component';
 import { NormalizarDialogo } from '../normalizar-dialogo.component';
 import { ObservacionesDialogo } from '../../observaciones-dialogo/observaciones-dialogo.component';
+import { MensajeExcepcion } from 'src/app/modelos/mensaje-excepcion';
 
 @Component({
   selector: 'app-viaje-combustible',
@@ -183,6 +184,8 @@ export class ViajeCombustibleComponent implements OnInit {
   }
   //Agrega datos a la tabla de combustibles
   public agregarCombustible(): void {
+    this.loaderService.show();
+    this.formularioViajeCombustible.get('viaje').setValue({id: this.ID_VIAJE});
     this.formularioViajeCombustible.get('precioUnitario').enable();
     this.formularioViajeCombustible.get('tipoComprobante').setValue({ id: 15 });
     this.formularioViajeCombustible.get('sucursal').setValue(this.appService.getUsuario().sucursal);
@@ -192,8 +195,9 @@ export class ViajeCombustibleComponent implements OnInit {
         if (res.status == 201) {
           this.reestablecerFormulario();
           this.establecerValoresPorDefecto(0);
+          this.listar();
           document.getElementById('idProveedorOC').focus();
-          this.toastr.success("Registro agregado con éxito");
+          this.toastr.success(MensajeExcepcion.AGREGADO);
           this.loaderService.hide();
         }
       },
@@ -205,6 +209,7 @@ export class ViajeCombustibleComponent implements OnInit {
   }
   //Modifica los datos del combustible
   public modificarCombustible(): void {
+    this.loaderService.show();
     let usuarioMod = this.appServicio.getUsuario();
     this.formularioViajeCombustible.value.usuarioMod = usuarioMod;
     this.servicio.actualizar(this.formularioViajeCombustible.value).subscribe(
@@ -213,6 +218,7 @@ export class ViajeCombustibleComponent implements OnInit {
           this.reestablecerFormulario();
           this.establecerValoresPorDefecto(0);
           this.btnCombustible = true;
+          this.listar();
           document.getElementById('idProveedorOC').focus();
           this.toastr.success("Registro actualizado con éxito");
           this.loaderService.hide();

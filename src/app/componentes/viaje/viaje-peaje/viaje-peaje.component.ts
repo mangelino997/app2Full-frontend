@@ -11,6 +11,7 @@ import { MatSort, MatTableDataSource, MatDialog } from '@angular/material';
 import { ViajePeaje } from 'src/app/modelos/viajePeaje';
 import { ViajePeajeService } from 'src/app/servicios/viaje-peaje';
 import { ConfirmarDialogoComponent } from '../../confirmar-dialogo/confirmar-dialogo.component';
+import { MensajeExcepcion } from 'src/app/modelos/mensaje-excepcion';
 
 @Component({
   selector: 'app-viaje-peaje',
@@ -109,13 +110,14 @@ export class ViajePeajeComponent implements OnInit {
   }
   //Agrega datos a la tabla de peajes
   public agregarPeaje(): void {
+    this.loaderService.show();
     if (!this.formularioViajePeaje.value.importe) {
       this.formularioViajePeaje.get('importe').setValue(this.appService.establecerDecimales('0.00', 2));
       this.formularioViajePeaje.get('importe').setValue(this.appService.establecerDecimales(this.formularioViajePeaje.value.importe, 2));
     }
     this.formularioViajePeaje.get('tipoComprobante').setValue({ id: 17 });
     this.formularioViajePeaje.get('usuarioAlta').setValue(this.appService.getUsuario());
-    this.formularioViajePeaje.value.viaje = { id: this.ID_VIAJE };
+    this.formularioViajePeaje.get('viaje').setValue({id: this.ID_VIAJE});
     this.servicio.agregar(this.formularioViajePeaje.value).subscribe(
       res => {
         if (res.status == 201) {
@@ -136,6 +138,7 @@ export class ViajePeajeComponent implements OnInit {
   }
   //Modifica los datos del Peaje
   public modificarPeaje(): void {
+    this.loaderService.show();
     if (!this.formularioViajePeaje.value.importe) {
       this.formularioViajePeaje.get('importe').setValue(this.appService.establecerDecimales('0.00', 2));
     }
@@ -177,7 +180,7 @@ export class ViajePeajeComponent implements OnInit {
       maxWidth: '60%',
       data: {
         tema: this.appService.getTema(),
-        question: {id: 1}
+        mensaje: MensajeExcepcion.PREGUNTA_ELIMINAR
       }
     });
     dialogRef.afterClosed().subscribe(resultado => {
@@ -300,7 +303,7 @@ export class ViajePeajeComponent implements OnInit {
   public reestablecerFormulario(): void {
     this.vaciarListas();
     this.formularioViajePeaje.reset();
-    this.formularioViajePeaje.value.viaje = this.ID_VIAJE;
+    this.formularioViajePeaje.get('viaje').setValue({id: this.ID_VIAJE});
     this.indicePeaje = null;
     this.btnPeaje = true;
   }

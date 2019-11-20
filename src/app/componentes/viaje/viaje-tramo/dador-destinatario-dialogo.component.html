@@ -4,15 +4,14 @@
     <div class="row">
         <div class="col">
             <form [formGroup]="formulario">
-                <div class="row">
+                <div class="row" *ngIf="!soloLectura">
                     <div class="col-md-5">
                         <div class="form-group has-float-label">
                             <label for="idTramoDadorCarga" class="tamanio-label">Dador de Carga *</label>
                             <input id="idTramoDadorCarga" class="form-control form-control-sm" type="text" matInput
                                 [formControl]="formulario.get('clienteDador')" [matAutocomplete]="autoDadorCarga"
                                 autocomplete="off" (blur)="verificarSeleccion(formulario.get('clienteDador'))"
-                                placeholder="Buscar por N° Cuenta, Razón Social, Nombre Fantasía o Número Documento"
-                                (blur)="verificarSeleccion(formulario.get('clienteDador'))">
+                                placeholder="Buscar por N° Cuenta, Razón Social, Nombre Fantasía o Número Documento">
                             <mat-autocomplete #autoDadorCarga="matAutocomplete" [displayWith]="displayFb.bind(this)">
                                 <mat-option *ngFor="let itemDadorCarga of resultadosClientes" [value]="itemDadorCarga">
                                     {{itemDadorCarga.alias}}
@@ -27,8 +26,7 @@
                                 [formControl]="formulario.get('clienteDestinatario')"
                                 [matAutocomplete]="autoDestinatario" autocomplete="off"
                                 (blur)="verificarSeleccion(formulario.get('clienteDestinatario'))"
-                                placeholder="Buscar por N° Cuenta, Razón Social, Nombre Fantasía o Número Documento"
-                                (blur)="verificarSeleccion(formulario.get('clienteDestinatario'))">
+                                placeholder="Buscar por N° Cuenta, Razón Social, Nombre Fantasía o Número Documento">
                             <mat-autocomplete #autoDestinatario="matAutocomplete" [displayWith]="displayFb.bind(this)">
                                 <mat-option *ngFor="let itemDestinatario of resultadosClientes"
                                     [value]="itemDestinatario">
@@ -76,7 +74,8 @@
                                 <td mat-cell *matCellDef="let elemento">
                                     <button mat-icon-button class="mat-icon-button-table"
                                         *ngIf="!soloLectura" (click)="eliminarDadorDestinatario(elemento)" 
-                                        matTooltip="Eliminar" matTooltipPosition="above">
+                                        matTooltip="Eliminar" matTooltipPosition="above"
+                                        [disabled]="!soloLectura">
                                         <mat-icon>delete</mat-icon>
                                     </button>
                                 </td>

@@ -13,6 +13,7 @@ import { ViajeEfectivoService } from 'src/app/servicios/viaje-efectivo';
 import { AnularDialogo } from '../anular-dialogo.component';
 import { NormalizarDialogo } from '../normalizar-dialogo.component';
 import { ObservacionesDialogo } from '../../observaciones-dialogo/observaciones-dialogo.component';
+import { MensajeExcepcion } from 'src/app/modelos/mensaje-excepcion';
 
 @Component({
   selector: 'app-viaje-efectivo',
@@ -117,6 +118,8 @@ export class ViajeEfectivoComponent implements OnInit {
   }
   //Agrega datos a la tabla de adelanto efectivo
   public agregarEfectivo(): void {
+    this.loaderService.show();
+    this.formularioViajeEfectivo.get('viaje').setValue({id: this.ID_VIAJE});
     this.formularioViajeEfectivo.get('fecha').setValue(this.fechaActual);
     this.formularioViajeEfectivo.get('tipoComprobante').setValue({ id: 16 });
     this.formularioViajeEfectivo.get('sucursal').setValue(this.appServicio.getUsuario().sucursal);
@@ -127,8 +130,9 @@ export class ViajeEfectivoComponent implements OnInit {
         if (res.status == 201) {
           this.reestablecerFormulario();
           this.establecerValoresPorDefecto(0);
+          this.listar();
           document.getElementById('idFechaCajaAE').focus();
-          this.toastr.success("Registro agregado con éxito");
+          this.toastr.success(MensajeExcepcion.AGREGADO);
           this.loaderService.hide();
         }
       },
@@ -141,6 +145,7 @@ export class ViajeEfectivoComponent implements OnInit {
   }
   //Modifica los datos del Efectivo
   public modificarEfectivo(): void {
+    this.loaderService.show();
     let usuarioMod = this.appServicio.getUsuario();
     this.formularioViajeEfectivo.value.usuarioMod = usuarioMod;
     !this.formularioViajeEfectivo.value.importe ? this.formularioViajeEfectivo.get('importe').setValue(this.appServicio.establecerDecimales('0.00', 2)) : '';
@@ -150,6 +155,7 @@ export class ViajeEfectivoComponent implements OnInit {
           this.reestablecerFormulario();
           this.establecerValoresPorDefecto(0);
           this.btnEfectivo = true;
+          this.listar();
           document.getElementById('idFechaCajaAE').focus();
           this.toastr.success("Registro actualizado con éxito");
           this.loaderService.hide();
@@ -293,7 +299,7 @@ export class ViajeEfectivoComponent implements OnInit {
   public establecerLista(lista, idViaje, pestaniaViaje): void {
     this.establecerValoresPorDefecto(1);
     this.recargarListaCompleta(lista);
-    this.formularioViajeEfectivo.get('viaje').patchValue({ id: idViaje });
+    this.formularioViajeEfectivo.get('viaje').setValue({id: idViaje});
     this.establecerIdViaje(idViaje);
     this.establecerCamposSoloLectura(pestaniaViaje);
     this.listar();
@@ -367,7 +373,7 @@ export class ViajeEfectivoComponent implements OnInit {
   public reestablecerFormulario(): void {
     this.vaciarListas();
     this.formularioViajeEfectivo.reset();
-    this.formularioViajeEfectivo.value.viaje = this.ID_VIAJE;
+    this.formularioViajeEfectivo.get('viaje').setValue({id: this.ID_VIAJE});
     this.indiceEfectivo = null;
     this.btnEfectivo = true;
   }

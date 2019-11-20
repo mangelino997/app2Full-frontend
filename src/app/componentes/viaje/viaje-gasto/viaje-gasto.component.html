@@ -64,8 +64,8 @@
     </div>
   </div>
   <div class="row">
-    <div class="tabla">
-      <div class="tabla-ancho">
+    <!-- <div class="tabla"> -->
+      <!-- <div class="tabla-ancho"> -->
         <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
           <ng-container matColumnDef="fecha" sticky>
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha</th>
@@ -81,19 +81,19 @@
           </ng-container>
           <ng-container matColumnDef="cantidad">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Cantidad</th>
-            <td mat-cell *matCellDef="let elemento"
+            <td mat-cell *matCellDef="let elemento" class="number-right" 
               [ngStyle]="{'background-color':elemento.estaAnulado ? '#E9ECEF' : '#FFFFFF' }">
               {{elemento.cantidad? elemento.cantidad : '--'}}</td>
           </ng-container>
           <ng-container matColumnDef="precioUnitario">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Precio Unitario</th>
-            <td mat-cell *matCellDef="let elemento"
+            <td mat-cell *matCellDef="let elemento" class="number-right" 
               [ngStyle]="{'background-color':elemento.estaAnulado ? '#E9ECEF' : '#FFFFFF' }">$
               {{establecerCerosTabla(elemento.precioUnitario)}}</td>
           </ng-container>
           <ng-container matColumnDef="importe">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Importe</th>
-            <td mat-cell *matCellDef="let elemento"
+            <td mat-cell *matCellDef="let elemento" class="number-right" 
               [ngStyle]="{'background-color':elemento.estaAnulado ? '#E9ECEF' : '#FFFFFF' }">$
               {{establecerCerosTabla(elemento.importe)}}</td>
           </ng-container>
@@ -139,8 +139,8 @@
           <tr mat-header-row *matHeaderRowDef="columnas"></tr>
           <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
         </table>
-      </div>
-    </div>
+      <!-- </div> -->
+    <!-- </div> -->
   </div>
   <br>
   <div class="row justify-content-end">

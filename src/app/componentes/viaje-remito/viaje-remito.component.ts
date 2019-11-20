@@ -359,6 +359,7 @@ export class ViajeRemitoComponent implements OnInit {
       this.formularioFiltro.get('idClienteRemitente').setValue(this.autocompletadoRemitente.value.id);
     if (this.autocompletadoDestinatario.value)
       this.formularioFiltro.get('idClienteDestinatario').setValue(this.autocompletadoDestinatario.value.id);
+    console.log(this.formularioFiltro.value);
     this.servicio.listarPorFiltros(this.formularioFiltro.value).subscribe(
       res => {
         this.listaCompleta = new MatTableDataSource(res.json());

@@ -50,4 +50,9 @@ export class MensajeExcepcion {
     /*
     * FIN DATO DUPLICADO
     */
+
+    /*
+    * MENSAJES GENERALES
+    */
+   public static PREGUNTA_ELIMINAR = '¿Seguro que desea eliminar este registro?';
 }

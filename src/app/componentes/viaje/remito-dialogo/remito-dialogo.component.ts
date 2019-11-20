@@ -50,6 +50,8 @@ export class RemitoDialogoComponent implements OnInit {
   public formulario:FormGroup;
   //Define el formulario de aforar
   public formularioAforar: FormGroup;
+  //Define solo lectura para campos y botones
+  public soloLectura:boolean = false;
   //Constructor
   constructor(public dialogRef: MatDialogRef<RemitoDialogoComponent>, @Inject(MAT_DIALOG_DATA) public data, 
     private toastr: ToastrService, private appServicio: AppService, private viajeTramoClienteRemito: ViajeTramoClienteRemito, 
@@ -76,6 +78,8 @@ export class RemitoDialogoComponent implements OnInit {
     this.listarPorViajeTramoCliente(this.data.dadorDestinatario.id);
     //Establece valores por defecto
     this.establecerValoresPorDefecto();
+    //Establece botones y campos solo lectura
+    this.soloLectura = this.data.indiceSeleccionado == 2 || this.data.indiceSeleccionado == 4 ? true : false;
   }
   //Establece la tarifa segun el viaje tarifa seleccionada en tramo
   private establecerTarifa(): void {
@@ -221,10 +225,10 @@ export class RemitoDialogoComponent implements OnInit {
       this.formulario.get('m3').reset();
     elemento.valorDeclarado ? this.formulario.get('valorDeclarado').setValue(this.appServicio.establecerDecimales(elemento.valorDeclarado, 2)) :
       this.formulario.get('valorDeclarado').reset();
-    elemento.kilosEfectivo ? this.formulario.get('kilosEfectivo').setValue(this.appServicio.establecerDecimales(elemento.kilosEfectivo, 2)) :
-      this.formulario.get('kilosEfectivo').reset();
-    elemento.kilosAforado ? this.formulario.get('kilosAforado').setValue(this.appServicio.establecerDecimales(elemento.kilosAforado, 2)) :
-      this.formulario.get('kilosAforado').reset();
+    elemento.kgEfectivo ? this.formulario.get('kgEfectivo').setValue(this.appServicio.establecerDecimales(elemento.kgEfectivo, 2)) :
+      this.formulario.get('kgEfectivo').reset();
+    elemento.kgAforado ? this.formulario.get('kgAforado').setValue(this.appServicio.establecerDecimales(elemento.kgAforado, 2)) :
+      this.formulario.get('kgAforado').reset();
     elemento.precioUnitario ? this.formulario.get('precioUnitario').setValue(this.appServicio.establecerDecimales(elemento.precioUnitario, 2)) :
       this.formulario.get('precioUnitario').reset();
     elemento.importeCosto ? this.formulario.get('importeCosto').setValue(this.appServicio.establecerDecimales(elemento.importeCosto, 2)) :
@@ -271,10 +275,10 @@ export class RemitoDialogoComponent implements OnInit {
     dialogRef.afterClosed().subscribe(resultado => {
       if (resultado) {
         this.formularioAforar.patchValue(resultado);
-        this.formulario.get('kilosAforado').setValue(this.appServicio.setDecimales(resultado.kiloAforadoTotal, 2));
+        this.formulario.get('kgAforado').setValue(this.appServicio.setDecimales(resultado.kiloAforadoTotal, 2));
       }else{
         this.formularioAforar.reset();
-        this.formulario.get('kilosAforado').setValue(this.appServicio.setDecimales('0.00', 2));
+        this.formulario.get('kgAforado').setValue(this.appServicio.setDecimales('0.00', 2));
       }
     });
   }

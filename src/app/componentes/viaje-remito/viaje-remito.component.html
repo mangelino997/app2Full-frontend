@@ -137,9 +137,11 @@
           <div class="col-md-6">
             <div class="form-group has-float-label">
               <label for="idSucursalDestinatario" class="tamanio-label">Sucursal Destinatario</label>
-              <mat-select id="idSucursalDestinatario" class="form-control form-control-sm" formControlName="sucursalClienteDest">
+              <mat-select id="idSucursalDestinatario" class="form-control form-control-sm"
+                formControlName="sucursalClienteDest">
                 <div *ngFor="let item of sucursalesDestinatario">
-                  <mat-option [value]="item">{{item.nombre}} - {{item.domicilio}} - {{item.localidad.nombre}}</mat-option>
+                  <mat-option [value]="item">{{item.nombre}} - {{item.domicilio}} - {{item.localidad.nombre}}
+                  </mat-option>
                 </div>
               </mat-select>
             </div>
@@ -246,14 +248,14 @@
       <br>
       <form [formGroup]="formularioFiltro" class="contenedor">
         <div class="row">
-          <div class="col-md-3">
+          <div class="col-md-2">
             <div class="form-group has-float-label">
               <label for="idFecha" class="tamanio-label">Fecha Desde *</label>
               <input id="idFecha" type="date" formControlName="fechaDesde" autocomplete="off"
                 class="form-control form-control-sm" required>
             </div>
           </div>
-          <div class="col-md-3">
+          <div class="col-md-2">
             <div class="form-group has-float-label">
               <label for="idFecha" class="tamanio-label">Fecha Hasta *</label>
               <input id="idFecha" type="date" formControlName="fechaHasta" autocomplete="off"
@@ -261,30 +263,6 @@
             </div>
           </div>
           <div class="col-md-3">
-            <div class="form-group has-float-label">
-              <label for="idSucursalDestino" class="tamanio-label">Sucursal Ingreso</label>
-              <mat-select id="idSucursalDestino" class="form-control form-control-sm"
-                formControlName="idSucursalIngreso" [compareWith]="compareFn">
-                <mat-option *ngFor="let item of sucursales" [value]="item.id">{{item.nombre}}
-                </mat-option>
-                <mat-option [value]="0">TODAS</mat-option>
-              </mat-select>
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div class="form-group has-float-label">
-              <label for="idSucursalDestino" class="tamanio-label">Sucursal Destino</label>
-              <mat-select id="idSucursalDestino" class="form-control form-control-sm"
-                formControlName="idSucursalDestino" [compareWith]="compareFn">
-                <mat-option *ngFor="let item of sucursales" [value]="item.id">{{item.nombre}}
-                </mat-option>
-                <mat-option [value]="0">TODAS</mat-option>
-              </mat-select>
-            </div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-md-4">
             <div class="form-group has-float-label">
               <label for="idAutocompletado" class="tamanio-label">Remitente</label>
               <input id="idAutocompletado" class="form-control form-control-sm" autocomplete="off" type="text" matInput
@@ -297,7 +275,7 @@
               </mat-autocomplete>
             </div>
           </div>
-          <div class="col-md-4">
+          <div class="col-md-3">
             <div class="form-group has-float-label">
               <label for="idAutocompletado" class="tamanio-label">Destinatario</label>
               <input id="idAutocompletado" class="form-control form-control-sm" autocomplete="off" type="text" matInput
@@ -310,11 +288,57 @@
               </mat-autocomplete>
             </div>
           </div>
+        </div>
+        <div class="row">
           <div class="col-md-2">
             <div class="form-group has-float-label">
               <label for="idNumeroCamion" class="tamanio-label">N° de Camión</label>
               <input id="idNumeroCamion" [textMask]="mascararEnteros(3)" type="text" formControlName="numeroCamion"
                 autocomplete="off" class="form-control form-control-sm number-right">
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div class="form-group has-float-label">
+              <label for="idSucursalDestino" class="tamanio-label">Sucursal Ingreso</label>
+              <mat-select id="idSucursalDestino" class="form-control form-control-sm"
+                formControlName="idSucursalIngreso" [compareWith]="compareFn">
+                <mat-option *ngFor="let item of sucursales" [value]="item.id">{{item.nombre}}
+                </mat-option>
+                <mat-option [value]="0">TODAS</mat-option>
+              </mat-select>
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div class="form-group has-float-label">
+              <label for="idSucursalDestino" class="tamanio-label">Sucursal Destino</label>
+              <mat-select id="idSucursalDestino" class="form-control form-control-sm"
+                formControlName="idSucursalDestino" [compareWith]="compareFn">
+                <mat-option *ngFor="let item of sucursales" [value]="item.id">{{item.nombre}}
+                </mat-option>
+                <mat-option [value]="0">TODAS</mat-option>
+              </mat-select>
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div class="form-group has-float-label">
+              <label for="idEstado" class="tamanio-label">Estado</label>
+              <mat-select id="idEstado" class="form-control form-control-sm" formControlName="estado"
+                [compareWith]="compareFn">
+                <mat-option [value]="2">Todos</mat-option>
+                <mat-option [value]="0">Pendientes</mat-option>
+                <mat-option [value]="1">Facturados</mat-option>
+              </mat-select>
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div class="form-group has-float-label">
+              <label for="idAsignado" class="tamanio-label">Asignado a GS</label>
+              <mat-select id="idAsignado" class="form-control form-control-sm" formControlName="asignado"
+                [compareWith]="compareFn">
+                <mat-option [value]="2">Todos</mat-option>
+                <mat-option [value]="1">Pendientes</mat-option>
+                <mat-option [value]="0">Asignados</mat-option>
+              </mat-select>
             </div>
           </div>
           <div class="col-md-2">

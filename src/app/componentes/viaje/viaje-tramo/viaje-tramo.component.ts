@@ -478,12 +478,16 @@ export class ViajeTramoComponent implements OnInit {
       this.formularioViajeTramo.get('viajeTipoCarga').disable();
       this.formularioViajeTramo.get('viajeTipo').disable();
       this.formularioViajeTramo.get('viajeTarifa').disable();
+      this.formularioViajeTramo.get('importeCosto').disable();
+      this.formularioViajeTramo.get('observaciones').disable();
     } else {
       this.formularioViajeTramo.get('empresa').enable();
       this.formularioViajeTramo.get('viajeUnidadNegocio').enable();
       this.formularioViajeTramo.get('viajeTipoCarga').enable();
       this.formularioViajeTramo.get('viajeTipo').enable();
       this.formularioViajeTramo.get('viajeTarifa').enable();
+      this.formularioViajeTramo.get('importeCosto').enable();
+      this.formularioViajeTramo.get('observaciones').enable();
     }
   }
   //Convierte la lista de tramos a MatTableDataSource
@@ -548,7 +552,8 @@ export class ViajeTramoComponent implements OnInit {
         viajeTramo: elemento.id,
         tramo: elemento,
         viajeTarifa: elemento.viajeTarifa,
-        importeCosto: elemento.importeCosto
+        importeCosto: elemento.importeCosto,
+        indiceSeleccionado: this.indiceSeleccionado
       }
     });
     dialogRef.afterClosed().subscribe(viajeTramoClientes => {
@@ -587,6 +592,8 @@ export class DadorDestinatarioDialogo {
   public tramo: string = null;
   //Define la modalidad de carga seleccionada
   public modalidadCarga: boolean;
+  //Define campos solo lectura
+  public soloLectura:boolean = false;
   //Define las columnas de la tabla
   public columnas: string[] = ['dador', 'destinatario', 'remitos', 'eliminar'];
   //Define muestra de progress dialog
@@ -618,7 +625,7 @@ export class DadorDestinatarioDialogo {
           this.resultadosClientes = response.json();
         })
       }
-    })
+    });
     //Autocompletado Cliente Destinatario - Buscar por alias
     this.formulario.get('clienteDestinatario').valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
@@ -626,7 +633,9 @@ export class DadorDestinatarioDialogo {
           this.resultadosClientes = response.json();
         })
       }
-    })
+    });
+    //Establece botones y campos solo lectura
+    this.soloLectura = this.data.indiceSeleccionado == 2 || this.data.indiceSeleccionado == 4 ? true : false;
   }
   onNoClick(): void {
     this.dialogRef.close();
@@ -678,7 +687,9 @@ export class DadorDestinatarioDialogo {
       const dialogRef = this.dialog.open(ConfirmarDialogoComponent, {
         width: '50%',
         maxWidth: '50%',
-        data: {}
+        data: {
+          mensaje: MensajeExcepcion.PREGUNTA_ELIMINAR
+        }
       });
       dialogRef.afterClosed().subscribe(resultado => {
         if (resultado) {
@@ -710,7 +721,8 @@ export class DadorDestinatarioDialogo {
         tramo: this.tramo,
         dadorDestinatario: elemento,
         viajeTarifa: this.data.viajeTarifa,
-        importeCosto: this.data.importeCosto
+        importeCosto: this.data.importeCosto,
+        indiceSeleccionado: this.data.indiceSeleccionado
       }
     });
     dialogRef.afterClosed().subscribe(resultado => { });

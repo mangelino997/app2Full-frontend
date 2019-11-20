@@ -182,9 +182,9 @@ export class ViajeInsumoComponent implements OnInit {
   }
   //Modifica los datos del Insumo
   public modificarInsumo(): void {
+    this.loaderService.show();
     let usuarioMod = this.appServicio.getUsuario();
     this.formularioViajeInsumo.value.usuarioMod = usuarioMod;
-    this.formularioViajeInsumo.value.viaje = { id: this.ID_VIAJE };
     this.servicio.actualizar(this.formularioViajeInsumo.value).subscribe(
       res => {
         if (res.status == 200) {
@@ -369,7 +369,7 @@ export class ViajeInsumoComponent implements OnInit {
   public reestablecerFormulario(): void {
     this.vaciarListas();
     this.formularioViajeInsumo.reset();
-    this.formularioViajeInsumo.value.viaje = this.ID_VIAJE;
+    this.formularioViajeInsumo.get('viaje').setValue({ id: this.ID_VIAJE });
     this.indiceInsumo = null;
     this.btnInsumo = true;
   }

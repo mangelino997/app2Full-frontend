@@ -533,25 +533,32 @@ export class ViajeComponent implements OnInit {
   }
   //Finaliza un viaje
   public finalizar(): void {
-    this.reestablecerFormulario();
-    this.obtenerSiguienteId();
-    this.establecerValoresPorDefecto();
-    this.viajeTramoComponente.finalizar();
-    this.viajeCombustibleComponente.finalizar();
-    this.viajeEfectivoComponente.finalizar();
-    this.viajeInsumoComponente.finalizar();
-    this.viajeGastoComponente.finalizar();
-    this.viajePeajeComponente.finalizar();
-    this.indiceSeleccionado == 1 ? document.getElementById('idFecha').focus() : document.getElementById('idViaje').focus();
+    this.loaderService.show();
     switch (this.indiceSeleccionado) {
       case 1:
+          this.seleccionarPestania(1, 'Agregar', 0);
         this.toastr.success(MensajeExcepcion.AGREGADO);
+        this.loaderService.hide();
         break;
       case 3:
-        this.toastr.success(MensajeExcepcion.ACTUALIZADO);
+        this.formularioViaje.enable();
+        this.servicio.actualizar(this.formularioViaje.value).subscribe(
+          res => {
+            if(res.status == 200) {
+              this.seleccionarPestania(3, 'Actualizar', 0);
+              this.toastr.success(MensajeExcepcion.ACTUALIZADO);
+            }
+            this.loaderService.hide();
+          },
+          err => {
+            this.loaderService.hide();
+          }
+        );
         break;
       case 4:
+          this.seleccionarPestania(4, 'Eliminar', 0);
         this.toastr.success(MensajeExcepcion.ELIMINADO);
+        this.loaderService.hide();
         break;
     }
   }

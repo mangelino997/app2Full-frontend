@@ -44,8 +44,8 @@
   <h6 *ngIf="tipoRemitos">Remitos Asignados</h6>
   <h6 *ngIf="!tipoRemitos">Remitos Pendientes</h6>
   <div class="row">
-    <div class="tabla">
-      <div class="tabla-ancho">
+    <!-- <div class="tabla"> -->
+      <!-- <div class="tabla-ancho"> -->
         <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
           <ng-container matColumnDef="check">
             <th mat-header-cell *matHeaderCellDef>
@@ -92,9 +92,10 @@
           <tr mat-header-row *matHeaderRowDef="columnas"></tr>
           <tr mat-row *matRowDef="let row; columns: columnas;" (click)="seleccionCheck.toggle(row)"></tr>
         </table>
-      </div>
-    </div>
+      <!-- </div> -->
+    <!-- </div> -->
   </div>
+  <br>
   <div class="row">
     <div *ngIf="indiceSeleccionado != 2 && indiceSeleccionado != 4">
       <button mat-raised-button color="primary" (click)="asignarRemitos()" *ngIf="!tipoRemitos"
