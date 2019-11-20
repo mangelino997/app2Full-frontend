@@ -398,7 +398,9 @@ export class ViajeTramoComponent implements OnInit {
       const dialogRef = this.dialog.open(ConfirmarDialogoComponent, {
         width: '50%',
         maxWidth: '50%',
-        data: {}
+        data: {
+          mensaje: "¿Está seguro de eliminar el Tramo?"
+        }
       });
       dialogRef.afterClosed().subscribe(resultado => {
         if (resultado) {

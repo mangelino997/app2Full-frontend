@@ -41,77 +41,54 @@
         </div>
         <div class="row">
           <div class="col-md-12">
-            <table class="table table-bordered table-striped table-sm">
-              <thead>
-                <tr>
-                  <th class="text-center" style="width:5%" scope="col">Id</th>
-                  <th class="text-center" style="width:15%" scope="col">Nombre</th>
-                  <th class="text-center" style="width:10%" scope="col">Vendedor</th>
-                  <th class="text-center" style="width:10%" scope="col">Tarifa</th>
-                  <th class="text-center" style="width:10%" scope="col">% Seguro</th>
-                  <th class="text-center" style="width:10%" scope="col">% Com. C.R.</th>
-                  <th class="text-center" style="width:10%" scope="col">Activa</th>
-                  <th class="text-center" style="width:20%" scope="col">Observaciones</th>
-                </tr>
-              </thead>
-              <tbody>
-                <ng-container *ngFor="let l of listaCompleta; let i= index">
-                  <tr class="ordenVta-no-seleccionada" *ngIf="l.tipoTarifa.porPorcentaje==false" id="fila{{i}}"
-                    (click)="seleccionOrdenVta(i, l.id)">
-                    <td align="center">
-                      <span>{{l.id}}</span>
-                    </td>
-                    <td align="center">
-                      <span>{{l.nombre}}</span>
-                    </td>
-                    <td align="center">
-                      <span>{{l.vendedor.nombre}}</span>
-                    </td>
-                    <td align="center">
-                      <span>{{l.tipoTarifa.nombre}}</span>
-                    </td>
-                    <td align="center">
-                      <span>{{l.seguro}} %</span>
-                    </td>
-                    <td align="center">
-                      <span>{{l.comisionCR}} %</span>
-                    </td>
-                    <td align="center">
-                      <span>{{l.estaActiva? 'Sí':'No'}}</span>
-                    </td>
-                    <td align="center">
-                      <span>{{l.observaciones}}</span>
-                    </td>
-                  </tr>
-                  <tr *ngIf="l.tipoTarifa.porPorcentaje==true" class="fila-bloqueada">
-                    <td align="center">
-                      <span>{{l.nombre}}</span>
-                    </td>
-                    <td align="center">
-                      <span>{{l.vendedor.nombre}}</span>
-                    </td>
-                    <td align="center">
-                      <span>{{l.tipoTarifa.nombre}}</span>
-                    </td>
-                    <td align="center">
-                      <span>{{l.seguro}}</span>
-                    </td>
-                    <td align="center">
-                      <span>{{l.comisionCR}} %</span>
-                    </td>
-                    <td align="center">
-                      <span>{{l.estaActiva? 'Sí':'No'}}</span>
-                    </td>
-                    <td align="center">
-                      <span>{{l.observaciones}}</span>
-                    </td>
-                    <td align="center">
-                      <mat-checkbox class="" disabled="true"></mat-checkbox>
-                    </td>
-                  </tr>
-                </ng-container>
-              </tbody>
+            <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
+              <ng-container matColumnDef="ID">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header class="col-id-width">#</th>
+                <td mat-cell *matCellDef="let elemento; let i = index" class="number-right">
+                  {{i + 1}}</td>
+              </ng-container>
+              <ng-container matColumnDef="NOMBRE">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</th>
+                <td mat-cell *matCellDef="let elemento">{{elemento.nombre}}</td>
+              </ng-container>
+              <ng-container matColumnDef="VENDEDOR">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Vendedor</th>
+                <td mat-cell *matCellDef="let elemento">{{elemento.vendedor.nombre}}</td>
+              </ng-container>
+              <ng-container matColumnDef="P_SEGURO">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>% Seguro</th>
+                <td mat-cell *matCellDef="let elemento">
+                  {{(elemento.seguro ? elemento.seguro : '00.00') | number: '1.2-2'}} %
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="P_COM_CR">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>% Com. C.R.</th>
+                <td mat-cell *matCellDef="let elemento">
+                  {{(elemento.comisionCR ? elemento.comisionCR : '00.00') | number: '1.2-2'}} %
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="ACTIVA">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Activa</th>
+                <td mat-cell *matCellDef="let elemento">
+                  {{elemento.estaActiva? 'Sí' : 'No'}}
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="OBS">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Observaciones</th>
+                <td mat-cell *matCellDef="let elemento">
+                  {{elemento.observaciones}}
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="CHECK">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Check</th>
+                <td mat-cell *matCellDef="let elemento; let i = index">
+                  <mat-checkbox class="cursor-color" (change)="seleccionOrdenVta(i, elemento.id, $event)"></mat-checkbox>
+                </td>
+              </ng-container>
+              <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+              <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
             </table>
+            <mat-paginator [pageSizeOptions]="[10]" showFirstLastButtons></mat-paginator>
           </div>
         </div>
         <div class="row">
@@ -162,8 +139,8 @@
           </div>
           <div class="col-md-3">
             <div class="form-group left">
-              <button id="btn-confirm" mat-raised-button color="primary"
-                [disabled]="!formulario.valid" (click)="confirmar()">Confirmar</button>
+              <button id="btn-confirm" mat-raised-button color="primary" [disabled]="!formulario.valid"
+                (click)="confirmar()">Confirmar</button>
             </div>
           </div>
         </div>

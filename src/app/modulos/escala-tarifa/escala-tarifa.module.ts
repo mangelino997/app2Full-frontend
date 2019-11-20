@@ -9,6 +9,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { EscalaTarifaComponent } from 'src/app/componentes/escala-tarifa/escala-tarifa.component';
 import { EscalaTarifaService } from 'src/app/servicios/escala-tarifa.service';
 import { TextMaskModule } from 'angular2-text-mask';
+import { EscalaTarifa } from 'src/app/modelos/escalaTarifa';
 
 @NgModule({
   declarations: [
@@ -31,7 +32,8 @@ import { TextMaskModule } from 'angular2-text-mask';
     TextMaskModule
   ],
   providers: [
-    EscalaTarifaService
+    EscalaTarifaService,
+    EscalaTarifa
   ]
 })
 export class EscalaTarifaModule { }

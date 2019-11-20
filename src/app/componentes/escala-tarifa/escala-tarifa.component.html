@@ -9,8 +9,8 @@
         <div id="divValor" class="form-group has-float-label">
           <label id="labelValor" for="idValor" class="tamanio-label">Valor *</label>
           <input id="idValor" type="text" formControlName="valor" autocomplete="off" placeholder="0.00"
-            class="form-control form-control-sm number-right" (ngModelChange)="cambioCampo('idValor', 'labelValor')"
-            [textMask]="obtenerMascaraEnteroConDecimales(10)" (blur)="setDecimales(formulario.get('valor'), 2)" >
+            class="form-control form-control-sm number-right" (blur)="cambioValor()"
+            [textMask]="obtenerMascaraEnteroConDecimales(10)" >
         </div>
       </div>
       <div class="col-md-4">

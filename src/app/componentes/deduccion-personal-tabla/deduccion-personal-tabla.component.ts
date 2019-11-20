@@ -328,7 +328,7 @@ export class DeduccionPersonalTablaComponent implements OnInit {
     const dialogRef = this.dialog.open(ConfirmarDialogoComponent, {
       width: '60%',
       data: {
-        question: {id: 1}
+        mensaje: "¿Está seguro de eliminar el registro?"
       }
     });
     dialogRef.afterClosed().subscribe(result => {

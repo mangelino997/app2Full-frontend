@@ -239,7 +239,6 @@ export class PuntoVentaComponent implements OnInit {
         this.establecerValoresPestania(nombre, true, true, true, 'idSucursal');
         break;
       case 5:
-        this.listaCompleta = new MatTableDataSource([]);
         this.empresa.setValue(this.appService.getEmpresa());
         this.empresa.disable();
         setTimeout(function () {
@@ -316,7 +315,7 @@ export class PuntoVentaComponent implements OnInit {
     this.formulario.get('id').setValue(null);
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
-        var respuesta = res.json();
+        let respuesta = res.json();
         if (respuesta.codigo == 201) {
           this.reestablecerFormulario();
           this.establecerEstadoCampos(true);
@@ -337,7 +336,7 @@ export class PuntoVentaComponent implements OnInit {
     this.formulario.enable();
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
-        var respuesta = res.json();
+        let respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario();
           this.establecerEstadoCamposActualizar();
@@ -357,7 +356,7 @@ export class PuntoVentaComponent implements OnInit {
     this.loaderService.show();
     this.servicio.eliminar(this.formulario.value.id).subscribe(
       res => {
-        var respuesta = res.json();
+        let respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario();
           this.establecerEstadoCamposActualizar();
@@ -378,15 +377,22 @@ export class PuntoVentaComponent implements OnInit {
   }
   //Reestablece el formulario
   private reestablecerFormulario() {
+    this.vaciarListas();
+    this.empresa.reset();
+    this.sucursal.reset();
     this.formulario.reset();
     this.autocompletado.reset();
     this.tipoComprobante.reset();
-    this.afipComprobantes = [];
     this.establecerValoresPorDefecto();
+  }
+  //Vacía las listas
+  private vaciarListas(){
+    this.afipComprobantes = [];
+    this.listaCompleta = new MatTableDataSource([]);
   }
   //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
   private lanzarError(err) {
-    var respuesta = err.json();
+    let respuesta = err.json();
     if (respuesta.codigo == 11013) {
       document.getElementById("labelTelefonoFijo").classList.add('label-error');
       document.getElementById("idTelefonoFijo").classList.add('is-invalid');
@@ -460,7 +466,7 @@ export class PuntoVentaComponent implements OnInit {
   }
   //Maneja los evento al presionar una tacla (para pestanias y opciones)
   public manejarEvento(keycode) {
-    var indice = this.indiceSeleccionado;
+    let indice = this.indiceSeleccionado;
     if (keycode == 113) {
       if (indice < this.pestanias.length) {
         this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre);

@@ -49,10 +49,6 @@ export class OrdenVentaComponent implements OnInit {
   public mostrarBoton: boolean = null;
   //Define una lista
   public lista = null;
-  //Define la lista para las Escalas agregadas
-  public listaDeEscalas: Array<any> = [];
-  //Define la lista para los tramos agregados
-  public listaDeTramos: Array<any> = [];
   //Define la lista de pestanias
   public pestanias = null;
   //Define un formulario para validaciones de campos
@@ -128,9 +124,9 @@ export class OrdenVentaComponent implements OnInit {
   //Define la cantidad de resultados que trae listaTarifasDeOrdVta
   public lengthTable: number = 0;
   //Define si muestra el boton de orden venta (en actualizat, eliminar)
-  public btnOrdenVta: boolean = false;
+  // public btnOrdenVta: boolean = false;
   //Bandera boolean para determinar si modifica o agrega un atarifa
-  public btnActualizarTarifa: boolean = false;
+  // public btnActualizarTarifa: boolean = false;
   //Define las columnas de la tabla
   public columnas: string[] = ['id', 'tarifa', 'escala', 'porPorcentaje', 'ver', 'eliminar'];
   //Define las columnas de la tabla para la pestaña LISTAR
@@ -329,11 +325,10 @@ export class OrdenVentaComponent implements OnInit {
     this.formulario.enable();
     this.tipoTarifa.enable();
     this.cliente.reset();
-    this.vaciarLista();
+    this.vaciarListas();
     this.ordenventa.reset();
-    this.listaDeEscalas = [];
-    this.listaDeTramos = [];
-    this.btnOrdenVta = false;
+  
+    // this.btnOrdenVta = false;
     this.empresa.reset();
     let empresa = this.appService.getEmpresa();
     this.formulario.value.empresas = [empresa];
@@ -353,13 +348,13 @@ export class OrdenVentaComponent implements OnInit {
     this.cambioTipoTarifa();
   }
   //Vacia la lista de resultados de autocompletados
-  public vaciarLista() {
+  public vaciarListas() {
+    this.resultadosTramos = [];
+    this.resultadosClientes = [];
+    this.resultadosVendedores = [];
     this.resultados = new MatTableDataSource([]);
     this.listaOrdenVenta = new MatTableDataSource([]);
     this.listaTarifasDeOrdVta = new MatTableDataSource([]);
-    this.resultadosClientes = [];
-    this.resultadosVendedores = [];
-    this.resultadosTramos = [];
   }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
@@ -436,7 +431,7 @@ export class OrdenVentaComponent implements OnInit {
         this.formularioTramo.enable();
         this.formularioTarifa.enable();
         this.tipoTarifa.enable();
-        this.btnOrdenVta = false;
+        // this.btnOrdenVta = false;
         break;
       case 2:
         this.formulario.get('vendedor').disable();
@@ -446,7 +441,7 @@ export class OrdenVentaComponent implements OnInit {
         this.formularioTramo.disable();
         this.formularioTarifa.disable();
         this.tipoTarifa.disable();
-        this.btnOrdenVta = false;
+        // this.btnOrdenVta = false;
         break;
       case 3:
         this.formulario.get('vendedor').enable();
@@ -458,7 +453,7 @@ export class OrdenVentaComponent implements OnInit {
         this.formularioTramo.enable();
         this.formularioTarifa.enable();
         this.tipoTarifa.enable();
-        this.btnOrdenVta = true;
+        // this.btnOrdenVta = true;
         break;
       case 4:
         this.formulario.get('vendedor').disable();
@@ -469,7 +464,7 @@ export class OrdenVentaComponent implements OnInit {
         this.formularioTramo.disable();
         this.formularioTarifa.disable();
         this.tipoTarifa.disable();
-        this.btnOrdenVta = true;
+        // this.btnOrdenVta = true;
         break;
     }
   }
@@ -593,7 +588,7 @@ export class OrdenVentaComponent implements OnInit {
     const dialogRef = this.dialog.open(ConfirmarDialogoComponent, {
       width: '500px',
       data: {
-        question: {id: 1}
+        mensaje: "¿Está seguro de eliminar la Orden de Venta?"
       },
     });
     dialogRef.afterClosed().subscribe(resultado => {
@@ -646,7 +641,7 @@ export class OrdenVentaComponent implements OnInit {
   }
   //Abre el modal de ver Orden Venta Tarifa
   public modificarOrdenVentaTarifa(elemento) {
-    this.btnActualizarTarifa = true;
+    // this.btnActualizarTarifa = true;
     this.formularioTarifa.patchValue(elemento);
     if (elemento.tipoTarifa.porEscala) {
       this.tipoTarifa.setValue('porEscala');
@@ -668,7 +663,7 @@ export class OrdenVentaComponent implements OnInit {
           formulario: null,
           porEscala: null,
           ordenVenta: null,
-          question: {id: 1}
+          mensaje: "¿Está seguro de eliminar la tarifa de la Orden de Venta?"
         },
       });
       dialogRef.afterClosed().subscribe(result => {
@@ -733,7 +728,7 @@ export class OrdenVentaComponent implements OnInit {
     this.establecerPorcentajes(elemento);
     this.establecerOrdenVentaCabecera(elemento.id);
     this.listarTarifasOrdenVenta();
-    this.btnOrdenVta = true;
+    // this.btnOrdenVta = true;
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
@@ -745,7 +740,7 @@ export class OrdenVentaComponent implements OnInit {
     this.establecerPorcentajes(elemento);
     this.establecerOrdenVentaCabecera(elemento.id);
     this.listarTarifasOrdenVenta();
-    this.btnOrdenVta = true;
+    // this.btnOrdenVta = true;
   }
   //Carga los datos de la orden de venta seleccionada en los input
   public cargarDatosOrden() {
@@ -755,7 +750,7 @@ export class OrdenVentaComponent implements OnInit {
     this.establecerPorcentajes(elemento);
     this.establecerOrdenVentaCabecera(elemento.id);
     this.listarTarifasOrdenVenta();
-    this.btnOrdenVta = true;
+    // this.btnOrdenVta = true;
     //En la pestaña consultar y eliminar, deshabilita todo
     if (this.indiceSeleccionado == 2 || this.indiceSeleccionado == 4) {
       this.formulario.get('vendedor').disable();
@@ -764,7 +759,7 @@ export class OrdenVentaComponent implements OnInit {
       this.formularioEscala.disable();
       this.formularioTramo.disable();
       this.formularioTarifa.disable();
-      this.btnOrdenVta = false;
+      // this.btnOrdenVta = false;
     } else {
       //Si la orden de venta no esta activa, deshabilita todos los campos excepto 'estaActiva'
       if (!this.formulario.get('estaActiva').value) {
@@ -774,13 +769,13 @@ export class OrdenVentaComponent implements OnInit {
         this.formularioEscala.disable();
         this.formularioTramo.disable();
         this.formularioTarifa.disable();
-        this.btnOrdenVta = false;
+        // this.btnOrdenVta = false;
       } else {
         this.formulario.enable();
         this.formularioEscala.enable();
         this.formularioTramo.enable();
         this.formularioTarifa.enable();
-        this.btnOrdenVta = true;
+        // this.btnOrdenVta = true;
       }
     }
     this.tipoTarifa.disable();
@@ -963,18 +958,12 @@ export class VerTarifaDialogo {
   public resultadosTramos = [];
   //Define a escala como un FormControl
   public escala: FormControl = new FormControl();
-  //Define a tramo como un FormControl
-  public tramo: FormControl = new FormControl();
   //Define importes seco por
   public importeSecoPor: FormControl = new FormControl();
   //Define importes ref por
   public importeRefPor: FormControl = new FormControl();
-  //Define la escala actual
-  public escalaActual: any;
   //Define si el campo es de solo lectura
   public soloLectura: boolean = false;
-  //Define si el boton Agregar se habilita o deshabilita
-  public btnAgregar: boolean = null;
   //Define el id del Tramo o Escala que se quiere modificar
   public idMod: number = null;
   //Define si la orden de venta esta activa
@@ -1001,7 +990,6 @@ export class VerTarifaDialogo {
     //Inicializa valores
     this.ordenVentaTarifa = this.data.ordenVentaTarifa;
     this.ordenVentaActiva = this.data.ordenVentaActiva;
-    this.listaCompleta = new MatTableDataSource([]);
     this.ordenVenta.setValue(this.ordenVentaTarifa.ordenVenta);
     this.preciosDesde.setValue(this.data.fechaActual);
     this.preciosDesde.disable();
@@ -1229,10 +1217,8 @@ export class VerTarifaDialogo {
   }
   //Reestablece valores y formularios
   public reestablecerFormularios() {
-    this.listaCompleta = new MatTableDataSource([]);
     this.formularioEscala.reset();
     this.formularioTramo.reset();
-    this.resultadosTramos = [];
     this.idMod = null;
     if (this.ordenVentaTarifa.tipoTarifa.porEscala) {
       this.tipoTarifa = "porEscala";

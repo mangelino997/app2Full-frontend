@@ -1,9 +1,8 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
-import { FormGroup, FormControl } from '@angular/forms';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { ProductoService } from 'src/app/servicios/producto.service';
-import { Producto } from 'src/app/modelos/producto';
 import { UnidadMedidaService } from 'src/app/servicios/unidad-medida.service';
 import { MarcaProductoService } from 'src/app/servicios/marca-producto.service';
 import { RubroProductoService } from 'src/app/servicios/rubro-producto.service';
@@ -13,6 +12,7 @@ import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
 import { MatSort, MatTableDataSource, MatPaginator } from '@angular/material';
 import { ReporteService } from 'src/app/servicios/reporte.service';
+import { InsumoProducto } from 'src/app/modelos/insumoProducto';
 
 @Component({
   selector: 'app-producto',
@@ -71,7 +71,7 @@ export class ProductoComponent implements OnInit {
   //Define la paginacion
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Constructor
-  constructor(private appService: AppService, private producto: Producto, private servicio: ProductoService,
+  constructor(private appService: AppService, private modelo: InsumoProducto, private servicio: ProductoService,
     private subopcionPestaniaService: SubopcionPestaniaService, private rubrosServicio: RubroProductoService,
     private unidadMedidaServicio: UnidadMedidaService, private marcaServicio: MarcaProductoService, private toastr: ToastrService,
     private loaderService: LoaderService, private reporteServicio: ReporteService) {
@@ -98,10 +98,10 @@ export class ProductoComponent implements OnInit {
         this.show = state.show;
       });
     //Define el formulario y validaciones
-    this.formulario = this.producto.formulario;
+    this.formulario = this.modelo.formulario;
     this.formularioFiltro = new FormGroup({
-      rubroProducto: new FormControl(),
-      marcaProducto: new FormControl(),
+      rubroProducto: new FormControl('', Validators.required),
+      marcaProducto: new FormControl('', Validators.required),
     });
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar');
@@ -121,13 +121,16 @@ export class ProductoComponent implements OnInit {
     this.formulario.get('esCritico').setValue(false);
   }
   //Establece el formulario al seleccionar de autocompletado
-  public establecerAutocompletado(): void {
+  public cambioAutocompletado(): void {
     let elemento = this.autocompletado.value;
-    if (elemento) {
-      this.formulario.patchValue(elemento);
-      elemento.precioUnitarioVenta ? this.formulario.get('precioUnitarioVenta').setValue(this.appService.establecerDecimales(elemento.precioUnitarioVenta, 2)) : '';
-      elemento.coeficienteITC ? this.formulario.get('coeficienteITC').setValue(this.appService.establecerDecimales(elemento.coeficienteITC, 2)) : '';
-    }
+    let precioUnitarioVenta = elemento.precioUnitarioViaje;
+    let precioUnitarioViaje = elemento.precioUnitarioVenta;
+    let itcPorLitro = elemento.itcPorLitro;
+    let itcNeto = elemento.itcNeto;
+    this.formulario.get('precioUnitarioViaje').setValue(this.appService.establecerDecimales(precioUnitarioViaje.toString(), 2));
+    this.formulario.get('precioUnitarioVenta').setValue(this.appService.establecerDecimales(precioUnitarioVenta.toString(), 2));
+    this.formulario.get('itcPorLitro').setValue(this.appService.establecerDecimales(itcPorLitro.toString(), 4));
+    this.formulario.get('itcNeto').setValue(this.appService.desenmascararPorcentaje(itcNeto.toString(), 2));
   }
   //Obtiene el listado de rubros
   private listarRubros() {
@@ -257,7 +260,7 @@ export class ProductoComponent implements OnInit {
     this.formulario.get('usuario').setValue(this.appService.getUsuario());
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
-        var respuesta = res.json();
+        let respuesta = res.json();
         if (respuesta.codigo == 201) {
           this.reestablecerFormulario(respuesta.id);
           this.establecerValoresPorDefecto();
@@ -267,7 +270,7 @@ export class ProductoComponent implements OnInit {
         }
       },
       err => {
-        var respuesta = err.json();
+        let respuesta = err.json();
         if (respuesta.codigo == 11002) {
           document.getElementById("labelNombre").classList.add('label-error');
           document.getElementById("idNombre").classList.add('is-invalid');
@@ -283,16 +286,16 @@ export class ProductoComponent implements OnInit {
     this.loaderService.show();
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
-        var respuesta = res.json();
+        let respuesta = res.json();
         if (respuesta.codigo == 200) {
-          this.reestablecerFormulario('');
+          this.reestablecerFormulario(undefined);
           document.getElementById('idAutocompletado').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
         }
       },
       err => {
-        var respuesta = err.json();
+        let respuesta = err.json();
         if (respuesta.codigo == 11002) {
           document.getElementById("labelNombre").classList.add('label-error');
           document.getElementById("idNombre").classList.add('is-invalid');
@@ -309,7 +312,7 @@ export class ProductoComponent implements OnInit {
     let formulario = this.formulario.value;
     this.servicio.eliminar(formulario.id).subscribe(
       res => {
-        var respuesta = res.json();
+        let respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario(null);
           document.getElementById('idNombre').focus();
@@ -318,7 +321,7 @@ export class ProductoComponent implements OnInit {
         this.loaderService.hide();
       },
       err => {
-        var respuesta = err.json();
+        let respuesta = err.json();
         if (respuesta.codigo == 500) {
           document.getElementById("labelNombre").classList.add('label-error');
           document.getElementById("idNombre").classList.add('is-invalid');
@@ -338,8 +341,9 @@ export class ProductoComponent implements OnInit {
   //Reestablece los campos formularios
   private reestablecerFormulario(id) {
     this.formulario.reset();
-    this.formulario.get('id').setValue(id);
     this.autocompletado.reset();
+    this.formularioFiltro.reset();
+    this.formulario.get('id').setValue(id);
     this.vaciarListas();
   }
   //Manejo de colores de campos y labels
@@ -366,7 +370,7 @@ export class ProductoComponent implements OnInit {
   }
   //Maneja los evento al presionar una tacla (para pestanias y opciones)
   public manejarEvento(keycode) {
-    var indice = this.indiceSeleccionado;
+    let indice = this.indiceSeleccionado;
     if (keycode == 113) {
       if (indice < this.pestanias.length) {
         this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre);
@@ -383,15 +387,15 @@ export class ProductoComponent implements OnInit {
     marcaProducto = marcaProducto == '1' ? 0 : marcaProducto.id;
     this.servicio.listarPorRubroYMarca(rubroProducto, marcaProducto).subscribe(
       res => {
-        if(res.json().length >0){
+        if (res.json().length > 0) {
           this.listaCompleta = new MatTableDataSource(res.json());
           this.listaCompleta.sort = this.sort;
           this.listaCompleta.paginator = this.paginator;
-        }else{
+        } else {
           this.listaCompleta = new MatTableDataSource([]);
           this.toastr.error("Sin registros para mostrar.");
         }
-        
+
         this.loaderService.hide();
       },
       err => {
@@ -429,7 +433,21 @@ export class ProductoComponent implements OnInit {
   public mascararImporte(limit, decimalLimite) {
     return this.appService.mascararImporte(limit, decimalLimite);
   }
-  //Establece los decimales
+  //Obtiene la mascara de importe
+  public mascararCoeficiente(intLimite) {
+    return this.appService.mascararEnterosCon4Decimales(intLimite);
+  }
+  //Mascara un porcentaje
+  public mascararPorcentaje() {
+    return this.appService.mascararPorcentaje();
+  }
+  //Establece los decimales de porcentaje
+  public establecerPorcentaje(formulario, cantidad): void {
+    formulario.setValue(this.appService.desenmascararPorcentaje(formulario.value, cantidad));
+    if (formulario.value > 100.00)
+      formulario.setValue('100.00');
+  }
+  //Formatea el numero a x decimales
   public establecerDecimales(formulario, cantidad) {
     let valor = formulario.value;
     if (valor != '') {

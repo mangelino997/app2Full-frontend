@@ -96,19 +96,10 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
       .subscribe((state: LoaderState) => {
         this.show = state.show;
       });
-    this.loaderService.show();
     //Define el formulario y validaciones
     this.formulario = this.companiaSeguroPolizaModelo.formulario;
     //Define el objeto 'pdf' y sus campos
     this.objetoPdf.setValue(this.companiaSeguroPolizaModelo.formulario.get('pdf').value);
-    //Autocompletado Compania Seguro - Buscar por nombre
-    this.formulario.get('companiaSeguro').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.companiaSeguroServicio.listarPorNombre(data).subscribe(res => {
-          this.resultadosCompaniasSeguros = res;
-        })
-      }
-    })
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar', 0);
     //Obtiene la lista de empresas
@@ -117,11 +108,16 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
     this.fechaService.obtenerFecha().subscribe(
       res => {
         this.fechaActual = res.json();
-      },
-      err => {
+      }, err => { }
+    )
+    //Autocompletado Compania Seguro - Buscar por nombre
+    this.formulario.get('companiaSeguro').valueChanges.subscribe(data => {
+      if (typeof data == 'string' && data.length > 2) {
+        this.companiaSeguroServicio.listarPorNombre(data).subscribe(res => {
+          this.resultadosCompaniasSeguros = res;
+        })
       }
-    );
-
+    })
   }
   //Obtiene la lista de empresas
   private listarEmpresas() {
@@ -291,9 +287,7 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
   }
   //Obtiene un listado por compania de seguro
   public listarPorCompaniaSeguro() {
-    let companiaSeguro = this.formulario.get('companiaSeguro').value;
-    let empresa = this.appService.getEmpresa();
-    this.servicio.listarPorCompaniaSeguroYEmpresa(companiaSeguro.id, empresa.id).subscribe(res => {
+    this.servicio.listarPorCompaniaSeguroYEmpresa(this.formulario.value.companiaSeguro.id, this.appService.getEmpresa().id).subscribe(res => {
       this.listaCompleta = new MatTableDataSource(res.json());
       this.listaCompleta.sort = this.sort;
     })
@@ -373,61 +367,8 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
   }
   //Establece la foto y pdf (activar consultar/actualizar)
   private establecerPdf(elemento): void {
-    console.log(elemento);
     if (elemento.pdf) {
       this.formulario.get('pdf.datos').setValue(atob(elemento.pdf.datos));
-    }
-  }
-  //Obtiene la mascara de enteros CON decimales
-  public obtenerMascaraEnteroSinDecimales(intLimite) {
-    return this.appService.mascararEnterosSinDecimales(intLimite);
-  }
-  //Funcion para comparar y mostrar elemento de campo select
-  public compareFn = this.compararFn.bind(this);
-  private compararFn(a, b) {
-    if (a != null && b != null) {
-      return a.id === b.id;
-    }
-  }
-  //Formatea el valor del autocompletado
-  public displayFn(elemento) {
-    if (elemento != undefined) {
-      return elemento.nombre ? elemento.nombre : elemento;
-    } else {
-      return elemento;
-    }
-  }
-  //Formatea el valor del autocompletado a
-  public displayFa(elemento) {
-    if (elemento != undefined) {
-      return elemento.razonSocial ? elemento.razonSocial : elemento;
-    } else {
-      return elemento;
-    }
-  }
-  //Formatea el valor del autocompletado b
-  public displayFb(elemento) {
-    if (elemento != undefined) {
-      return elemento.numeroPoliza ? elemento.numeroPoliza + ' - ' + elemento.companiaSeguro.nombre : elemento;
-    } else {
-      return elemento;
-    }
-  }
-  //Maneja los evento al presionar una tacla (para pestanias y opciones)
-  public manejarEvento(keycode) {
-    var indice = this.indiceSeleccionado;
-    if (keycode == 113) {
-      if (indice < this.pestanias.length) {
-        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre, 0);
-      } else {
-        this.seleccionarPestania(1, this.pestanias[0].nombre, 0);
-      }
-    }
-  }
-  //Verifica si se selecciono un elemento del autocompletado
-  public verificarSeleccion(valor): void {
-    if (typeof valor.value != 'object') {
-      valor.setValue(null);
     }
   }
   //Obtiene el pdf para mostrarlo
@@ -550,5 +491,57 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
       columnas: this.columnas
     }
     this.reporteServicio.abrirDialogo(datos);
+  }
+  //Obtiene la mascara de enteros CON decimales
+  public obtenerMascaraEnteroSinDecimales(intLimite) {
+    return this.appService.mascararEnterosSinDecimales(intLimite);
+  }
+  //Funcion para comparar y mostrar elemento de campo select
+  public compareFn = this.compararFn.bind(this);
+  private compararFn(a, b) {
+    if (a != null && b != null) {
+      return a.id === b.id;
+    }
+  }
+  //Formatea el valor del autocompletado
+  public displayFn(elemento) {
+    if (elemento != undefined) {
+      return elemento.nombre ? elemento.nombre : elemento;
+    } else {
+      return elemento;
+    }
+  }
+  //Formatea el valor del autocompletado a
+  public displayFa(elemento) {
+    if (elemento != undefined) {
+      return elemento.razonSocial ? elemento.razonSocial : elemento;
+    } else {
+      return elemento;
+    }
+  }
+  //Formatea el valor del autocompletado b
+  public displayFb(elemento) {
+    if (elemento != undefined) {
+      return elemento.numeroPoliza ? elemento.numeroPoliza + ' - ' + elemento.companiaSeguro.nombre : elemento;
+    } else {
+      return elemento;
+    }
+  }
+  //Maneja los evento al presionar una tacla (para pestanias y opciones)
+  public manejarEvento(keycode) {
+    var indice = this.indiceSeleccionado;
+    if (keycode == 113) {
+      if (indice < this.pestanias.length) {
+        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre, 0);
+      } else {
+        this.seleccionarPestania(1, this.pestanias[0].nombre, 0);
+      }
+    }
+  }
+  //Verifica si se selecciono un elemento del autocompletado
+  public verificarSeleccion(valor): void {
+    if (typeof valor.value != 'object') {
+      valor.setValue(null);
+    }
   }
 }

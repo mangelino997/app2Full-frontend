@@ -186,11 +186,11 @@ export class MonedaComponent implements OnInit {
     if (elemento.porDefecto && this.listaCompleta.data.length > 0) {
       this.servicio.obtenerPorDefecto().subscribe(
         res => {
-          let respuesta = res.json(); //moneda porDefecto=true (monedaPrincipal)
-          if (elemento.id == respuesta.id) // Si el cobrador principal es el mismo que se quiere actualizar saltea el modal 'cambiarPrincipal'
-            this.controlaAccionPestania(opcionPestania);
-          else
-            this.cambiarPrincipal(respuesta, elemento, opcionPestania);
+          //moneda porDefecto=true (monedaPrincipal)
+          let respuesta = res.json();
+
+          // Si el cobrador principal es el mismo que se quiere actualizar saltea el modal 'cambiarPrincipal'
+          elemento.id == respuesta.id ? this.controlaAccionPestania(opcionPestania) : this.cambiarPrincipal(respuesta, elemento, opcionPestania);
         },
         err => {
           this.toastr.warning("No hay Moneda por defecto.");
@@ -217,7 +217,7 @@ export class MonedaComponent implements OnInit {
     this.formulario.get('id').setValue(null);
     this.servicio.agregar(moneda).subscribe(
       res => {
-        var respuesta = res.json();
+        let respuesta = res.json();
         this.reestablecerFormulario(respuesta.id);
         document.getElementById('idNombre').focus();
         this.toastr.success(respuesta.mensaje);
@@ -234,11 +234,18 @@ export class MonedaComponent implements OnInit {
     this.loaderService.show();
     this.servicio.actualizar(moneda).subscribe(
       res => {
-        var respuesta = res.json();
+        let respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario(undefined);
+          this.servicio.obtenerPorDefecto().subscribe(
+            res => {
+              /*Si el usuario modificó el campo porDefecto a false pero el service no modificó el atributo 
+              porque no puede quedar sin moneda principal el sistema */
+              moneda.id == res.json().id && moneda.porDefecto == 'false' && res.json().porDefecto ?
+                this.toastr.success("No se modificó el atributo moneda pricipal. No puede quedar sin moneda principal.") :
+                this.toastr.success(respuesta.mensaje);
+            })
           document.getElementById('idAutocompletado').focus();
-          this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
         }
       },
@@ -254,7 +261,7 @@ export class MonedaComponent implements OnInit {
     let formulario = this.formulario.value;
     this.servicio.eliminar(formulario.id).subscribe(
       res => {
-        var respuesta = res.json();
+        let respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario(null);
           document.getElementById('idNombre').focus();
@@ -263,12 +270,14 @@ export class MonedaComponent implements OnInit {
         this.loaderService.hide();
       },
       err => {
-        var respuesta = err.json();
-        if (respuesta.codigo == 500) {
+        let error = err.json();
+        if (error.codigo == 500) {
           document.getElementById("labelNombre").classList.add('label-error');
           document.getElementById("idNombre").classList.add('is-invalid');
           document.getElementById("idNombre").focus();
-          this.toastr.error(respuesta.mensaje);
+          this.toastr.error(error.mensaje);
+        } else {
+          this.toastr.error(error.mensaje);
         }
         this.loaderService.hide();
       }
@@ -276,20 +285,25 @@ export class MonedaComponent implements OnInit {
   }
   //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
   private lanzarError(err) {
-    var respuesta = err.json();
-    if (respuesta.codigo == 11002) {
+    let error = err.json();
+    if (error.codigo == 11002) {
       document.getElementById("labelNombre").classList.add('label-error');
       document.getElementById("idNombre").classList.add('is-invalid');
       document.getElementById("idNombre").focus();
     }
-    this.toastr.error(respuesta.mensaje);
+    this.toastr.error(error.mensaje);
   }
   //Reestablece los campos formularios
   private reestablecerFormulario(id) {
+    this.vaciarListas();
     this.formulario.reset();
-    this.formulario.get('id').setValue(id);
     this.autocompletado.reset();
+    this.formulario.get('id').setValue(id);
+  }
+  //Vacía las listas
+  private vaciarListas() {
     this.resultados = [];
+    this.listaCompleta = new MatTableDataSource([]);
   }
   //Manejo de colores de campos y labels
   public cambioCampo(id, label) {
@@ -298,7 +312,7 @@ export class MonedaComponent implements OnInit {
   };
   //Establece el formulario al seleccionar elemento del autocompletado
   public cambioAutocompletado() {
-    var elemento = this.autocompletado.value;
+    let elemento = this.autocompletado.value;
     this.autocompletado.setValue(elemento);
     this.formulario.patchValue(elemento);
   }
@@ -316,7 +330,7 @@ export class MonedaComponent implements OnInit {
   }
   //Maneja los evento al presionar una tacla (para pestanias y opciones)
   public manejarEvento(keycode) {
-    var indice = this.indiceSeleccionado;
+    let indice = this.indiceSeleccionado;
     if (keycode == 113) {
       if (indice < this.pestanias.length) {
         this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre);
@@ -331,9 +345,9 @@ export class MonedaComponent implements OnInit {
   public cambiarPrincipal(monedaPrincipal, monedaAgregar, opcion): void {
     const dialogRef = this.dialog.open(CambiarMonedaPrincipalDialogo, {
       width: '750px',
-      data: { 
-        monedaPrincipal: monedaPrincipal, 
-        monedaAgregar: monedaAgregar 
+      data: {
+        monedaPrincipal: monedaPrincipal,
+        monedaAgregar: monedaAgregar
       },
     });
     dialogRef.afterClosed().subscribe(result => {

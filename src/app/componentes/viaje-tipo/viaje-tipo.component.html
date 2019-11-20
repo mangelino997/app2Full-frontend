@@ -42,14 +42,14 @@
         </div>
         <div class="form-group has-float-label">
           <label for="idCostoPorKmPropio" class="tamanio-label">Costo por Km Vehículos Propios</label>
-          <input id="idCostoPorKmPropio" [textMask]="mascararImporte(8,3)" type="text"
+          <input id="idCostoPorKmPropio" [textMask]="mascararImporte(7,3)" type="text"
             formControlName="costoPorKmPropio" autocomplete="off" class="form-control form-control-sm number-right"
             [readonly]="soloLectura" (blur)="establecerDecimales(formulario.get('costoPorKmPropio'), 3)"
             placeholder="$0.000">
         </div>
         <div class="form-group has-float-label">
           <label for="idCostoPorKmTercero" class="tamanio-label">Costo por Km Vehículos Terceros</label>
-          <input id="idCostoPorKmTercero" [textMask]="mascararImporte(8,3)" type="text"
+          <input id="idCostoPorKmTercero" [textMask]="mascararImporte(7,3)" type="text"
             formControlName="costoPorKmTercero" autocomplete="off" class="form-control form-control-sm number-right"
             [readonly]="soloLectura" (blur)="establecerDecimales(formulario.get('costoPorKmTercero'), 3)"
             placeholder="$0.000">

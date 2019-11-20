@@ -8,6 +8,7 @@ import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
 import { ReporteService } from 'src/app/servicios/reporte.service';
+import { EscalaTarifa } from 'src/app/modelos/escalaTarifa';
 
 @Component({
   selector: 'app-escala-tarifa',
@@ -32,11 +33,7 @@ export class EscalaTarifaComponent implements OnInit {
   private subscription: Subscription;
   //Constructor
   constructor(private appService: AppService, private servicio: EscalaTarifaService, private loaderService: LoaderService,
-    private toastr: ToastrService, private appServicio: AppService, private reporteServicio: ReporteService) {
-    //Se subscribe al servicio de lista de registros
-    // this.servicio.listaCompleta.subscribe(res => {
-    //   this.listaCompleta = res;
-    // });
+    private toastr: ToastrService, private appServicio: AppService, private reporteServicio: ReporteService, private modelo: EscalaTarifa) {
     //Establece el foco en valor
     setTimeout(function () {
       document.getElementById('idValor').focus();
@@ -50,12 +47,7 @@ export class EscalaTarifaComponent implements OnInit {
         this.show = state.show;
       });
     //Define los campos para validaciones
-    this.formulario = new FormGroup({
-      id: new FormControl(),
-      version: new FormControl(),
-      valor: new FormControl('', [Validators.required, Validators.min(1), Validators.maxLength(45)]),
-      descripcion: new FormControl()
-    });
+    this.formulario = this.modelo.formulario;
     //Obtiene la lista completa de registros
     this.listar();
   }
@@ -82,23 +74,23 @@ export class EscalaTarifaComponent implements OnInit {
     this.formulario.get('id').setValue(null);
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
-        var respuesta = res.json();
+        let respuesta = res.json();
         if (respuesta.codigo == 201) {
           this.reestablecerFormulario();
+          this.listar();
           document.getElementById('idValor').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
-          this.listar();
         }
       },
       err => {
-        var respuesta = err.json();
-        if (respuesta.codigo == 11016) {
+        let error = err.json();
+        if (error.codigo == 11016) {
           document.getElementById("labelValor").classList.add('label-error');
           document.getElementById("idValor").classList.add('is-invalid');
           document.getElementById("idValor").focus();
         }
-        this.toastr.error(respuesta.mensaje);
+        this.toastr.error(error.mensaje);
         this.loaderService.hide();
       }
     );
@@ -108,18 +100,18 @@ export class EscalaTarifaComponent implements OnInit {
     this.loaderService.show();
     this.servicio.eliminar(id).subscribe(
       res => {
-        var respuesta = res.json();
+        let respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario();
+          this.listar();
           document.getElementById('idValor').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
-          this.listar();
         }
       },
       err => {
-        var respuesta = err.json();
-        this.toastr.error(respuesta.mensaje);
+        let error = err.json();
+        this.toastr.error(error.mensaje);
         this.loaderService.hide();
       }
     )
@@ -131,20 +123,15 @@ export class EscalaTarifaComponent implements OnInit {
   //Reestablece el formulario
   private reestablecerFormulario() {
     this.formulario.reset();
+    this.listaCompleta = new MatTableDataSource([]);
   }
   //Manejo de colores de campos y labels
-  public cambioCampo(id, label) {
-    document.getElementById(id).classList.remove('is-invalid');
-    document.getElementById(label).classList.remove('label-error');
-    this.establecerHasta(this.formulario.get('valor'));
-  }
-  //Establece el valor del campo descripcion al perder foco el campo valor
-  private establecerHasta(valor) {
-    if (valor.value != undefined && valor.value != '') {
-      this.formulario.get('descripcion').setValue('Hasta ' + valor.value);
-    } else {
-      this.formulario.get('descripcion').setValue(undefined);
-    }
+  public cambioValor() {
+    this.setDecimales(this.formulario.get('valor'), 2);
+    let elemento = this.formulario.get('valor').value;
+    document.getElementById('idValor').classList.remove('is-invalid');
+    document.getElementById('labelValor').classList.remove('label-error');
+    elemento ? this.formulario.get('descripcion').setValue('Hasta ' + elemento) : this.formulario.get('descripcion').reset() ;
   }
   //Obtiene la mascara de enteros CON decimales
   public obtenerMascaraEnteroConDecimales(intLimite) {
