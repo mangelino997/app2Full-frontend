@@ -52,8 +52,8 @@ export class ViajeRemitoGS {
             idClienteRemitente: new FormControl(),
             idClienteDestinatario: new FormControl(),
             numeroCamion: new FormControl(),
-            estado: new FormControl(),
-            asignado: new FormControl()
+            estaPendiente: new FormControl(),
+            estaFacturado: new FormControl()
         });
     }
 }

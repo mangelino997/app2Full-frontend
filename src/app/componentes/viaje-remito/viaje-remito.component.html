@@ -322,7 +322,7 @@
           <div class="col-md-2">
             <div class="form-group has-float-label">
               <label for="idEstado" class="tamanio-label">Estado</label>
-              <mat-select id="idEstado" class="form-control form-control-sm" formControlName="estado"
+              <mat-select id="idEstado" class="form-control form-control-sm" formControlName="estaFacturado"
                 [compareWith]="compareFn">
                 <mat-option [value]="2">Todos</mat-option>
                 <mat-option [value]="0">Pendientes</mat-option>
@@ -333,7 +333,7 @@
           <div class="col-md-2">
             <div class="form-group has-float-label">
               <label for="idAsignado" class="tamanio-label">Asignado a GS</label>
-              <mat-select id="idAsignado" class="form-control form-control-sm" formControlName="asignado"
+              <mat-select id="idAsignado" class="form-control form-control-sm" formControlName="estaPendiente"
                 [compareWith]="compareFn">
                 <mat-option [value]="2">Todos</mat-option>
                 <mat-option [value]="1">Pendientes</mat-option>
