@@ -24,6 +24,8 @@ export class VacioFacturadoDialogoComponent implements OnInit {
   public dadorDestinatario:FormControl = new FormControl();
   //Define la fecha actual
   public fechaActual:any;
+  //Define campos y botones solo lectura
+  public soloLectura:boolean = false;
   //Constructor
   constructor(public dialogRef: MatDialogRef<VacioFacturadoDialogoComponent>, @Inject(MAT_DIALOG_DATA) public data,
     private viajeTramoClienteRemito: ViajeTramoClienteRemito, private viajeTramoClienteRemitoService: ViajeTramoClienteRemitoService, 
@@ -40,6 +42,8 @@ export class VacioFacturadoDialogoComponent implements OnInit {
     this.dadorDestinatario.setValue(dadorDestinatario);
     this.formulario.get('viajeTramoCliente').setValue(this.data.dadorDestinatario);
     this.formulario.get('viajeTarifa').setValue(this.data.viajeTarifa);
+    //Establece variable para campos y botones solo lectura
+    this.soloLectura = this.data.indiceSeleccionado == 2 || this.data.indiceSeleccionado == 4 ? true : false;
     //Obtiene la fecha actual
     this.obtenerFecha();
     //Obtiene por viaje tramo cliente

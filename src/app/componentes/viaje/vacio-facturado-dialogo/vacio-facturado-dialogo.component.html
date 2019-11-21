@@ -26,14 +26,14 @@
                 <div class="form-group has-float-label">
                     <label for="idFecha" class="tamanio-label">Fecha *</label>
                     <input #fecha id="idFecha" type="date" formControlName="fecha" autocomplete="off"
-                        class="form-control form-control-sm">
+                        class="form-control form-control-sm" [readonly]="soloLectura">
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="form-group has-float-label">
                     <label for="idImporteRetiro" class="tamanio-label">Flete por Retiro</label>
                     <input id="idImporteRetiro" [textMask]="mascararImporte(10, 2)" type="text" formControlName="importeRetiro"
-                        autocomplete="off" class="form-control form-control-sm number-right" 
+                        autocomplete="off" class="form-control form-control-sm number-right" [readonly]="soloLectura" 
                         (blur)="establecerDecimales(formulario.get('importeRetiro'), 2)" placeholder="$ 0.00">
                 </div>
             </div>
@@ -41,7 +41,7 @@
                 <div class="form-group has-float-label">
                     <label for="idImporteEntrega" class="tamanio-label">Flete por Entrega</label>
                     <input id="idImporteEntrega" [textMask]="mascararImporte(10, 2)" type="text" formControlName="importeEntrega"
-                        autocomplete="off" class="form-control form-control-sm number-right" 
+                        autocomplete="off" class="form-control form-control-sm number-right" [readonly]="soloLectura" 
                         (blur)="establecerDecimales(formulario.get('importeEntrega'), 2)" placeholder="$ 0.00">
                 </div>
             </div>
@@ -49,13 +49,13 @@
                 <div class="form-group has-float-label">
                     <label for="idImporteFlete" class="tamanio-label">Flete a Facturar</label>
                     <input id="idImporteFlete" [textMask]="mascararImporte(10, 2)" type="text" formControlName="importeFlete"
-                        autocomplete="off" class="form-control form-control-sm number-right" 
+                        autocomplete="off" class="form-control form-control-sm number-right" [readonly]="soloLectura" 
                         (blur)="establecerDecimales(formulario.get('importeFlete'), 2)" placeholder="$ 0.00">
                 </div>
             </div>
         </div>
         <div class="row justify-content-center">
-            <button mat-raised-button color="primary" (click)="agregar()" *ngIf="!show">Valorizar</button>
+            <button mat-raised-button color="primary" (click)="agregar()" *ngIf="!show && !soloLectura">Valorizar</button>
             <button class="margin-left-3" mat-raised-button (click)="cerrar()" *ngIf="!show">Cerrar</button>
             <mat-progress-bar mode="indeterminate" *ngIf="show"></mat-progress-bar>
         </div>
