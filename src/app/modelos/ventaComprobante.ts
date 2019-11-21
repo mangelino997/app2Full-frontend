@@ -19,7 +19,7 @@ export class VentaComprobante {
             tipoComprobante: new FormControl('', Validators.required),
             codigoAfip: new FormControl('', Validators.required),
             fechaEmision: new FormControl('', Validators.required),
-            fechaVtoPago: new FormControl('', Validators.required),
+            fechaVtoPago: new FormControl(),
             cliente: new FormControl('', Validators.required),
             clienteGrupo: new FormControl(),
             afipCondicionIva: new FormControl(),

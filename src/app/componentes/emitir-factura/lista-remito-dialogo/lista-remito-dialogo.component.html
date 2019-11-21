@@ -46,9 +46,9 @@
                     </div>
                 </div>
                 <div class="col-md-3">
-                    <button id="idBotonConsultar" mat-raised-button color="primary" style="min-width: fit-content;"
+                    <button id="idBotonConsultar" mat-raised-button color="primary" style="min-width: fit-content; margin-right: 3px;"
                         [disabled]="!formularioFiltro.value.idViaje && !formularioFiltro.value.idRemito"
-                        (click)="filtrar()">Consultar</button>
+                        (click)="filtrar()" >Consultar</button>
                     <button id="idBotonLimpiar" mat-raised-button color="primary" style="min-width: fit-content;"
                         [disabled]="listaCompleta.data.length == 0" (click)="limpiarConfiguracion()">Limpiar</button>
                 </div>

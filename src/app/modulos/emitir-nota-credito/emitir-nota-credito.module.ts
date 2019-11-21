@@ -8,6 +8,7 @@ import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModul
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { EmitirNotaCreditoComponent } from 'src/app/componentes/emitir-nota-credito/emitir-nota-credito.component';
 import { NotaCredito } from 'src/app/modelos/notaCredito';
+import { AfipActividadService } from 'src/app/servicios/afip-actividad.service';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,8 @@ import { NotaCredito } from 'src/app/modelos/notaCredito';
     MatCheckboxModule
   ],
   providers: [
-    NotaCredito
+    NotaCredito,
+    AfipActividadService
   ]
 })
 export class EmitirNotaCreditoModule { }

@@ -69,7 +69,7 @@ export class EmitirFacturaComponent implements OnInit {
   //Define la fecha actual
   public fechaActual: string = null;
   //Define el boton FCE MiPyMEs para habilitarlo o no
-  public btnFCE: boolean = null;
+  public btnFCE: boolean = true;
   //Define el boton 'G.S' para habilitarlo o no
   public btnGS: boolean = null;
   //Define el boton 'Agregar Otro Remito' para habilitarlo o no
@@ -272,6 +272,7 @@ export class EmitirFacturaComponent implements OnInit {
   }
   //Controla el cambio en el campo Fecha
   public cambioFecha() {
+    this.formulario.get('fechaVtoPago').setValue(this.formulario.value.fechaEmision);
     this.formulario.value.puntoVenta ? this.validarFechaEmision() : '';
     this.formulario.value.fechaVtoPago ? this.validarFechaVtoPago() : '';
   }
@@ -394,7 +395,7 @@ export class EmitirFacturaComponent implements OnInit {
   public cambioDestinatario() {
     let clienteDestinatario = this.formulario.value.clienteDestinatario;
     let clienteRemitente = this.formulario.value.clienteRemitente;
-    if (clienteRemitente && clienteDestinatario.id != clienteRemitente.id) {
+    if (clienteRemitente) {
       let res = this.validarDocumento(clienteDestinatario.tipoDocumento, clienteDestinatario.numeroDocumento, 'Destinatario');
       if (res) {
         this.formularioDestinatario.get('domicilio').setValue(clienteDestinatario.domicilio);
@@ -407,8 +408,7 @@ export class EmitirFacturaComponent implements OnInit {
         this.cambioPagoEnOrigen();
       }
     } else {
-      clienteRemitente ? this.toastr.error("El Destinatario no puede ser el mismo que el Remitente.") :
-        this.toastr.warning("Seleccione un Remitente.");
+      this.toastr.warning("Seleccione un Remitente.");
       this.formulario.get('clienteDestinatario').reset();
       this.formularioDestinatario.reset();
       document.getElementById('idDestinatario').focus();
@@ -416,7 +416,6 @@ export class EmitirFacturaComponent implements OnInit {
   }
   //Completa el input "porcentaje" segun la Orden Venta seleccionada 
   public cambioOrdenVta() {
-    console.log(this.ordenVenta.value);
     //Con cada cambio limpia los campos 'Tarifa' - 'pSeguro'
     this.formularioVtaCpteItemFA.get('pSeguro').reset();
     this.formularioVtaCpteItemFA.get('ordenVentaTarifa').reset()
@@ -428,7 +427,11 @@ export class EmitirFacturaComponent implements OnInit {
     } else {
       this.formulario.value.cliente.esSeguroPropio ? this.formularioVtaCpteItemFA.get('pSeguro').disable() :
         this.formularioVtaCpteItemFA.get('pSeguro').setValue(this.appService.establecerDecimales(this.ordenVenta.value.ordenVenta.seguro, 2));
-      this.listarTarifasOrdenVta();
+        
+        /* Setea las tarifas */
+        this.tarifasOrdenVta = this.ordenVenta.value.ordenVenta.tipoTarifas;
+        this.formularioVtaCpteItemFA.get('ordenVentaTarifa').setValue(this.tarifasOrdenVta[0]);
+        this.cambioTipoTarifa();
     }
   }
   //Maneja el cambio en el campo 'Tarifa de Orden Vta.' y obtiene el precio del Flete
@@ -555,14 +558,16 @@ export class EmitirFacturaComponent implements OnInit {
     this.formulario.value.condicionVenta.id == 1 ? this.formulario.get('letra').setValue('A') : this.formulario.get('letra').setValue('B');
     this.cargarCodigoAfip(this.formulario.value.letra);
     //Controla la lista para el campo 'Orden Venta'
-    this.formulario.value.cliente.clienteOrdenesVentas.length > 0 ? this.ordenesVenta = this.formulario.value.cliente.clienteOrdenesVentas : this.listarOrdenVentaEmpresa();
+    this.formulario.value.cliente.clienteOrdenesVentas.length > 0 ?
+      this.ordenesVenta = this.formulario.value.cliente.clienteOrdenesVentas : this.listarOrdenVentaEmpresa();
+    console.log(this.formulario.value.cliente);
     //Controla el campo 'Seguro'
     !this.formulario.value.cliente.esSeguroPropio ||
       (this.formulario.value.cliente.vencimientoPolizaSeguro ?
         this.formulario.value.cliente.vencimientoPolizaSeguro < this.formulario.value.fechaEmision : '') ?
       this.formularioVtaCpteItemFA.get('importeSeguro').enable() : this.formularioVtaCpteItemFA.get('importeSeguro').disable();
     //Controla si habilita el boton FCE MiPyMEs para abrir modal
-    this.formulario.value.tipoComprobante.id == 26 && this.formulario.value.cliente.esReceptorFCE ? this.btnFCE = true : this.btnFCE = false;
+    this.formulario.value.tipoComprobante.id == 26 && this.formulario.value.cliente.esReceptorFCE ? this.btnFCE = false : this.btnFCE = true;
   }
   //Abre dialogo para agregar un cliente eventual
   public agregarClienteEventual(tipoCliente): void {
@@ -755,10 +760,10 @@ export class EmitirFacturaComponent implements OnInit {
   public agregarItem() {
     this.formularioVtaCpteItemFA.enable();
     this.formularioVtaCpteItemFA.get('ordenVentaTarifa').setValue(
-      this.ordenVenta.value == 'false' ?  null : { id: this.formularioVtaCpteItemFA.value.ordenVentaTarifa.id });
+      this.ordenVenta.value == 'false' ? null : { id: this.formularioVtaCpteItemFA.value.ordenVentaTarifa.id });
 
     /* Guarda el idProvincia del Remitente */
-    this.formularioVtaCpteItemFA.get('provincia').setValue(this.formulario.get('cliente').value.localidad.provincia); 
+    this.formularioVtaCpteItemFA.get('provincia').setValue(this.formulario.get('cliente').value.localidad.provincia);
     this.listaCompletaItems.data.push(this.formularioVtaCpteItemFA.value);
     this.listaCompletaItems.sort = this.sort;
     this.contador.setValue(this.contador.value + 1);
@@ -878,7 +883,7 @@ export class EmitirFacturaComponent implements OnInit {
   }
   //Establece valores por defecto
   private establecerValoresPorDefecto(fechaEmision, puntoVenta, tipoComprobante) {
-    this.btnFCE = false;
+    this.btnFCE = true; //deshabilita
     this.btnRemito = false;
     this.btnGS = false;
     this.formulario.get('pagoEnOrigen').setValue(true);
@@ -1060,6 +1065,8 @@ export class EmitirFacturaComponent implements OnInit {
           this.loaderService.hide();
         }
       );
+    }else{
+      this.loaderService.hide();
     }
   }
   //Controla campos antes de grabar la factura

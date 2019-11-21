@@ -68,7 +68,7 @@ tr.planilla-no-seleccionada:hover {
     background-color:#50A8FA !important;
 }
 button {
-    width: fit-content !important;
+    /* width: fit-content !important; */
 }
 /* Define el estilo de la tabla */
 .tabla {
@@ -98,4 +98,8 @@ button {
     width: 130px;
     margin-left: 2px;
     margin-right: 2px;
+}
+/* Define el margen a la derecha para los campos generales (no de la parte de item vta. cpte.) */
+.margin-right {
+    margin-right: 5px;
 }
