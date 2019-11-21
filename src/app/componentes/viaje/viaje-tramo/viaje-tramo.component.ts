@@ -738,7 +738,8 @@ export class DadorDestinatarioDialogo {
         tema: this.appServicio.getTema(),
         tramo: this.tramo,
         dadorDestinatario: elemento,
-        viajeTarifa: this.data.viajeTarifa
+        viajeTarifa: this.data.viajeTarifa,
+        indiceSeleccionado: this.data.indiceSeleccionado
       }
     });
     dialogRef.afterClosed().subscribe(resultado => { });

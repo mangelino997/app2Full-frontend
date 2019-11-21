@@ -16,6 +16,7 @@ import { AppService } from 'src/app/servicios/app.service';
 import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
+import { MensajeExcepcion } from 'src/app/modelos/mensaje-excepcion';
 
 @Component({
   selector: 'app-cliente-eventual',
@@ -165,8 +166,8 @@ export class ClienteEventualComponent implements OnInit {
     );
   }
   //Cierra el mat dialog
-  private closeDialog() {
-    this.dialogRef.close(this.data.formulario);
+  private closeDialog(respuesta) {
+    this.dialogRef.close(respuesta);
   }
   //Obtiene el siguiente id
   private obtenerSiguienteId() {
@@ -185,16 +186,16 @@ export class ClienteEventualComponent implements OnInit {
     this.formulario.get('usuarioAlta').setValue(this.data.usuario);
     this.clienteServicio.agregarClienteEventual(this.formulario.value).subscribe(
       res => {
-        var respuesta = res.json();
-        if (respuesta.codigo == 201) {
+        if (res.status == 201) {
+          let respuesta = res.json();
           this.data.formulario = this.formulario.value;
-          this.toastr.success(respuesta.mensaje);
+          this.toastr.success(MensajeExcepcion.AGREGADO);
           this.reestablecerFormulario(respuesta.id);
           setTimeout(function () {
             document.getElementById('idCondicionIva').focus();
           }, 20);
           this.loaderService.hide();
-          this.closeDialog();
+          this.closeDialog(respuesta);
         }
       },
       err => {

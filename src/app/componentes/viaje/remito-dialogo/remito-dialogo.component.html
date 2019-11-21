@@ -252,11 +252,11 @@
                 <ng-container matColumnDef="editar" stickyEnd>
                     <th mat-header-cell *matHeaderCellDef>-</th>
                     <td mat-cell *matCellDef="let elemento">
-                        <button mat-icon-button class="mat-icon-button-table margin-left-3" (click)="editar(elemento)"
+                        <button *ngIf="!soloLectura" mat-icon-button class="mat-icon-button-table margin-left-3" (click)="editar(elemento)"
                             matTooltip="Editar" matTooltipPosition="above" [disabled]="esEditable">
                             <mat-icon>edit</mat-icon>
                         </button>
-                        <button mat-icon-button class="mat-icon-button-table margin-left-3"
+                        <button *ngIf="!soloLectura" mat-icon-button class="mat-icon-button-table margin-left-3"
                             (click)="eliminar(elemento.id)" matTooltip="Eliminar" matTooltipPosition="above"
                             [disabled]="esEditable">
                             <mat-icon>close</mat-icon>

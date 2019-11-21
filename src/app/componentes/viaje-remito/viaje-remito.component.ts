@@ -313,10 +313,18 @@ export class ViajeRemitoComponent implements OnInit {
         this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
         break;
       case 5:
+        this.establecerCamposDefectoListar();
         break;
       default:
         break;
     }
+  }
+  //Establece campos por defecto en pestaña listar
+  private establecerCamposDefectoListar(): void {
+    this.formularioFiltro.get('idSucursalIngreso').setValue('0');
+    this.formularioFiltro.get('idSucursalDestino').setValue('0');
+    this.formularioFiltro.get('estaPendiente').setValue('2');
+    this.formularioFiltro.get('estaFacturado').setValue('2');
   }
   //Funcion para determina que accion se requiere (Agregar, Actualizar, Eliminar)
   public accion(indice) {
@@ -359,7 +367,6 @@ export class ViajeRemitoComponent implements OnInit {
       this.formularioFiltro.get('idClienteRemitente').setValue(this.autocompletadoRemitente.value.id);
     if (this.autocompletadoDestinatario.value)
       this.formularioFiltro.get('idClienteDestinatario').setValue(this.autocompletadoDestinatario.value.id);
-    console.log(this.formularioFiltro.value);
     this.servicio.listarPorFiltros(this.formularioFiltro.value).subscribe(
       res => {
         this.listaCompleta = new MatTableDataSource(res.json());
@@ -513,14 +520,11 @@ export class ViajeRemitoComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe(resultado => {
       if (resultado) {
-        this.clienteServicio.obtenerPorId(resultado).subscribe(res => {
-          let cliente = res.json();
-          if (tipo == 1) {
-            this.formulario.get('clienteRemitente').setValue(cliente);
-          } else {
-            this.formulario.get('clienteDestinatario').setValue(cliente);
-          }
-        })
+        if (tipo == 1) {
+          this.formulario.get('clienteRemitente').setValue(resultado);
+        } else {
+          this.formulario.get('clienteDestinatario').setValue(resultado);
+        }
       }
     });
   }
