@@ -1,6 +1,6 @@
 import { Component, OnInit, Inject, ViewChild } from '@angular/core';
 import { Reparto } from 'src/app/modelos/reparto';
-import { FormGroup, FormControl } from '@angular/forms';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ZonaService } from 'src/app/servicios/zona.service';
 import { AppComponent } from 'src/app/app.component';
 import { ToastrService } from 'ngx-toastr';
@@ -89,7 +89,6 @@ export class RepartoComponent implements OnInit {
       }
     })
     //Autocompletado vehiculo proveedor- Buscar por alias
-    var empresa = this.appService.getEmpresa();
     this.formulario.get('vehiculoProveedor').valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
         this.vehiculoProveedorService.listarPorAlias(data).subscribe(response => {
@@ -153,7 +152,31 @@ export class RepartoComponent implements OnInit {
   }
   //Controla el cambio en el select Tipo de Viaje
   public cambioTipoViaje() {
-    this.tipoViaje.value ? this.formulario.get('esRepartoPropio').setValue(true) : this.formulario.get('esRepartoPropio').setValue(false);
+    if (this.tipoViaje.value) {
+      this.formulario.get('esRepartoPropio').setValue(true);
+
+      this.formulario.get('vehiculo').setValidators([Validators.required]);
+      this.formulario.get('personal').setValidators([Validators.required]);
+      this.formulario.get('vehiculoProveedor').setValidators([]);
+      this.formulario.get('choferProveedor').setValidators([]);
+
+      this.formulario.get('vehiculoProveedor').updateValueAndValidity();//Actualiza la validacion
+      this.formulario.get('vehiculo').updateValueAndValidity();//Actualiza la validacion
+      this.formulario.get('personal').updateValueAndValidity();//Actualiza la validacion
+      this.formulario.get('choferProveedor').updateValueAndValidity();//Actualiza la validacion
+    } else {
+      this.formulario.get('esRepartoPropio').setValue(false);
+
+      this.formulario.get('vehiculoProveedor').setValidators([Validators.required]);
+      this.formulario.get('choferProveedor').setValidators([Validators.required]);
+      this.formulario.get('vehiculo').setValidators([]);
+      this.formulario.get('personal').setValidators([]);
+
+      this.formulario.get('vehiculoProveedor').updateValueAndValidity();//Actualiza la validacion
+      this.formulario.get('vehiculo').updateValueAndValidity();//Actualiza la validacion
+      this.formulario.get('personal').updateValueAndValidity();//Actualiza la validacion
+      this.formulario.get('choferProveedor').updateValueAndValidity();//Actualiza la validacion
+    }
     this.formulario.get('vehiculo').reset();
     this.formulario.get('personal').reset();
     this.formulario.get('vehiculoProveedor').reset();
@@ -590,9 +613,9 @@ export class EliminarRepartoDialogo {
   }
   //Elimina un reparto
   public eliminarReparto() {
-    if(this.data.elemento.repartoComprobantes.length > 0){
+    if (this.data.elemento.repartoComprobantes.length > 0) {
       this.toastr.error("Eror: el reparto contiene comprobantes.");
-    }else{
+    } else {
       this.servicio.eliminar(this.data.elemento.id).subscribe(
         res => {
           if (res.status == 200) {

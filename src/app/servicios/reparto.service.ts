@@ -83,6 +83,14 @@ export class RepartoService {
   public listarAbiertosTerceros() {
     return this.http.get(this.url + '/listarAbiertosTerceros', this.options);
   }
+  //Obtiene la lista de registros
+  public listarCerradosPropios() {
+    return this.http.get(this.url + '/listarCerradosPropios', this.options);
+  }
+  //Obtiene la lista de registros
+  public listarCerradosTerceros() {
+    return this.http.get(this.url + '/listarCerradosTerceros', this.options);
+  }
   //Agrega un registro
   public agregar(elemento) {
     return this.http.post(this.url, elemento, this.options);

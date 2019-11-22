@@ -180,7 +180,7 @@
                   matTooltip="Anular" matTooltipPosition="above">
                   <mat-icon>close</mat-icon>
                 </button>
-                <button mat-icon-button class="mat-icon-button-table" *ngIf="!soloLectura && elemento.estaAnulado"
+                <button mat-icon-button class="mat-icon-button-table" *ngIf="!soloLectura && elemento.estaAnulado && elemento.viaje"
                   (click)="normalizarCombustible(elemento)" matTooltip="Normalizar" matTooltipPosition="above">
                   <mat-icon>open_in_browser</mat-icon>
                 </button>

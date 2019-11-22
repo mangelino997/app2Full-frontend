@@ -57,7 +57,7 @@ export class RepartoEntranteComponent implements OnInit {
     this.loaderService.show();
     this.listaCompleta = new MatTableDataSource([]);
     if (this.tipoViaje.value) {
-      this.servicio.listarAbiertosPropios().subscribe(
+      this.servicio.listarCerradosPropios().subscribe(
         res => {
           this.listaCompleta = new MatTableDataSource(res.json());
           if (this.listaCompleta.data.length == 0)
@@ -70,7 +70,7 @@ export class RepartoEntranteComponent implements OnInit {
         }
       )
     } else {
-      this.servicio.listarAbiertosTerceros().subscribe(
+      this.servicio.listarCerradosTerceros().subscribe(
         res => {
           this.listaCompleta = new MatTableDataSource(res.json());
           if (this.listaCompleta.data.length == 0)
@@ -151,7 +151,7 @@ export class RecibirRepartoDialogo {
   //Define un formulario para validaciones de campos
   public formulario: FormGroup;
   //Define la fecha actual
-  public fechaActual: any;
+  // public fechaActual: any;
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service
@@ -179,19 +179,28 @@ export class RecibirRepartoDialogo {
   public reestablecerFormulario() {
     this.formulario.reset();
     this.formulario.patchValue(this.data.elemento);
-    this.fechaService.obtenerFecha().subscribe(
-      res => {
-        this.formulario.get('fechaRegreso').setValue(res.json());
-        this.fechaActual = res.json();
-      }
-    );
+
+    /* establece la fecha de salida por defecto en fecha regreso */
+    this.formulario.get('fechaRegreso').setValue(this.formulario.get('fechaSalida').value);
   }
-  //Comprueba que la fecha de Recolección sea igual o mayor a la fecha actual 
+  //Comprueba que la fecha de Recolección sea igual o mayor a la fecha actual y fecha Salida
   public verificarFechaRegreso() {
-    if (this.formulario.get('fechaRegreso').value < this.fechaActual) {
-      this.formulario.get('fechaRegreso').setValue(this.fechaActual);
-      this.toastr.error("La Fecha Regreso no puede ser menor a la fecha actual.");
+    let fechaRegreso = this.formulario.get('fechaRegreso').value;
+    let fechaSalida = this.formulario.get('fechaSalida').value;
+    if (fechaRegreso < fechaSalida) {
+      this.formulario.get('fechaRegreso').setValue(fechaSalida);
+      this.toastr.error("La fecha regreso no puede ser menor a fecha salida.");
       document.getElementById('idFechaRegreso').focus();
+    }
+  }
+  //Comprueba que la hora de Recolección sea igual o mayor a la hora salida 
+  public verificarHoraRegreso() {
+    let horaRegreso = this.formulario.get('horaRegreso').value;
+    let horaSalida = this.formulario.get('horaSalida').value;
+    if (horaRegreso < horaSalida) {
+      this.formulario.get('horaRegreso').setValue(horaSalida);
+      this.toastr.error("La hora regreso no puede ser menor a la hora de salida.");
+      document.getElementById('idHoraRegreso').focus();
     }
   }
   //Cierra un reparto

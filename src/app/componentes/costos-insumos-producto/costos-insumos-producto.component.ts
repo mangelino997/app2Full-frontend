@@ -13,6 +13,7 @@ import { MarcaProductoService } from 'src/app/servicios/marca-producto.service';
 import { UnidadMedidaService } from 'src/app/servicios/unidad-medida.service';
 import { RubroProductoService } from 'src/app/servicios/rubro-producto.service';
 import { ReporteService } from 'src/app/servicios/reporte.service';
+import { CostoInsumoProducto } from 'src/app/modelos/costoInsumoProducto';
 
 @Component({
   selector: 'app-costos-insumos-producto',
@@ -73,7 +74,7 @@ export class CostosInsumosProductoComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Constructor
-  constructor(private servicio: InsumoProductoService, private insumoProducto: InsumoProducto, private loaderService: LoaderService,
+  constructor(private servicio: InsumoProductoService, private modelo: CostoInsumoProducto, private loaderService: LoaderService,
     private appService: AppService, private subopcionPestaniaService: SubopcionPestaniaService, private toastr: ToastrService,
     private rubroProductoServicio: RubroProductoService, private marcaProductoServicio: MarcaProductoService,
     private unidadMedidaServicio: UnidadMedidaService, private reporteServicio: ReporteService) {
@@ -108,7 +109,7 @@ export class CostosInsumosProductoComponent implements OnInit {
   //Al inicializarse el componente
   ngOnInit() {
     //Define los campos para validaciones
-    this.formulario = this.insumoProducto.formulario;
+    this.formulario = this.modelo.formulario;
     //Define los campos para validaciones en el formulario que filtra y obtiene registros
     this.formularioFiltro = new FormGroup({
       rubro: new FormControl('', Validators.required),

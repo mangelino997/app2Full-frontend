@@ -14,6 +14,7 @@ import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.s
 import { RubroProductoService } from 'src/app/servicios/rubro-producto.service';
 import { MarcaProductoService } from 'src/app/servicios/marca-producto.service';
 import { UnidadMedidaService } from 'src/app/servicios/unidad-medida.service';
+import { CostoInsumoProducto } from 'src/app/modelos/costoInsumoProducto';
 
 @NgModule({
   declarations: [
@@ -38,7 +39,7 @@ import { UnidadMedidaService } from 'src/app/servicios/unidad-medida.service';
   ],
   providers: [
     InsumoProductoService,
-    InsumoProducto,
+    CostoInsumoProducto,
     SubopcionPestaniaService,
     RubroProductoService,
     MarcaProductoService,

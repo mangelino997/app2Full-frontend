@@ -266,7 +266,7 @@ export class UsuarioComponent implements OnInit {
   //Elimina un registro
   private eliminar() {
     this.loaderService.show();
-    this.servicio.eliminar(this.formulario.value).subscribe(
+    this.servicio.eliminar(this.formulario.value.id).subscribe(
       res => {
         let respuesta = res.json();
         if (respuesta.codigo == 200) {
