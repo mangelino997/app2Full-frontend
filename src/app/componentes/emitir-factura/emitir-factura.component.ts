@@ -141,7 +141,6 @@ export class EmitirFacturaComponent implements OnInit {
       condicionVenta: new FormControl(),
       tipoYNumeroDocumento: new FormControl()
     });
-    console.log(this.appService.getEmpresa());
     //Reestablece el formulario ('true' para limpiar todo, 'false' para mantener campos generales)
     this.reestablecerFormulario(true);
     //Obtiene la lista de tipos de comprobante
@@ -560,7 +559,6 @@ export class EmitirFacturaComponent implements OnInit {
     //Controla la lista para el campo 'Orden Venta'
     this.formulario.value.cliente.clienteOrdenesVentas.length > 0 ?
       this.ordenesVenta = this.formulario.value.cliente.clienteOrdenesVentas : this.listarOrdenVentaEmpresa();
-    console.log(this.formulario.value.cliente);
     //Controla el campo 'Seguro'
     !this.formulario.value.cliente.esSeguroPropio ||
       (this.formulario.value.cliente.vencimientoPolizaSeguro ?
@@ -614,13 +612,11 @@ export class EmitirFacturaComponent implements OnInit {
       }
     });
     dialogRef.afterClosed().subscribe(resultado => {
-      console.log(resultado);
       resultado ? this.controlarRemitoSeleccionado(resultado) : '';
     });
   }
   //Controla los campos cuando se selecciona un Remito del modal abrirListaRemitoDialogo
   private controlarRemitoSeleccionado(resultado) {
-    console.log(resultado);
     if (resultado.configuracionModalRemitos.formularioFiltro) {
       let idViaje = resultado.configuracionModalRemitos.formularioFiltro.idViaje;
       let idRemito = resultado.configuracionModalRemitos.formularioFiltro.idRemito;

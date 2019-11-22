@@ -242,8 +242,8 @@ export class MonedaComponent implements OnInit {
               /*Si el usuario modificó el campo porDefecto a false pero el service no modificó el atributo 
               porque no puede quedar sin moneda principal el sistema */
               moneda.id == res.json().id && moneda.porDefecto == 'false' && res.json().porDefecto ?
-                this.toastr.success("No se modificó el atributo moneda pricipal. No puede quedar sin moneda principal.") :
-                this.toastr.success(respuesta.mensaje);
+                this.toastr.error("No se modificó el atributo moneda pricipal. No puede quedar sin moneda principal.") :
+                this.toastr.success("Campos restantes actualizados con éxito.");
             })
           document.getElementById('idAutocompletado').focus();
           this.loaderService.hide();

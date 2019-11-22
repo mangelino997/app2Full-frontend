@@ -41,7 +41,7 @@
                         <label id="labelNumeroDocumento" for="idNumeroDocumento" class="tamanio-label">N° de Documento
                             *</label>
                         <input id="idNumeroDocumento" type="number" formControlName="numeroDocumento" autocomplete="off"
-                            class="form-control form-control-sm number-right" (blur)="validarDocumento()"
+                            class="form-control form-control-sm number-right" (blur)="formulario.value.numeroDocumento? validarDocumento() : ''"
                             (ngModelChange)="cambioCampo('idNumeroDocumento', 'labelNumeroDocumento')" maxlength="15">
                     </div>
                 </div>

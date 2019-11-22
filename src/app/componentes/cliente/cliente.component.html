@@ -208,7 +208,7 @@
                           *</label>
                         <input id="idNumeroDocumento" type="number" formControlName="numeroDocumento" autocomplete="off"
                           class="form-control form-control-sm number-right" [readonly]="soloLectura"
-                          (blur)="validarDocumento()"
+                          (blur)="formulario.value.numeroDocumento? validarDocumento() : ''"
                           (ngModelChange)="cambioCampo('idNumeroDocumento', 'labelNumeroDocumento')">
                       </div>
                     </div>

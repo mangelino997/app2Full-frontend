@@ -622,7 +622,8 @@ export class ProveedorComponent implements OnInit {
   //Verifica que el CBU sea de 22 carácteres obligatorios
   public verificarCBU() {
     let elemento = this.formulario.value.numeroCBU;
-    elemento.length < 22 ? [this.toastr.error("El N° de CBU debe ser de 22 carácteres."), this.formulario.get('numeroCBU').reset()] : '';
+    elemento.length < 22 ?
+      [this.toastr.error("El N° de CBU debe ser de 22 carácteres."), this.formulario.get('numeroCBU').reset()] : '';
   }
   //Verifica si se selecciono un elemento del autocompletado
   public verificarSeleccion(valor): void {

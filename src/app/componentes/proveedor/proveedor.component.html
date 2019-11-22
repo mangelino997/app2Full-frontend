@@ -176,7 +176,7 @@
                           *</label>
                         <input id="idNumeroDocumento" type="text" formControlName="numeroDocumento" autocomplete="off"
                           class="form-control form-control-sm number-right" [readonly]="soloLectura"
-                          (blur)="validarDocumento()"
+                          (blur)="formulario.value.numeroDocumento? validarDocumento() : ''"
                           (ngModelChange)="cambioCampo('idNumeroDocumento', 'labelNumeroDocumento')">
                       </div>
                     </div>
@@ -329,7 +329,7 @@
                         <label for="idNumeroCBU" class="tamanio-label">N° de CBU/CVU</label>
                         <input id="idNumeroCBU" type="text" formControlName="numeroCBU" autocomplete="off"
                           class="form-control form-control-sm number-right" [textMask]="mascararEnteros(22)"
-                          [readonly]="soloLectura" maxlength="22" (blur)="verificarCBU()">
+                          [readonly]="soloLectura" maxlength="22" (blur)="formulario.value.numeroCBU ? verificarCBU() : ''">
                       </div>
                     </div>
                     <div class="col-md-3">

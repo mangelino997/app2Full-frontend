@@ -33,7 +33,7 @@
             <div class="form-group has-float-label">
               <label for="idTipoVehiculo" class="tamanio-label">Tipo de Vehículo *</label>
               <mat-select id="idTipoVehiculo" class="form-control form-control-sm" [formControl]="tipoVehiculo"
-                [compareWith]="compareFn" (selectionChange)="listarConfiguracionesPorTipoVehiculoMarcaVehiculo()">
+                [compareWith]="compareFn" (selectionChange)="tipoVehiculo.value? listarConfiguracionesPorTipoVehiculoMarcaVehiculo(): ''">
                 <mat-option *ngFor="let itemTipoVehiculo of tiposVehiculos" [value]="itemTipoVehiculo">
                   {{itemTipoVehiculo.nombre}}
                 </mat-option>
@@ -44,7 +44,7 @@
             <div class="form-group has-float-label">
               <label for="idMarcaVehiculo" class="tamanio-label">Marca de Vehículo *</label>
               <mat-select id="idMarcaVehiculo" class="form-control form-control-sm" [formControl]="marcaVehiculo"
-                [compareWith]="compareFn" (selectionChange)="listarConfiguracionesPorTipoVehiculoMarcaVehiculo()">
+                [compareWith]="compareFn" (selectionChange)="marcaVehiculo.value? listarConfiguracionesPorTipoVehiculoMarcaVehiculo() : ''">
                 <mat-option *ngFor="let itemMarcaVehiculo of marcasVehiculos" [value]="itemMarcaVehiculo">
                   {{itemMarcaVehiculo.nombre}}
                 </mat-option>

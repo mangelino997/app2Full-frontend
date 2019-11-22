@@ -101,7 +101,7 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
     //Define el objeto 'pdf' y sus campos
     this.objetoPdf.setValue(this.companiaSeguroPolizaModelo.formulario.get('pdf').value);
     //Establece los valores de la primera pestania activa
-    this.seleccionarPestania(1, 'Agregar', 0);
+    this.seleccionarPestania(1, 'Agregar');
     //Obtiene la lista de empresas
     this.listarEmpresas();
     //Obtiene la fecha del dia actual
@@ -129,6 +129,7 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
   }
   //Vacia la listas de resultados autocompletados
   private vaciarListas() {
+    this.polizas = [];
     this.listaCompleta = new MatTableDataSource([]);
     this.resultadosCompaniasSeguros = [];
   }
@@ -151,14 +152,10 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
     }
   }
   //Establece valores al seleccionar una pestania
-  public seleccionarPestania(id, nombre, opcion) {
-    if (opcion == 0) {
-      this.empresaBusqueda.setValue(undefined);
-      this.vaciarListas();
-    }
-    this.formulario.reset();
+  public seleccionarPestania(id, nombre) {
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
+    this.reestablecerFormulario(undefined);
     switch (id) {
       case 1:
         this.obtenerSiguienteId();
@@ -195,7 +192,6 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
         this.actualizar();
         break;
       case 4:
-        this.eliminar();
         break;
       default:
         break;
@@ -255,9 +251,9 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
     );
   }
   //Elimina un registro
-  private eliminar() {
+  private eliminar(elemento) {
     this.loaderService.show();
-    this.servicio.eliminar(this.formulario.value.id).subscribe(
+    this.servicio.eliminar(elemento.id).subscribe(
       res => {
         let respuesta = res.json();
         if (res.status == 200) {
@@ -287,6 +283,7 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
   }
   //Obtiene un listado por compania de seguro
   public listarPorCompaniaSeguro() {
+    this.listaCompleta = new MatTableDataSource([]);
     this.servicio.listarPorCompaniaSeguroYEmpresa(this.formulario.value.companiaSeguro.id, this.appService.getEmpresa().id).subscribe(res => {
       this.listaCompleta = new MatTableDataSource(res.json());
       this.listaCompleta.sort = this.sort;
@@ -299,6 +296,7 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
       let empresa = this.formulario.get('empresa').value;
       if (companiaSeguro != null && empresa != null) {
         this.servicio.listarPorCompaniaSeguroYEmpresa(companiaSeguro.id, empresa.id).subscribe(res => {
+          this.polizas = [];
           this.polizas = res.json();
         })
       }
@@ -319,7 +317,7 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
   }
   //Reestablece los campos formularios
   private reestablecerFormulario(id) {
-    this.empresaBusqueda.setValue(undefined);
+    this.empresaBusqueda.reset();
     this.formulario.reset();
     this.poliza.reset();
     this.vaciarListas();
@@ -343,12 +341,12 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
   }
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
-    this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
+    this.seleccionarPestania(2, this.pestanias[1].nombre);
     this.establecerElemento(elemento);
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
-    this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
+    this.seleccionarPestania(3, this.pestanias[2].nombre);
     this.establecerElemento(elemento);
   }
   //Establece elemento a formulario y controles
@@ -359,11 +357,6 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
     this.listarPorCompaniaSeguroYEmpresa();
     this.poliza.patchValue(elemento);
     pdf ? this.obtenerPorId(elemento.id) : '';
-  }
-  //Muestra en la pestania actualizar el elemento seleccionado de listar
-  public activarEliminar(elemento) {
-    this.formulario.patchValue(elemento);
-    this.eliminar();
   }
   //Establece la foto y pdf (activar consultar/actualizar)
   private establecerPdf(elemento): void {
@@ -532,9 +525,9 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
     var indice = this.indiceSeleccionado;
     if (keycode == 113) {
       if (indice < this.pestanias.length) {
-        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre, 0);
+        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre);
       } else {
-        this.seleccionarPestania(1, this.pestanias[0].nombre, 0);
+        this.seleccionarPestania(1, this.pestanias[0].nombre);
       }
     }
   }

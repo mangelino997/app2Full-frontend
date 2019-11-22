@@ -123,14 +123,19 @@ export class ProductoComponent implements OnInit {
   //Establece el formulario al seleccionar de autocompletado
   public cambioAutocompletado(): void {
     let elemento = this.autocompletado.value;
-    let precioUnitarioVenta = elemento.precioUnitarioViaje;
-    let precioUnitarioViaje = elemento.precioUnitarioVenta;
-    let itcPorLitro = elemento.itcPorLitro;
-    let itcNeto = elemento.itcNeto;
-    this.formulario.get('precioUnitarioViaje').setValue(this.appService.establecerDecimales(precioUnitarioViaje.toString(), 2));
-    this.formulario.get('precioUnitarioVenta').setValue(this.appService.establecerDecimales(precioUnitarioVenta.toString(), 2));
-    this.formulario.get('itcPorLitro').setValue(this.appService.establecerDecimales(itcPorLitro.toString(), 4));
-    this.formulario.get('itcNeto').setValue(this.appService.desenmascararPorcentaje(itcNeto.toString(), 2));
+    this.formulario.patchValue(elemento);
+
+    /* Cuando la pestaña es 'Consultar' muestra los ITC y precios */
+    if(this.indiceSeleccionado == 2){
+      let precioUnitarioVenta = elemento.precioUnitarioViaje;
+      let precioUnitarioViaje = elemento.precioUnitarioVenta;
+      let itcPorLitro = elemento.itcPorLitro;
+      let itcNeto = elemento.itcNeto;
+      this.formulario.get('precioUnitarioViaje').setValue(this.appService.establecerDecimales(precioUnitarioViaje.toString(), 2));
+      this.formulario.get('precioUnitarioVenta').setValue(this.appService.establecerDecimales(precioUnitarioVenta.toString(), 2));
+      this.formulario.get('itcPorLitro').setValue(this.appService.establecerDecimales(itcPorLitro.toString(), 4));
+      this.formulario.get('itcNeto').setValue(this.appService.desenmascararPorcentaje(itcNeto.toString(), 2));
+    }
   }
   //Obtiene el listado de rubros
   private listarRubros() {

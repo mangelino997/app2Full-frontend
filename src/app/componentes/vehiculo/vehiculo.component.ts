@@ -429,6 +429,7 @@ export class VehiculoComponent implements OnInit {
     this.loaderService.show();
     let tipoVehiculo = this.tipoVehiculo.value;
     let marcaVehiculo = this.marcaVehiculo.value;
+    this.configuracionesVehiculos = [];
     this.esVehiculoRemolque = tipoVehiculo.esRemolque ? true : false;
     if (this.esVehiculoRemolque) {
       this.formulario.get('personal').disable();
@@ -457,8 +458,14 @@ export class VehiculoComponent implements OnInit {
         .subscribe(
           res => {
             this.loaderService.hide();
-            res.json().length > 0 ? this.configuracionesVehiculos = res.json() :
+            this.configuracionesVehiculos = res.json()
+            if(this.configuracionesVehiculos.length == 0){
+              this.configuracion.reset();
+              this.formulario.get('configuracionVehiculo').reset();
               this.toastr.error("Sin registros en Lista de Configuraciones para el Tipo y Marca de Vehículo.");
+            }else{
+              this.formulario.get('configuracionVehiculo').enable();
+            }
           }, err => { this.loaderService.hide(); }
         )
     } else {
@@ -573,6 +580,9 @@ export class VehiculoComponent implements OnInit {
     this.tipoVehiculo.setValue(undefined);
     this.marcaVehiculo.setValue(undefined);
     this.configuracion.setValue(undefined);
+
+    /* deshabilita el control'Lista de Configuraciones' */
+    this.formulario.get('configuracionVehiculo').disable();
     this.vaciarLista();
   }
   /*
