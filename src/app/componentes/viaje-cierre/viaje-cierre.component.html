@@ -1,0 +1,74 @@
+<div id="viajeremito" class="container-fluid" (window:keydown)="manejarEvento($event.keyCode)">
+    <div class="row">
+        <div class="col" class="centrar">
+            <nav mat-tab-nav-bar>
+                <a mat-tab-link disabled>CIERRE VIAJE</a>
+                <a mat-tab-link *ngFor="let pestania of pestanias" [active]="activeLink == pestania.nombre"
+                    (click)="seleccionarPestania(pestania.id, pestania.nombre)">{{pestania.nombre}}</a>
+            </nav>
+        </div>
+    </div>
+    <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado < 5">
+        <div class="col-md-8">
+            <h5 class="text-center">{{pestaniaActual}} Cierre de Viaje</h5>
+            <form [formGroup]="formulario" class="contenedor">
+                
+            </form>
+        </div>
+    </div>
+    <div class="row contenedor" *ngIf="indiceSeleccionado == 5">
+        <div class="col-md-12">
+            <div class="row" *ngIf="show">
+                <div class="col text-center">
+                    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                </div>
+            </div>
+            <div class="tabla">
+                <div class="tabla-ancho">
+                    <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
+                        <ng-container matColumnDef="ID">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
+                            <td mat-cell *matCellDef="let elemento">{{elemento.id}}</td>
+                        </ng-container>
+                        <ng-container matColumnDef="VIAJE">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header>Guía de Servicio</th>
+                            <td mat-cell *matCellDef="let elemento">{{elemento.viaje.id}}</td>
+                        </ng-container>
+                        <ng-container matColumnDef="FECHA">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha</th>
+                            <td mat-cell *matCellDef="let elemento">{{elemento.fecha | date: 'dd/MM/yyyy'}}</td>
+                        </ng-container>
+                        <ng-container matColumnDef="KMINICIO">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header>km Inicio</th>
+                            <td mat-cell *matCellDef="let elemento">{{elemento.kmInicio}}
+                            </td>
+                        </ng-container>
+                        <ng-container matColumnDef="KMFINAL">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header>km Final</th>
+                            <td mat-cell *matCellDef="let elemento">{{elemento.kmFinal}}
+                        </ng-container>
+                        <ng-container matColumnDef="EDITAR" stickyEnd>
+                            <th mat-header-cell *matHeaderCellDef><button class="button-full-width" mat-raised-button
+                                    color="primary" (click)="abrirReporte()">Reporte</button></th>
+                            <td mat-cell *matCellDef="let elemento">
+                                <button mat-icon-button class="mat-icon-button-table"
+                                    (click)="activarConsultar(elemento)" matTooltip="Consultar"
+                                    matTooltipPosition="above">
+                                    <mat-icon>search</mat-icon>
+                                </button>
+                                <button mat-icon-button class="mat-icon-button-table margin-left-3"
+                                    (click)="activarActualizar(elemento)" matTooltip="Editar"
+                                    matTooltipPosition="above">
+                                    <mat-icon>edit</mat-icon>
+                                </button>
+                            </td>
+                        </ng-container>
+                        <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+                        <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <mat-paginator [pageSizeOptions]="[10]" showFirstLastButtons></mat-paginator>
+    </div>
+</div>

@@ -119,7 +119,8 @@ const routes: Routes = [
     { path: 'configuraciontiporetencion', loadChildren: () => import('./modulos/tipo-retencion/tipo-retencion.module').then(m => m.TipoRetencionModule), canActivate: [GuardiaService] },
     { path: 'configuraciontipopercepcion', loadChildren: () => import('./modulos/tipo-percepcion/tipo-percepcion.module').then(m => m.TipoPercepcionModule), canActivate: [GuardiaService] },
     { path: 'adelantosadelantosenlote', loadChildren: () => import('./modulos/adelanto-lote/adelanto-lote.module').then(m => m.AdelantoLoteModule), canActivate: [GuardiaService] },
-    { path: 'adelantosadministrar', loadChildren: () => import('./modulos/adelanto-personal/adelanto-personal.module').then(m => m.AdelantoPersonalModule), canActivate: [GuardiaService] }
+    { path: 'adelantosadministrar', loadChildren: () => import('./modulos/adelanto-personal/adelanto-personal.module').then(m => m.AdelantoPersonalModule), canActivate: [GuardiaService] },
+    { path: 'cierresdeviajesdocumentacion', loadChildren: () => import('./modulos/viaje-cierre-documentacion/viaje-cierre-documentacion.module').then(m => m.ViajeCierreDocumentacionModule), canActivate: [GuardiaService] }
 ];
 
 @NgModule({
