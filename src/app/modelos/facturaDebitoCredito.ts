@@ -18,6 +18,7 @@ export class FacturaDebitoCredito {
             codigoAfip: new FormControl('', Validators.required),
             fechaEmision: new FormControl('', Validators.required),
             fechaContable: new FormControl('', Validators.required),
+            fechaVtoPago: new FormControl('', Validators.required),
             fechaRegistracion: new FormControl(),
             proveedor: new FormControl('', Validators.required),
             afipCondicionIva: new FormControl(),

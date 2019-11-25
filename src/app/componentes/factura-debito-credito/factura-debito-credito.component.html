@@ -152,6 +152,14 @@
           </div>
           <div class="col-md-2">
             <div class="form-group has-float-label">
+              <label id="labelFechaVtoPago" for="idFechaVtoPago" class="descripcion-label">Fecha Vto. Pago *</label>
+              <input id="idFechaVtoPago" type="date" formControlName="fechaVtoPago" autocomplete="off"
+                [readOnly]="indiceSeleccionado == 2 || indiceSeleccionado == 4" (blur)="controlarFechaVtoPago()"
+                class="form-control form-control-sm">
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div class="form-group has-float-label">
               <label id="labelFechaContable" for="idFechaContable" class="descripcion-label">Fecha Contable *</label>
               <input id="idFechaContable" type="date" formControlName="fechaContable" autocomplete="off"
                 [readOnly]="indiceSeleccionado == 2 || indiceSeleccionado == 4" (blur)="controlarFechaContable()"
@@ -372,7 +380,7 @@
           </div>
           <div class="col-md-2">
             <button id="idBotonVencimientos" mat-raised-button color="primary" (click)="detalleVencimientosDialogo()"
-              [disabled]="!formulario.valid">Vencimientos </button>
+              [disabled]="!formulario.valid || formulario.value.importeTotal == 0">Vencimientos </button>
           </div>
           <div class="col-md-2">
             <button id="idBotonMediosDePago" mat-raised-button color="primary" [disabled]="!formulario.valid">Medios de

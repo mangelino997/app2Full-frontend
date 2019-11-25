@@ -173,7 +173,7 @@ export class ViajeGastoComponent implements OnInit {
       }
     });
     dialogRef.afterClosed().subscribe(resultado => {
-      if (resultado.value.observaciones) {
+      if (resultado) {
         this.loaderService.show();
         elemento.viaje = { id: this.ID_VIAJE };
         elemento.observacionesAnulado = resultado.value.observaciones;
