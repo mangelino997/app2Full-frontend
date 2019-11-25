@@ -690,7 +690,7 @@ export class DadorDestinatarioDialogo {
         width: '50%',
         maxWidth: '50%',
         data: {
-          mensaje: MensajeExcepcion.PREGUNTA_ELIMINAR
+          mensaje: '¿Seguro que desea eliminar este registro? (Puede contener remitos)'
         }
       });
       dialogRef.afterClosed().subscribe(resultado => {
