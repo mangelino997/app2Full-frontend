@@ -74,7 +74,7 @@ export class RepartoComprobanteComponent implements OnInit {
     //Establece la subscripcion a loader
     this.subscription = this.loaderService.loaderState
       .subscribe((state: LoaderState) => {
-        this.show = state.show;
+        this.show = false;
       });
     //Define el formulario para el Reparto Saliente y validaciones
     let formularioParaRepSaliente = new FormGroup({
@@ -213,15 +213,18 @@ export class RepartoComprobanteComponent implements OnInit {
   }
   //Agrega un registro a la tabla
   public agregar() {
-    this.loaderService.show();
+    // this.loaderService.show();
     let tipoComprobante = this.formulario.get('tipoComprobante').value;
     let numero = this.formulario.get('numero').value;
     if (tipoComprobante.id == 13) {
       this.ordenRecoleccionService.obtenerPorId(numero).subscribe(
         res => {
           if (res.text() != '') { //Controla que exista una orden recoleccion
-            this.formularioComprobante.get('ordenRecoleccion').setValue({ id: res.json().id });
-            this.agregarComprobanteReparto(this.formularioComprobante.value);
+            let respuesta = res.json();
+            respuesta.forEach(element => {
+              this.formularioComprobante.get('ordenRecoleccion').setValue(element);
+              this.agregarComprobanteReparto(this.formularioComprobante.value);
+            });
           } else {
             this.toastr.error("No existe una Orden Recolección con el número ingresado.");
           }
@@ -236,20 +239,17 @@ export class RepartoComprobanteComponent implements OnInit {
           res => {
             if (res.text() != '') { //Controla que exista un viaje remito
               let respuesta = res.json();
-              let viajeRemito = {
-                letra: respuesta.letra,
-                puntoVenta: respuesta.puntoVenta,
-                numero: respuesta.numero
-              }
-              this.formularioComprobante.get('viajeRemito').setValue(viajeRemito);
-              this.agregarComprobanteReparto(this.formularioComprobante.value);
+              respuesta.forEach(element => {
+                this.formularioComprobante.get('viajeRemito').setValue(element);
+                this.agregarComprobanteReparto(this.formularioComprobante.value);
+              });
             } else {
               this.toastr.error("No existe un Viaje Remito con el punto de venta, letra y número ingresado.");
             }
           },
           err => {
             this.toastr.error("No existe un Viaje Remito con el punto de venta, letra y número ingresado.");
-            this.loaderService.hide();
+            // this.loaderService.hide();
           })
     } else if (tipoComprobante.id == 1) {
       this.ventaComprobanteService.obtener(this.formulario.get('puntoVenta').value, this.formulario.get('letra').value,
@@ -257,27 +257,23 @@ export class RepartoComprobanteComponent implements OnInit {
           res => {
             if (res.text() != '') { //Controla que exista una venta comprobante
               let respuesta = res.json();
-              let ventaComprobante = {
-                letra: respuesta.letra,
-                puntoVenta: respuesta.puntoVenta,
-                numero: respuesta.numero,
-                tipoComprobante: respuesta.tipoComprobante
-              }
-              this.formularioComprobante.get('ventaComprobante').setValue(ventaComprobante);
-              this.agregarComprobanteReparto(this.formularioComprobante.value);
+              respuesta.forEach(element => {
+                this.formularioComprobante.get('ventaComprobante').setValue(element);
+                this.agregarComprobanteReparto(this.formularioComprobante.value);
+              });
             } else {
               this.toastr.error("No existe una Venta Comprobante con el punto de venta, letra y número ingresado.");
             }
           },
           err => {
             this.toastr.error("No existe una Venta Comprobante con el punto de venta, letra y número ingresado.");
-            this.loaderService.hide();
+            // this.loaderService.hide();
           })
     }
   }
   //Agrega un Comprobante
   private agregarComprobanteReparto(formularioComprobante) {
-    this.loaderService.show();
+    // this.loaderService.show();
     formularioComprobante.reparto.repartoComprobantes.length > 0 ? formularioComprobante.reparto.repartoComprobantes = [] : '';
     this.servicio.agregar(formularioComprobante).subscribe(
       res => {
@@ -286,11 +282,11 @@ export class RepartoComprobanteComponent implements OnInit {
           this.establecerValoresPorDefecto();
           this.toastr.success("Reparto Comprobante: " + res.json().mensaje);
         }
-        this.loaderService.hide();
+        // this.loaderService.hide();
       },
       err => {
         this.toastr.error(err.json().mensaje);
-        this.loaderService.hide();
+        // this.loaderService.hide();
       }
     )
   }
@@ -323,17 +319,17 @@ export class RepartoComprobanteComponent implements OnInit {
   //Obtiene los registros, para mostrar en la tabla, por idReparto
   private listarPorReparto(idReparto) {
     setTimeout(() => {
-      this.loaderService.show();
+      // this.loaderService.show();
       this.repartoService.obtenerPorId(idReparto).subscribe(
         res => {
           let repartoComprobantes = res.json().repartoComprobantes;
           this.listaCompleta = new MatTableDataSource(repartoComprobantes);
           this.listaCompleta.sort = this.sort;
-          this.loaderService.hide();
+          // this.loaderService.hide();
         },
         err => {
           this.toastr.error("Sin registros para mostrar.");
-          this.loaderService.hide();
+          // this.loaderService.hide();
         }
       )
     }, 20);
@@ -363,7 +359,7 @@ export class RepartoComprobanteComponent implements OnInit {
   public sumaBultosVentaCpte(listaItemFAs) {
     let bultosTotal = 0;
     listaItemFAs.forEach(elemento => {
-      elemento.bultos? bultosTotal += elemento.bultos : '';
+      elemento.bultos ? bultosTotal += elemento.bultos : '';
     });
     return bultosTotal;
   }
@@ -426,7 +422,7 @@ export class RepartoComprobanteComponent implements OnInit {
   }
   //Actualiza un Seguimiento Venta Comprobante
   private actualizarSeguimientoVentaComprobante() {
-    this.loaderService.show();
+    // this.loaderService.show();
     this.formularioSeguimiento.value.ventaComprobante = { id: this.formularioSeguimiento.value.ventaComprobante.id };
     this.seguimientoVentaComprobanteService.agregar(this.formularioSeguimiento.value).subscribe(
       res => {
@@ -434,18 +430,18 @@ export class RepartoComprobanteComponent implements OnInit {
           this.toastr.success(res.json().mensaje);
           this.reestablecerFormularioSeguimiento();
         }
-        this.loaderService.hide();
+        // this.loaderService.hide();
       },
       err => {
         let error = err.json();
         this.lanzarError(error);
-        this.loaderService.hide();
+        // this.loaderService.hide();
       }
     )
   }
   //Actualiza un Seguimiento Orden Recoleccion
   private actualizarSeguimientoOrdenRecoleccion() {
-    this.loaderService.show();
+    // this.loaderService.show();
     this.formularioSeguimiento.value.ordenRecoleccion = { id: this.formularioSeguimiento.value.ordenRecoleccion.id };
     this.seguimientoOrdenRecoleccionService.agregar(this.formularioSeguimiento.value).subscribe(
       res => {
@@ -453,18 +449,18 @@ export class RepartoComprobanteComponent implements OnInit {
           this.toastr.success(res.json().mensaje);
           this.reestablecerFormularioSeguimiento();
         }
-        this.loaderService.hide();
+        // this.loaderService.hide();
       },
       err => {
         let error = err.json();
         this.lanzarError(error);
-        this.loaderService.hide();
+        // this.loaderService.hide();
       }
     )
   }
   //Actualiza un Seguimiento Viaje Remito
   private actualizarViajeRemito() {
-    this.loaderService.show();
+    // this.loaderService.show();
     this.formularioSeguimiento.value.viajeRemito = { id: this.formularioSeguimiento.value.viajeRemito.id };
     this.seguimientoViajeRemitoService.agregar(this.formularioSeguimiento.value).subscribe(
       res => {
@@ -472,12 +468,12 @@ export class RepartoComprobanteComponent implements OnInit {
           this.toastr.success(res.json().mensaje);
           this.reestablecerFormularioSeguimiento();
         }
-        this.loaderService.hide();
+        // this.loaderService.hide();
       },
       err => {
         let error = err.json();
         this.lanzarError(error);
-        this.loaderService.hide();
+        // this.loaderService.hide();
       }
     )
   }

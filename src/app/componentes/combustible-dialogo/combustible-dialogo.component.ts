@@ -320,7 +320,7 @@ export class CombustibleDialogo implements OnInit {
       }
     });
     dialogRef.afterClosed().subscribe(resultado => {
-      if (resultado.value.observaciones) {
+      if (resultado) {
         this.loaderService.show();
         this.ID_VIAJE ? elemento.viaje = { id: this.ID_VIAJE } : elemento.viaje = null;
         elemento.observacionesAnulado = resultado.value.observaciones;

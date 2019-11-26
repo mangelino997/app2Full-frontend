@@ -55,8 +55,16 @@ export class TipoComprobanteService {
     return this.http.get(this.url, this.options);
   }
   //Obtiene la lista de registros
+  public listarEstaActivoCompraCargaTrue() {
+    return this.http.get(this.url + '/listarActivosCompraCarga', this.options);
+  }
+  //Obtiene la lista de registros
   public listarParaEmisionFactura() {
     return this.http.get(this.url + '/listarParaEmisionFactura', this.options);
+  }
+  //Obtiene la lista de registros
+  public listarParaNotaCredito() {
+    return this.http.get(this.url + '/listarParaNotaCredito', this.options);
   }
   //Obtiene un listado por nombre
   public listarPorNombre(nombre) {

@@ -11,7 +11,9 @@ export class CompraComprobanteVencimiento {
             version: new FormControl(),
             compraComprobante: new FormControl(), //se establece en backend
             fecha: new FormControl('', Validators.required),
-            importe: new FormControl('', Validators.required)
+            importe: new FormControl('', Validators.required),
+            cuota: new FormControl(),
+            estaPagado: new FormControl()
         })
     }
 }
