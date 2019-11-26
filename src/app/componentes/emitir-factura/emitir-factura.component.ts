@@ -958,7 +958,6 @@ export class EmitirFacturaComponent implements OnInit {
   }
   //Establece valores por defecto para el formulario
   private establecerValoresPorDefectoItemFA() {
-    this.ordenVenta.reset();
     this.formularioVtaCpteItemFA.reset();
     this.establecerAlicuotaIva();
     this.formularioVtaCpteItemFA.get('importeExento').setValue(this.appService.establecerDecimales('0.00', 2));

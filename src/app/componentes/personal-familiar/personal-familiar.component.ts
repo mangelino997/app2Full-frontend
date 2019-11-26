@@ -342,7 +342,7 @@ export class PersonalFamiliarComponent implements OnInit {
     this.loaderService.show();
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
-        var respuesta = res.json();
+        let respuesta = res.json();
         if (res.status == 201) {
           this.reestablecerFormulario(undefined);
           this.formulario.get('personal').setValue(respuesta);
@@ -363,7 +363,7 @@ export class PersonalFamiliarComponent implements OnInit {
     this.loaderService.show();
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
-        var respuesta = res.json();
+        let respuesta = res.json();
         if (res.status == 200) {
           this.reestablecerFormulario(undefined);
           document.getElementById('idPersonal').focus();
@@ -383,7 +383,7 @@ export class PersonalFamiliarComponent implements OnInit {
     this.formulario.enable();
     this.servicio.eliminar(this.formulario.value.id).subscribe(
       res => {
-        var respuesta = res.json();
+        let respuesta = res.json();
         if (res.status == 200) {
           this.reestablecerFormulario(undefined);
           document.getElementById('idPersonal').focus();
@@ -442,13 +442,13 @@ export class PersonalFamiliarComponent implements OnInit {
     document.getElementById("labelNumeroDocumento").classList.add('label-error');
     document.getElementById("idNumeroDocumento").classList.add('is-invalid');
     document.getElementById("idNumeroDocumento").focus();
-    var respuesta = err;
+    let respuesta = err;
     this.toastr.error(respuesta.mensaje);
 
   }
   //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
   private lanzarError(err) {
-    var respuesta = err;
+    let respuesta = err;
     try {
       if (respuesta.codigo == 11010) {
         document.getElementById("labelNumeroDocumento").classList.add('label-error');
@@ -586,8 +586,8 @@ export class PersonalFamiliarComponent implements OnInit {
   }
   //Maneja los evento al presionar una tacla (para pestanias y opciones)
   public manejarEvento(keycode) {
-    var indice = this.indiceSeleccionado;
-    var opcion = this.opcionSeleccionada;
+    let indice = this.indiceSeleccionado;
+    let opcion = this.opcionSeleccionada;
     if (keycode == 113) {
       if (indice < this.pestanias.length) {
         this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre);

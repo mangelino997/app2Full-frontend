@@ -62,6 +62,10 @@ export class TipoComprobanteService {
   public listarParaEmisionFactura() {
     return this.http.get(this.url + '/listarParaEmisionFactura', this.options);
   }
+  //Obtiene la lista de registros
+  public listarParaNotaCredito() {
+    return this.http.get(this.url + '/listarParaNotaCredito', this.options);
+  }
   //Obtiene un listado por nombre
   public listarPorNombre(nombre) {
     return this.http.get(this.url + '/listarPorNombre/' + nombre, this.options).map(res => {

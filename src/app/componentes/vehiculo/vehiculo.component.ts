@@ -566,6 +566,11 @@ export class VehiculoComponent implements OnInit {
       }
     );
   }
+  //Verifica que el año de fabricación tenga como minimo 4 caracteres
+  public verificarAnioFabricacion(){
+    this.formulario.value.anioFabricacion.length != 4? 
+    [this.toastr.error("El año de fabricación debe ser de 4 carácteres."), this.formulario.get('anioFabricacion').reset() ] : '';
+  }
   //Verifica si se selecciono un elemento del autocompletado
   public verificarSeleccion(valor): void {
     if (typeof valor.value != 'object') {
