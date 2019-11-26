@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { VehiculoRoutingModule } from './vehiculo-routing.module';
 
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
-  MatSelectModule, MatProgressBarModule, MatButtonModule, MatDialogModule, MatIconModule } from '@angular/material';
+  MatSelectModule, MatProgressBarModule, MatButtonModule, MatDialogModule, MatIconModule, MatTooltipModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { VehiculoComponent } from 'src/app/componentes/vehiculo/vehiculo.component';
 import { TextMaskModule } from 'angular2-text-mask';
@@ -43,7 +43,8 @@ import { Pdf } from 'src/app/modelos/pdf';
     MatDialogModule,
     MatIconModule,
     TextMaskModule,
-    PdfViewerModule
+    PdfViewerModule,
+    MatTooltipModule
   ],
   providers: [
     VehiculoService,

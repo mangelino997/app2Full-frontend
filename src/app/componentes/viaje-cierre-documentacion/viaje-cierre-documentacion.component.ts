@@ -8,9 +8,9 @@ import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.s
 import { ViajeCierreDocumentacionService } from 'src/app/servicios/viaje-cierre-documentacion.service';
 
 @Component({
-  selector: 'app-viaje-cierre',
-  templateUrl: './viaje-cierre.component.html',
-  styleUrls: ['./viaje-cierre.component.css']
+  selector: 'app-viaje-cierre-documentacion',
+  templateUrl: './viaje-cierre-documentacion.component.html',
+  styleUrls: ['./viaje-cierre-documentacion.component.css']
 })
 export class ViajeCierreDocumentacionComponent implements OnInit {
   //Define la pestania activa
@@ -46,14 +46,12 @@ export class ViajeCierreDocumentacionComponent implements OnInit {
   //Constructor de la clase
   constructor(private viajeCierreDocumentacion: ViajeCierreDocumentacion, private servicio: ViajeCierreDocumentacionService, private appService: AppService, 
     private subopcionPestaniaService: SubopcionPestaniaService) { 
-      console.log('PASO');
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
       .subscribe(
         res => {
           this.pestanias = res.json();
           this.activeLink = this.pestanias[0].nombre;
-          console.log(this.pestanias);
         }
       );
   }
@@ -112,26 +110,18 @@ export class ViajeCierreDocumentacionComponent implements OnInit {
   private establecerEstadoCampos(estado) {
     if (estado) {
       this.formulario.get('viaje').enable();
-      this.formulario.get('fechaDocumentacion').enable();
+      this.formulario.get('fechaRegistracion').enable();
       this.formulario.get('kmInicio').enable();
       this.formulario.get('kmFinal').enable();
-      this.formulario.get('kmRecorridos').enable();
-      this.formulario.get('kmTramos').enable();
-      this.formulario.get('kmDiferencia').enable();
-      this.formulario.get('litrosViaje').enable();
+      this.formulario.get('kmAjuste').enable();
       this.formulario.get('litrosRendidos').enable();
-      this.formulario.get('litrosDiferencia').enable();
     } else {
       this.formulario.get('viaje').disable();
-      this.formulario.get('fechaDocumentacion').disable();
+      this.formulario.get('fechaRegistracion').disable();
       this.formulario.get('kmInicio').disable();
       this.formulario.get('kmFinal').disable();
-      this.formulario.get('kmRecorridos').disable();
-      this.formulario.get('kmTramos').disable();
-      this.formulario.get('kmDiferencia').disable();
-      this.formulario.get('litrosViaje').disable();
+      this.formulario.get('kmAjuste').disable();
       this.formulario.get('litrosRendidos').disable();
-      this.formulario.get('litrosDiferencia').disable();
     }
   }
 }
