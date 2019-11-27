@@ -110,16 +110,34 @@
       <div class="row">
         <div class="col-md-8">
           <form [formGroup]="formulario" class="contenedor">
-            <div class="form-group has-float-label">
-              <label for="idCompaniaSeguro" class="tamanio-label">Compañía de Seguro</label>
-              <input id="idCompaniaSeguro" class="form-control form-control-sm" type="text" matInput
-                [formControl]="formulario.get('companiaSeguro')" [matAutocomplete]="autoCompaniaSeguro"
-                autocomplete="off">
-              <mat-autocomplete #autoCompaniaSeguro="matAutocomplete" [displayWith]="displayFn.bind(this)">
-                <mat-option *ngFor="let itemCompaniaSeguro of resultadosCompaniasSeguros" [value]="itemCompaniaSeguro">
-                  {{itemCompaniaSeguro.nombre}}
-                </mat-option>
-              </mat-autocomplete>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group has-float-label">
+                  <label for="idCompaniaSeguroFiltro" class="tamanio-label">Compañía de Seguro</label>
+                  <input id="idCompaniaSeguroFiltro" class="form-control form-control-sm" type="text" matInput
+                    [formControl]="formulario.get('companiaSeguro')" [matAutocomplete]="autoCompaniaSeguroFiltro"
+                    autocomplete="off">
+                  <mat-autocomplete #autoCompaniaSeguroFiltro="matAutocomplete" [displayWith]="displayFn.bind(this)">
+                    <mat-option *ngFor="let itemCompaniaSeguro of resultadosCompaniasSeguros"
+                      [value]="itemCompaniaSeguro">
+                      {{itemCompaniaSeguro.nombre}}
+                    </mat-option>
+                  </mat-autocomplete>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="col-md-12">
+                  <div class="form-group has-float-label">
+                    <label for="idEmpresaFiltro" class="tamanio-label">Empresa *</label>
+                    <mat-select id="idEmpresaFiltro" class="form-control form-control-sm" formControlName="empresa"
+                      [compareWith]="compareFn">
+                      <mat-option *ngFor="let itemEmpresa of empresas" [value]="itemEmpresa">
+                        {{itemEmpresa.razonSocial}}
+                      </mat-option>
+                    </mat-select>
+                  </div>
+                </div>
+              </div>
             </div>
           </form>
         </div>
@@ -175,8 +193,8 @@
             </ng-container>
             <ng-container matColumnDef="ELIMINAR" sticky>
               <th mat-header-cell *matHeaderCellDef [hidden]="indiceSeleccionado != 4">-</th>
-              <td mat-cell *matCellDef="let elemento" (click)="eliminar(elemento)"
-                [hidden]="indiceSeleccionado != 4"><span class="cursor-color-rojo">X</span></td>
+              <td mat-cell *matCellDef="let elemento" (click)="eliminar(elemento)" [hidden]="indiceSeleccionado != 4">
+                <span class="cursor-color-rojo">X</span></td>
             </ng-container>
             <tr mat-header-row *matHeaderRowDef="columnas"></tr>
             <tr mat-row *matRowDef="let row; columns: columnas;"></tr>

@@ -143,14 +143,6 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
       document.getElementById(componente).focus();
     }, 20);
   };
-  //Habilita o deshabilita los campos dependiendo de la pestaña
-  private establecerEstadoCampos(estado) {
-    if (estado) {
-      this.formulario.get('empresa').enable();
-    } else {
-      this.formulario.get('empresa').disable();
-    }
-  }
   //Establece valores al seleccionar una pestania
   public seleccionarPestania(id, nombre) {
     this.indiceSeleccionado = id;
@@ -159,24 +151,20 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
     switch (id) {
       case 1:
         this.obtenerSiguienteId();
-        this.establecerEstadoCampos(true);
         this.establecerValoresPestania(nombre, false, false, true, 'idCompaniaSeguro');
         break;
       case 2:
-        this.establecerEstadoCampos(false);
-        this.establecerValoresPestania(nombre, true, true, false, 'idCompaniaSeguro');
+        this.establecerValoresPestania(nombre, true, true, false, 'idCompaniaSeguroFiltro');
         break;
       case 3:
-        this.establecerEstadoCampos(true);
         this.establecerValoresPestania(nombre, true, false, true, 'idCompaniaSeguro');
         break;
       case 4:
-        this.establecerEstadoCampos(false);
-        this.establecerValoresPestania(nombre, true, true, true, 'idCompaniaSeguro');
+        this.establecerValoresPestania(nombre, true, true, true, 'idCompaniaSeguroFiltro');
         break;
       case 5:
         setTimeout(function () {
-          document.getElementById('idCompaniaSeguro').focus();
+          document.getElementById('idCompaniaSeguroFiltro').focus();
         }, 20);
       default:
         break;
@@ -284,9 +272,11 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
   //Obtiene un listado por compania de seguro
   public listarPorCompaniaSeguro() {
     this.listaCompleta = new MatTableDataSource([]);
-    this.servicio.listarPorCompaniaSeguroYEmpresa(this.formulario.value.companiaSeguro.id, this.appService.getEmpresa().id).subscribe(res => {
+    console.log(this.formulario.value.companiaSeguro.id, this.formulario.value.empresa.id);
+    this.servicio.listarPorCompaniaSeguroYEmpresa(this.formulario.value.companiaSeguro.id, this.formulario.value.empresa.id).subscribe(res => {
       this.listaCompleta = new MatTableDataSource(res.json());
       this.listaCompleta.sort = this.sort;
+      this.listaCompleta.data.length == 0? this.toastr.error("Sin registros para mostrar para la Empresa y Compañía Seguro.") : '';
     })
   }
   //Obtiene un listado por compania de seguro

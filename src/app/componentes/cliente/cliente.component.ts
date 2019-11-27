@@ -59,6 +59,10 @@ export class ClienteComponent implements OnInit {
   public opciones: Array<any> = [];
   //Define un formulario para validaciones de campos
   public formulario: FormGroup;
+  //Define un formulario para realizar el filtro en pestaña Listar
+  public formularioFiltro: FormGroup;
+  //Define el campo opcionLocalidadFiltro como un formControl
+  public opcionLocalidadFiltro: FormControl = new FormControl();
   //Define la lista completa de registros
   public listaCompleta = new MatTableDataSource([]);
   //Define la opcion seleccionada
@@ -155,7 +159,7 @@ export class ClienteComponent implements OnInit {
     this.autocompletado.valueChanges.subscribe(data => {
       if (typeof data == 'string') {
         data = data.trim();
-        if(data == '*' || data.length > 2) {
+        if (data == '*' || data.length > 2) {
           this.servicio.listarPorAlias(data).subscribe(
             res => {
               this.resultados = res.json();
@@ -175,6 +179,13 @@ export class ClienteComponent implements OnInit {
       });
     //Define los campos para validaciones
     this.formulario = this.clienteModelo.formulario;
+    //Define los campos para filtrar la tabla 
+    this.formularioFiltro = new FormGroup({
+      localidad: new FormControl(),
+      cobrador: new FormControl('', Validators.required),
+      condicionVenta: new FormControl('', Validators.required),
+      esSeguroPropio: new FormControl('', Validators.required)
+    });
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar', true);
     //Establece la primera opcion seleccionada
@@ -189,6 +200,14 @@ export class ClienteComponent implements OnInit {
     })
     //Autocompletado Localidad - Buscar por nombre
     this.formulario.get('localidad').valueChanges.subscribe(data => {
+      if (typeof data == 'string' && data.length > 2) {
+        this.localidadServicio.listarPorNombre(data).subscribe(response => {
+          this.resultadosLocalidades = response;
+        })
+      }
+    })
+    //Autocompletado Localidad - Buscar por nombre - Enn formularioFiltro
+    this.formularioFiltro.get('localidad').valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
         this.localidadServicio.listarPorNombre(data).subscribe(response => {
           this.resultadosLocalidades = response;
@@ -475,6 +494,9 @@ export class ClienteComponent implements OnInit {
     this.formulario.get('creditoLimite').setValue(elemento.creditoLimite ? this.appService.establecerDecimales(elemento.creditoLimite, 2) : null);
     this.formulario.get('descuentoFlete').setValue(elemento.descuentoFlete ? this.appService.desenmascararPorcentaje(elemento.descuentoFlete.toString(), 2) : null);
     this.formulario.get('descuentoSubtotal').setValue(elemento.descuentoSubtotal ? this.appService.establecerDecimales(elemento.descuentoSubtotal, 2) : null);
+
+    /* Si no tiene seguro propio que compañia/poliza/vencimiento no sean readOnly */
+    this.cambioTipoSeguro();
     this.cuentasBancarias = new MatTableDataSource(elemento.clienteCuentasBancarias);
   }
   //Establece los valores por defecto
@@ -616,7 +638,7 @@ export class ClienteComponent implements OnInit {
   public seleccionarPestania(id, nombre, opcion) {
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    if(opcion) {
+    if (opcion) {
       this.reestablecerFormulario(undefined);
     }
     switch (id) {
@@ -638,7 +660,8 @@ export class ClienteComponent implements OnInit {
         this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
         break;
       case 5:
-        this.listar();
+        this.establecerFormularioFiltro();
+        // this.listar();
         break;
       default:
         break;
@@ -688,6 +711,9 @@ export class ClienteComponent implements OnInit {
       // case 4:
       //   this.eliminar();
       //   break;
+      case 5:
+        this.listarPorFiltros();
+        break;
       default:
         break;
     }
@@ -699,21 +725,6 @@ export class ClienteComponent implements OnInit {
         this.formulario.get('id').setValue(res.json());
       },
       err => {
-      }
-    );
-  }
-  //Obtiene el listado de registros
-  private listar() {
-    this.loaderService.show();
-    this.servicio.listar().subscribe(
-      res => {
-        this.listaCompleta = new MatTableDataSource(res.json());
-        this.listaCompleta.sort = this.sort;
-        this.listaCompleta.paginator = this.paginator;
-        this.loaderService.hide();
-      },
-      err => {
-        this.loaderService.hide();
       }
     );
   }
@@ -766,6 +777,78 @@ export class ClienteComponent implements OnInit {
       }
     );
   }
+  //Lista los registros por el formularioFiltro
+  private listarPorFiltros() {
+    // this.loaderService.show();
+    let esSeguroPropioFiltro = this.formularioFiltro.get('esSeguroPropio').value;
+    let condicionVentaFiltro = this.formularioFiltro.get('condicionVenta').value;
+    console.log(esSeguroPropioFiltro);
+    esSeguroPropioFiltro == 0 ? this.formularioFiltro.get('esSeguroPropio').setValue(null) : esSeguroPropioFiltro ?
+      this.formularioFiltro.get('esSeguroPropio').setValue(1) : this.formularioFiltro.get('esSeguroPropio').setValue(0);
+    condicionVentaFiltro == 0 ? this.formularioFiltro.get('condicionVenta').setValue(null) : '';
+    this.opcionLocalidadFiltro.value == 0 ? this.formularioFiltro.get('localidad').setValue(null) : '';
+    console.log(this.formularioFiltro.value);
+    this.servicio.listarPorFiltros(this.formularioFiltro.value).subscribe(
+      res => {
+        console.log(res.json());
+      },
+      err => {
+        console.log(err.json());
+      }
+    )
+  }
+  //Carga la tabla con los registros
+  // public listarPorFiltros() {
+  //   this.loaderService.show();
+  //   this.listaCompleta = new MatTableDataSource([]);
+  //   this.listaCompleta.paginator = this.paginator;
+  //   let alias = this.formularioFiltro.get('alias').value;
+  //   alias != undefined || alias != null ? alias = alias.alias : alias = "";
+  //   //Genero el objeto
+  //   let obj = {
+  //     idEmpresa: this.appService.getEmpresa().id,
+  //     idSucursal: this.appService.getUsuario().sucursal.id,
+  //     fechaDesde: this.formularioFiltro.get('fechaEmisionDesde').value,
+  //     fechaHasta: this.formularioFiltro.get('fechaEmisionHasta').value,
+  //     adelanto: this.formularioFiltro.get('adelanto').value,
+  //     alias: alias,
+  //     estado: this.formularioFiltro.get('estado').value
+  //   }
+  //   //Consulta por filtro
+  //   this.servicio.listarPorFiltros(obj).subscribe(
+  //     res => {
+  //       if(res.json().length > 0){
+  //         this.listaCompleta = new MatTableDataSource(res.json());
+  //         this.listaCompleta.sort = this.sort;
+  //       }else{
+  //         this.listaCompleta = new MatTableDataSource([]);
+  //         this.toastr.warning("Sin registros para mostrar.");
+  //       }
+  //       this.listaCompleta.paginator = this.paginator;
+  //       this.loaderService.hide();
+  //     },
+  //     err => {
+  //       let error = err.json();
+  //       this.toastr.error(error.message);
+  //       this.loaderService.hide()
+  //     }
+  //   )
+  // }
+  //Obtiene el listado de registros
+  // private listar() {
+  //   this.loaderService.show();
+  //   this.servicio.listar().subscribe(
+  //     res => {
+  //       this.listaCompleta = new MatTableDataSource(res.json());
+  //       this.listaCompleta.sort = this.sort;
+  //       this.listaCompleta.paginator = this.paginator;
+  //       this.loaderService.hide();
+  //     },
+  //     err => {
+  //       this.loaderService.hide();
+  //     }
+  //   );
+  // }
   //Elimina un registro
   // private eliminar() {
   //   const dialogRef = this.dialog.open(ConfirmarDialogoComponent, {
@@ -813,6 +896,14 @@ export class ClienteComponent implements OnInit {
     this.establecerZona();
     this.establecerRubro();
     this.establecerValoresPorDefecto();
+  }
+  //Reestablece e inicializa el formulario filtro
+  private establecerFormularioFiltro() {
+    this.formularioFiltro.reset();
+    this.opcionLocalidadFiltro.setValue(0);
+    this.formularioFiltro.get('cobrador').setValue(0);
+    this.formularioFiltro.get('condicionVenta').setValue(0);
+    this.formularioFiltro.get('esSeguroPropio').setValue(0);
   }
   //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
   private lanzarError(err) {
@@ -1604,7 +1695,7 @@ export class VtoPagosDialogo implements OnInit {
     this.formulario.enable();
     this.formulario.reset();
     //Deshabilita el formulario si estamos en la pestania consultar
-    if(this.data.indice == 2) {
+    if (this.data.indice == 2) {
       this.formulario.disable();
     }
     //Establece la empresa

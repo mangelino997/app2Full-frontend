@@ -181,8 +181,6 @@ export class VehiculoComponent implements OnInit {
     this.listarMarcasVehiculos();
     //Obtiene la lista de empresas
     this.listarEmpresas();
-    //Obtiene la lista de Compania de Seguro
-    this.listarCompaniasSeguroPorEmpresa();
   }
   //Obtiene la lista de tipos de vehiculos
   private listarTiposVehiculos() {
@@ -257,15 +255,17 @@ export class VehiculoComponent implements OnInit {
   //Obtiene la lista de compania de seguros poliza por empresa
   public listarCompaniasSeguroPorEmpresa(): void {
     this.loaderService.show();
-    this.formulario.get('companiaSeguroPoliza').reset();
     this.companiaSeguro.reset();
     this.companiasSeguros = [];
     this.companiasSegurosPolizas = [];
-    let empresa = this.appService.getEmpresa();
-    this.companiaSeguroService.listarPorEmpresa(empresa.id).subscribe(res => {
-      this.loaderService.hide();
-      this.companiasSeguros = res.json();
-    })
+    this.formulario.get('companiaSeguroPoliza').reset();
+    if (this.formulario.value.empresa.id) {
+      this.companiaSeguroService.listarPorEmpresa(this.formulario.value.empresa.id).subscribe(res => {
+        this.companiasSeguros = res.json();
+        this.companiasSeguros.length == 0? this.toastr.warning("El Titular no tiene Compañía de Seguro asigandas.") : '';
+      })
+    }
+    this.loaderService.hide();
   }
   //Obtiene la lista de polizas por compania de seguro
   public listarPolizas(): void {
@@ -459,11 +459,11 @@ export class VehiculoComponent implements OnInit {
           res => {
             this.loaderService.hide();
             this.configuracionesVehiculos = res.json()
-            if(this.configuracionesVehiculos.length == 0){
+            if (this.configuracionesVehiculos.length == 0) {
               this.configuracion.reset();
               this.formulario.get('configuracionVehiculo').reset();
               this.toastr.error("Sin registros en Lista de Configuraciones para el Tipo y Marca de Vehículo.");
-            }else{
+            } else {
               this.formulario.get('configuracionVehiculo').enable();
             }
           }, err => { this.loaderService.hide(); }
@@ -567,9 +567,9 @@ export class VehiculoComponent implements OnInit {
     );
   }
   //Verifica que el año de fabricación tenga como minimo 4 caracteres
-  public verificarAnioFabricacion(){
-    this.formulario.value.anioFabricacion.length != 4? 
-    [this.toastr.error("El año de fabricación debe ser de 4 carácteres."), this.formulario.get('anioFabricacion').reset() ] : '';
+  public verificarAnioFabricacion() {
+    this.formulario.value.anioFabricacion.length != 4 ?
+      [this.toastr.error("El año de fabricación debe ser de 4 carácteres."), this.formulario.get('anioFabricacion').reset()] : '';
   }
   //Verifica si se selecciono un elemento del autocompletado
   public verificarSeleccion(valor): void {

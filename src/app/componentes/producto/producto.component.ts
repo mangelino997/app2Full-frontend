@@ -170,7 +170,7 @@ export class ProductoComponent implements OnInit {
   //Vacia la lista de resultados de autocompletados
   public vaciarListas() {
     this.resultados = [];
-    this.listaCompleta = new MatTableDataSource([]);
+    // this.listaCompleta = new MatTableDataSource([]);
   }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
@@ -347,7 +347,7 @@ export class ProductoComponent implements OnInit {
   private reestablecerFormulario(id) {
     this.formulario.reset();
     this.autocompletado.reset();
-    this.formularioFiltro.reset();
+    // this.formularioFiltro.reset();
     this.formulario.get('id').setValue(id);
     this.vaciarListas();
   }
