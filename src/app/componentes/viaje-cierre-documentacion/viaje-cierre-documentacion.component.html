@@ -9,10 +9,126 @@
         </div>
     </div>
     <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado < 5">
-        <div class="col-md-8">
+        <div class="col-md-12">
             <h5 class="text-center">{{pestaniaActual}} Cierre de Viaje</h5>
+            <form [formGroup]="formularioViaje" class="contenedor">
+                <div class="row">
+                    <div class="col-md-2">
+                        <div class="form-group has-float-label">
+                            <label for="idCodigo" class="tamanio-label-titulo">N° Guía de Servicio</label>
+                            <input id="idCodigo" type="number" formControlName="id" class="form-control form-control-sm number-right">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group has-float-label">
+                            <label for="idFletero" class="tamanio-label-titulo">Fletero</label>
+                            <input id="idFletero" type="text" formControlName="proveedor"
+                                class="form-control form-control-sm" readonly>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group has-float-label">
+                            <label for="idVehiculo" class="tamanio-label-titulo">Vehículo</label>
+                            <input id="idVehiculo" type="text" formControlName="vehiculo"
+                                class="form-control form-control-sm" readonly>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group has-float-label">
+                            <label for="idChofer" class="tamanio-label-titulo">Chofer</label>
+                            <input id="idChofer" type="text" formControlName="personal"
+                                class="form-control form-control-sm" readonly>
+                        </div>
+                    </div>
+                </div>
+            </form>
             <form [formGroup]="formulario" class="contenedor">
-                
+                <div class="row">
+                    <div class="col-md-2">
+                        <div class="form-group has-float-label">
+                            <label for="idFecha" class="tamanio-label-titulo">Fecha Cierre</label>
+                            <input id="idFecha" type="date" formControlName="fecha" class="form-control form-control-sm">
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group has-float-label">
+                            <label for="idKmInicio" class="tamanio-label-titulo">km al Inicio</label>
+                            <input id="idKmInicio" type="text" formControlName="kmInicio" class="form-control form-control-sm" readonly>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <button mat-raised-button>Ajuste</button>
+                    </div>
+                    <div class="col-md-2"></div>
+                    <div class="col-md-2"></div>
+                    <div class="col-md-2">
+                        <button mat-raised-button>Consultar Viajes Cerrados</button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-2">
+                        <div class="form-group has-float-label">
+                            <label for="idHora" class="tamanio-label-titulo">Hora</label>
+                            <input id="idHora" type="text" [formControl]="hora" class="form-control form-control-sm" readonly>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group has-float-label">
+                            <label for="idKmFinal" class="tamanio-label-titulo">km al Final</label>
+                            <input id="idKmFinal" type="text" formControlName="kmFinal" class="form-control form-control-sm">
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group has-float-label">
+                            <label for="idKmRecorridos" class="tamanio-label-titulo">km Recorridos</label>
+                            <input id="idKmRecorridos" type="text" [formControl]="kmRecorridos" class="form-control form-control-sm" readonly>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group has-float-label">
+                            <label for="idKmTramos" class="tamanio-label-titulo">km por Tramos</label>
+                            <input id="idKmTramos" type="text" [formControl]="kmTramos" class="form-control form-control-sm" readonly>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group has-float-label">
+                            <label for="idDiferenciaKm" class="tamanio-label-titulo">Diferencia km</label>
+                            <input id="idDiferenciaKm" type="text" [formControl]="diferenciaKm" class="form-control form-control-sm" readonly>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <button mat-raised-button>km al 100%</button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-2"></div>
+                    <div class="col-md-2"></div>
+                    <div class="col-md-2">
+                        <div class="form-group has-float-label">
+                            <label for="idLitrosRendidos" class="tamanio-label-titulo">Litros Rendidos</label>
+                            <input id="idLitrosRendidos" type="text" formControlName="litrosRendidos" class="form-control form-control-sm">
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group has-float-label">
+                            <label for="idLitrosGS" class="tamanio-label-titulo">Litros Guía de Servicio</label>
+                            <input id="idLitrosGS" type="text" [formControl]="litrosGS" class="form-control form-control-sm">
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group has-float-label">
+                            <label for="idDiferenciaLts" class="tamanio-label-titulo">Diferencia lts.</label>
+                            <input id="idDiferenciaLts" type="text" [formControl]="diferenciaLts" class="form-control form-control-sm">
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <button mat-raised-button>Peajes</button>
+                    </div>
+                </div>
+                <div class="row justify-content-center">
+                    <button mat-raised-button>Vista Previa</button>
+                    <button class="margin-left-3" mat-raised-button color="primary">Confirmar</button>
+                </div>
             </form>
         </div>
     </div>

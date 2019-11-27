@@ -76,7 +76,7 @@
             <div class="row justify-content-end">
               <input style="display: none;" type="file" (change)="readURL($event)" #fileInput />
               <button class="btn-height" mat-raised-button color="primary" (click)="fileInput.click()"
-                [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4" matTooltip="Adjuntar PDF">
+                [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4" matTooltip="Adjuntar Póliza">
                 <i class="material-icons" *ngIf="!formulario.get('pdf.nombre').value">cloud_upload</i>
                 <i class="material-icons" *ngIf="formulario.get('pdf.nombre').value"
                   style="color: lightgreen">cloud_done</i>

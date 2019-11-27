@@ -27,6 +27,8 @@ export class MensajeExcepcion {
 
     public static NO_VALORIZADO = "No se pudo valorizar el registro";
 
+    public static SELECCIONAR_PESTANIA = "Falta seleccionar, como mínimo, una pestaña";
+
 
     /*
     * FIN ERRORES GENERALES

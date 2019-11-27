@@ -1,11 +1,12 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormGroup, FormControl } from '@angular/forms';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { MatTableDataSource, MatSort, MatPaginator } from '@angular/material';
 import { Subscription } from 'rxjs';
 import { ViajeCierreDocumentacion } from 'src/app/modelos/viaje-cierre-documentacion';
 import { AppService } from 'src/app/servicios/app.service';
 import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
 import { ViajeCierreDocumentacionService } from 'src/app/servicios/viaje-cierre-documentacion.service';
+import { Viaje } from 'src/app/modelos/viaje';
 
 @Component({
   selector: 'app-viaje-cierre-documentacion',
@@ -29,6 +30,20 @@ export class ViajeCierreDocumentacionComponent implements OnInit {
   public pestanias: Array<any> = [];
   //Define el formulario 
   public formulario: FormGroup;
+  //Define el formulario viaje
+  public formularioViaje: FormGroup;
+  //Define la hora
+  public hora:FormControl = new FormControl('', Validators.required);
+  //Define km recorridos
+  public kmRecorridos:FormControl = new FormControl('', Validators.required);
+  //Define km tramos
+  public kmTramos:FormControl = new FormControl('', Validators.required);
+  //Define diferencia km
+  public diferenciaKm:FormControl = new FormControl('', Validators.required);
+  //Define litros gs
+  public litrosGS:FormControl = new FormControl('', Validators.required);
+  //Define diferencia lts
+  public diferenciaLts:FormControl = new FormControl('', Validators.required);
   //Define la lista completa de registros
   public listaCompleta = new MatTableDataSource([]);
   //Define el form control para las busquedas
@@ -45,7 +60,7 @@ export class ViajeCierreDocumentacionComponent implements OnInit {
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Constructor de la clase
   constructor(private viajeCierreDocumentacion: ViajeCierreDocumentacion, private servicio: ViajeCierreDocumentacionService, private appService: AppService, 
-    private subopcionPestaniaService: SubopcionPestaniaService) { 
+    private subopcionPestaniaService: SubopcionPestaniaService, private viaje: Viaje) { 
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
       .subscribe(
@@ -59,6 +74,8 @@ export class ViajeCierreDocumentacionComponent implements OnInit {
   ngOnInit() {
     //Establece el formulario
     this.formulario = this.viajeCierreDocumentacion.formulario;
+    //Establece el formulario de viaje
+    this.formularioViaje = this.viaje.formulario;
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar');
   }
@@ -109,15 +126,13 @@ export class ViajeCierreDocumentacionComponent implements OnInit {
   //Habilita o deshabilita los campos dependiendo de la pestaña
   private establecerEstadoCampos(estado) {
     if (estado) {
-      this.formulario.get('viaje').enable();
-      this.formulario.get('fechaRegistracion').enable();
+      this.formulario.get('fecha').enable();
       this.formulario.get('kmInicio').enable();
       this.formulario.get('kmFinal').enable();
       this.formulario.get('kmAjuste').enable();
       this.formulario.get('litrosRendidos').enable();
     } else {
-      this.formulario.get('viaje').disable();
-      this.formulario.get('fechaRegistracion').disable();
+      this.formulario.get('fecha').disable();
       this.formulario.get('kmInicio').disable();
       this.formulario.get('kmFinal').disable();
       this.formulario.get('kmAjuste').disable();

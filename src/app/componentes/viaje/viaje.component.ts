@@ -353,7 +353,7 @@ export class ViajeComponent implements OnInit {
     this.formularioViaje.get('esRemolquePropio').setValue(true);
     this.formularioViaje.get('sucursal').setValue(sucursal);
     this.formularioViaje.get('empresaEmision').patchValue(empresa);
-    this.formularioViaje.get('afipCondicionIva').setValue(empresa.afipCondicionIva);
+    this.formularioViaje.get('afipCondicionIvaProveedor').setValue(empresa.afipCondicionIva);
     this.formularioViaje.get('usuarioAlta').setValue(usuario);
     //Establece la fecha actual
     this.fechaServicio.obtenerFecha().subscribe(res => {

@@ -126,7 +126,7 @@
               <div class="col-md-12">
                 <input style="display: none;" type="file" (change)="readURL($event, 'pdfTitulo')" #fileInputTitulo />
                 <button id="btn-adjuntar" mat-raised-button color="primary" (click)="fileInputTitulo.click()"
-                  [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4" matTooltip="Adjuntar PDF">
+                  [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4" matTooltip="Adjuntar Título">
                   <i class="material-icons" *ngIf="!formulario.get('pdfTitulo.nombre').value">cloud_upload</i>
                   <i class="material-icons" *ngIf="formulario.get('pdfTitulo.nombre').value"
                     style="color: lightgreen">cloud_done</i>
@@ -149,7 +149,7 @@
                 <input style="display: none;" type="file" (change)="readURL($event, 'pdfCedulaIdent')"
                   #fileInputCedulaIdent />
                 <button id="btn-adjuntar" mat-raised-button color="primary" (click)="fileInputCedulaIdent.click()"
-                  [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4" matTooltip="Adjuntar PDF">
+                  [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4" matTooltip="Adjuntar Cédula Identificación">
                   <i class="material-icons" *ngIf="!formulario.get('pdfCedulaIdent.nombre').value">cloud_upload</i>
                   <i class="material-icons" *ngIf="formulario.get('pdfCedulaIdent.nombre').value"
                     style="color: lightgreen">cloud_done</i>
@@ -268,7 +268,7 @@
               <div class="col-md-12">
                 <input style="display: none;" type="file" (change)="readURL($event, 'pdfVtoRuta')" #fileInputVtoRuta />
                 <button id="btn-adjuntar" mat-raised-button color="primary" (click)="fileInputVtoRuta.click()"
-                  [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4" matTooltip="Adjuntar PDF">
+                  [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4" matTooltip="Adjuntar Vto. Ruta">
                   <i class="material-icons" *ngIf="!formulario.get('pdfVtoRuta.nombre').value">cloud_upload</i>
                   <i class="material-icons" *ngIf="formulario.get('pdfVtoRuta.nombre').value" style="color: lightgreen">
                     cloud_done
@@ -301,7 +301,7 @@
                 <input style="display: none;" type="file" (change)="readURL($event, 'pdfVtoInspTecnica')"
                   #fileInputVtoInspTecnica />
                 <button id="btn-adjuntar" mat-raised-button color="primary" (click)="fileInputVtoInspTecnica.click()"
-                  [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4" matTooltip="Adjuntar PDF">
+                  [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4" matTooltip="Adjuntar Vto. Inspección Técnica">
                   <i class="material-icons" *ngIf="!formulario.get('pdfVtoInspTecnica.nombre').value">cloud_upload</i>
                   <i class="material-icons" *ngIf="formulario.get('pdfVtoInspTecnica.nombre').value"
                     style="color: lightgreen">cloud_done</i>
@@ -334,7 +334,7 @@
                 <input style="display: none;" type="file" (change)="readURL($event, 'pdfVtoSenasa')"
                   #fileInputVtoSenasa />
                 <button id="btn-adjuntar" mat-raised-button color="primary" (click)="fileInputVtoSenasa.click()"
-                  [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4" matTooltip="Adjuntar PDF">
+                  [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4" matTooltip="Adjuntar Vto. Senasa">
                   <i class="material-icons" *ngIf="!formulario.get('pdfVtoSenasa.nombre').value">cloud_upload</i>
                   <i class="material-icons" *ngIf="formulario.get('pdfVtoSenasa.nombre').value"
                     style="color: lightgreen">cloud_done</i>
@@ -367,7 +367,7 @@
                 <input style="display: none;" type="file" (change)="readURL($event, 'pdfHabBromat')"
                   #fileInputHabBromat />
                 <button id="btn-adjuntar" mat-raised-button color="primary" (click)="fileInputHabBromat.click()"
-                  [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4" matTooltip="Adjuntar PDF">
+                  [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4" matTooltip="Adjuntar Vto. Hab. Bromatológica">
                   <i class="material-icons" *ngIf="!formulario.get('pdfHabBromat.nombre').value">cloud_upload</i>
                   <i class="material-icons" *ngIf="formulario.get('pdfHabBromat.nombre').value"
                     style="color: lightgreen">cloud_done</i>

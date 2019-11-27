@@ -9,7 +9,8 @@ export class ViajeCierreDocumentacion {
         this.formulario = new FormGroup({
             id: new FormControl(),
             version: new FormControl(),
-            fechaRegistracion: new FormControl('', Validators.required),
+            fechaRegistracion: new FormControl(),
+            fecha: new FormControl('', Validators.required),
             kmInicio: new FormControl('', Validators.required),
             kmFinal: new FormControl('', Validators.required),
             kmAjuste: new FormControl(),
