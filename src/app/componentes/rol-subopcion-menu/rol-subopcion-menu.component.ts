@@ -210,6 +210,13 @@ export class RolSubopcionMenuComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe(result => { });
   }
+  //Determina si abre el dialogo pestanias al hacer check en una subopcion
+  public abrirDialogoPestania(subopcion): void {
+    let check = this.formulario.get('mostrar').value;
+    if(check) {
+      this.verPestanias(subopcion);
+    }
+  }
   //Abre el dialogo vista previa para visualizar el menu del rol
   public verPestaniasDialogo(subopcion, pestanias): void {
     const dialogRef = this.dialog.open(PestaniaDialogo, {
@@ -225,11 +232,14 @@ export class RolSubopcionMenuComponent implements OnInit {
   }
   //Visualiza las pestanias de una subopcion para actualizar estado
   public verPestanias(subopcion): void {
-    let rol = this.formulario.get('rol').value;
-    this.subopcionPestaniaServicio.obtenerPestaniasPorRolYSubopcion(rol.id, subopcion.id).subscribe(res => {
-      this.pestanias = res.json();
-      this.verPestaniasDialogo(subopcion, this.pestanias);
-    })
+    let check = this.formulario.get('mostrar').value;
+    if(check) {
+      let rol = this.formulario.get('rol').value;
+      this.subopcionPestaniaServicio.obtenerPestaniasPorRolYSubopcion(rol.id, subopcion.id).subscribe(res => {
+        this.pestanias = res.json();
+        this.verPestaniasDialogo(subopcion, this.pestanias);
+      });
+    }
   }
   //Funcion para comparar y mostrar elemento de campo select
   public compareFn = this.compararFn.bind(this);

@@ -79,7 +79,7 @@
                         <span>{{a.value.nombre}}</span>
                       </td>
                       <td align="center">
-                        <mat-checkbox formControlName="mostrar" color="primary"></mat-checkbox>
+                        <mat-checkbox formControlName="mostrar" color="primary" (click)="verPestanias(a.value)"></mat-checkbox>
                       </td>
                       <td align="center">
                         <span class="cursor-color" (click)="verPestanias(a.value)">ver</span>
