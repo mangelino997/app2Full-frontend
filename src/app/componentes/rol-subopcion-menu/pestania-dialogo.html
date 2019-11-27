@@ -27,7 +27,7 @@
                 </table>
                 <div class="row justify-content-center" *ngIf="!show">
                     <button mat-raised-button color="primary" (click)="actualizar()">Actualizar</button>
-                    <button mat-raised-button color="accent" (click)="onNoClick()">Cerrar</button>
+                    <button mat-raised-button color="accent" (click)="cerrar(false)">Cerrar</button>
                 </div>
                 <div class="row" *ngIf="show">
                     <div class="col text-center">

@@ -12,6 +12,7 @@ import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.s
 import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
+import { MensajeExcepcion } from 'src/app/modelos/mensaje-excepcion';
 
 @Component({
   selector: 'app-rol-subopcion-menu',
@@ -210,13 +211,6 @@ export class RolSubopcionMenuComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe(result => { });
   }
-  //Determina si abre el dialogo pestanias al hacer check en una subopcion
-  public abrirDialogoPestania(subopcion): void {
-    let check = this.formulario.get('mostrar').value;
-    if(check) {
-      this.verPestanias(subopcion);
-    }
-  }
   //Abre el dialogo vista previa para visualizar el menu del rol
   public verPestaniasDialogo(subopcion, pestanias): void {
     const dialogRef = this.dialog.open(PestaniaDialogo, {
@@ -224,18 +218,22 @@ export class RolSubopcionMenuComponent implements OnInit {
       maxWidth: '95%',
       data: {
         rol: this.formulario.get('rol'),
-        subopcion: subopcion,
+        subopcion: subopcion.value,
         pestanias: pestanias
       }
     });
-    dialogRef.afterClosed().subscribe(result => { });
+    dialogRef.afterClosed().subscribe(resultado => { 
+      if(!resultado) {
+        subopcion.get('mostrar').setValue(false);
+      }
+    });
   }
   //Visualiza las pestanias de una subopcion para actualizar estado
-  public verPestanias(subopcion): void {
-    let check = this.formulario.get('mostrar').value;
+  public verPestanias(subopcion, opcion): void {
+    let check = opcion ? !subopcion.value.mostrar : subopcion.value.mostrar;
     if(check) {
       let rol = this.formulario.get('rol').value;
-      this.subopcionPestaniaServicio.obtenerPestaniasPorRolYSubopcion(rol.id, subopcion.id).subscribe(res => {
+      this.subopcionPestaniaServicio.obtenerPestaniasPorRolYSubopcion(rol.id, subopcion.value.id).subscribe(res => {
         this.pestanias = res.json();
         this.verPestaniasDialogo(subopcion, this.pestanias);
       });
@@ -421,8 +419,8 @@ export class PestaniaDialogo {
       this.pestanias.push(this.crearPestanias(pestanias[i]));
     }
   }
-  onNoClick(): void {
-    this.dialogRef.close();
+  public cerrar(opcion): void {
+    this.dialogRef.close(opcion);
   }
   //Crea el array de pestanias
   private crearPestanias(elemento): FormGroup {
@@ -436,20 +434,33 @@ export class PestaniaDialogo {
   //Actualiza la lista de pestanias de la subopcion
   public actualizar(): void {
     this.loaderService.show();
-    this.servicio.actualizar(this.formulario.value).subscribe(
-      res => {
-        let respuesta = res.json();
-        if (respuesta.codigo == 200) {
-          this.toastr.success(respuesta.mensaje);
-          this.loaderService.hide();
-        }
-      },
-      err => {
-        let respuesta = err.json();
-        this.toastr.error(respuesta.mensaje);
-        this.loaderService.hide();
+    let pestanias = this.formulario.value.pestanias;
+    let opcion = true;
+    for(let i = 0 ; i < pestanias.length ; i++) {
+      if(pestanias[i].mostrar) {
+        this.servicio.actualizar(this.formulario.value).subscribe(
+          res => {
+            let respuesta = res.json();
+            if (respuesta.codigo == 200) {
+              this.toastr.success(respuesta.mensaje);
+              this.loaderService.hide();
+              this.cerrar(true);
+            }
+          },
+          err => {
+            let respuesta = err.json();
+            this.toastr.error(respuesta.mensaje);
+            this.loaderService.hide();
+          }
+        );
+        opcion = false;
+        break;
       }
-    )
+    }
+    if(opcion) {
+      this.loaderService.hide();
+      this.toastr.error(MensajeExcepcion.SELECCIONAR_PESTANIA);
+    }
   }
   //Establece control para lista pestania con checkbox
   get controlPestanias() {
