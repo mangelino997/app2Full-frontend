@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { FacturaDebitoCreditoRoutingModule } from './factura-debito-credito-routing.module';
 
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
-  MatSelectModule, MatProgressBarModule, MatButtonModule, MatDialogModule, MatDividerModule, MatIconModule } from '@angular/material';
+  MatSelectModule, MatProgressBarModule, MatButtonModule, MatDialogModule, MatDividerModule, MatIconModule, MatTooltipModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FacturaDebitoCreditoComponent, AgregarItemDialogo, DetallePercepcionesDialogo, DetalleVencimientosDialogo, DetalleCompraComprobantesDialogo } from 'src/app/componentes/factura-debito-credito/factura-debito-credito.component';
 import { TextMaskModule } from 'angular2-text-mask';
@@ -52,7 +52,8 @@ import { CompraComprobanteVencimiento } from 'src/app/modelos/compra-comprobante
     MatDialogModule,
     MatDividerModule,
     TextMaskModule,
-    MatIconModule
+    MatIconModule,
+    MatTooltipModule
     
   ],
   providers: [

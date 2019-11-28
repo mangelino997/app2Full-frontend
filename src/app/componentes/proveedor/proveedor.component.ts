@@ -11,7 +11,7 @@ import { CondicionCompraService } from '../../servicios/condicion-compra.service
 import { BancoService } from '../../servicios/banco.service';
 import { TipoCuentaBancariaService } from '../../servicios/tipo-cuenta-bancaria.service';
 import { AppService } from '../../servicios/app.service';
-import { FormGroup, FormControl } from '@angular/forms';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { Proveedor } from 'src/app/modelos/proveedor';
 import { LoaderService } from 'src/app/servicios/loader.service';
@@ -48,6 +48,8 @@ export class ProveedorComponent implements OnInit {
   public opciones: Array<any> = [];
   //Define un formulario para validaciones de campos
   public formulario: FormGroup;
+  //Define un formulario para realizar el filtro en pestaña Listar
+  public formularioFiltro: FormGroup;
   //Define la lista completa de registros
   public listaCompleta = new MatTableDataSource([]);
   //Define la lista de planes de cuentas
@@ -68,6 +70,8 @@ export class ProveedorComponent implements OnInit {
   public botonOpcionActivo: boolean = null;
   //Define el form control para las busquedas
   public autocompletado: FormControl = new FormControl();
+  //Define el campo opcionLocalidadFiltro como un formControl
+  public opcionLocalidadFiltro: FormControl = new FormControl();
   //Define la lista de resultados de busqueda
   public resultados: Array<any> = [];
   //Define la lista de resultados de busqueda de barrios
@@ -138,6 +142,12 @@ export class ProveedorComponent implements OnInit {
   ngOnInit() {
     //Define los campos para validaciones
     this.formulario = this.proveedorModelo.formulario;
+    //Define los campos para filtrar la tabla 
+    this.formularioFiltro = new FormGroup({
+      localidad: new FormControl(),
+      tipoProveedor: new FormControl('', Validators.required),
+      condicionCompra: new FormControl('', Validators.required)
+    });
     //Autocompletado Barrio - Buscar por nombre
     this.formulario.get('barrio').valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
@@ -389,7 +399,7 @@ export class ProveedorComponent implements OnInit {
         this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
         break;
       case 5:
-        this.listar();
+        this.establecerFormularioFiltro();
         break;
       default:
         break;
@@ -439,6 +449,9 @@ export class ProveedorComponent implements OnInit {
       case 4:
         this.eliminar();
         break;
+      case 5:
+        this.listarPorFiltros();
+        break;
       default:
         break;
     }
@@ -453,20 +466,32 @@ export class ProveedorComponent implements OnInit {
       }
     );
   }
-  //Obtiene el listado de registros
-  private listar() {
+  //Lista los registros por el formularioFiltro
+  private listarPorFiltros() {
     this.loaderService.show();
-    this.servicio.listar().subscribe(
+    let condicionCompra = this.formularioFiltro.get('condicionCompra').value;
+    let tipoProveedor = this.formularioFiltro.get('tipoProveedor').value;
+    let formularioConsulta = {
+      idLocalidad: this.opcionLocalidadFiltro.value == 0 ? 0 : this.formularioFiltro.value.localidad.id,
+      idTipoProveedor: tipoProveedor == 0 ? 0 : this.formularioFiltro.value.tipoProveedor.id,
+      idCondicionCompra: condicionCompra == 0 ? 0 : this.formularioFiltro.value.condicionCompra.id,
+    }
+    this.servicio.listarPorFiltros(formularioConsulta).subscribe(
       res => {
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
         this.listaCompleta.paginator = this.paginator;
+        if (this.listaCompleta.data.length == 0) {
+          this.toastr.warning("Sin registros para mostrar.");
+        }
         this.loaderService.hide();
       },
       err => {
-        this.loaderService.hide();
+        let error = err.json();
+        this.toastr.error(error.message);
+        this.loaderService.hide()
       }
-    );
+    )
   }
   //Agrega un registro
   private agregar() {
@@ -536,6 +561,13 @@ export class ProveedorComponent implements OnInit {
     this.vaciarListas();
     this.crearCuentasContables();
     this.establecerValoresPorDefecto();
+  }
+  //Reestablece e inicializa el formulario filtro
+  private establecerFormularioFiltro() {
+    this.formularioFiltro.reset();
+    this.opcionLocalidadFiltro.setValue(0);
+    this.formularioFiltro.get('tipoProveedor').setValue(0);
+    this.formularioFiltro.get('condicionCompra').setValue(0);
   }
   //Lanza error (error interno, duplicidad de datos, etc.)
   private lanzarError(err) {

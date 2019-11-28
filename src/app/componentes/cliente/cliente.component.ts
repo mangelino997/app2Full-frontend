@@ -779,76 +779,33 @@ export class ClienteComponent implements OnInit {
   }
   //Lista los registros por el formularioFiltro
   private listarPorFiltros() {
-    // this.loaderService.show();
-    let esSeguroPropioFiltro = this.formularioFiltro.get('esSeguroPropio').value;
-    let condicionVentaFiltro = this.formularioFiltro.get('condicionVenta').value;
-    console.log(esSeguroPropioFiltro);
-    esSeguroPropioFiltro == 0 ? this.formularioFiltro.get('esSeguroPropio').setValue(null) : esSeguroPropioFiltro ?
-      this.formularioFiltro.get('esSeguroPropio').setValue(1) : this.formularioFiltro.get('esSeguroPropio').setValue(0);
-    condicionVentaFiltro == 0 ? this.formularioFiltro.get('condicionVenta').setValue(null) : '';
-    this.opcionLocalidadFiltro.value == 0 ? this.formularioFiltro.get('localidad').setValue(null) : '';
-    console.log(this.formularioFiltro.value);
-    this.servicio.listarPorFiltros(this.formularioFiltro.value).subscribe(
+    this.loaderService.show();
+    let cobrador = this.formularioFiltro.get('cobrador').value;
+    let condicionVenta = this.formularioFiltro.get('condicionVenta').value;
+    let esSeguroPropio = this.formularioFiltro.get('esSeguroPropio').value;
+    let formularioConsulta = {
+      idLocalidad: this.opcionLocalidadFiltro.value == 0 ? 0 : this.formularioFiltro.value.localidad.id,
+      idCobrador: cobrador == 0 ? 0 : this.formularioFiltro.value.cobrador.id,
+      idCondicionVenta: condicionVenta == 0 ? 0 : this.formularioFiltro.value.condicionVenta.id,
+      esSeguroPropio: esSeguroPropio == 2 ? 2 : esSeguroPropio == true ? 1 : 0,
+    }
+    this.servicio.listarPorFiltros(formularioConsulta).subscribe(
       res => {
-        console.log(res.json());
+        this.listaCompleta = new MatTableDataSource(res.json());
+        this.listaCompleta.sort = this.sort;
+        this.listaCompleta.paginator = this.paginator;
+        if (this.listaCompleta.data.length == 0) {
+          this.toastr.warning("Sin registros para mostrar.");
+        }
+        this.loaderService.hide();
       },
       err => {
-        console.log(err.json());
+        let error = err.json();
+        this.toastr.error(error.message);
+        this.loaderService.hide()
       }
     )
   }
-  //Carga la tabla con los registros
-  // public listarPorFiltros() {
-  //   this.loaderService.show();
-  //   this.listaCompleta = new MatTableDataSource([]);
-  //   this.listaCompleta.paginator = this.paginator;
-  //   let alias = this.formularioFiltro.get('alias').value;
-  //   alias != undefined || alias != null ? alias = alias.alias : alias = "";
-  //   //Genero el objeto
-  //   let obj = {
-  //     idEmpresa: this.appService.getEmpresa().id,
-  //     idSucursal: this.appService.getUsuario().sucursal.id,
-  //     fechaDesde: this.formularioFiltro.get('fechaEmisionDesde').value,
-  //     fechaHasta: this.formularioFiltro.get('fechaEmisionHasta').value,
-  //     adelanto: this.formularioFiltro.get('adelanto').value,
-  //     alias: alias,
-  //     estado: this.formularioFiltro.get('estado').value
-  //   }
-  //   //Consulta por filtro
-  //   this.servicio.listarPorFiltros(obj).subscribe(
-  //     res => {
-  //       if(res.json().length > 0){
-  //         this.listaCompleta = new MatTableDataSource(res.json());
-  //         this.listaCompleta.sort = this.sort;
-  //       }else{
-  //         this.listaCompleta = new MatTableDataSource([]);
-  //         this.toastr.warning("Sin registros para mostrar.");
-  //       }
-  //       this.listaCompleta.paginator = this.paginator;
-  //       this.loaderService.hide();
-  //     },
-  //     err => {
-  //       let error = err.json();
-  //       this.toastr.error(error.message);
-  //       this.loaderService.hide()
-  //     }
-  //   )
-  // }
-  //Obtiene el listado de registros
-  // private listar() {
-  //   this.loaderService.show();
-  //   this.servicio.listar().subscribe(
-  //     res => {
-  //       this.listaCompleta = new MatTableDataSource(res.json());
-  //       this.listaCompleta.sort = this.sort;
-  //       this.listaCompleta.paginator = this.paginator;
-  //       this.loaderService.hide();
-  //     },
-  //     err => {
-  //       this.loaderService.hide();
-  //     }
-  //   );
-  // }
   //Elimina un registro
   // private eliminar() {
   //   const dialogRef = this.dialog.open(ConfirmarDialogoComponent, {
@@ -903,7 +860,7 @@ export class ClienteComponent implements OnInit {
     this.opcionLocalidadFiltro.setValue(0);
     this.formularioFiltro.get('cobrador').setValue(0);
     this.formularioFiltro.get('condicionVenta').setValue(0);
-    this.formularioFiltro.get('esSeguroPropio').setValue(0);
+    this.formularioFiltro.get('esSeguroPropio').setValue(true);
   }
   //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
   private lanzarError(err) {

@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { CaeAnticipadoRoutingModule } from './cae-anticipado-routing.module';
 
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
-  MatSelectModule, MatProgressBarModule } from '@angular/material';
+  MatSelectModule, MatProgressBarModule, MatTooltipModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CaeAnticipadoComponent } from 'src/app/componentes/cae-anticipado/cae-anticipado.component';
 import { TextMaskModule } from 'angular2-text-mask';
@@ -25,7 +25,8 @@ import { TextMaskModule } from 'angular2-text-mask';
     MatSortModule,
     MatSelectModule,
     MatProgressBarModule,
-    TextMaskModule
+    TextMaskModule,
+    MatTooltipModule
   ]
 })
 export class CaeAnticipadoModule { }

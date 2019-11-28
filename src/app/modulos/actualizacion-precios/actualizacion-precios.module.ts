@@ -5,7 +5,7 @@ import { ActualizacionPreciosRoutingModule } from './actualizacion-precios-routi
 import { ActualizacionPreciosComponent, ListaPreciosDialogo, ConfirmarDialogo } from 'src/app/componentes/actualizacion-precios/actualizacion-precios.component';
 
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
-  MatSelectModule, MatProgressBarModule, MatCheckboxModule, MatButtonModule, MatDialogModule } from '@angular/material';
+  MatSelectModule, MatProgressBarModule, MatCheckboxModule, MatButtonModule, MatDialogModule, MatTooltipModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TextMaskModule } from 'angular2-text-mask';
 import { ActualizacionPrecios } from 'src/app/modelos/actualizacionPrecios';
@@ -37,7 +37,8 @@ import { OrdenVentaService } from 'src/app/servicios/orden-venta.service';
     MatCheckboxModule,
     MatButtonModule,
     MatDialogModule,
-    TextMaskModule
+    TextMaskModule,
+    MatTooltipModule
   ],
   providers: [
     ActualizacionPrecios,

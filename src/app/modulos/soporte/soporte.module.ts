@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { SoporteRoutingModule } from './soporte-routing.module';
 
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
-  MatSelectModule, MatProgressBarModule, MatButton, MatButtonModule, MatDialogModule, MatIconModule } from '@angular/material';
+  MatSelectModule, MatProgressBarModule, MatButton, MatButtonModule, MatDialogModule, MatIconModule, MatTooltipModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SoporteComponent } from 'src/app/componentes/soporte/soporte.component';
 import { SoporteService } from 'src/app/servicios/soporte.service';
@@ -31,6 +31,7 @@ import { BugImagen } from 'src/app/modelos/bugImagen';
     MatAutocompleteModule,
     MatTableModule,
     MatPaginatorModule,
+    MatTooltipModule,
     MatSortModule,
     MatSelectModule,
     MatProgressBarModule,

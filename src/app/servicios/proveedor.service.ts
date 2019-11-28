@@ -58,6 +58,10 @@ export class ProveedorService {
       })
     })
   }
+  //Obtiene una lista de registros por filtros
+  public listarPorFiltros(elemento) {
+    return this.http.post(this.url + '/listarPorFiltros', elemento, this.options);
+  }
   //Agrega un registro
   public agregar(elemento) {
     return this.http.post(this.url, elemento, this.options);

@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { ChoferProveedorRoutingModule } from './chofer-proveedor-routing.module';
 
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
-  MatSelectModule, MatProgressBarModule, MatButtonModule, MatIconModule } from '@angular/material';
+  MatSelectModule, MatProgressBarModule, MatButtonModule, MatIconModule, MatTooltipModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ChoferProveedorComponent } from 'src/app/componentes/chofer-proveedor/chofer-proveedor.component';
 import { ChoferProveedorService } from 'src/app/servicios/chofer-proveedor.service';
@@ -32,7 +32,8 @@ import { TipoDocumentoService } from 'src/app/servicios/tipo-documento.service';
     MatSelectModule,
     MatProgressBarModule,
     MatButtonModule,
-    MatIconModule
+    MatIconModule,
+    MatTooltipModule
   ],
   providers: [
     ChoferProveedorService,

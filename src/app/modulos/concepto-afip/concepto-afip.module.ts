@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { ConceptoAfipRoutingModule } from './concepto-afip-routing.module';
 
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
-  MatSelectModule, MatProgressBarModule, MatButtonModule } from '@angular/material';
+  MatSelectModule, MatProgressBarModule, MatButtonModule, MatTooltipModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ConceptoAfipComponent } from 'src/app/componentes/concepto-afip/concepto-afip.component';
 import { ConceptoAfip } from 'src/app/modelos/concepto-afip';
@@ -25,7 +25,8 @@ import { ConceptoAfip } from 'src/app/modelos/concepto-afip';
     MatSortModule,
     MatSelectModule,
     MatProgressBarModule,
-    MatButtonModule
+    MatButtonModule,
+    MatTooltipModule
   ],
   providers: [
     ConceptoAfip

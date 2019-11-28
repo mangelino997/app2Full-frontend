@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { AfipCondicionIvaRoutingModule } from './afip-condicion-iva-routing.module';
 
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
-  MatSelectModule, MatProgressBarModule, MatButtonModule, MatIconModule } from '@angular/material';
+  MatSelectModule, MatProgressBarModule, MatButtonModule, MatIconModule, MatTooltipModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AfipCondicionIvaComponent } from 'src/app/componentes/afip-condicion-iva/afip-condicion-iva.component';
 import { AfipCondicionIvaService } from 'src/app/servicios/afip-condicion-iva.service';
@@ -28,7 +28,8 @@ import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.s
     MatSelectModule,
     MatProgressBarModule,
     MatButtonModule,
-    MatIconModule
+    MatIconModule,
+    MatTooltipModule
   ],
   providers: [
     AfipCondicionIvaService,

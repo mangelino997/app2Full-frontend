@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { BugImagenDialogoRoutingModule } from './bug-imagen-dialogo-routing.module';
 
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
-  MatSelectModule, MatProgressBarModule, MatIconModule, MatButtonModule, MatDialogModule } from '@angular/material';
+  MatSelectModule, MatProgressBarModule, MatIconModule, MatButtonModule, MatDialogModule, MatTooltipModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BugImagenDialogoComponent } from 'src/app/componentes/bugImagen-dialogo/bug-imagen-dialogo.component';
 
@@ -26,7 +26,8 @@ import { BugImagenDialogoComponent } from 'src/app/componentes/bugImagen-dialogo
     MatProgressBarModule,
     MatIconModule,
     MatButtonModule,
-    MatDialogModule
+    MatDialogModule,
+    MatTooltipModule
   ]
 })
 export class BugImagenDialogoModule { }

@@ -146,7 +146,7 @@
             <div class="form-group has-float-label">
               <label id="labelFechaEmision" for="idFechaEmision" class="descripcion-label">Fecha de Emisión *</label>
               <input id="idFechaEmision" type="date" formControlName="fechaEmision" autocomplete="off"
-                [readOnly]="indiceSeleccionado == 2 || indiceSeleccionado == 4" (blur)="controlarFechaEmision()"
+                 (blur)="controlarFechaEmision()"
                 class="form-control form-control-sm">
             </div>
           </div>
@@ -154,7 +154,7 @@
             <div class="form-group has-float-label">
               <label id="labelFechaVtoPago" for="idFechaVtoPago" class="descripcion-label">Fecha Vto. Pago *</label>
               <input id="idFechaVtoPago" type="date" formControlName="fechaVtoPago" autocomplete="off"
-                [readOnly]="indiceSeleccionado == 2 || indiceSeleccionado == 4" (blur)="controlarFechaVtoPago()"
+              [readOnly]="indiceSeleccionado == 2 || indiceSeleccionado == 4" (blur)="controlarFechaVtoPago()"
                 class="form-control form-control-sm">
             </div>
           </div>
@@ -162,7 +162,7 @@
             <div class="form-group has-float-label">
               <label id="labelFechaContable" for="idFechaContable" class="descripcion-label">Fecha Contable *</label>
               <input id="idFechaContable" type="date" formControlName="fechaContable" autocomplete="off"
-                [readOnly]="indiceSeleccionado == 2 || indiceSeleccionado == 4" (blur)="controlarFechaContable()"
+                 (blur)="controlarFechaContable()"
                 class="form-control form-control-sm">
             </div>
           </div>
@@ -262,7 +262,7 @@
                 </ng-container>
                 <ng-container matColumnDef="alicuotaIva">
                   <th mat-header-cell *matHeaderCellDef mat-sort-header>Alícuota IVA</th>
-                  <td mat-cell *matCellDef="let elemento">%</td>
+                  <td mat-cell *matCellDef="let elemento">{{elemento.afipAlicuotaIva.alicuota | number: '1.2-2'}}%</td>
                 </ng-container>
                 <ng-container matColumnDef="IVA">
                   <th mat-header-cell *matHeaderCellDef mat-sort-header>IVA</th>
@@ -292,7 +292,7 @@
                 <ng-container matColumnDef="eliminar">
                   <th mat-header-cell *matHeaderCellDef>-</th>
                   <td mat-cell *matCellDef="let elemento; let i=index">
-                    <span class="cursor-color-rojo" (click)="activarEliminar(i)">
+                    <span class="cursor-color-rojo" (click)="activarEliminar(i)" *ngIf="indiceSeleccionado == 1">
                       Quitar
                     </span>
                   </td>

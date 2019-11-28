@@ -342,10 +342,10 @@ export class PersonalFamiliarComponent implements OnInit {
     this.loaderService.show();
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
-        let respuesta = res.json();
         if (res.status == 201) {
+          let personal = this.formulario.value.personal;
           this.reestablecerFormulario(undefined);
-          this.formulario.get('personal').setValue(respuesta);
+          this.formulario.get('personal').setValue(personal);
           this.formulario.get('tipoDocumento').setValue(this.tiposDocumentos[7]);
           document.getElementById('idTipoFamiliar').focus();
           this.toastr.success("Registro agregado con éxito.");
@@ -367,8 +367,8 @@ export class PersonalFamiliarComponent implements OnInit {
         if (res.status == 200) {
           this.reestablecerFormulario(undefined);
           document.getElementById('idPersonal').focus();
+          this.toastr.success(respuesta.mensaje);
         }
-        this.toastr.success(respuesta.mensaje);
         this.loaderService.hide();
       },
       err => {

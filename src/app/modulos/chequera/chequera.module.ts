@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { ChequeraRoutingModule } from './chequera-routing.module';
 
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
-  MatSelectModule, MatProgressBarModule, MatButtonModule, MatIconModule } from '@angular/material';
+  MatSelectModule, MatProgressBarModule, MatButtonModule, MatIconModule, MatTooltipModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ChequeraComponent } from 'src/app/componentes/chequera/chequera.component';
 import { ChequeraService } from 'src/app/servicios/chequera.service';
@@ -32,7 +32,8 @@ import { TextMaskModule } from 'angular2-text-mask';
     MatProgressBarModule,
     MatButtonModule,
     MatIconModule,
-    TextMaskModule
+    TextMaskModule,
+    MatTooltipModule
   ],
   providers: [
     ChequeraService,

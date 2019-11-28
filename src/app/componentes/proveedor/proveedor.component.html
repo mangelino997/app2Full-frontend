@@ -329,7 +329,8 @@
                         <label for="idNumeroCBU" class="tamanio-label">N° de CBU/CVU</label>
                         <input id="idNumeroCBU" type="text" formControlName="numeroCBU" autocomplete="off"
                           class="form-control form-control-sm number-right" [textMask]="mascararEnteros(22)"
-                          [readonly]="soloLectura" maxlength="22" (blur)="formulario.value.numeroCBU ? verificarCBU() : ''">
+                          [readonly]="soloLectura" maxlength="22"
+                          (blur)="formulario.value.numeroCBU ? verificarCBU() : ''">
                       </div>
                     </div>
                     <div class="col-md-3">
@@ -374,12 +375,6 @@
                     </div>
                   </div>
                 </div>
-                <div class="contenedor-top" *ngIf="opcionSeleccionada == 13">
-
-                </div>
-                <div class="contenedor-top" *ngIf="opcionSeleccionada == 14">
-
-                </div>
                 <br>
                 <div class="row">
                   <div class="centrar">
@@ -402,6 +397,67 @@
     </mat-sidenav-container>
   </div>
   <div class="row justify-content-center" *ngIf="indiceSeleccionado == 5">
+    <div class="col-md-10 padd-20">
+      <form [formGroup]="formularioFiltro">
+        <div class="row">
+          <div class="col">
+            <div class="form-group has-float-label">
+              <label for="idTipoProveedorFiltro" class="tamanio-label">Tipo de Proveedor *</label>
+              <mat-select id="idTipoProveedorFiltro" class="form-control form-control-sm" [compareWith]="compareFn"
+                formControlName="tipoProveedor">
+                <mat-option value="0">TODOS</mat-option>
+                <mat-option *ngFor="let itemTipoProveedor of tiposProveedores" [value]="itemTipoProveedor">
+                  {{itemTipoProveedor.nombre}}
+                </mat-option>
+              </mat-select>
+            </div>
+          </div>
+          <div class="col">
+            <div class="form-group has-float-label">
+              <label for="idLocalidadFiltro" class="rubro-label">Localidad *</label>
+              <mat-select id="idLocalidadFiltro" class="form-control form-control-sm"
+                [formControl]="opcionLocalidadFiltro" [compareWith]="compareFn">
+                <mat-option [value]="0">TODAS</mat-option>
+                <mat-option [value]="1">SELECCIONAR</mat-option>
+              </mat-select>
+            </div>
+          </div>
+          <div class="col">
+            <div class="form-group has-float-label">
+              <label for="idLocalidadFiltro" class="tamanio-label">Nombre *</label>
+              <input id="idLocalidadFiltro" class="form-control form-control-sm" type="text"
+                [formControl]="formularioFiltro.get('localidad')" [matAutocomplete]="autoLocalidadFiltro"
+                autocomplete="off" [readonly]="opcionLocalidadFiltro.value == 0"
+                (blur)="verificarSeleccion(formularioFiltro.get('localidad'))">
+              <mat-autocomplete #autoLocalidadFiltro="matAutocomplete" [displayWith]="displayFb.bind(this)">
+                <mat-option *ngFor="let itemLocalidad of resultadosLocalidades" [value]="itemLocalidad">
+                  {{itemLocalidad.nombre}}, {{itemLocalidad.provincia.nombre}},
+                  {{itemLocalidad.provincia.pais.nombre}}
+                </mat-option>
+              </mat-autocomplete>
+            </div>
+          </div>
+          <div class="col">
+            <div class="form-group has-float-label">
+              <label for="idCondicionCompraFiltro" class="tamanio-label">Condición de Compra *</label>
+              <mat-select id="idCondicionCompraFiltro" class="form-control form-control-sm"
+                formControlName="condicionCompra" [compareWith]="compareFn" (selectionChange)="cambioCondicionCompra()">
+                <mat-option value="0">TODAS</mat-option>
+                <mat-option *ngFor="let itemCondicionCompra of condicionesCompras" [value]="itemCondicionCompra">
+                  {{itemCondicionCompra.nombre}}
+                </mat-option>
+              </mat-select>
+            </div>
+          </div>
+          <div class="col-md-1">
+            <button id="idBoton" mat-raised-button color="primary" formnovalidate (click)="accion(indiceSeleccionado)"
+              [disabled]="!formularioFiltro.valid">Listar
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+    <br>
     <div class="col-md-10">
       <div class="row" *ngIf="show">
         <div class="col text-center">
