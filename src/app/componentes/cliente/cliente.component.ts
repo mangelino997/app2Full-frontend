@@ -661,7 +661,6 @@ export class ClienteComponent implements OnInit {
         break;
       case 5:
         this.establecerFormularioFiltro();
-        // this.listar();
         break;
       default:
         break;
@@ -860,7 +859,7 @@ export class ClienteComponent implements OnInit {
     this.opcionLocalidadFiltro.setValue(0);
     this.formularioFiltro.get('cobrador').setValue(0);
     this.formularioFiltro.get('condicionVenta').setValue(0);
-    this.formularioFiltro.get('esSeguroPropio').setValue(true);
+    this.formularioFiltro.get('esSeguroPropio').setValue(2);
   }
   //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
   private lanzarError(err) {
@@ -983,6 +982,10 @@ export class ClienteComponent implements OnInit {
       this.formulario.get('vencimientoPolizaSeguro').disable();
       this.formulario.get('vencimientoPolizaSeguro').clearValidators();
     }
+  }
+  //Cambio en el campo Localidad del formulario filtro en pestaña Listar
+  public cambioLocalidadFiltro(){
+    this.formularioFiltro.get('localidad').reset();
   }
   //Abre el Modal para Listas de Precios
   public abrirListasPrecios() {

@@ -39,7 +39,7 @@
                         </div>
                         <div class="col">
                             <button id="idBotonConfirmar" mat-raised-button color="primary" (click)="confirmar()"
-                                [disabled]="!condicionCompra || cantidadCuotas==0">Confirmar</button>
+                                [disabled]="!condicionCompra || cantidadCuotas==0 || soloLectura">Confirmar</button>
                         </div>
                         <div class="col"></div>
                     </div>
@@ -76,7 +76,7 @@
                         </div>
                         <div class="col">
                             <button id="idBotonCancelar" mat-raised-button color="primary"
-                                (click)="cancelar()">Cancelar</button>
+                                (click)="cancelar()" [disabled]="soloLectura">Cancelar</button>
                         </div>
                     </div>
                     <br>
@@ -88,7 +88,7 @@
                                         <th mat-header-cell *matHeaderCellDef mat-sort-header>N° de Cuota</th>
                                         <td mat-cell *matCellDef="let elemento; let i=index" class="number-right"
                                             style="width: 15px;">
-                                            {{i + 1}}</td>
+                                            {{i+1}}</td>
                                     </ng-container>
                                     <ng-container matColumnDef="fechaVencimiento">
                                         <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha de Vencimiento</th>
@@ -103,14 +103,15 @@
                                     <ng-container matColumnDef="mod">
                                         <th mat-header-cell *matHeaderCellDef>-</th>
                                         <td mat-cell *matCellDef="let elemento; let i=index">
-                                            <span class="cursor-color"
-                                                (click)="activarActualizar(elemento, i)">Mod</span>
+                                            <span class="cursor-color" (click)="activarActualizar(elemento, i)"
+                                                *ngIf="!soloLectura">Mod</span>
                                         </td>
                                     </ng-container>
                                     <ng-container matColumnDef="eliminar">
                                         <th mat-header-cell *matHeaderCellDef>-</th>
                                         <td mat-cell *matCellDef="let elemento; let i=index">
-                                            <span class="cursor-color-rojo" (click)="activarEliminar(i)">Quitar</span>
+                                            <span class="cursor-color-rojo" (click)="activarEliminar(i)"
+                                                *ngIf="!soloLectura">Quitar</span>
                                         </td>
                                     </ng-container>
                                     <tr mat-header-row *matHeaderRowDef="columnasPercepcion"></tr>
@@ -143,7 +144,7 @@
                     [disabled]="!btnAceptar">
                     Aceptar</button>
             </div>
-            <div class="col-md-1">
+            <div class="col-md-1" *ngIf="!soloLectura">
                 <button id="idBoton" mat-raised-button color="secondary" *ngIf="!show"
                     (click)="closeDialog('cancelar')">Cancelar</button>
             </div>

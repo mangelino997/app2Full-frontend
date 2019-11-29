@@ -164,6 +164,14 @@ export class ProveedorComponent implements OnInit {
         })
       }
     })
+    //Autocompletado Localidad - Buscar por nombre - Enn formularioFiltro
+    this.formularioFiltro.get('localidad').valueChanges.subscribe(data => {
+      if (typeof data == 'string' && data.length > 2) {
+        this.localidadServicio.listarPorNombre(data).subscribe(response => {
+          this.resultadosLocalidades = response;
+        })
+      }
+    })
     //Autocompletado Banco - Buscar por nombre
     this.formulario.get('banco').valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
@@ -599,6 +607,10 @@ export class ProveedorComponent implements OnInit {
   public cambioCampo(id, label) {
     document.getElementById(id).classList.remove('is-invalid');
     document.getElementById(label).classList.remove('label-error');
+  }
+  //Cambio en el campo Localidad del formulario filtro en pestaña Listar
+  public cambioLocalidadFiltro(){
+    this.formularioFiltro.get('localidad').reset();
   }
   //Formatea el numero a x decimales
   public setDecimales(valor, cantidad) {

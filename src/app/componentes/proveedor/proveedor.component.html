@@ -416,7 +416,7 @@
             <div class="form-group has-float-label">
               <label for="idLocalidadFiltro" class="rubro-label">Localidad *</label>
               <mat-select id="idLocalidadFiltro" class="form-control form-control-sm"
-                [formControl]="opcionLocalidadFiltro" [compareWith]="compareFn">
+                [formControl]="opcionLocalidadFiltro" [compareWith]="compareFn" (selectionChange)="cambioLocalidadFiltro()">
                 <mat-option [value]="0">TODAS</mat-option>
                 <mat-option [value]="1">SELECCIONAR</mat-option>
               </mat-select>

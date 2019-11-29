@@ -272,7 +272,6 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
   //Obtiene un listado por compania de seguro
   public listarPorCompaniaSeguro() {
     this.listaCompleta = new MatTableDataSource([]);
-    console.log(this.formulario.value.companiaSeguro.id, this.formulario.value.empresa.id);
     this.servicio.listarPorCompaniaSeguroYEmpresa(this.formulario.value.companiaSeguro.id, this.formulario.value.empresa.id).subscribe(res => {
       this.listaCompleta = new MatTableDataSource(res.json());
       this.listaCompleta.sort = this.sort;

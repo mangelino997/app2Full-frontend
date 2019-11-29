@@ -71,7 +71,6 @@
                             </div>
                         </div>
                     </div>
-
                     <div class="row" *ngIf="mostrarCamposPorJurisdiccion">
                         <div class="col-md-6">
                             <div class="row">
@@ -101,7 +100,7 @@
                                 <div class="col-md-2">
                                     <button id="idBotonAgregarPercepcion" mat-raised-button color="primary"
                                         *ngIf="!show" (click)="agregarPercepcionPorJurisdiccion()"
-                                        [disabled]="!formularioPorJurisdiccion.valid">Agregar</button>
+                                        [disabled]="!formularioPorJurisdiccion.valid || soloLectura">Agregar</button>
                                 </div>
                             </div>
                             <div class="row">
@@ -165,12 +164,13 @@
                                 </ng-container>
                                 <ng-container matColumnDef="importe">
                                     <th mat-header-cell *matHeaderCellDef mat-sort-header>Importe</th>
-                                    <td mat-cell *matCellDef="let elemento" class="number-right">${{elemento.importe | number: '1.2-2'}}</td>
+                                    <td mat-cell *matCellDef="let elemento" class="number-right">
+                                        $ {{elemento.importe ? (elemento.importe | number: '1.2-2') : '0.00'}}</td>
                                 </ng-container>
                                 <ng-container matColumnDef="eliminar">
                                     <th mat-header-cell *matHeaderCellDef>-</th>
                                     <td mat-cell *matCellDef="let elemento; let i=index">
-                                        <span class="cursor-color-rojo" (click)="activarEliminarPercepcion(i)">
+                                        <span class="cursor-color-rojo" (click)="activarEliminarPercepcion(i)" *ngIf="!soloLectura">
                                             Quitar
                                         </span>
                                     </td>
@@ -189,9 +189,9 @@
                 <button id="idBoton" mat-raised-button color="primary" *ngIf="!show"
                     (click)="closeDialog('aceptar')">Aceptar</button>
             </div>
-            <div class="col-md-1">
+            <div class="col-md-1" *ngIf="!soloLectura">
                 <button id="idBoton" mat-raised-button color="secondary" *ngIf="!show"
-                    (click)="closeDialog('cancelar')">Cancelar</button>
+                    (click)="closeDialog('cancelar')" >Cancelar</button>
             </div>
         </div>
         <div class="row" *ngIf="show">
