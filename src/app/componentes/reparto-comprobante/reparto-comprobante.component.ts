@@ -189,7 +189,7 @@ export class RepartoComprobanteComponent implements OnInit {
       this.ventaComprobanteService.listarLetras().subscribe(
         res => {
           this.letras = res.json();
-          this.letras.length == 0 ? 'Sin registros en el campo Letra.' : '';
+          this.letras.length == 0 ? this.toastr.error('Campo Letra sin registros para Venta Comprobante.') : '';
         },
         err => {
           this.toastr.error("Error al obtener la lista de Letras en Venta Comprobante.");
@@ -199,7 +199,7 @@ export class RepartoComprobanteComponent implements OnInit {
       this.viajeRemitoService.listarLetras().subscribe(
         res => {
           this.letras = res.json();
-          this.letras.length == 0 ? 'Sin registros en el campo Letra.' : '';
+          this.letras.length == 0 ? this.toastr.error('Campo Letra sin registros para Remito.') : '';
         },
         err => {
           this.toastr.error("Error al obtener la lista de Letras en Viaje Remito.");
@@ -221,10 +221,11 @@ export class RepartoComprobanteComponent implements OnInit {
         res => {
           if (res.text() != '') { //Controla que exista una orden recoleccion
             let respuesta = res.json();
-            respuesta.forEach(element => {
-              this.formularioComprobante.get('ordenRecoleccion').setValue(element);
-              this.agregarComprobanteReparto(this.formularioComprobante.value);
-            });
+            respuesta.length > 0 ?
+              [respuesta.forEach(element => {
+                this.formularioComprobante.get('ordenRecoleccion').setValue(element);
+                this.agregarComprobanteReparto(this.formularioComprobante.value);
+              })] : this.toastr.error("Sin registros para mostrar.");
           } else {
             this.toastr.error("No existe una Orden Recolección con el número ingresado.");
           }
@@ -239,10 +240,12 @@ export class RepartoComprobanteComponent implements OnInit {
           res => {
             if (res.text() != '') { //Controla que exista un viaje remito
               let respuesta = res.json();
-              respuesta.forEach(element => {
-                this.formularioComprobante.get('viajeRemito').setValue(element);
-                this.agregarComprobanteReparto(this.formularioComprobante.value);
-              });
+              respuesta.length > 0 ?
+                [respuesta.forEach(element => {
+                  this.formularioComprobante.get('viajeRemito').setValue(element);
+                  this.agregarComprobanteReparto(this.formularioComprobante.value);
+                })] : this.toastr.error("Sin registros para mostrar.");
+
             } else {
               this.toastr.error("No existe un Viaje Remito con el punto de venta, letra y número ingresado.");
             }
@@ -257,10 +260,12 @@ export class RepartoComprobanteComponent implements OnInit {
           res => {
             if (res.text() != '') { //Controla que exista una venta comprobante
               let respuesta = res.json();
-              respuesta.forEach(element => {
-                this.formularioComprobante.get('ventaComprobante').setValue(element);
-                this.agregarComprobanteReparto(this.formularioComprobante.value);
-              });
+              respuesta.length > 0 ?
+                [respuesta.forEach(element => {
+                  this.formularioComprobante.get('ventaComprobante').setValue(element);
+                  this.agregarComprobanteReparto(this.formularioComprobante.value);
+                })] : this.toastr.error("Sin registros para mostrar.");
+
             } else {
               this.toastr.error("No existe una Venta Comprobante con el punto de venta, letra y número ingresado.");
             }

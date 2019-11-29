@@ -131,10 +131,16 @@ export class ProveedorComponent implements OnInit {
       );
     //Autocompletado - Buscar por alias
     this.autocompletado.valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.servicio.listarPorAlias(data).subscribe(response => {
-          this.resultados = response;
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 2) {
+          this.servicio.listarPorAlias(data).subscribe(
+            res => {
+              this.resultados = res;
+            },
+            err => {
+            });
+        }
       }
     })
   }
