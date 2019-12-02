@@ -53,14 +53,14 @@ export class ListaRemitoDialogoComponent implements OnInit {
       this.formularioFiltro = new FormGroup({
         idViaje: new FormControl(),
         idRemito: new FormControl(),
-        estaFacturado: new FormControl(true)
+        estaFacturado: new FormControl(0)
       })
     } else {
       /*Define los campos del formulario y validaciones si es Dador de Carga*/
       this.formularioFiltro = new FormGroup({
         idViaje: new FormControl('', Validators.required),
         idRemito: new FormControl(),
-        estaFacturado: new FormControl(true)
+        estaFacturado: new FormControl(0)
       })
       //Obtiene la lista de Tramos
       this.listarTramos();
@@ -102,7 +102,9 @@ export class ListaRemitoDialogoComponent implements OnInit {
     if (this.data.esRemitoGeneral) {
       this.serviceRemitoGeneral.listarPorViajeYEstado(this.formularioFiltro.value).subscribe(
         res => {
-          this.asignarAtributoChecked(res.json());
+          console.log(res.json());
+          let respuesta = res.json();
+          respuesta.length > 0? this.asignarAtributoChecked(respuesta, true) : this.toastr.error("Sin registros para mostrar.");
           this.loaderService.hide();
         },
         err => {
@@ -113,7 +115,9 @@ export class ListaRemitoDialogoComponent implements OnInit {
     } else {
       this.serviceNoEsRemitoGeneral.listarPorViajeYEstado(this.formularioFiltro.value).subscribe(
         res => {
-          this.asignarAtributoChecked(res.json());
+          console.log(res.json());
+          let respuesta = res.json();
+          respuesta.length > 0? this.asignarAtributoChecked(respuesta, false) : this.toastr.error("Sin registros para mostrar.");
           this.loaderService.hide();
         },
         err => {
@@ -123,16 +127,31 @@ export class ListaRemitoDialogoComponent implements OnInit {
       )
     }
   }
-  //Agrga a cada registro el atributo 'checked' para controlarlo en la vista
-  private asignarAtributoChecked(registros) {
+  /*Agrga a cada registro el atributo 'checked' para controlarlo en la vista
+   Le paso como parámetro si es RemitoGeneral en true ó si es DadorCarga como false (en éste establece el json viajeRemito)*/
+  private asignarAtributoChecked(registros, esRemitoGeneral) {
+    let listaModificada = [];
     registros.forEach(elemento => {
-      elemento.checked = false;
-      elemento.mostrarCheck = true;
+      if (!esRemitoGeneral) {
+        let registro = elemento; /* guarda los datos de cada fila devuelta */
+        elemento = {};
+        elemento.viajeRemito = registro; /* genero el atributo(json) viajeRemito y le asigno los datos del registro*/
+        
+        /* genera el nuevo json con sus atributos correspondientes */
+        elemento.id = registro.id;
+        elemento.checked = false;
+        elemento.mostrarCheck = true;
+      } else {
+        elemento.checked = false;
+        elemento.mostrarCheck = true;
+      }
+      listaModificada.push(elemento); /* agrega cada elemento(registro) a la nueva lista modificada  */
     });
     this.data.configuracionModalRemitos.formularioFiltro = this.formularioFiltro.value;
-    this.data.configuracionModalRemitos.listaCompletaRemitos = registros;
-    this.listaCompleta = new MatTableDataSource(registros);
+    this.data.configuracionModalRemitos.listaCompletaRemitos = listaModificada;
+    this.listaCompleta = new MatTableDataSource(listaModificada);
     this.listaCompleta.sort = this.sort;
+    console.log(this.listaCompleta.data);
   }
   //Abre un dialogo para ver las observaciones
   public verObservacionesDialogo(elemento): void {
