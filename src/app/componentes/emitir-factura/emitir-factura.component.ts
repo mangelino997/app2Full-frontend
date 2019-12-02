@@ -427,12 +427,12 @@ export class EmitirFacturaComponent implements OnInit {
   public cambioOrdenVta() {
     //Con cada cambio limpia los campos 'Tarifa' - 'pSeguro'
     this.formularioVtaCpteItemFA.get('pSeguro').reset();
-    this.tarifaOrdenVenta.reset()
+    this.tarifaOrdenVenta.reset();
     //Controla el campo 'Seguro'. El ordenVenta == false corresponde a 'Libre'
     if (this.ordenVenta.value == 'false') {
+      this.tarifaOrdenVenta.disable();
       this.formulario.value.cliente.esSeguroPropio ? this.formularioVtaCpteItemFA.get('importeSeguro').disable() :
         this.formularioVtaCpteItemFA.get('importeSeguro').enable();
-      this.tarifaOrdenVenta.disable()
     } else {
       this.tarifaOrdenVenta.enable();
       this.formulario.value.cliente.esSeguroPropio ? this.formularioVtaCpteItemFA.get('pSeguro').disable() :
@@ -568,8 +568,10 @@ export class EmitirFacturaComponent implements OnInit {
     this.formulario.value.condicionVenta.id == 1 ? this.formulario.get('letra').setValue('A') : this.formulario.get('letra').setValue('B');
     this.cargarCodigoAfip(this.formulario.value.letra);
     //Controla la lista para el campo 'Orden Venta'
-    this.formulario.value.cliente.clienteOrdenesVentas.length > 0 ?
-      this.ordenesVenta = this.formulario.value.cliente.clienteOrdenesVentas : this.listarOrdenVentaEmpresa();
+    this.formulario.value.cliente.clienteOrdenesVentas ?
+      [this.ordenesVenta = this.formulario.value.cliente.clienteOrdenesVentas,
+      this.ordenesVenta.length == 0 ? this.toastr.warning("El cliente tiene asignado una lista vacía de orden venta.") : '']
+      : this.listarOrdenVentaEmpresa();
     //Controla el campo 'Seguro'
     !this.formulario.value.cliente.esSeguroPropio ||
       (this.formulario.value.cliente.vencimientoPolizaSeguro ?
@@ -589,8 +591,9 @@ export class EmitirFacturaComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe(resultado => {
       if (resultado) {
-        tipoCliente == 'Remitente' ? this.formulario.get('clienteRemitente').setValue(resultado) : this.formulario.get('clienteDestinatario').setValue(resultado);
-        tipoCliente == 'Remitente' ? this.cambioRemitente() : this.cambioDestinatario();
+        tipoCliente == 'Remitente' ?
+          [this.formulario.get('clienteRemitente').setValue(resultado), this.cambioRemitente()] :
+          [this.formulario.get('clienteDestinatario').setValue(resultado), this.cambioDestinatario()];
       }
     });
   }
@@ -623,6 +626,7 @@ export class EmitirFacturaComponent implements OnInit {
       }
     });
     dialogRef.afterClosed().subscribe(resultado => {
+      console.log(resultado);
       resultado ? this.controlarRemitoSeleccionado(resultado) : '';
     });
   }
@@ -645,12 +649,20 @@ export class EmitirFacturaComponent implements OnInit {
     this.formularioVtaCpteItemFA.get('viajeRemito').setValue(remitoSeleccionado);
     this.formularioVtaCpteItemFA.get('numeroRemito').setValue(idRemito);
     this.formularioVtaCpteItemFA.get('bultos').setValue(remitoSeleccionado.viajeRemito.bultos);
-    this.formularioVtaCpteItemFA.get('kilosEfectivo').setValue(this.appService.establecerDecimales(remitoSeleccionado.viajeRemito.kilosEfectivo.toString(), 2));
-    this.formularioVtaCpteItemFA.get('kilosAforado').setValue(this.appService.establecerDecimales(remitoSeleccionado.viajeRemito.kilosAforado.toString(), 2));
-    this.formularioVtaCpteItemFA.get('m3').setValue(this.appService.establecerDecimales(remitoSeleccionado.viajeRemito.m3.toString(), 2));
-    this.formularioVtaCpteItemFA.get('valorDeclarado').setValue(this.appService.establecerDecimales(remitoSeleccionado.viajeRemito.valorDeclarado.toString(), 2));
-    this.formularioVtaCpteItemFA.get('importeRetiro').setValue(this.appService.establecerDecimales(remitoSeleccionado.viajeRemito.importeRetiro.toString(), 2));
-    this.formularioVtaCpteItemFA.get('importeEntrega').setValue(this.appService.establecerDecimales(remitoSeleccionado.viajeRemito.importeEntrega.toString(), 2));
+
+    /* como los valores pueden ser null, pregunto antes de establecer los decimales */
+    this.formularioVtaCpteItemFA.get('kilosEfectivo').setValue(this.appService.establecerDecimales(
+      remitoSeleccionado.viajeRemito.kilosEfectivo ? remitoSeleccionado.viajeRemito.kilosEfectivo.toString() : '0.00', 2));
+    this.formularioVtaCpteItemFA.get('kilosAforado').setValue(this.appService.establecerDecimales(
+      remitoSeleccionado.viajeRemito.kilosAforado ? remitoSeleccionado.viajeRemito.kilosAforado.toString() : '0.00', 2));
+    this.formularioVtaCpteItemFA.get('m3').setValue(this.appService.establecerDecimales(
+      remitoSeleccionado.viajeRemito.m3 ? remitoSeleccionado.viajeRemito.m3.toString() : '0.00', 2));
+    this.formularioVtaCpteItemFA.get('valorDeclarado').setValue(this.appService.establecerDecimales(
+      remitoSeleccionado.viajeRemito.valorDeclarado ? remitoSeleccionado.viajeRemito.valorDeclarado.toString() : '0.00', 2));
+    this.formularioVtaCpteItemFA.get('importeRetiro').setValue(this.appService.establecerDecimales(
+      remitoSeleccionado.viajeRemito.importeRetiro ? remitoSeleccionado.viajeRemito.importeRetiro.toString() : '0.00', 2));
+    this.formularioVtaCpteItemFA.get('importeEntrega').setValue(this.appService.establecerDecimales(
+      remitoSeleccionado.viajeRemito.importeEntrega ? remitoSeleccionado.viajeRemito.importeEntrega.toString() : '0.00', 2));
 
     /* Pregunta si el item es Remito Carga Gral. y si no hay items cargados en la lista de items */
     if (this.itemFactura.value.id == 1 && this.listaCompletaItems.data.length == 0) {
@@ -770,12 +782,12 @@ export class EmitirFacturaComponent implements OnInit {
     this.formularioVtaCpteItemFA.get('provincia').setValue(this.formulario.get('cliente').value.localidad.provincia);
 
     /* Establece la orden de vta. tarifa*/
-    this.ordenVenta.value ? [this.formularioVtaCpteItemFA.value.ordenVentaTarifa =
-      { ordenVenta: this.ordenVenta.value.ordenVenta, tipoTarifa: this.tarifaOrdenVenta.value }, this.actualizarTabla()] :
+    this.ordenVenta.value ? [this.formularioVtaCpteItemFA.value.ordenVentaTarifa = null, this.actualizarTabla()] :
       [this.formularioVtaCpteItemFA.value.ordenVentaTarifa = null, this.actualizarTabla()];
   }
   /* Controla el cambio en la tabla */
   private actualizarTabla() {
+    console.log(this.formularioVtaCpteItemFA.value);
     this.listaCompletaItems.data.push(this.formularioVtaCpteItemFA.value);
     this.listaCompletaItems.sort = this.sort;
     this.calcularImportesTotales();
