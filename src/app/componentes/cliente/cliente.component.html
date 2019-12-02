@@ -625,7 +625,7 @@
             </ng-container>
             <ng-container matColumnDef="ID">
               <th mat-header-cell *matHeaderCellDef mat-sort-header class="col-id-width">#</th>
-              <td mat-cell *matCellDef="let elemento" class="number-right">{{elemento.id}}</td>
+              <td mat-cell class="number-right" *matCellDef="let elemento" class="number-right">{{elemento.id}}</td>
             </ng-container>
             <ng-container matColumnDef="TIPO_DOC">
               <th mat-header-cell *matHeaderCellDef mat-sort-header>Tipo Documento</th>
@@ -634,12 +634,12 @@
             </ng-container>
             <ng-container matColumnDef="NUM_DOC">
               <th mat-header-cell *matHeaderCellDef mat-sort-header>N° Documento</th>
-              <td mat-cell *matCellDef="let elemento" class="number-right">
+              <td mat-cell  class="number-right" *matCellDef="let elemento" class="number-right">
                 {{elemento.numeroDocumento? elemento.numeroDocumento : '--'}}</td>
             </ng-container>
             <ng-container matColumnDef="TELEFONO">
               <th mat-header-cell *matHeaderCellDef mat-sort-header>Teléfono</th>
-              <td mat-cell *matCellDef="let elemento">{{elemento.telefono? elemento.telefono : '--'}}</td>
+              <td mat-cell class="number-right" *matCellDef="let elemento">{{elemento.telefono? elemento.telefono : '--'}}</td>
             </ng-container>
             <ng-container matColumnDef="DOMICILIO">
               <th mat-header-cell *matHeaderCellDef mat-sort-header>Domicilio</th>
@@ -652,8 +652,8 @@
               </td>
             </ng-container>
             <ng-container matColumnDef="EDITAR" stickyEnd>
-              <th mat-header-cell *matHeaderCellDef><button class="button-full-width" mat-raised-button color="primary"
-                  (click)="abrirReporte()">Reporte</button></th>
+              <th mat-header-cell *matHeaderCellDef><button class="button-full-width" [disabled]="listaCompleta.data.length==0" 
+                 mat-raised-button color="primary" (click)="abrirReporte()">Reporte</button></th>
               <td mat-cell *matCellDef="let elemento">
                 <button mat-icon-button class="mat-icon-button-table" (click)="activarConsultar(elemento)"
                   matTooltip="Consultar" matTooltipPosition="above">
