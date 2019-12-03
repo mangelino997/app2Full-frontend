@@ -97,26 +97,35 @@ export class ViajeRemitoComponent implements OnInit {
       );
     //Autocompletado - Buscar por alias
     this.autocompletado.valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.servicio.listarPorAlias(data).subscribe(response => {
-          this.resultados = response;
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.servicio.listarPorAlias(data).subscribe(response => {
+            this.resultados = response;
+          })
+        }
       }
     });
     //Autocompletado ClienteRemitente - Buscar por nombre
     this.autocompletadoRemitente.valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.clienteServicio.listarPorAlias(data).subscribe(response => {
-          this.resultadosClienteRemitente = response.json();
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.clienteServicio.listarPorAlias(data).subscribe(response => {
+            this.resultadosClienteRemitente = response.json();
+          })
+        }
       }
     });
     //Autocompletado ClienteDestinatario - Buscar por nombre
     this.autocompletadoDestinatario.valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.clienteServicio.listarPorAlias(data).subscribe(response => {
-          this.resultadosClienteDestinatario = response.json();
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.clienteServicio.listarPorAlias(data).subscribe(response => {
+            this.resultadosClienteDestinatario = response.json();
+          })
+        }
       }
     });
   }
@@ -148,18 +157,24 @@ export class ViajeRemitoComponent implements OnInit {
     this.letras = ['A', 'B', 'C'];
     //Autocompletado ClienteRemitente - Buscar por nombre
     this.formulario.get('clienteRemitente').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.clienteServicio.listarPorAlias(data).subscribe(response => {
-          this.resultadosClienteRemitente = response.json();
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.clienteServicio.listarPorAlias(data).subscribe(response => {
+            this.resultadosClienteRemitente = response.json();
+          })
+        }
       }
     })
     //Autocompletado ClienteDestinatario - Buscar por nombre
     this.formulario.get('clienteDestinatario').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.clienteServicio.listarPorAlias(data).subscribe(response => {
-          this.resultadosClienteDestinatario = response.json();
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.clienteServicio.listarPorAlias(data).subscribe(response => {
+            this.resultadosClienteDestinatario = response.json();
+          })
+        }
       }
     });
   }

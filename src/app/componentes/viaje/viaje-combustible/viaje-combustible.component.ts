@@ -74,10 +74,13 @@ export class ViajeCombustibleComponent implements OnInit {
     this.formularioViajeCombustible = this.viajeCombustibleModelo.formulario;
     //Autocompletado Proveedor (Combustible) - Buscar por alias
     this.formularioViajeCombustible.get('proveedor').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.proveedorServicio.listarPorAlias(data).subscribe(response => {
-          this.resultadosProveedores = response;
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.proveedorServicio.listarPorAlias(data).subscribe(response => {
+            this.resultadosProveedores = response;
+          })
+        }
       }
     })
     //Limpia el formulario y las listas
@@ -185,7 +188,7 @@ export class ViajeCombustibleComponent implements OnInit {
   //Agrega datos a la tabla de combustibles
   public agregarCombustible(): void {
     this.loaderService.show();
-    this.formularioViajeCombustible.get('viaje').setValue({id: this.ID_VIAJE});
+    this.formularioViajeCombustible.get('viaje').setValue({ id: this.ID_VIAJE });
     this.formularioViajeCombustible.get('precioUnitario').enable();
     this.formularioViajeCombustible.get('tipoComprobante').setValue({ id: 15 });
     this.formularioViajeCombustible.get('sucursal').setValue(this.appService.getUsuario().sucursal);

@@ -89,27 +89,35 @@ export class SucursalClienteComponent implements OnInit {
     this.seleccionarPestania(1, 'Agregar');
     //Autocompletado - Buscar por alias cliente
     this.formulario.get('cliente').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        // this.cambioAutocompletado();
-        this.clienteServicio.listarPorAlias(data).subscribe(response => {
-          this.resultadosClientes = response.json();
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.clienteServicio.listarPorAlias(data).subscribe(response => {
+            this.resultadosClientes = response.json();
+          })
+        }
       }
     })
     //Autocompletado - Buscar por nombre barrio
     this.formulario.get('barrio').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.barrioServicio.listarPorNombre(data).subscribe(response => {
-          this.resultadosBarrios = response;
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.barrioServicio.listarPorNombre(data).subscribe(response => {
+            this.resultadosBarrios = response;
+          })
+        }
       }
     })
     //Autocompletado - Buscar por nombre localidad
     this.formulario.get('localidad').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.localidadServicio.listarPorNombre(data).subscribe(response => {
-          this.resultadosLocalidades = response;
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.localidadServicio.listarPorNombre(data).subscribe(response => {
+            this.resultadosLocalidades = response;
+          })
+        }
       }
     })
   }
@@ -217,7 +225,7 @@ export class SucursalClienteComponent implements OnInit {
             } else {
               this.sucursales = res.json();
             }
-          }else{
+          } else {
             let cliente = this.formulario.value.cliente;
             this.sucursales = [];
             this.formulario.reset();
@@ -431,7 +439,7 @@ export class SucursalClienteComponent implements OnInit {
         cliente: elemento.cliente.razonSocial,
         nombre: elemento.nombre,
         domicilio: elemento.domicilio,
-        barrio: elemento.barrio? elemento.barrio.nombre : '',
+        barrio: elemento.barrio ? elemento.barrio.nombre : '',
         localidad: elemento.localidad.nombre + ', ' + elemento.localidad.provincia.nombre,
         telefono_fijo: elemento.telefonoFijo,
         telefono_movil: elemento.telefonoMovil
@@ -443,7 +451,7 @@ export class SucursalClienteComponent implements OnInit {
   //Abre el dialogo de reporte
   public abrirReporte(): void {
     let lista = this.prepararDatos(this.listaCompleta.data);
-    if(this.formulario.value.cliente){
+    if (this.formulario.value.cliente) {
       let datos = {
         nombre: 'Sucursales - Cliente: ' + this.formulario.value.cliente.id + ' - ' + this.formulario.value.cliente.razonSocial,
         empresa: this.appService.getEmpresa().razonSocial,
@@ -452,7 +460,7 @@ export class SucursalClienteComponent implements OnInit {
         columnas: this.columnas
       }
       this.reporteServicio.abrirDialogo(datos);
-    }else{
+    } else {
       this.toastr.error("Complete el campo Cliente para filtrar los registros.");
     }
   }

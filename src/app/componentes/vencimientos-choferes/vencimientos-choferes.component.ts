@@ -77,10 +77,13 @@ export class VencimientosChoferesComponent implements OnInit {
     private loaderService: LoaderService, private tipoDocumentoServicio: TipoDocumentoService, private reporteServicio: ReporteService) {
     //Autocompletado - Buscar por alias
     this.autocompletado.valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.personalServicio.listarPorAlias(data).subscribe(response => {
-          this.resultados = response;
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.personalServicio.listarPorAlias(data).subscribe(response => {
+            this.resultados = response;
+          })
+        }
       }
     })
   }
@@ -100,7 +103,7 @@ export class VencimientosChoferesComponent implements OnInit {
           this.pestanias.splice(0, 1);
           this.activeLink = this.pestanias[0].nombre;
         },
-        err => {}
+        err => { }
       );
     //Define el Formulario
     this.formulario = this.personal.formulario;
@@ -179,7 +182,7 @@ export class VencimientosChoferesComponent implements OnInit {
     this.mostrarAutocompletado = autocompletado;
     this.soloLectura = soloLectura;
     this.mostrarBoton = boton;
-    soloLectura? this.formulario.disable() : this.formulario.enable();
+    soloLectura ? this.formulario.disable() : this.formulario.enable();
     setTimeout(function () {
       document.getElementById('idAutocompletado').focus();
     }, 20);
@@ -209,12 +212,12 @@ export class VencimientosChoferesComponent implements OnInit {
   }
   //Establece la foto y pdf (actilet consultar/actualizar)
   private establecerFotoYPdfs(elemento): void {
-    elemento.foto? elemento.foto.datos = atob(elemento.foto.datos): '';
-    elemento.pdfLicConducir? elemento.pdfLicConducir.datos = atob(elemento.pdfLicConducir.datos): '';
-    elemento.pdfLinti? elemento.pdfLinti.datos = atob(elemento.pdfLinti.datos): '';
-    elemento.pdfLibSanidad? elemento.pdfLibSanidad.datos = atob(elemento.pdfLibSanidad.datos): '';
-    elemento.pdfDni? elemento.pdfDni.datos = atob(elemento.pdfDni.datos): '';
-    elemento.pdfAltaTemprana? elemento.pdfAltaTemprana.datos = atob(elemento.pdfAltaTemprana.datos): '';
+    elemento.foto ? elemento.foto.datos = atob(elemento.foto.datos) : '';
+    elemento.pdfLicConducir ? elemento.pdfLicConducir.datos = atob(elemento.pdfLicConducir.datos) : '';
+    elemento.pdfLinti ? elemento.pdfLinti.datos = atob(elemento.pdfLinti.datos) : '';
+    elemento.pdfLibSanidad ? elemento.pdfLibSanidad.datos = atob(elemento.pdfLibSanidad.datos) : '';
+    elemento.pdfDni ? elemento.pdfDni.datos = atob(elemento.pdfDni.datos) : '';
+    elemento.pdfAltaTemprana ? elemento.pdfAltaTemprana.datos = atob(elemento.pdfAltaTemprana.datos) : '';
     this.formulario.patchValue(elemento);
     this.cambioEsChofer();
   }

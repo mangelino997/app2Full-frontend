@@ -141,18 +141,24 @@ export class FacturaDebitoCreditoComponent implements OnInit {
     this.listarCondicionCompra();
     //Autocompletado Proveedor- Buscar por alias
     this.formulario.get('proveedor').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.proveedorService.listarPorAlias(data).subscribe(response => {
-          this.resultados = response;
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.proveedorService.listarPorAlias(data).subscribe(response => {
+            this.resultados = response;
+          })
+        }
       }
     })
     //Autocompletado Proveedor- Buscar por alias
     this.formularioFiltro.get('nombre').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.proveedorService.listarPorAlias(data).subscribe(response => {
-          this.resultados = response;
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.proveedorService.listarPorAlias(data).subscribe(response => {
+            this.resultados = response;
+          })
+        }
       }
     })
   }
@@ -951,10 +957,13 @@ export class AgregarItemDialogo {
     this.reestablecerFormulario();
     //Autocompletado InsumoProducto- Buscar por alias
     this.formulario.get('insumoProducto').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.insumoProductoService.listarPorAlias(data).subscribe(response => {
-          this.resultados = response;
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.insumoProductoService.listarPorAlias(data).subscribe(response => {
+            this.resultados = response;
+          })
+        }
       }
     })
   }

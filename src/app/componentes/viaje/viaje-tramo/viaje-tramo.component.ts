@@ -595,7 +595,7 @@ export class DadorDestinatarioDialogo {
   //Define la modalidad de carga seleccionada
   public modalidadCarga: boolean;
   //Define campos solo lectura
-  public soloLectura:boolean = false;
+  public soloLectura: boolean = false;
   //Define las columnas de la tabla
   public columnas: string[] = ['dador', 'destinatario', 'remitos', 'eliminar'];
   //Define muestra de progress dialog
@@ -622,18 +622,24 @@ export class DadorDestinatarioDialogo {
     this.listar(this.data.viajeTramo);
     //Autocompletado Cliente Dador - Buscar por alias
     this.formulario.get('clienteDador').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.clienteServicio.listarPorAlias(data).subscribe(response => {
-          this.resultadosClientes = response.json();
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.clienteServicio.listarPorAlias(data).subscribe(response => {
+            this.resultadosClientes = response.json();
+          })
+        }
       }
     });
     //Autocompletado Cliente Destinatario - Buscar por alias
     this.formulario.get('clienteDestinatario').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.clienteServicio.listarPorAlias(data).subscribe(response => {
-          this.resultadosClientes = response.json();
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.clienteServicio.listarPorAlias(data).subscribe(response => {
+            this.resultadosClientes = response.json();
+          })
+        }
       }
     });
     //Establece botones y campos solo lectura

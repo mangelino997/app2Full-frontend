@@ -13,9 +13,10 @@
       <h5>{{pestaniaActual}} Deducción General</h5>
       <form [formGroup]="formulario" class="contenedor">
         <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
-          <label for="idAutocompletado" class="tamanio-label">Buscar por Nombre</label>
+          <label for="idAutocompletado" class="tamanio-label">Buscar</label>
           <input id="idAutocompletado" class="form-control form-control-sm color-busqueda" type="text" matInput
-            [formControl]="autocompletado" [matAutocomplete]="auto1" autocomplete="off" (blur)="verificarSeleccion(autocompletado)">
+            [formControl]="autocompletado" [matAutocomplete]="auto1" autocomplete="off"
+            (blur)="verificarSeleccion(autocompletado)" placeholder="Por Nombre">
           <mat-autocomplete #auto1="matAutocomplete" [displayWith]="displayFn.bind(this)"
             (optionSelected)="cambioAutocompletado()">
             <mat-option *ngFor="let item of resultados" [value]="item">
@@ -35,9 +36,9 @@
           <div class="col-md-12">
             <div class="form-group has-float-label">
               <label id="labelDescripcion" for="idDescripcion" class="descripcion-label">Nombre *</label>
-              <input id="idDescripcion" type="text" formControlName="descripcion" autocomplete="off" [readonly]="soloLectura"
-                class="form-control form-control-sm" (ngModelChange)="cambioCampo('idDescripcion', 'labelDescripcion')"
-                maxlength="80">
+              <input id="idDescripcion" type="text" formControlName="descripcion" autocomplete="off"
+                [readonly]="soloLectura" class="form-control form-control-sm"
+                (ngModelChange)="cambioCampo('idDescripcion', 'labelDescripcion')" maxlength="80">
             </div>
           </div>
         </div>
@@ -78,8 +79,8 @@
               matTooltip="Consultar" matTooltipPosition="above">
               <mat-icon>search</mat-icon>
             </button>
-            <button mat-icon-button class="mat-icon-button-table margin-left-3"
-              (click)="activarActualizar(elemento)" matTooltip="Editar" matTooltipPosition="above">
+            <button mat-icon-button class="mat-icon-button-table margin-left-3" (click)="activarActualizar(elemento)"
+              matTooltip="Editar" matTooltipPosition="above">
               <mat-icon>edit</mat-icon>
             </button>
           </td>

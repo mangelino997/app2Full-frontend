@@ -119,10 +119,13 @@ export class VehiculoComponent implements OnInit {
       );
     //Autocompletado - Buscar por alias
     this.autocompletado.valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.servicio.listarPorAlias(data).subscribe(response => {
-          this.resultados = response;
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.servicio.listarPorAlias(data).subscribe(response => {
+            this.resultados = response;
+          })
+        }
       }
     })
   }
@@ -143,34 +146,46 @@ export class VehiculoComponent implements OnInit {
     });
     //Autocompletado - Buscar por alias filtro remolque
     this.formulario.get('vehiculoRemolque').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.servicio.listarPorAliasYRemolqueTrue(data).subscribe(response => {
-          this.resultadosVehiculosRemolques = response;
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.servicio.listarPorAliasYRemolqueTrue(data).subscribe(response => {
+            this.resultadosVehiculosRemolques = response;
+          })
+        }
       }
     })
     //Autocompletado Localidad - Buscar por nombre
     this.formulario.get('localidad').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.localidadServicio.listarPorNombre(data).subscribe(response => {
-          this.resultadosLocalidades = response;
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.localidadServicio.listarPorNombre(data).subscribe(response => {
+            this.resultadosLocalidades = response;
+          })
+        }
       }
     })
     //Autocompletado Personal - Buscar chofer por alias
     this.formulario.get('personal').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.personalServicio.listarChoferActivoPorAlias(data).subscribe(response => {
-          this.resultadosPersonales = response;
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.personalServicio.listarChoferActivoPorAlias(data).subscribe(response => {
+            this.resultadosPersonales = response;
+          })
+        }
       }
     })
     //Autocompletado Compania de Seguro - Buscar por nombre
     this.formulario.get('companiaSeguroPoliza').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.companiaSeguroPolizaServicio.listarPorCompaniaSeguroNombre(data).subscribe(response => {
-          this.resultadosCompaniasSegurosPolizas = response;
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.companiaSeguroPolizaServicio.listarPorCompaniaSeguroNombre(data).subscribe(response => {
+            this.resultadosCompaniasSegurosPolizas = response;
+          })
+        }
       }
     })
     //Establece los valores de la primera pestania activa
@@ -262,7 +277,7 @@ export class VehiculoComponent implements OnInit {
     if (this.formulario.value.empresa.id) {
       this.companiaSeguroService.listarPorEmpresa(this.formulario.value.empresa.id).subscribe(res => {
         this.companiasSeguros = res.json();
-        this.companiasSeguros.length == 0? this.toastr.warning("El Titular no tiene Compañía de Seguro asigandas.") : '';
+        this.companiasSeguros.length == 0 ? this.toastr.warning("El Titular no tiene Compañía de Seguro asigandas.") : '';
       })
     }
     this.loaderService.hide();

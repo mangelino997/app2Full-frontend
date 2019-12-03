@@ -88,10 +88,18 @@ export class ContactoCompaniaSeguroComponent implements OnInit {
     this.listarTiposContactos();
     //Autocompletado - Buscar por nombre compania seguro
     this.formulario.get('companiaSeguro').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.companiaSeguroServicio.listarPorNombre(data).subscribe(response => {
-          this.resultadosCompaniasSeguros = response;
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.loaderService.show();
+          this.companiaSeguroServicio.listarPorNombre(data).subscribe(response => {
+            this.resultadosCompaniasSeguros = response;
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
+        }
       }
     })
   }

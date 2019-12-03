@@ -112,10 +112,18 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
     )
     //Autocompletado Compania Seguro - Buscar por nombre
     this.formulario.get('companiaSeguro').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.companiaSeguroServicio.listarPorNombre(data).subscribe(res => {
-          this.resultadosCompaniasSeguros = res;
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.loaderService.show();
+          this.companiaSeguroServicio.listarPorNombre(data).subscribe(res => {
+            this.resultadosCompaniasSeguros = res;
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
+        }
       }
     })
   }
@@ -275,7 +283,7 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
     this.servicio.listarPorCompaniaSeguroYEmpresa(this.formulario.value.companiaSeguro.id, this.formulario.value.empresa.id).subscribe(res => {
       this.listaCompleta = new MatTableDataSource(res.json());
       this.listaCompleta.sort = this.sort;
-      this.listaCompleta.data.length == 0? this.toastr.error("Sin registros para mostrar para la Empresa y Compañía Seguro.") : '';
+      this.listaCompleta.data.length == 0 ? this.toastr.error("Sin registros para mostrar para la Empresa y Compañía Seguro.") : '';
     })
   }
   //Obtiene un listado por compania de seguro

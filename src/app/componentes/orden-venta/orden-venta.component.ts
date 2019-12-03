@@ -155,10 +155,13 @@ export class OrdenVentaComponent implements OnInit {
       );
     //Autocompletado - Buscar por nombre
     this.buscar.valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.servicio.listarPorNombre(data).subscribe(response => {
-          this.resultados = response;
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.servicio.listarPorNombre(data).subscribe(response => {
+            this.resultados = response;
+          })
+        }
       }
     });
   }
@@ -190,18 +193,24 @@ export class OrdenVentaComponent implements OnInit {
     this.seleccionarPestania(1, 'Agregar');
     //Autocompletado - Buscar por nombre cliente
     this.cliente.valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.clienteServicio.listarPorAlias(data).subscribe(response => {
-          this.resultadosClientes = response.json();
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.clienteServicio.listarPorAlias(data).subscribe(response => {
+            this.resultadosClientes = response.json();
+          })
+        }
       }
     });
     //Autocompletado - Buscar por nombre cliente - Pestania Listar
     this.formularioFiltro.get('cliente').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.clienteServicio.listarPorAlias(data).subscribe(response => {
-          this.resultadosClientes = response.json();
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.clienteServicio.listarPorAlias(data).subscribe(response => {
+            this.resultadosClientes = response.json();
+          })
+        }
       }
     });
   }
@@ -327,7 +336,7 @@ export class OrdenVentaComponent implements OnInit {
     this.cliente.reset();
     this.vaciarListas();
     this.ordenventa.reset();
-  
+
     // this.btnOrdenVta = false;
     this.empresa.reset();
     let empresa = this.appService.getEmpresa();
@@ -496,12 +505,13 @@ export class OrdenVentaComponent implements OnInit {
       let usuarioAlta = this.appService.getUsuario();
       let empresa = this.appService.getEmpresa();
       this.formulario.get('id').setValue(null);
-      this.formulario.get('ordenesVentasTarifas').setValue(this.formularioTarifa.value);
+      // this.formulario.get('tipoTarifas').setValue(this.formularioTarifa.value);
       if (!this.formulario.get('seguro').value) {
         this.formulario.get('seguro').setValue(this.appService.setDecimales('7', 2));
       }
       this.formulario.get('comisionCR').setValue(0.00);
-      this.servicio.agregar(this.formulario.value, usuarioAlta, empresa, this.cliente.value).then(
+      this.formulario.get('tipoTarifas').disable();
+      this.servicio.agregar(this.formulario.value, usuarioAlta, empresa, this.cliente.value, this.formularioTarifa.value).then(
         res => {
           if (res.status == 201) {
             let respuesta = res.json();
@@ -510,7 +520,13 @@ export class OrdenVentaComponent implements OnInit {
                 this.formularioTarifa.reset();
                 this.establecerOrdenVentaCabecera(data.id);
                 this.soloLectura = true;
-                this.listarTarifasOrdenVenta();
+                this.servicio.obtenerPorId(data.id).subscribe(
+                  res => {
+                    console.log(res.json());
+                  }
+                );
+
+                // this.listarTarifasOrdenVenta();
                 this.formulario.disable();
                 this.tipoOrdenVenta.disable();
                 this.toastr.success("Registro agregado con éxito");

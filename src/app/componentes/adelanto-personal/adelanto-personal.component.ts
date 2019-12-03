@@ -104,10 +104,18 @@ export class AdelantoPersonalComponent implements OnInit {
       );
     //Autocompletado
     this.autocompletado.valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.personalService.listarActivosPorAlias(data).subscribe(res => {
-          this.resultados = res;
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.loaderService.show();
+          this.personalService.listarActivosPorAlias(data).subscribe(res => {
+            this.resultados = res;
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
+        }
       }
     });
   }
@@ -148,10 +156,18 @@ export class AdelantoPersonalComponent implements OnInit {
     let empresa = this.appService.getEmpresa();
     let usuario = this.appService.getUsuario();
     this.formularioFiltro.get('alias').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.personalService.listarActivosPorAliasEmpresaYSucursal(data, empresa.id, usuario.sucursal.id).subscribe(res => {
-          this.resultados = res;
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.loaderService.show();
+          this.personalService.listarActivosPorAliasEmpresaYSucursal(data, empresa.id, usuario.sucursal.id).subscribe(res => {
+            this.resultados = res;
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
+        }
       }
     })
   }
@@ -250,10 +266,10 @@ export class AdelantoPersonalComponent implements OnInit {
     //Consulta por filtro
     this.servicio.listarPorFiltros(obj).subscribe(
       res => {
-        if(res.json().length > 0){
+        if (res.json().length > 0) {
           this.listaCompleta = new MatTableDataSource(res.json());
           this.listaCompleta.sort = this.sort;
-        }else{
+        } else {
           this.listaCompleta = new MatTableDataSource([]);
           this.toastr.warning("Sin registros para mostrar.");
         }

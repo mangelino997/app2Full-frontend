@@ -159,12 +159,15 @@ export class ClienteComponent implements OnInit {
     this.autocompletado.valueChanges.subscribe(data => {
       if (typeof data == 'string') {
         data = data.trim();
-        if (data == '*' || data.length > 2) {
+        if (data == '*' || data.length > 0) {
+          this.loaderService.show();
           this.servicio.listarPorAlias(data).subscribe(
             res => {
               this.resultados = res.json();
+              this.loaderService.hide();
             },
             err => {
+              this.loaderService.hide();
             });
         }
       }
@@ -192,46 +195,84 @@ export class ClienteComponent implements OnInit {
     this.seleccionarOpcion(1, 0);
     //Autocompletado Barrio - Buscar por nombre
     this.formulario.get('barrio').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.barrioServicio.listarPorNombre(data).subscribe(response => {
-          this.resultadosBarrios = response;
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.loaderService.show();
+          this.barrioServicio.listarPorNombre(data).subscribe(response => {
+            this.resultadosBarrios = response;
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
+        }
       }
     })
     //Autocompletado Localidad - Buscar por nombre
     this.formulario.get('localidad').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.localidadServicio.listarPorNombre(data).subscribe(response => {
-          this.resultadosLocalidades = response;
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.loaderService.show();
+          this.localidadServicio.listarPorNombre(data).subscribe(response => {
+            this.resultadosLocalidades = response;
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
+        }
       }
     })
     //Autocompletado Localidad - Buscar por nombre - Enn formularioFiltro
     this.formularioFiltro.get('localidad').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.localidadServicio.listarPorNombre(data).subscribe(response => {
-          this.resultadosLocalidades = response;
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.loaderService.show();
+          this.localidadServicio.listarPorNombre(data).subscribe(response => {
+            this.resultadosLocalidades = response;
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
+        }
       }
     })
     //Autocompletado Cuenta Grupo - Buscar por nombre
     this.formulario.get('cuentaGrupo').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.servicio.listarPorAlias(data).subscribe(res => {
-          this.resultadosCuentasGrupos = res.json();
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.loaderService.show();
+          this.servicio.listarPorAlias(data).subscribe(res => {
+            this.resultadosCuentasGrupos = res.json();
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
+        }
       }
     })
     //Autocompletado Compania Seguro - Buscar por nombre
     this.formulario.get('companiaSeguro').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.companiaSeguroServicio.listarPorNombre(data).subscribe(response => {
-          this.resultadosCompaniasSeguros = response;
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.loaderService.show();
+          this.companiaSeguroServicio.listarPorNombre(data).subscribe(response => {
+            this.resultadosCompaniasSeguros = response;
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
+        }
       }
     })
-    //Obtiene la lista completa de registros
-    // this.listar();
     //Obtiene la lista de condiciones de iva
     this.listarCondicionesIva();
     //Obtiene la lista de tipos de documentos
@@ -984,7 +1025,7 @@ export class ClienteComponent implements OnInit {
     }
   }
   //Cambio en el campo Localidad del formulario filtro en pestaña Listar
-  public cambioLocalidadFiltro(){
+  public cambioLocalidadFiltro() {
     this.formularioFiltro.get('localidad').reset();
   }
   //Abre el Modal para Listas de Precios
@@ -1266,10 +1307,18 @@ export class ListasDePreciosDialog {
     this.establecerEmpresa();
     //Autocompletado - Buscar por nombre cliente
     this.formulario.get('cliente').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.clienteServicio.listarPorAlias(data).subscribe(res => {
-          this.resultadosClientes = res.json();
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.loaderService.show();
+          this.clienteServicio.listarPorAlias(data).subscribe(res => {
+            this.resultadosClientes = res.json();
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
+        }
       }
     });
   }

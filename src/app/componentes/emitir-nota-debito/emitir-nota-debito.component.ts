@@ -81,10 +81,13 @@ export class EmitirNotaDebitoComponent implements OnInit {
     this.listarAlicuotaIva();
     //Autcompletado - Buscar por Cliente
     this.formulario.get('cliente').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.clienteService.listarPorAlias(data).subscribe(res => {
-          this.resultadosClientes = res.json();
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.clienteService.listarPorAlias(data).subscribe(res => {
+            this.resultadosClientes = res.json();
+          })
+        }
       }
     });
   }
@@ -189,13 +192,13 @@ export class EmitirNotaDebitoComponent implements OnInit {
       this.formulario.get('cli.tipoDocumento').setValue(this.formulario.get('cliente').value.tipoDocumento.abreviatura);
       this.formulario.get('cli.numeroDocumento').setValue(this.formulario.get('cliente').value.numeroDocumento);
       this.establecerCabecera();
-        document.getElementById('idMotivo').focus();
+      document.getElementById('idMotivo').focus();
     }
     else {
       this.formulario.get('cliente').setValue(null);
       this.resultadosClientes = [];
       this.toastr.error('Debe seleccionar un PUNTO DE VENTA');
-        document.getElementById('idPuntoVenta').focus();
+      document.getElementById('idPuntoVenta').focus();
     }
   }
   //Establece Letra
@@ -248,12 +251,12 @@ export class EmitirNotaDebitoComponent implements OnInit {
       this.listaItem[this.itemSeleccionado] = this.formularioItem.value;
       this.calcularImportesItem();
       this.reestablecerFormularioItem();
-        document.getElementById('idMotivo').focus();
+      document.getElementById('idMotivo').focus();
     } else {
       this.listaItem.push(this.formularioItem.value);
       this.calcularImportesItem();
       this.reestablecerFormularioItem();
-        document.getElementById('idMotivo').focus();
+      document.getElementById('idMotivo').focus();
     }
   }
   //Calcula los Importes Totales de los Items que se agregan mediante el formulario
@@ -289,7 +292,7 @@ export class EmitirNotaDebitoComponent implements OnInit {
     this.itemSeleccionado = indice;
     this.formularioItem.patchValue(item);
     this.subtotalCIVA = this.formularioItem.get('importeTotal').value;
-      document.getElementById('idMotivo').focus();
+    document.getElementById('idMotivo').focus();
   }
   //Eliminar un item de la Lista de items
   public eliminarItem(indice) {

@@ -88,10 +88,13 @@ export class SoporteComponent implements OnInit {
     //Defiene autocompletado
     let usuario = this.appService.getUsuario();
     this.autocompletado.valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.servicio.listarPorAliasYUsuario(data, usuario.id).subscribe(res => {
-          this.resultados = res;
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.servicio.listarPorAliasYUsuario(data, usuario.id).subscribe(res => {
+            this.resultados = res;
+          })
+        }
       }
     })
   }
