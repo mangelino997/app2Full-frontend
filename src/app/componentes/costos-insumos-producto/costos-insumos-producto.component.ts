@@ -99,10 +99,13 @@ export class CostosInsumosProductoComponent implements OnInit {
       );
     //Autocompletado - Buscar por alias
     this.autocompletado.valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.servicio.listarPorAlias(data).subscribe(response => {
-          this.resultados = response;
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.servicio.listarPorAlias(data).subscribe(response => {
+            this.resultados = response;
+          })
+        }
       }
     })
   }
@@ -243,10 +246,10 @@ export class CostosInsumosProductoComponent implements OnInit {
     let idMarca = this.formularioFiltro.value.marca;
     idMarca = idMarca == 1 ? 0 : this.formularioFiltro.value.marca.id;
     this.servicio.listarPorRubroYMarca(this.formularioFiltro.value.rubro.id, idMarca).subscribe(res => {
-      if(res.json().length > 0){
+      if (res.json().length > 0) {
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
-      }else{
+      } else {
         this.toastr.error("Sin registros para mostrar.");
         this.listaCompleta = new MatTableDataSource([]);
       }

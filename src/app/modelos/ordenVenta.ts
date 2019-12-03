@@ -21,7 +21,7 @@ export class OrdenVenta {
             estaActiva: new FormControl('', Validators.required),
             fechaAlta: new FormControl(),
             activaDesde: new FormControl(),
-            ordenesVentasTarifas: new FormControl(),
+            tipoTarifas: new FormControl(),
         })
     }
 }

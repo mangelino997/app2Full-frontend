@@ -82,50 +82,68 @@ export class RepartoComponent implements OnInit {
     //Autocompletado vehiculo- Buscar por alias
     var empresa = this.appService.getEmpresa();
     this.formulario.get('vehiculo').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.vehiculoService.listarPorAliasYEmpresa(data, empresa.id).subscribe(response => {
-          this.resultadosVehiculo = response;
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.vehiculoService.listarPorAliasYEmpresa(data, empresa.id).subscribe(response => {
+            this.resultadosVehiculo = response;
+          })
+        }
       }
     })
     //Autocompletado vehiculo proveedor- Buscar por alias
     this.formulario.get('vehiculoProveedor').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.vehiculoProveedorService.listarPorAlias(data).subscribe(response => {
-          this.resultadosVehiculo = response;
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.vehiculoProveedorService.listarPorAlias(data).subscribe(response => {
+            this.resultadosVehiculo = response;
+          })
+        }
       }
     })
     //Autocompletado vehiculo remolque- Buscar por alias
     this.formulario.get('vehiculoRemolque').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.vehiculoService.listarPorAliasYEmpresaFiltroRemolque(data, empresa.id).subscribe(response => {
-          this.resultadosRemolque = response;
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.vehiculoService.listarPorAliasYEmpresaFiltroRemolque(data, empresa.id).subscribe(response => {
+            this.resultadosRemolque = response;
+          })
+        }
       }
     })
     //Autocompletado vehiculo remolque proveedor- Buscar por alias
     this.formulario.get('vehiculoRemolqueProveedor').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.vehiculoProveedorService.listarPorAliasFiltroRemolque(data).subscribe(response => {
-          this.resultadosRemolque = response;
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.vehiculoProveedorService.listarPorAliasFiltroRemolque(data).subscribe(response => {
+            this.resultadosRemolque = response;
+          })
+        }
       }
     })
     //Autocompletado chofer- Buscar por alias
     this.formulario.get('personal').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.personalService.listarChoferesPorDistanciaPorAlias(data, false).subscribe(response => {
-          this.resultadosChofer = response.json();
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.personalService.listarChoferesPorDistanciaPorAlias(data, false).subscribe(response => {
+            this.resultadosChofer = response.json();
+          })
+        }
       }
     })
     //Autocompletado chofer proveedor - Buscar por alias
     this.formulario.get('choferProveedor').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.choferProveedorService.listarActivosPorAlias(data).subscribe(response => {
-          this.resultadosChofer = response;
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.choferProveedorService.listarActivosPorAlias(data).subscribe(response => {
+            this.resultadosChofer = response;
+          })
+        }
       }
     })
   }

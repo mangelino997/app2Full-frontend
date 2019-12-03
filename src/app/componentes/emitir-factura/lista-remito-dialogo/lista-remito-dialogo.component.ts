@@ -102,7 +102,6 @@ export class ListaRemitoDialogoComponent implements OnInit {
     if (this.data.esRemitoGeneral) {
       this.serviceRemitoGeneral.listarPorViajeYEstado(this.formularioFiltro.value).subscribe(
         res => {
-          console.log(res.json());
           let respuesta = res.json();
           respuesta.length > 0? this.asignarAtributoChecked(respuesta, true) : this.toastr.error("Sin registros para mostrar.");
           this.loaderService.hide();
@@ -115,7 +114,6 @@ export class ListaRemitoDialogoComponent implements OnInit {
     } else {
       this.serviceNoEsRemitoGeneral.listarPorViajeYEstado(this.formularioFiltro.value).subscribe(
         res => {
-          console.log(res.json());
           let respuesta = res.json();
           respuesta.length > 0? this.asignarAtributoChecked(respuesta, false) : this.toastr.error("Sin registros para mostrar.");
           this.loaderService.hide();
@@ -151,7 +149,6 @@ export class ListaRemitoDialogoComponent implements OnInit {
     this.data.configuracionModalRemitos.listaCompletaRemitos = listaModificada;
     this.listaCompleta = new MatTableDataSource(listaModificada);
     this.listaCompleta.sort = this.sort;
-    console.log(this.listaCompleta.data);
   }
   //Abre un dialogo para ver las observaciones
   public verObservacionesDialogo(elemento): void {

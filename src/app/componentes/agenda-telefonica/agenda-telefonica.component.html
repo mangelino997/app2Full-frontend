@@ -15,9 +15,9 @@
         <div class="row">
           <div class="col-md-8">
             <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
-              <label for="idAutocompletado" class="tamanio-label">Buscar por Nombre</label>
+              <label for="idAutocompletado" class="tamanio-label">Buscar</label>
               <input id="idAutocompletado" class="form-control form-control-sm color-busqueda" type="text" matInput
-                [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off"
+                [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off" placeholder="Por Nombre"
                 (blur)="verificarSeleccion(autocompletado)">
               <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)"
                 (optionSelected)="cambioAutocompletado()">

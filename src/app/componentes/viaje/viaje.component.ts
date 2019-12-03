@@ -155,69 +155,93 @@ export class ViajeComponent implements OnInit {
     this.cambioTipoRemolque();
     //Autocompletado Vehiculo - Buscar por alias
     this.formularioViaje.get('vehiculo').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.vehiculoServicio.listarPorAliasYRemolqueFalse(data).subscribe(response => {
-          this.resultadosVehiculos = response;
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.vehiculoServicio.listarPorAliasYRemolqueFalse(data).subscribe(response => {
+            this.resultadosVehiculos = response;
+          })
+        }
       }
     })
     //Autocompletado Personal - Buscar por alias
     this.formularioViaje.get('vehiculoProveedor').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.vehiculoProveedorService.listarPorAlias(data).subscribe(response => {
-          this.resultadosVehiculos = response;
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.vehiculoProveedorService.listarPorAlias(data).subscribe(response => {
+            this.resultadosVehiculos = response;
+          })
+        }
       }
     })
     //Autocompletado Vehiculo Remolque - Buscar por alias
     this.formularioViaje.get('vehiculoRemolque').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.vehiculoServicio.listarPorAliasYRemolqueTrue(data).subscribe(response => {
-          this.resultadosVehiculosRemolques = response;
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.vehiculoServicio.listarPorAliasYRemolqueTrue(data).subscribe(response => {
+            this.resultadosVehiculosRemolques = response;
+          })
+        }
       }
     })
     //Autocompletado Vehiculo Remolque - Buscar por alias
     this.formularioViaje.get('vehiculoRemolqueProveedor').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.vehiculoProveedorService.listarPorAliasFiltroRemolque(data).subscribe(response => {
-          this.resultadosVehiculosRemolques = response;
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.vehiculoProveedorService.listarPorAliasFiltroRemolque(data).subscribe(response => {
+            this.resultadosVehiculosRemolques = response;
+          })
+        }
       }
     })
     //Autocompletado Personal - Buscar por alias
     this.formularioViaje.get('personal').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.personalServicio.listarChoferesPorDistanciaPorAlias(data, true).subscribe(res => {
-          this.resultadosChoferes = res.json();
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.personalServicio.listarChoferesPorDistanciaPorAlias(data, true).subscribe(res => {
+            this.resultadosChoferes = res.json();
+          })
+        }
       }
     })
     //Autocompletado Proveedor Chofer - Buscar por alias
     this.formularioViaje.get('choferProveedor').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        let vehiculoProveedor = this.formularioViaje.get('vehiculoProveedor').value;
-        if (vehiculoProveedor) {
-          this.choferProveedorServicio.listarPorAliasYProveedor(data, vehiculoProveedor.proveedor.id).subscribe(res => {
-            this.resultadosChoferes = res.json();
-          });
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          let vehiculoProveedor = this.formularioViaje.get('vehiculoProveedor').value;
+          if (vehiculoProveedor) {
+            this.choferProveedorServicio.listarPorAliasYProveedor(data, vehiculoProveedor.proveedor.id).subscribe(res => {
+              this.resultadosChoferes = res.json();
+            });
+          }
         }
       }
     })
     //Autocompletado Personal - Buscar por alias - Filtros
     this.formularioFiltros.get('personal').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.personalServicio.listarChoferesPorDistanciaPorAlias(data, true).subscribe(res => {
-          this.resultadosPersonales = res.json();
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.personalServicio.listarChoferesPorDistanciaPorAlias(data, true).subscribe(res => {
+            this.resultadosPersonales = res.json();
+          })
+        }
       }
     })
     //Autocompletado Proveedor - Buscar por alias - Filtros
     this.formularioFiltros.get('proveedor').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.personalServicio.listarPorAlias(data).subscribe(res => {
-          this.resultadosProveedores = res.json();
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.personalServicio.listarPorAlias(data).subscribe(res => {
+            this.resultadosProveedores = res.json();
+          })
+        }
       }
     })
   }
@@ -296,10 +320,10 @@ export class ViajeComponent implements OnInit {
     this.servicio.listarPorFiltros(this.formularioFiltros.value).subscribe(
       res => {
         let respuesta = res.json();
-        if(respuesta.length == 0) {
+        if (respuesta.length == 0) {
           this.toastr.warning(MensajeExcepcion.SIN_REGISTROS);
           this.loaderService.hide();
-        } else if(respuesta.length == 1) {
+        } else if (respuesta.length == 1) {
           this.loaderService.hide();
           this.establecerViaje(respuesta[0].id);
         } else {
@@ -311,8 +335,8 @@ export class ViajeComponent implements OnInit {
               lista: respuesta
             }
           });
-          dialogRef.afterClosed().subscribe(resultado => { 
-            if(resultado) {
+          dialogRef.afterClosed().subscribe(resultado => {
+            if (resultado) {
               this.establecerViaje(resultado);
             }
           });
@@ -373,7 +397,7 @@ export class ViajeComponent implements OnInit {
       res => {
         this.sucursales = res.json();
         this.render = true;
-        setTimeout(function() {
+        setTimeout(function () {
           document.getElementById('idFecha').focus();
         });
         this.establecerValoresPorDefecto();
@@ -536,7 +560,7 @@ export class ViajeComponent implements OnInit {
     this.loaderService.show();
     switch (this.indiceSeleccionado) {
       case 1:
-          this.seleccionarPestania(1, 'Agregar', 0);
+        this.seleccionarPestania(1, 'Agregar', 0);
         this.toastr.success(MensajeExcepcion.AGREGADO);
         this.loaderService.hide();
         break;
@@ -544,7 +568,7 @@ export class ViajeComponent implements OnInit {
         this.formularioViaje.enable();
         this.servicio.actualizar(this.formularioViaje.value).subscribe(
           res => {
-            if(res.status == 200) {
+            if (res.status == 200) {
               this.seleccionarPestania(3, 'Actualizar', 0);
               this.toastr.success(MensajeExcepcion.ACTUALIZADO);
             }
@@ -556,7 +580,7 @@ export class ViajeComponent implements OnInit {
         );
         break;
       case 4:
-          this.seleccionarPestania(4, 'Eliminar', 0);
+        this.seleccionarPestania(4, 'Eliminar', 0);
         this.toastr.success(MensajeExcepcion.ELIMINADO);
         this.loaderService.hide();
         break;
@@ -702,7 +726,7 @@ export class ListarViajesDialogo {
   //Define la lista de dadores-destinatarios
   public listaCompleta = new MatTableDataSource([]);
   //Define el ordenador
-  @ViewChild(MatSort, {static: false}) sort: MatSort;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
   //Define el paginador
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Constructor

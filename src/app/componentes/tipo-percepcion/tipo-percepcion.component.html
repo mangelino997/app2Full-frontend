@@ -13,10 +13,10 @@
       <h5>{{pestaniaActual}} Tipo Percepción</h5>
       <form [formGroup]="formulario" class="contenedor">
         <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
-          <label for="idAutocompletado" class="tamanio-label">Buscar por Nombre</label>
+          <label for="idAutocompletado" class="tamanio-label">Buscar</label>
           <input id="idAutocompletado" class="form-control form-control-sm color-busqueda" type="text" matInput
             [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off"
-            (blur)="verificarSeleccion(autocompletado)">
+            (blur)="verificarSeleccion(autocompletado)" placeholder="Por Nombre">
           <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)"
             (optionSelected)="cambioAutocompletado()">
             <mat-option *ngFor="let item of resultados" [value]="item">
@@ -91,16 +91,15 @@
       <mat-paginator [pageSizeOptions]="[5, 10]" showFirstLastButtons></mat-paginator>
     </div>
     <div class="col-md-2">
-        <div class="row">
-          <div class="col">
-            <div class="form-group has-float-label">
-              <label for="idColumnas" class="tamanio-label">Columnas</label>
-              <mat-select class="form-control form-control-sm" [(ngModel)]="columnasSeleccionadas" multiple>
-                <mat-option *ngFor="let itemColumna of columnas" [value]="itemColumna">
-                  {{itemColumna}}
-                </mat-option>
-              </mat-select>
-            </div>
+      <div class="row">
+        <div class="col">
+          <div class="form-group has-float-label">
+            <label for="idColumnas" class="tamanio-label">Columnas</label>
+            <mat-select class="form-control form-control-sm" [(ngModel)]="columnasSeleccionadas" multiple>
+              <mat-option *ngFor="let itemColumna of columnas" [value]="itemColumna">
+                {{itemColumna}}
+              </mat-option>
+            </mat-select>
           </div>
         </div>
         <div class="row justify-content-end">
@@ -108,5 +107,6 @@
           [disabled]="listaCompleta.data.length==0">Reporte</button>
         </div>
       </div>
+    </div>
   </div>
 </div>
