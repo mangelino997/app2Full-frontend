@@ -196,7 +196,7 @@
           </ng-container>
           <ng-container matColumnDef="CBU">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>CBU</th>
-            <td mat-cell *matCellDef="let elemento">{{elemento.cbu}}</td>
+            <td mat-cell *matCellDef="let elemento" class ="number-right">{{elemento.cbu}}</td>
           </ng-container>
           <ng-container matColumnDef="ALIAS_CBU">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Alias CBU</th>
@@ -212,7 +212,8 @@
           </ng-container>
           <ng-container matColumnDef="EDITAR" stickyEnd>
             <th mat-header-cell *matHeaderCellDef>
-              <button mat-raised-button color="primary" (click)="abrirReporte()" style="width: 100%;">Reporte</button>
+              <button mat-raised-button color="primary" (click)="abrirReporte()" style="width: 100%;" 
+              [disabled]="listaCompleta.data.length==0">Reporte</button>
             </th>
             <td mat-cell *matCellDef="let elemento">
               <button mat-icon-button class="mat-icon-button-table" (click)="activarConsultar(elemento)"

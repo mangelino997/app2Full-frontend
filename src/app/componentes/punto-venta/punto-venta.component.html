@@ -217,7 +217,7 @@
             </ng-container>
             <ng-container matColumnDef="PUNTO_VENTA">
               <th mat-header-cell *matHeaderCellDef mat-sort-header>Punto de Venta</th>
-              <td mat-cell *matCellDef="let elemento">{{displayFb(elemento)}}</td>
+              <td mat-cell *matCellDef="let elemento" class="number-right">{{displayFb(elemento)}}</td>
             </ng-container>
             <ng-container matColumnDef="FE">
               <th mat-header-cell *matHeaderCellDef mat-sort-header>Es FE</th>
@@ -257,7 +257,7 @@
             </ng-container>
             <ng-container matColumnDef="EDITAR" stickyEnd>
               <th mat-header-cell *matHeaderCellDef><button class="button-full-width" mat-raised-button color="primary"
-                  (click)="abrirReporte()">Reporte</button></th>
+                [disabled]="listaCompleta.data.length==0" (click)="abrirReporte()">Reporte</button></th>
               <td mat-cell *matCellDef="let elemento">
                 <button mat-icon-button class="mat-icon-button-table" (click)="activarConsultar(elemento)"
                   matTooltip="Consultar" matTooltipPosition="above">

@@ -38,7 +38,7 @@
         <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
           <ng-container matColumnDef="HASTA">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>-</th>
-            <td mat-cell *matCellDef="let elemento">Hasta</td>
+            <td mat-cell *matCellDef="let elemento" class="number-right">Hasta</td>
           </ng-container>
           <ng-container matColumnDef="VALOR">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Valor</th>
@@ -46,7 +46,7 @@
           </ng-container>
           <ng-container matColumnDef="ELIMINAR" stickyEnd>
             <th mat-header-cell *matHeaderCellDef><button class="button-full-width" mat-raised-button color="primary"
-                (click)="abrirReporte()">Reporte</button></th>
+              [disabled]="listaCompleta.data.length==0" (click)="abrirReporte()">Reporte</button></th>
             <td mat-cell *matCellDef="let elemento" class="last-col-end">
               <button mat-icon-button class="mat-icon-button-table" (click)="eliminar(elemento.id)"
                 matTooltip="Eliminar" matTooltipPosition="above">
