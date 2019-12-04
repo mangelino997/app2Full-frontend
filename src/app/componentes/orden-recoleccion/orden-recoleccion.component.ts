@@ -129,9 +129,14 @@ export class OrdenRecoleccionComponent implements OnInit {
       if (typeof data == 'string') {
         data = data.trim();
         if (data == '*' || data.length > 0) {
+          this.loaderService.show();
           this.servicio.listarPorAlias(data).subscribe(res => {
             this.formulario.patchValue(res.json());
-          })
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
         }
       }
     })
@@ -140,9 +145,14 @@ export class OrdenRecoleccionComponent implements OnInit {
       if (typeof data == 'string') {
         data = data.trim();
         if (data == '*' || data.length > 0) {
+          this.loaderService.show();
           this.clienteService.listarPorAlias(data).subscribe(res => {
             this.resultadosClientes = res.json();
-          })
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
         }
       }
     });
@@ -151,9 +161,14 @@ export class OrdenRecoleccionComponent implements OnInit {
       if (typeof data == 'string') {
         data = data.trim();
         if (data == '*' || data.length > 0) {
+          this.loaderService.show();
           this.localidadService.listarPorNombre(data).subscribe(res => {
             this.resultadosLocalidades = res;
-          })
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
         }
       }
     });
@@ -162,9 +177,14 @@ export class OrdenRecoleccionComponent implements OnInit {
       if (typeof data == 'string') {
         data = data.trim();
         if (data == '*' || data.length > 0) {
+          this.loaderService.show();
           this.barrioService.listarPorNombre(data).subscribe(res => {
             this.resultadosBarrios = res;
-          })
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
         }
       }
     })

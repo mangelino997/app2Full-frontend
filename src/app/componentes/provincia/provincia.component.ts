@@ -70,10 +70,18 @@ export class ProvinciaComponent implements OnInit {
       );
     //Autocompletado - Buscar por nombre
     this.autocompletado.valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.servicio.listarPorNombre(data).subscribe(res => {
-          this.resultados = res;
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.loaderService.show();
+          this.servicio.listarPorNombre(data).subscribe(res => {
+            this.resultados = res;
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
+        }
       }
     })
   }
@@ -92,10 +100,18 @@ export class ProvinciaComponent implements OnInit {
     this.listarPaises();
     //Autocompletado Pais - Buscar por nombre
     this.formulario.get('pais').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.paisServicio.listarPorNombre(data).subscribe(res => {
-          this.resultadosPaises = res;
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.loaderService.show();
+          this.paisServicio.listarPorNombre(data).subscribe(res => {
+            this.resultadosPaises = res;
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
+        }
       }
     })
   }
@@ -262,7 +278,7 @@ export class ProvinciaComponent implements OnInit {
       document.getElementById("labelNombre").classList.add('label-error');
       document.getElementById("idNombre").classList.add('is-invalid');
       document.getElementById("idNombre").focus();
-    } 
+    }
     this.toastr.error(respuesta.mensaje);
   }
   //Obtiene la lista de provincias por pais

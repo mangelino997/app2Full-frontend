@@ -158,9 +158,14 @@ export class ViajeComponent implements OnInit {
       if (typeof data == 'string') {
         data = data.trim();
         if (data == '*' || data.length > 0) {
+          this.loaderService.show();
           this.vehiculoServicio.listarPorAliasYRemolqueFalse(data).subscribe(response => {
             this.resultadosVehiculos = response;
-          })
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
         }
       }
     })
@@ -169,9 +174,14 @@ export class ViajeComponent implements OnInit {
       if (typeof data == 'string') {
         data = data.trim();
         if (data == '*' || data.length > 0) {
+          this.loaderService.show();
           this.vehiculoProveedorService.listarPorAlias(data).subscribe(response => {
             this.resultadosVehiculos = response;
-          })
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
         }
       }
     })
@@ -180,9 +190,14 @@ export class ViajeComponent implements OnInit {
       if (typeof data == 'string') {
         data = data.trim();
         if (data == '*' || data.length > 0) {
+          this.loaderService.show();
           this.vehiculoServicio.listarPorAliasYRemolqueTrue(data).subscribe(response => {
             this.resultadosVehiculosRemolques = response;
-          })
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
         }
       }
     })
@@ -191,9 +206,14 @@ export class ViajeComponent implements OnInit {
       if (typeof data == 'string') {
         data = data.trim();
         if (data == '*' || data.length > 0) {
+          this.loaderService.show();
           this.vehiculoProveedorService.listarPorAliasFiltroRemolque(data).subscribe(response => {
             this.resultadosVehiculosRemolques = response;
-          })
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
         }
       }
     })
@@ -202,9 +222,14 @@ export class ViajeComponent implements OnInit {
       if (typeof data == 'string') {
         data = data.trim();
         if (data == '*' || data.length > 0) {
+          this.loaderService.show();
           this.personalServicio.listarChoferesPorDistanciaPorAlias(data, true).subscribe(res => {
             this.resultadosChoferes = res.json();
-          })
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
         }
       }
     })
@@ -213,11 +238,16 @@ export class ViajeComponent implements OnInit {
       if (typeof data == 'string') {
         data = data.trim();
         if (data == '*' || data.length > 0) {
+          this.loaderService.show();
           let vehiculoProveedor = this.formularioViaje.get('vehiculoProveedor').value;
           if (vehiculoProveedor) {
             this.choferProveedorServicio.listarPorAliasYProveedor(data, vehiculoProveedor.proveedor.id).subscribe(res => {
               this.resultadosChoferes = res.json();
-            });
+              this.loaderService.hide();
+            }),
+              err => {
+                this.loaderService.hide();
+              };
           }
         }
       }
@@ -227,9 +257,14 @@ export class ViajeComponent implements OnInit {
       if (typeof data == 'string') {
         data = data.trim();
         if (data == '*' || data.length > 0) {
+          this.loaderService.show();
           this.personalServicio.listarChoferesPorDistanciaPorAlias(data, true).subscribe(res => {
             this.resultadosPersonales = res.json();
-          })
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
         }
       }
     })
@@ -238,9 +273,14 @@ export class ViajeComponent implements OnInit {
       if (typeof data == 'string') {
         data = data.trim();
         if (data == '*' || data.length > 0) {
+          this.loaderService.show();
           this.personalServicio.listarPorAlias(data).subscribe(res => {
             this.resultadosProveedores = res.json();
-          })
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
         }
       }
     })

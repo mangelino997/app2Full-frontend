@@ -35,10 +35,10 @@
                   <div class="row">
                     <div class="col-md-6">
                       <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
-                        <label for="idAutocompletado" class="tamanio-label">Buscar Cliente</label>
+                        <label for="idAutocompletado" class="tamanio-label">Cliente</label>
                         <input id="idAutocompletado" class="form-control form-control-sm" autocomplete="off" type="text"
                           matInput [formControl]="autocompletado" [matAutocomplete]="auto"
-                          placeholder="Buscar por id, razón social, nombre de fantasía o número de documento">
+                          placeholder="Buscar por id, razón social, alias, nombre de fantasía o número de documento">
                         <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayF.bind(this)"
                           (optionSelected)="establecerFormulario()">
                           <mat-option *ngFor="let item of resultados" [value]="item">
@@ -241,7 +241,7 @@
                         <label for="idCuentaGrupo" class="tamanio-label">Cuenta del Grupo</label>
                         <input id="idCuentaGrupo" class="form-control form-control-sm" type="text" matInput
                           [formControl]="formulario.get('cuentaGrupo')" [matAutocomplete]="autoCuentaGrupo"
-                          autocomplete="off" [readonly]="soloLectura"
+                          autocomplete="off" [readonly]="soloLectura" placeholder="Buscar por alias"
                           (blur)="verificarSeleccion(formulario.get('cuentaGrupo'))">
                         <mat-autocomplete #autoCuentaGrupo="matAutocomplete" [displayWith]="displayF.bind(this)">
                           <mat-option *ngFor="let itemCuentaGrupo of resultadosCuentasGrupos" [value]="itemCuentaGrupo">

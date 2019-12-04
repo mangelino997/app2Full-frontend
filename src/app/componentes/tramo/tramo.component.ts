@@ -77,42 +77,82 @@ export class TramoComponent implements OnInit {
       );
     //Autocompletado - Buscar por nombre
     this.autocompletado.valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.servicio.listarPorOrigen(data).subscribe(res => {
-          this.resultados = res;
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.loaderService.show();
+          this.servicio.listarPorOrigen(data).subscribe(res => {
+            this.resultados = res;
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
+        }
       }
     })
     //Autocompletado - Buscar por nombre
     this.autocompletadoOrigen.valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.servicio.listarPorOrigen(data).subscribe(res => {
-          this.resultados = res;
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.loaderService.show();
+          this.servicio.listarPorOrigen(data).subscribe(res => {
+            this.resultados = res;
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
+        }
       }
     })
     //Autocompletado - Buscar por nombre
     this.autocompletadoDestino.valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.servicio.listarPorDestino(data).subscribe(res => {
-          this.resultados = res;
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.loaderService.show();
+          this.servicio.listarPorDestino(data).subscribe(res => {
+            this.resultados = res;
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
+        }
       }
     })
     //Autocompletado - Buscar por nombre
     this.autocompletadoOrigenListar.valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.origenDestinoServicio.listarPorNombre(data).subscribe(res => {
-          this.resultadosOrigenListar = res;
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.loaderService.show();
+          this.origenDestinoServicio.listarPorNombre(data).subscribe(res => {
+            this.resultadosOrigenListar = res;
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
+        }
       }
     })
     //Autocompletado - Buscar por nombre
     this.autocompletadoDestinoListar.valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.origenDestinoServicio.listarPorNombre(data).subscribe(res => {
-          this.resultadosDestinoListar = res;
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.loaderService.show();
+          this.origenDestinoServicio.listarPorNombre(data).subscribe(res => {
+            this.resultadosDestinoListar = res;
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
+        }
       }
     })
   }
@@ -122,18 +162,34 @@ export class TramoComponent implements OnInit {
     this.formulario = this.modelo.formulario;
     //Autocompletado Origen - Buscar por nombre
     this.formulario.get('origen').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.origenDestinoServicio.listarPorNombre(data).subscribe(res => {
-          this.resultadosOrigenesDestinos = res;
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.loaderService.show();
+          this.origenDestinoServicio.listarPorNombre(data).subscribe(res => {
+            this.resultadosOrigenesDestinos = res;
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
+        }
       }
     })
     //Autocompletado Destino - Buscar por nombre
     this.formulario.get('destino').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.origenDestinoServicio.listarPorNombre(data).subscribe(res => {
-          this.resultadosOrigenesDestinos = res;
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.loaderService.show();
+          this.origenDestinoServicio.listarPorNombre(data).subscribe(res => {
+            this.resultadosOrigenesDestinos = res;
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
+        }
       }
     })
     //Establece la subscripcion a loader

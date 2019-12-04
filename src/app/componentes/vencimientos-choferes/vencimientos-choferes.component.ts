@@ -79,10 +79,15 @@ export class VencimientosChoferesComponent implements OnInit {
     this.autocompletado.valueChanges.subscribe(data => {
       if (typeof data == 'string') {
         data = data.trim();
+        this.loaderService.show();
         if (data == '*' || data.length > 0) {
           this.personalServicio.listarPorAlias(data).subscribe(response => {
             this.resultados = response;
-          })
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
         }
       }
     })

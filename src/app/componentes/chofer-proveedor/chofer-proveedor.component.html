@@ -4,7 +4,7 @@
       <nav mat-tab-nav-bar>
         <a mat-tab-link disabled>CHOFER PROVEEDOR</a>
         <a mat-tab-link *ngFor="let pestania of pestanias" [active]="activeLink == pestania.nombre"
-          (click)="seleccionarPestania(pestania.id, pestania.nombre, 0)">{{pestania.nombre}}</a>
+          (click)="seleccionarPestania(pestania.id, pestania.nombre)">{{pestania.nombre}}</a>
       </nav>
     </div>
   </div>
@@ -18,7 +18,7 @@
               <label for="idProveedor" class="tamanio-label">Proveedor *</label>
               <input id="idProveedor" class="form-control form-control-sm" type="text" matInput
                 [formControl]="formulario.get('proveedor')" [matAutocomplete]="autoProveedor" autocomplete="off"
-                (blur)="verificarSeleccion(formulario.get('proveedor'))">
+                (blur)="verificarSeleccion(formulario.get('proveedor'))" placeholder="Buscar por Alias">
               <mat-autocomplete #autoProveedor="matAutocomplete" [displayWith]="displayF.bind(this)"
                 (optionSelected)="listarPorProveedor()">
                 <mat-option *ngFor="let itemProveedor of resultadosProveedores" [value]="itemProveedor">

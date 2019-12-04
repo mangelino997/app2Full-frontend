@@ -17,10 +17,10 @@
             <div class="row">
               <div class="col-md-8">
                 <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
-                  <label for="idAutocompletado" class="tamanio-label">Buscar </label>
+                  <label for="idAutocompletado" class="tamanio-label">Orden Recolección </label>
                   <input id="idAutocompletado" class="form-control form-control-sm color-busqueda" type="text" matInput
                     [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off"
-                    (blur)="verificarSeleccion(autocompletado)">
+                    (blur)="verificarSeleccion(autocompletado)" placeholder="Buscar por alias">
                   <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayF.bind(this)">
                     <mat-option *ngFor="let item of resultados" [value]="item"
                       (onSelectionChange)="formulario.setValue(item)">
@@ -52,7 +52,8 @@
                   <label for="idCliente" class="cliente-label">Remitente *</label>
                   <input id="idCliente" class="form-control form-control-sm" type="text" matInput
                     [formControl]="formulario.get('cliente')" [matAutocomplete]="autoCliente" autocomplete="off"
-                    (blur)="verificarSeleccion(formulario.get('cliente'))">
+                    (blur)="verificarSeleccion(formulario.get('cliente'))"
+                    placeholder="Buscar por alias">
                   <mat-autocomplete #autoCliente="matAutocomplete" [displayWith]="displayF.bind(this)"
                     (optionSelected)="cambioRemitente()">
                     <mat-option *ngFor="let itemCliente of resultadosClientes" [value]="itemCliente">
@@ -190,8 +191,9 @@
             <div class="form-group has-float-label">
               <label for="idKgEfectivo" class="tamanio-label">Kg Efectivo </label>
               <input id="idKgEfectivo" type="text" formControlName="kilosEfectivo" autocomplete="off"
-                (blur)="setDecimales($event, 2)" class="form-control form-control-sm number-right" [readonly]="soloLectura"
-                placeholder="0.00" (blur)="establecerDecimales(formulario.get('kilosEfectivo'), 2)"
+                (blur)="setDecimales($event, 2)" class="form-control form-control-sm number-right"
+                [readonly]="soloLectura" placeholder="0.00"
+                (blur)="establecerDecimales(formulario.get('kilosEfectivo'), 2)"
                 [textMask]="mascararEnterosConDecimales(8)">
             </div>
           </div>
@@ -207,8 +209,9 @@
             <div class="form-group has-float-label">
               <label for="idValorDeclarado" class="tamanio-label">Valor Declarado *</label>
               <input id="idValorDeclarado" type="text" formControlName="valorDeclarado" autocomplete="off"
-                (blur)="setDecimales($event, 2)" class="form-control form-control-sm number-right" [readonly]="soloLectura"
-                placeholder="0.00" (blur)="establecerDecimales(formulario.get('valorDeclarado'), 2)"
+                (blur)="setDecimales($event, 2)" class="form-control form-control-sm number-right"
+                [readonly]="soloLectura" placeholder="0.00"
+                (blur)="establecerDecimales(formulario.get('valorDeclarado'), 2)"
                 [textMask]="mascararEnterosConDecimales(10)">
             </div>
           </div>
@@ -287,7 +290,8 @@
               <label for="idCliente" class="cliente-label">Remitente </label>
               <input id="idCliente" class="form-control form-control-sm" type="text" matInput
                 [formControl]="formulario.get('cliente')" [matAutocomplete]="autoCliente" autocomplete="off"
-                (blur)="verificarSeleccion(formulario.get('cliente'))">
+                (blur)="verificarSeleccion(formulario.get('cliente'))"
+                placeholder="Buscar por alias">
               <mat-autocomplete #autoCliente="matAutocomplete" [displayWith]="displayF.bind(this)"
                 (optionSelected)="cambioRemitente()">
                 <mat-option *ngFor="let itemCliente of resultadosClientes" [value]="itemCliente">
@@ -347,14 +351,14 @@
         </ng-container>
         <ng-container matColumnDef="EDITAR" stickyEnd>
           <th mat-header-cell *matHeaderCellDef><button class="button-full-width" mat-raised-button color="primary"
-            [disabled]="listaCompleta.data.length==0" (click)="abrirReporte()">Reporte</button></th>
+              [disabled]="listaCompleta.data.length==0" (click)="abrirReporte()">Reporte</button></th>
           <td mat-cell *matCellDef="let elemento">
             <button mat-icon-button class="mat-icon-button-table" (click)="activarConsultar(elemento)"
               matTooltip="Consultar" matTooltipPosition="above">
               <mat-icon>search</mat-icon>
             </button>
-            <button mat-icon-button class="mat-icon-button-table margin-left-3"
-              (click)="activarActualizar(elemento)" matTooltip="Editar" matTooltipPosition="above">
+            <button mat-icon-button class="mat-icon-button-table margin-left-3" (click)="activarActualizar(elemento)"
+              matTooltip="Editar" matTooltipPosition="above">
               <mat-icon>edit</mat-icon>
             </button>
           </td>

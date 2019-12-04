@@ -8,6 +8,8 @@ import { ViajeCierreDocumentacionComponent } from 'src/app/componentes/viaje-cie
 import { MatTabsModule, MatTableModule, MatPaginatorModule, MatSortModule, MatProgressBarModule, MatButtonModule, MatDialogModule, MatIconModule } from '@angular/material';
 import { ReactiveFormsModule } from '@angular/forms';
 import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
+import { ViajeService } from 'src/app/servicios/viaje.service';
+import { LoaderService } from 'src/app/servicios/loader.service';
 
 @NgModule({
   declarations: [
@@ -29,7 +31,9 @@ import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.s
   providers: [
     ViajeCierreDocumentacion,
     ViajeCierreDocumentacionService,
-    SubopcionPestaniaService
+    SubopcionPestaniaService,
+    ViajeService,
+    LoaderService
   ]
 })
 export class ViajeCierreDocumentacionModule { }

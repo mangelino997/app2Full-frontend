@@ -34,7 +34,7 @@
               <label for="idCliente" class="tamanio-label">Cliente *</label>
               <input id="idCliente" class="form-control form-control-sm" type="text" matInput
                 [readOnly]="soloLectura || soloLecturaMod" [formControl]="cliente" [matAutocomplete]="autoCliente"
-                autocomplete="off" (blur)="verificarSeleccion(cliente)">
+                autocomplete="off" (blur)="verificarSeleccion(cliente)" placeholder="Buscar por alias">
               <mat-autocomplete #autoCliente="matAutocomplete" [displayWith]="displayF.bind(this)"
                 (optionSelected)="listarOrdenesVentas('cliente', cliente.value.id)">
                 <mat-option *ngFor="let itemCliente of resultadosClientes" [value]="itemCliente">
@@ -263,7 +263,7 @@
               <label for="idCliente" class="tamanio-label">Cliente *</label>
               <input id="idCliente" class="form-control form-control-sm" type="text" matInput
                 [matAutocomplete]="autoCliente" autocomplete="off" [formControl]="formularioFiltro.get('cliente')"
-                (blur)="verificarSeleccion(formularioFiltro.get('cliente'))">
+                (blur)="verificarSeleccion(formularioFiltro.get('cliente'))" placeholder="Buscar por alias">
               <mat-autocomplete #autoCliente="matAutocomplete" [displayWith]="displayF.bind(this)">
                 <mat-option *ngFor="let itemCliente of resultadosClientes" [value]="itemCliente">
                   {{itemCliente.alias}}
@@ -307,7 +307,8 @@
               </ng-container>
               <ng-container matColumnDef="EDITAR" stickyEnd>
                 <th mat-header-cell *matHeaderCellDef><button class="button-full-width" mat-raised-button
-                  [disabled]="listaCompleta.data.length==0" color="primary" (click)="abrirReporte()">Reporte</button></th>
+                    [disabled]="listaCompleta.data.length==0" color="primary" (click)="abrirReporte()">Reporte</button>
+                </th>
                 <td mat-cell *matCellDef="let elemento">
                   <button mat-icon-button class="mat-icon-button-table" (click)="activarConsultar(elemento)"
                     matTooltip="Consultar" matTooltipPosition="above">

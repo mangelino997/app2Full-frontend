@@ -170,11 +170,14 @@ export class PersonalComponent implements OnInit {
       if (typeof data == 'string') {
         data = data.trim();
         if (data == '*' || data.length > 2) {
+          this.loaderService.show();
           this.servicio.listarPorActivosAliasYEmpresa(data, empresa.id).subscribe(
             res => {
               this.resultados = res;
+              this.loaderService.hide();
             },
             err => {
+              this.loaderService.hide();
             });
         }
       }
@@ -186,10 +189,18 @@ export class PersonalComponent implements OnInit {
     this.formulario = this.personal.formulario;
     //Autocompletado Barrio - Buscar por nombre
     this.formulario.get('barrio').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.barrioServicio.listarPorNombre(data).subscribe(response => {
-          this.resultadosBarrios = response;
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.loaderService.show();
+          this.barrioServicio.listarPorNombre(data).subscribe(response => {
+            this.resultadosBarrios = response;
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
+        }
       }
     })
     //Establece la fecha emision y registracion
@@ -199,18 +210,34 @@ export class PersonalComponent implements OnInit {
     });
     //Autocompletado Localidad - Buscar por nombre
     this.formulario.get('localidad').valueChanges.subscribe(data => {
-      if (data && typeof data == 'string' && data.length > 2) {
-        this.localidadServicio.listarPorNombre(data).subscribe(response => {
-          this.resultadosLocalidades = response;
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.loaderService.show();
+          this.localidadServicio.listarPorNombre(data).subscribe(response => {
+            this.resultadosLocalidades = response;
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
+        }
       }
     })
     //Autocompletado Localidad Nacimiento - Buscar por nombre
     this.formulario.get('localidadNacimiento').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.localidadServicio.listarPorNombre(data).subscribe(response => {
-          this.resultadosLocalidades = response;
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.loaderService.show();
+          this.localidadServicio.listarPorNombre(data).subscribe(response => {
+            this.resultadosLocalidades = response;
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
+        }
       }
     })
     //Autocompletado Seguridad Social - Buscar por nombre

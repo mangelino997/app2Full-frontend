@@ -340,6 +340,7 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
   public activarConsultar(elemento) {
     this.seleccionarPestania(2, this.pestanias[1].nombre);
     this.establecerElemento(elemento);
+    this.listaCompleta.data.push(elemento);
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {

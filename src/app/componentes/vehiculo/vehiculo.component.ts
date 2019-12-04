@@ -122,9 +122,14 @@ export class VehiculoComponent implements OnInit {
       if (typeof data == 'string') {
         data = data.trim();
         if (data == '*' || data.length > 0) {
+          this.loaderService.show();
           this.servicio.listarPorAlias(data).subscribe(response => {
             this.resultados = response;
-          })
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
         }
       }
     })
@@ -149,9 +154,14 @@ export class VehiculoComponent implements OnInit {
       if (typeof data == 'string') {
         data = data.trim();
         if (data == '*' || data.length > 0) {
+          this.loaderService.show();
           this.servicio.listarPorAliasYRemolqueTrue(data).subscribe(response => {
             this.resultadosVehiculosRemolques = response;
-          })
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
         }
       }
     })
@@ -160,9 +170,14 @@ export class VehiculoComponent implements OnInit {
       if (typeof data == 'string') {
         data = data.trim();
         if (data == '*' || data.length > 0) {
+          this.loaderService.show();
           this.localidadServicio.listarPorNombre(data).subscribe(response => {
             this.resultadosLocalidades = response;
-          })
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
         }
       }
     })
@@ -171,9 +186,14 @@ export class VehiculoComponent implements OnInit {
       if (typeof data == 'string') {
         data = data.trim();
         if (data == '*' || data.length > 0) {
+          this.loaderService.show();
           this.personalServicio.listarChoferActivoPorAlias(data).subscribe(response => {
             this.resultadosPersonales = response;
-          })
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
         }
       }
     })
@@ -182,9 +202,14 @@ export class VehiculoComponent implements OnInit {
       if (typeof data == 'string') {
         data = data.trim();
         if (data == '*' || data.length > 0) {
+          this.loaderService.show();
           this.companiaSeguroPolizaServicio.listarPorCompaniaSeguroNombre(data).subscribe(response => {
             this.resultadosCompaniasSegurosPolizas = response;
-          })
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
         }
       }
     })

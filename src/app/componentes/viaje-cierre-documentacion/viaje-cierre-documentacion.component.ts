@@ -7,6 +7,10 @@ import { AppService } from 'src/app/servicios/app.service';
 import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
 import { ViajeCierreDocumentacionService } from 'src/app/servicios/viaje-cierre-documentacion.service';
 import { Viaje } from 'src/app/modelos/viaje';
+import { ViajeService } from 'src/app/servicios/viaje.service';
+import { LoaderService } from 'src/app/servicios/loader.service';
+import { LoaderState } from 'src/app/modelos/loader';
+import { FechaService } from 'src/app/servicios/fecha.service';
 
 @Component({
   selector: 'app-viaje-cierre-documentacion',
@@ -60,7 +64,8 @@ export class ViajeCierreDocumentacionComponent implements OnInit {
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Constructor de la clase
   constructor(private viajeCierreDocumentacion: ViajeCierreDocumentacion, private servicio: ViajeCierreDocumentacionService, private appService: AppService, 
-    private subopcionPestaniaService: SubopcionPestaniaService, private viaje: Viaje) { 
+    private subopcionPestaniaService: SubopcionPestaniaService, private viaje: Viaje, private viajeServicio: ViajeService,
+    private loaderService: LoaderService, private fechaServicio: FechaService) { 
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
       .subscribe(
@@ -72,12 +77,37 @@ export class ViajeCierreDocumentacionComponent implements OnInit {
   }
   //Al inicializarse el componente
   ngOnInit() {
+    //Establece la subscripcion a loader
+    this.subscription = this.loaderService.loaderState
+      .subscribe((state: LoaderState) => {
+        this.show = state.show;
+      });
     //Establece el formulario
     this.formulario = this.viajeCierreDocumentacion.formulario;
     //Establece el formulario de viaje
-    this.formularioViaje = this.viaje.formulario;
+    this.formularioViaje = new FormGroup({
+      id: new FormControl(),
+      fletero: new FormControl(),
+      vehiculo: new FormControl(),
+      chofer: new FormControl()
+    });
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar');
+    //Obtiene la fecha y hora actual
+    this.obtenerFechaYHora();
+  }
+  //Obtiene la fecha y hora actual
+  private obtenerFechaYHora(): void {
+    this.loaderService.show();
+    this.fechaServicio.obtenerFechaYHora().subscribe(
+      res => {
+        this.hora.setValue(res.text());
+        this.loaderService.hide();
+      },
+      err => {
+        this.loaderService.hide();
+      }
+    );
   }
   //Establece valores al seleccionar una pestania
   public seleccionarPestania(id, nombre) {
@@ -88,7 +118,7 @@ export class ViajeCierreDocumentacionComponent implements OnInit {
       case 1:
         // this.obtenerSiguienteId();
         this.establecerEstadoCampos(true);
-        this.establecerValoresPestania(nombre, false, false, true, 'idViaje');
+        this.establecerValoresPestania(nombre, false, false, true, 'idCodigo');
         break;
       case 2:
         this.establecerEstadoCampos(false);
@@ -120,7 +150,7 @@ export class ViajeCierreDocumentacionComponent implements OnInit {
     this.soloLectura = soloLectura;
     this.mostrarBoton = boton;
     setTimeout(function () {
-      // document.getElementById(componente).focus();
+      document.getElementById(componente).focus();
     }, 20);
   }
   //Habilita o deshabilita los campos dependiendo de la pestaña
@@ -138,5 +168,48 @@ export class ViajeCierreDocumentacionComponent implements OnInit {
       this.formulario.get('kmAjuste').disable();
       this.formulario.get('litrosRendidos').disable();
     }
+  }
+  //Maneja los evento al presionar una tacla (para pestanias y opciones)
+  public manejarEvento(keycode) {
+    var indice = this.indiceSeleccionado;
+    if (keycode == 113) {
+      if (indice < this.pestanias.length) {
+        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre);
+      } else {
+        this.seleccionarPestania(1, this.pestanias[0].nombre);
+      }
+    }
+  }
+  //Obtiene un viaje por id
+  public obtenerViajePorId() {
+    this.loaderService.show();
+    let id = this.formularioViaje.get('id').value;
+    this.viajeServicio.obtenerPorId(id).subscribe(
+      res => {
+        let viaje = res.json();
+        this.formularioViaje.get('fletero').setValue(viaje.empresaEmision ? viaje.empresaEmision.razonSocial : viaje.proveedor.razonSocial);
+        this.formularioViaje.get('vehiculo').setValue(viaje.vehiculo ? viaje.vehiculo.alias : viaje.vehiculoProveedor.alias);
+        this.formularioViaje.get('chofer').setValue(viaje.personal ? viaje.personal.alias : viaje.choferProveedor.alias);
+        this.loaderService.hide();
+        viaje.vehiculo ? this.obtenerUltimoCierreDeVehiculo(viaje.vehiculo.id) : null;
+      },
+      err => {
+        this.loaderService.hide();
+      }
+    );
+  }
+  //Obtiene el ultimo cierre de documentacion de un vehiculo
+  private obtenerUltimoCierreDeVehiculo(idVehiculo): void {
+    this.loaderService.show();
+    this.servicio.obtenerUltimoCierreDeVehiculo(idVehiculo).subscribe(
+      res => {
+        let respuesta = res.json();
+        this.formulario.get('kmInicio').setValue(respuesta.kmInicio);
+        this.loaderService.hide();
+      },
+      err => {
+        this.loaderService.hide();
+      }
+    );
   }
 }

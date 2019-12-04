@@ -79,10 +79,18 @@ export class SucursalBancoComponent implements OnInit {
     });
     //Autocompletado - Buscar por nombre banco
     this.formulario.get('banco').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.bancoServicio.listarPorNombre(data).subscribe(response => {
-          this.resultadosBancos = response;
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.loaderService.show();
+          this.bancoServicio.listarPorNombre(data).subscribe(response => {
+            this.resultadosBancos = response;
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
+        }
       }
     })
     //Establece los valores de la primera pestania activa

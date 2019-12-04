@@ -133,12 +133,15 @@ export class ProveedorComponent implements OnInit {
     this.autocompletado.valueChanges.subscribe(data => {
       if (typeof data == 'string') {
         data = data.trim();
-        if (data == '*' || data.length > 2) {
+        if (data == '*' || data.length > 0) {
+          this.loaderService.show();
           this.servicio.listarPorAlias(data).subscribe(
             res => {
               this.resultados = res;
+              this.loaderService.hide();
             },
             err => {
+              this.loaderService.hide();
             });
         }
       }
@@ -156,34 +159,66 @@ export class ProveedorComponent implements OnInit {
     });
     //Autocompletado Barrio - Buscar por nombre
     this.formulario.get('barrio').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.barrioServicio.listarPorNombre(data).subscribe(response => {
-          this.resultadosBarrios = response;
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.loaderService.show();
+          this.barrioServicio.listarPorNombre(data).subscribe(response => {
+            this.resultadosBarrios = response;
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
+        }
       }
     })
     //Autocompletado Localidad - Buscar por nombre
     this.formulario.get('localidad').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.localidadServicio.listarPorNombre(data).subscribe(response => {
-          this.resultadosLocalidades = response;
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.loaderService.show();
+          this.localidadServicio.listarPorNombre(data).subscribe(response => {
+            this.resultadosLocalidades = response;
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
+        }
       }
     })
     //Autocompletado Localidad - Buscar por nombre - Enn formularioFiltro
     this.formularioFiltro.get('localidad').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.localidadServicio.listarPorNombre(data).subscribe(response => {
-          this.resultadosLocalidades = response;
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.loaderService.show();
+          this.localidadServicio.listarPorNombre(data).subscribe(response => {
+            this.resultadosLocalidades = response;
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
+        }
       }
     })
     //Autocompletado Banco - Buscar por nombre
     this.formulario.get('banco').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.bancoServicio.listarPorNombre(data).subscribe(response => {
-          this.resultadosBancos = response;
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.loaderService.show();
+          this.bancoServicio.listarPorNombre(data).subscribe(response => {
+            this.resultadosBancos = response;
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
+        }
       }
     })
     //Establece los valores de la primera pestania activa
@@ -205,6 +240,7 @@ export class ProveedorComponent implements OnInit {
   public establecerFormulario() {
     let elemento = this.autocompletado.value;
     this.formulario.setValue(elemento);
+    this.indiceSeleccionado == 3 ? this.verificarCBU() : '';
     if (elemento.proveedorCuentasContables.length == 0) {
       this.crearCuentasContables();
     } else {
@@ -360,6 +396,7 @@ export class ProveedorComponent implements OnInit {
     this.resultadosBarrios = [];
     this.resultadosLocalidades = [];
     this.resultadosBancos = [];
+    this.listaCompleta = new MatTableDataSource([]);
   }
   //Habilita o deshabilita los campos select dependiendo de la pestania actual
   private establecerEstadoCampos(estado) {
@@ -615,7 +652,7 @@ export class ProveedorComponent implements OnInit {
     document.getElementById(label).classList.remove('label-error');
   }
   //Cambio en el campo Localidad del formulario filtro en pestaña Listar
-  public cambioLocalidadFiltro(){
+  public cambioLocalidadFiltro() {
     this.formularioFiltro.get('localidad').reset();
   }
   //Formatea el numero a x decimales
@@ -672,8 +709,11 @@ export class ProveedorComponent implements OnInit {
   //Verifica que el CBU sea de 22 carácteres obligatorios
   public verificarCBU() {
     let elemento = this.formulario.value.numeroCBU;
-    elemento.length < 22 ?
-      [this.toastr.error("El N° de CBU debe ser de 22 carácteres."), this.formulario.get('numeroCBU').reset()] : '';
+    elemento && elemento.length < 22 ?
+      [
+        this.toastr.error("El N° de CBU debe ser de 22 carácteres. Se reseteó el campo."),
+        this.formulario.get('numeroCBU').reset(),
+      ] : '';
   }
   //Verifica si se selecciono un elemento del autocompletado
   public verificarSeleccion(valor): void {
@@ -685,14 +725,15 @@ export class ProveedorComponent implements OnInit {
   public activarConsultar(elemento) {
     this.seleccionarPestania(2, this.pestanias[1].nombre);
     this.autocompletado.setValue(elemento);
-    this.formulario.setValue(elemento);
+    this.formulario.patchValue(elemento);
     this.planesCuentas = new MatTableDataSource(elemento.proveedorCuentasContables);
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
     this.seleccionarPestania(3, this.pestanias[2].nombre);
     this.autocompletado.setValue(elemento);
-    this.formulario.setValue(elemento);
+    this.formulario.patchValue(elemento);
+    this.verificarCBU();
     this.planesCuentas = new MatTableDataSource(elemento.proveedorCuentasContables);
   }
   //Define el mostrado de datos y comparacion en campo select

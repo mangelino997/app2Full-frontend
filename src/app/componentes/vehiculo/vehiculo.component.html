@@ -18,7 +18,7 @@
               <label for="idAutocompletado" class="tamanio-label">Buscar Vehículo</label>
               <input id="idAutocompletado" class="form-control form-control-sm color-busqueda" type="text" matInput
                 [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off"
-                placeholder="Buscar por Dominio o Número Interno" (blur)="verificarSeleccion(autocompletado)">
+                placeholder="Buscar por Dominio, Número Interno o Alias" (blur)="verificarSeleccion(autocompletado)">
               <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayF.bind(this)"
                 (optionSelected)="establecerElemento()">
                 <mat-option *ngFor="let item of resultados" [value]="item">
@@ -209,7 +209,7 @@
               <label for="idVehiculoRemolque" class="tamanio-label">Remolque Habitual</label>
               <input id="idVehiculoRemolque" class="form-control form-control-sm" type="text" matInput
                 [formControl]="formulario.get('vehiculoRemolque')" [matAutocomplete]="autoVehiculoRemolque"
-                autocomplete="off" [readonly]="soloLectura"
+                autocomplete="off" [readonly]="soloLectura" placeholder="Buscar por alias"
                 (blur)="verificarSeleccion(formulario.get('vehiculoRemolque'))">
               <mat-autocomplete #autoVehiculoRemolque="matAutocomplete" [displayWith]="displayF.bind(this)">
                 <mat-option *ngFor="let itemVehiculoRemolque of resultadosVehiculosRemolques"

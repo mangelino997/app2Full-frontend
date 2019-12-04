@@ -158,9 +158,14 @@ export class OrdenVentaComponent implements OnInit {
       if (typeof data == 'string') {
         data = data.trim();
         if (data == '*' || data.length > 0) {
+          this.loaderService.show();
           this.servicio.listarPorNombre(data).subscribe(response => {
             this.resultados = response;
-          })
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
         }
       }
     });
@@ -196,9 +201,14 @@ export class OrdenVentaComponent implements OnInit {
       if (typeof data == 'string') {
         data = data.trim();
         if (data == '*' || data.length > 0) {
+          this.loaderService.show();
           this.clienteServicio.listarPorAlias(data).subscribe(response => {
             this.resultadosClientes = response.json();
-          })
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
         }
       }
     });
@@ -207,9 +217,14 @@ export class OrdenVentaComponent implements OnInit {
       if (typeof data == 'string') {
         data = data.trim();
         if (data == '*' || data.length > 0) {
+          this.loaderService.show();
           this.clienteServicio.listarPorAlias(data).subscribe(response => {
             this.resultadosClientes = response.json();
-          })
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
         }
       }
     });
@@ -1021,10 +1036,18 @@ export class VerTarifaDialogo {
     this.listar();
     //Autocompletado Tramo - Buscar por nombre
     this.formularioTramo.get('tramo').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.tramoService.listarPorOrigen(data).subscribe(response => {
-          this.resultadosTramos = response;
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.loaderService.show();
+          this.tramoService.listarPorOrigen(data).subscribe(response => {
+            this.resultadosTramos = response;
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
+        }
       }
     });
   }

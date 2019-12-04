@@ -84,10 +84,18 @@ export class DeduccionGeneralComponent implements OnInit {
     this.seleccionarPestania(1, 'Agregar', 0);
     //Controla el autocompletado
     this.autocompletado.valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.servicio.listarPorDescripcion(data).subscribe(res => {
-          this.resultados = res;
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.loaderService.show();
+          this.servicio.listarPorDescripcion(data).subscribe(res => {
+            this.resultados = res;
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
+        }
       } else {
         this.formulario.reset();
       }

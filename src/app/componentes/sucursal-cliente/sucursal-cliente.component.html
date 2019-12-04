@@ -18,7 +18,8 @@
               <label for="idCliente" class="tamanio-label">Cliente *</label>
               <input id="idCliente" class="form-control form-control-sm" type="text" matInput
                 [formControl]="formulario.get('cliente')" [matAutocomplete]="autoCliente" autocomplete="off"
-                (blur)="verificarSeleccion(formulario.get('cliente'))" (ngModelChange)="cambioAutocompletado(formulario.get('cliente').value)">
+                (blur)="verificarSeleccion(formulario.get('cliente'))"
+                (ngModelChange)="cambioAutocompletado(formulario.get('cliente').value)" placeholder="Buscar por alias">
               <mat-autocomplete #autoCliente="matAutocomplete" [displayWith]="displayFa.bind(this)"
                 (optionSelected)="listarPorCliente()">
                 <mat-option *ngFor="let itemCliente of resultadosClientes" [value]="itemCliente">
@@ -68,7 +69,8 @@
               <label for="idBarrio" class="tamanio-label">Barrio</label>
               <input id="idBarrio" class="form-control form-control-sm" type="text" matInput
                 [formControl]="formulario.get('barrio')" [matAutocomplete]="autoBarrio" autocomplete="off"
-                [readonly]="soloLectura" (blur)="verificarSeleccion(formulario.get('barrio'))">
+                [readonly]="soloLectura" (blur)="verificarSeleccion(formulario.get('barrio'))"
+                placeholder="Buscar por nombre">
               <mat-autocomplete #autoBarrio="matAutocomplete" [displayWith]="displayFb.bind(this)">
                 <mat-option *ngFor="let itemBarrio of resultadosBarrios" [value]="itemBarrio">
                   {{itemBarrio.nombre}}
@@ -81,7 +83,8 @@
               <label for="idLocalidad" class="tamanio-label">Localidad *</label>
               <input id="idLocalidad" class="form-control form-control-sm" type="text" matInput
                 [formControl]="formulario.get('localidad')" [matAutocomplete]="autoLocalidad" autocomplete="off"
-                [readonly]="soloLectura" (blur)="verificarSeleccion(formulario.get('localidad'))">
+                [readonly]="soloLectura" (blur)="verificarSeleccion(formulario.get('localidad'))"
+                placeholder="Buscar por nombre">
               <mat-autocomplete #autoLocalidad="matAutocomplete" [displayWith]="displayFc.bind(this)">
                 <mat-option *ngFor="let itemLocalidad of resultadosLocalidades" [value]="itemLocalidad">
                   {{itemLocalidad.nombre}}, {{itemLocalidad.provincia.nombre}},
@@ -127,7 +130,8 @@
           <div class="form-group has-float-label">
             <label for="idCliente" class="tamanio-label">Cliente *</label>
             <input id="idCliente" class="form-control form-control-sm" type="text" matInput
-              [formControl]="formulario.get('cliente')" [matAutocomplete]="autoClienteL" autocomplete="off">
+              [formControl]="formulario.get('cliente')" [matAutocomplete]="autoClienteL" autocomplete="off"
+              placeholder="Buscar por alias">
             <mat-autocomplete #autoClienteL="matAutocomplete" [displayWith]="displayFa.bind(this)"
               (optionSelected)="listarPorCliente()">
               <mat-option *ngFor="let itemCliente of resultadosClientes" [value]="itemCliente">
@@ -143,49 +147,49 @@
         </div>
       </div>
       <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
-        <ng-container matColumnDef="ID" >
+        <ng-container matColumnDef="ID">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
           <td mat-cell *matCellDef="let elemento" class="number-right">{{elemento.id}}</td>
         </ng-container>
-        <ng-container matColumnDef="CLIENTE" >
+        <ng-container matColumnDef="CLIENTE">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Cliente</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.cliente.razonSocial}}</td>
         </ng-container>
-        <ng-container matColumnDef="NOMBRE" >
+        <ng-container matColumnDef="NOMBRE">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.nombre}}</td>
         </ng-container>
-        <ng-container matColumnDef="DOMICILIO" >
+        <ng-container matColumnDef="DOMICILIO">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Domicilio</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.domicilio}}</td>
         </ng-container>
-        <ng-container matColumnDef="BARRIO" >
+        <ng-container matColumnDef="BARRIO">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Barrio</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.barrio ? elemento.barrio.nombre : null}}</td>
         </ng-container>
-        <ng-container matColumnDef="LOCALIDAD" >
+        <ng-container matColumnDef="LOCALIDAD">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Localidad</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.localidad.nombre}}, {{elemento.localidad.provincia.nombre}}
           </td>
         </ng-container>
-        <ng-container matColumnDef="TELEFONO_FIJO" >
+        <ng-container matColumnDef="TELEFONO_FIJO">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Teléfono Fijo</th>
           <td mat-cell *matCellDef="let elemento" class="number-right">{{elemento.telefonoFijo}}</td>
         </ng-container>
-        <ng-container matColumnDef="TELEFONO_MOVIL" >
+        <ng-container matColumnDef="TELEFONO_MOVIL">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Teléfono Móvil</th>
           <td mat-cell *matCellDef="let elemento" class="number-right">{{elemento.telefonoMovil}}</td>
         </ng-container>
         <ng-container matColumnDef="EDITAR" stickyEnd>
-          <th mat-header-cell *matHeaderCellDef><button [disabled]="listaCompleta.data.length==0" class="button-full-width" 
-            mat-raised-button color="primary"  (click)="abrirReporte()">Reporte</button></th>
+          <th mat-header-cell *matHeaderCellDef><button [disabled]="listaCompleta.data.length==0"
+              class="button-full-width" mat-raised-button color="primary" (click)="abrirReporte()">Reporte</button></th>
           <td mat-cell *matCellDef="let elemento" class="last-col-end">
             <button mat-icon-button class="mat-icon-button-table" (click)="activarConsultar(elemento)"
               matTooltip="Consultar" matTooltipPosition="above">
               <mat-icon>search</mat-icon>
             </button>
-            <button mat-icon-button class="mat-icon-button-table margin-left-3"
-              (click)="activarActualizar(elemento)" matTooltip="Editar" matTooltipPosition="above">
+            <button mat-icon-button class="mat-icon-button-table margin-left-3" (click)="activarActualizar(elemento)"
+              matTooltip="Editar" matTooltipPosition="above">
               <mat-icon>edit</mat-icon>
             </button>
           </td>

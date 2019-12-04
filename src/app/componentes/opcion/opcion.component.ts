@@ -59,10 +59,18 @@ export class OpcionComponent implements OnInit {
       );
     //Autocompletado - Buscar por nombre
     this.autocompletado.valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.servicio.listarPorNombre(data).subscribe(res => {
-          this.resultados = res;
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.loaderService.show();
+          this.servicio.listarPorNombre(data).subscribe(res => {
+            this.resultados = res;
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
+        }
       }
     })
   }
@@ -85,14 +93,20 @@ export class OpcionComponent implements OnInit {
     this.seleccionarPestania(1, 'Agregar', 0);
     //Autocompletado Subopcion - Buscar por Nombre
     this.formulario.get('subopcion').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.subopcionServicio.listarPorNombre(data).subscribe(res => {
-          this.subopciones = res.json();
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.loaderService.show();
+          this.subopcionServicio.listarPorNombre(data).subscribe(res => {
+            this.subopciones = res.json();
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
+        }
       }
     })
-    //Obtiene la lista completa
-    //this.listar();
   }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {

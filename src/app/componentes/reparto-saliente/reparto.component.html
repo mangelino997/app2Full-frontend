@@ -61,7 +61,8 @@
                                 <input id="idVehiculo" class="form-control form-control-sm " type="text" matInput
                                     [matAutocomplete]="autoVehiculo"
                                     (blur)="tipoViaje.value? verificarSeleccion(formulario.get('vehiculo')) : verificarSeleccion(formulario.get('vehiculoProveedor'))"
-                                    [formControl]="tipoViaje.value ? formulario.get('vehiculo') : formulario.get('vehiculoProveedor')">
+                                    [formControl]="tipoViaje.value ? formulario.get('vehiculo') : formulario.get('vehiculoProveedor')"
+                                    placeholder="Buscar por alias">
                                 <mat-autocomplete #autoVehiculo="matAutocomplete" [displayWith]="displayFn.bind(this)">
                                     <mat-option *ngFor="let itemVehiculo of resultadosVehiculo" [value]="itemVehiculo">
                                         {{itemVehiculo.alias}}
@@ -81,7 +82,8 @@
                                 <input id="idRemolque" class="form-control form-control-sm " type="text" matInput
                                     [formControl]="formulario.get('vehiculoRemolque')" [matAutocomplete]="autoRemolque"
                                     (blur)="tipoRemolque.value? verificarSeleccion(formulario.get('vehiculoRemolque')) : verificarSeleccion(formulario.get('vehiculoRemolqueProveedor'))"
-                                    [formControl]="tipoRemolque.value ? formulario.get('vehiculoRemolque') : formulario.get('vehiculoRemolqueProveedor')">
+                                    [formControl]="tipoRemolque.value ? formulario.get('vehiculoRemolque') : formulario.get('vehiculoRemolqueProveedor')"
+                                    placeholder="Buscar por alias">
                                 <mat-autocomplete #autoRemolque="matAutocomplete" [displayWith]="displayFn.bind(this)">
                                     <mat-option *ngFor="let itemRemolque of resultadosRemolque" [value]="itemRemolque">
                                         {{itemRemolque.alias}}
@@ -99,9 +101,10 @@
                             <div class="form-group has-float-label">
                                 <label for="idChofer">Chofer *</label>
                                 <input id="idChofer" class="form-control form-control-sm" type="text" matInput
-                                    autocomplete="off" [matAutocomplete]="autoChofer" 
+                                    autocomplete="off" [matAutocomplete]="autoChofer"
                                     (blur)="tipoViaje.value? verificarSeleccion(formulario.get('personal')) : verificarSeleccion(formulario.get('choferProveedor'))"
-                                    [formControl]="tipoViaje.value ? formulario.get('personal') : formulario.get('choferProveedor')">
+                                    [formControl]="tipoViaje.value ? formulario.get('personal') : formulario.get('choferProveedor')"
+                                    placeholder="Buscar por alias">
                                 <mat-autocomplete #autoChofer="matAutocomplete" [displayWith]="displayFn.bind(this)">
                                     <mat-option *ngFor="let itemChofer of resultadosChofer" [value]="itemChofer">
                                         {{itemChofer.alias}}

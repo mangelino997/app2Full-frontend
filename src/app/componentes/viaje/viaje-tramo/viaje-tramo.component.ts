@@ -94,10 +94,18 @@ export class ViajeTramoComponent implements OnInit {
     this.formularioViaje = this.viajeModelo.formulario;
     //Autocompletado Tramo - Buscar por alias
     this.formularioViajeTramo.get('tramo').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.tramoServicio.listarPorOrigen(data).subscribe(response => {
-          this.resultadosTramos = response;
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.loaderService.show();
+          this.tramoServicio.listarPorOrigen(data).subscribe(response => {
+            this.resultadosTramos = response;
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
+        }
       }
     })
     //Limpia el formulario y las listas

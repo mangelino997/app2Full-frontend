@@ -19,24 +19,29 @@
                             <input id="idCodigo" type="number" formControlName="id" class="form-control form-control-sm number-right">
                         </div>
                     </div>
+                    <div class="col-md-2" *ngIf="!show">
+                        <button mat-raised-button color="primary" (click)="obtenerViajePorId()">Buscar</button>
+                    </div>
+                </div>
+                <div class="row">
                     <div class="col-md-4">
                         <div class="form-group has-float-label">
                             <label for="idFletero" class="tamanio-label-titulo">Fletero</label>
-                            <input id="idFletero" type="text" formControlName="proveedor"
+                            <input id="idFletero" type="text" formControlName="fletero"
                                 class="form-control form-control-sm" readonly>
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                         <div class="form-group has-float-label">
                             <label for="idVehiculo" class="tamanio-label-titulo">Vehículo</label>
                             <input id="idVehiculo" type="text" formControlName="vehiculo"
                                 class="form-control form-control-sm" readonly>
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                         <div class="form-group has-float-label">
                             <label for="idChofer" class="tamanio-label-titulo">Chofer</label>
-                            <input id="idChofer" type="text" formControlName="personal"
+                            <input id="idChofer" type="text" formControlName="chofer"
                                 class="form-control form-control-sm" readonly>
                         </div>
                     </div>
@@ -125,7 +130,10 @@
                         <button mat-raised-button>Peajes</button>
                     </div>
                 </div>
-                <div class="row justify-content-center">
+                <div class="row" *ngIf="show">
+                    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                </div>
+                <div class="row justify-content-center" *ngIf="!show">
                     <button mat-raised-button>Vista Previa</button>
                     <button class="margin-left-3" mat-raised-button color="primary">Confirmar</button>
                 </div>
