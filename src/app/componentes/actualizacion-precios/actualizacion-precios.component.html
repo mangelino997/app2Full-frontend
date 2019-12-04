@@ -18,7 +18,7 @@
             <div class="form-group has-float-label">
               <label for="idAutocompletado" class="tamanio-label">Cliente</label>
               <input id="idAutocompletado" class="form-control form-control-sm " autocomplete="off" type="text" matInput
-                [formControl]="autocompletado" [matAutocomplete]="auto">
+                [formControl]="autocompletado" [matAutocomplete]="auto" placeholder="Buscar por Alias">
               <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFa.bind(this)">
                 <mat-option *ngFor="let item of resultados" [value]="item"
                   (onSelectionChange)="cargarTabla(0, item.id)">

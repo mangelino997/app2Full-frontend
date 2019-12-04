@@ -240,6 +240,7 @@ export class ProveedorComponent implements OnInit {
   public establecerFormulario() {
     let elemento = this.autocompletado.value;
     this.formulario.setValue(elemento);
+    this.indiceSeleccionado == 3 ? this.verificarCBU() : '';
     if (elemento.proveedorCuentasContables.length == 0) {
       this.crearCuentasContables();
     } else {
@@ -395,6 +396,7 @@ export class ProveedorComponent implements OnInit {
     this.resultadosBarrios = [];
     this.resultadosLocalidades = [];
     this.resultadosBancos = [];
+    this.listaCompleta = new MatTableDataSource([]);
   }
   //Habilita o deshabilita los campos select dependiendo de la pestania actual
   private establecerEstadoCampos(estado) {
@@ -707,8 +709,11 @@ export class ProveedorComponent implements OnInit {
   //Verifica que el CBU sea de 22 carácteres obligatorios
   public verificarCBU() {
     let elemento = this.formulario.value.numeroCBU;
-    elemento.length < 22 ?
-      [this.toastr.error("El N° de CBU debe ser de 22 carácteres."), this.formulario.get('numeroCBU').reset()] : '';
+    elemento && elemento.length < 22 ?
+      [
+        this.toastr.error("El N° de CBU debe ser de 22 carácteres. Se reseteó el campo."),
+        this.formulario.get('numeroCBU').reset(),
+      ] : '';
   }
   //Verifica si se selecciono un elemento del autocompletado
   public verificarSeleccion(valor): void {
@@ -720,14 +725,15 @@ export class ProveedorComponent implements OnInit {
   public activarConsultar(elemento) {
     this.seleccionarPestania(2, this.pestanias[1].nombre);
     this.autocompletado.setValue(elemento);
-    this.formulario.setValue(elemento);
+    this.formulario.patchValue(elemento);
     this.planesCuentas = new MatTableDataSource(elemento.proveedorCuentasContables);
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
     this.seleccionarPestania(3, this.pestanias[2].nombre);
     this.autocompletado.setValue(elemento);
-    this.formulario.setValue(elemento);
+    this.formulario.patchValue(elemento);
+    this.verificarCBU();
     this.planesCuentas = new MatTableDataSource(elemento.proveedorCuentasContables);
   }
   //Define el mostrado de datos y comparacion en campo select

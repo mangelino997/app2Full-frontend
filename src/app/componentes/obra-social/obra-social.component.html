@@ -13,10 +13,10 @@
       <h5>{{pestaniaActual}} Obra Social</h5>
       <form [formGroup]="formulario" class="contenedor">
         <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
-          <label for="idAutocompletado" class="tamanio-label">Buscar</label>
+          <label for="idAutocompletado" class="tamanio-label">Obra Social</label>
           <input id="idAutocompletado" class="form-control form-control-sm color-busqueda" type="text" matInput
             [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off"
-            (blur)="verificarSeleccion(autocompletado)" placeholder="Por Nombre">
+            (blur)="verificarSeleccion(autocompletado)" placeholder="Buscar por alias">
           <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)"
             (optionSelected)="cambioAutocompletado()">
             <mat-option *ngFor="let item of resultados" [value]="item">

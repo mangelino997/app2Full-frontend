@@ -42,7 +42,7 @@
                                 <label for="idPersonal" class="tamanio-label">Chofer</label>
                                 <input id="idPersonal" class="form-control form-control-sm" type="text"
                                     [formControl]="formularioFiltros.get('personal')" [matAutocomplete]="autoPersonal"
-                                    autocomplete="off" placeholder="Buscar por N° Legajo, Nombre o Num. Doc.">
+                                    autocomplete="off" placeholder="Buscar por N° Legajo, Nombre, Alias o Núm. Doc.">
                                 <mat-autocomplete #autoPersonal="matAutocomplete" [displayWith]="displayFn.bind(this)">
                                     <mat-option *ngFor="let itemPersonal of resultadosPersonales"
                                         [value]="itemPersonal">
@@ -57,7 +57,7 @@
                                 <input id="idPersonal" class="form-control form-control-sm" type="text"
                                     [formControl]="formularioFiltros.get('proveedor')" [matAutocomplete]="autoProveedor"
                                     autocomplete="off"
-                                    placeholder="Buscar por Id, Razón Social, Tipo Documento o Num. Documento">
+                                    placeholder="Buscar por Id, Razón Social, Alias, Tipo Documento o Núm. Documento">
                                 <mat-autocomplete #autoProveedor="matAutocomplete" [displayWith]="displayFn.bind(this)">
                                     <mat-option *ngFor="let itemProveedor of resultadosProveedores"
                                         [value]="itemProveedor">
@@ -189,7 +189,7 @@
                                         [formControl]="formularioViaje.get('esViajePropio').value ? formularioViaje.get('personal') : formularioViaje.get('choferProveedor')"
                                         [matAutocomplete]="autoChofer" autocomplete="off"
                                         [readonly]="soloLectura"
-                                        placeholder="Buscar por N° Legajo, Nombre o Num. Doc.">
+                                        placeholder="Buscar por N° Legajo, Nombre, Alias o Núm. Doc.">
                                     <mat-autocomplete #autoChofer="matAutocomplete"
                                         [displayWith]="displayFn.bind(this)">
                                         <mat-option *ngFor="let itemChofer of resultadosChoferes" [value]="itemChofer">

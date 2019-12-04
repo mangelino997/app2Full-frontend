@@ -214,6 +214,8 @@ export class ProductoComponent implements OnInit {
         this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
         break;
       case 5:
+        /* si ya se establecieron los valores en el formularioFiltro, que recargue la lista */
+        this.formularioFiltro.valid ? this.listarPorRubroYMarcaLista() : '';
         setTimeout(function () {
           document.getElementById('idRubro').focus();
         }, 20);
@@ -408,12 +410,16 @@ export class ProductoComponent implements OnInit {
           this.listaCompleta = new MatTableDataSource([]);
           this.toastr.error("Sin registros para mostrar.");
         }
-
         this.loaderService.hide();
       },
       err => {
         this.loaderService.hide();
       });
+  }
+  /* Limpia la lista completa de la pestaña Listar con cada cambio en el campo de selección
+    Rubro o Marca*/
+  public limpiarFiltro() {
+    this.listaCompleta.data.length > 0 ? this.listaCompleta = new MatTableDataSource([]) : '';
   }
   //Funcion para comparar y mostrar elemento de campo select
   public compareFn = this.compararFn.bind(this);

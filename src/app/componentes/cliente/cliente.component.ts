@@ -986,13 +986,13 @@ export class ClienteComponent implements OnInit {
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
     this.seleccionarPestania(2, this.pestanias[1].nombre, false);
-    this.autocompletado.setValue(elemento);
+    this.autocompletado.patchValue(elemento);
     this.establecerFormulario();
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
     this.seleccionarPestania(3, this.pestanias[2].nombre, false);
-    this.autocompletado.setValue(elemento);
+    this.autocompletado.patchValue(elemento);
     this.establecerFormulario();
   }
   //Cambio de elemento seleccionado en condicion venta
