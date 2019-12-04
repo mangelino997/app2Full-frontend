@@ -419,8 +419,27 @@ export class PestaniaDialogo {
       this.pestanias.push(this.crearPestanias(pestanias[i]));
     }
   }
+  //Cierra el dialogo (verifica que una pestania este seleccionada)
   public cerrar(opcion): void {
-    this.dialogRef.close(opcion);
+    let auxiliar = true;
+    if(opcion) {
+      this.dialogRef.close(true);
+    } else {
+      this.loaderService.show();
+      let pestanias = this.formulario.value.pestanias;
+      for(let i = 0 ; i < pestanias.length ; i++) {
+        if(pestanias[i].mostrar) {
+          this.dialogRef.close(true);
+          this.loaderService.hide();
+          auxiliar = false;
+          break;
+        }
+      }
+      if(auxiliar) {
+        this.dialogRef.close(false);
+        this.loaderService.hide();
+      }
+    }
   }
   //Crea el array de pestanias
   private crearPestanias(elemento): FormGroup {

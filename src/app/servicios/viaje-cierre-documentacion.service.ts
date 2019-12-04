@@ -48,6 +48,10 @@ export class ViajeCierreDocumentacionService {
   public listar() {
     return this.http.get(this.url, this.options);
   }
+  //Obtiene el ultimo cierre de documentacion de un vehiculo
+  public obtenerUltimoCierreDeVehiculo(idVehiculo) {
+    return this.http.get(this.url + '/obtenerUltimoCierreDeVehiculo/' + idVehiculo, this.options);
+  }
   //Agrega un registro
   public agregar(elemento) {
     return this.http.post(this.url, elemento, this.options);
