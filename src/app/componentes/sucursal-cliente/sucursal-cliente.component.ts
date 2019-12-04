@@ -147,6 +147,7 @@ export class SucursalClienteComponent implements OnInit {
     this.resultadosBarrios = [];
     this.resultadosClientes = [];
     this.resultadosLocalidades = [];
+    this.listaCompleta = new MatTableDataSource([]);
   }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {

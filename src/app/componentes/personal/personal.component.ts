@@ -32,6 +32,7 @@ import { PdfService } from 'src/app/servicios/pdf.service';
 import { PdfDialogoComponent } from '../pdf-dialogo/pdf-dialogo.component';
 import { BugImagenDialogoComponent } from '../bugImagen-dialogo/bug-imagen-dialogo.component';
 import { ReporteService } from 'src/app/servicios/reporte.service';
+import { FechaService } from 'src/app/servicios/fecha.service';
 
 @Component({
   selector: 'app-personal',
@@ -69,6 +70,8 @@ export class PersonalComponent implements OnInit {
   public estadosCiviles: Array<any> = [];
   //Define la lista de tipos de documentos
   public tiposDocumentos: Array<any> = [];
+  //Define la fecha de hoy
+  public fechaActual: string = null;
   //Define la lista de sucursales
   public sucursales: Array<any> = [];
   //Define la lista de areas
@@ -127,7 +130,7 @@ export class PersonalComponent implements OnInit {
     private rolOpcionServicio: RolOpcionService, private barrioServicio: BarrioService,
     private localidadServicio: LocalidadService, private sexoServicio: SexoService, private loaderService: LoaderService,
     private estadoCivilServicio: EstadoCivilService, private tipoDocumentoServicio: TipoDocumentoService,
-    private sucursalServicio: SucursalService, private areaServicio: AreaService,
+    private sucursalServicio: SucursalService, private areaServicio: AreaService, private fechaService: FechaService,
     private categoriaServicio: CategoriaService, private sindicatoServicio: SindicatoService,
     private seguridadSocialServicio: SeguridadSocialService, private obraSocialServicio: ObraSocialService,
     private afipActividadServicio: AfipActividadService, private afipCondicionServicio: AfipCondicionService,
@@ -189,6 +192,11 @@ export class PersonalComponent implements OnInit {
         })
       }
     })
+    //Establece la fecha emision y registracion
+    this.fechaService.obtenerFecha().subscribe(res => {
+      this.formulario.get('fechaInicio').setValue(res.json());
+      this.fechaActual = res.json();
+    });
     //Autocompletado Localidad - Buscar por nombre
     this.formulario.get('localidad').valueChanges.subscribe(data => {
       if (data && typeof data == 'string' && data.length > 2) {
@@ -257,6 +265,7 @@ export class PersonalComponent implements OnInit {
     this.listarCategorias();
     //Establece los valores por defecto
     this.establecerValoresPorDefecto();
+
   }
   //Obtiene la mascara de enteros
   public mascararEnteros(intLimite) {
@@ -364,6 +373,31 @@ export class PersonalComponent implements OnInit {
       err => {
       }
     );
+  }
+  //Controla el rango valido para la fecha de emision cuando el punto de venta es feCAEA
+  private verificarFecha(opcion) {
+    let nacimiento = this.formulario.value.fechaNacimiento;
+    switch (opcion) {
+      case 1:
+        if (nacimiento < this.fechaActual) {
+          document.getElementById('idLocalidadNacimiento').focus();
+        } else {
+          this.toastr.error("Fecha de nacimiento no válida.");
+          this.formulario.get('fechaNacimiento').reset();
+          document.getElementById('idFechaNacimiento').focus();
+        }
+        break;
+      case 2:
+        if (this.formulario.value.fechaInicio < this.fechaActual +10 
+          && this.formulario.value.fechaInicio> nacimiento) {
+          document.getElementById('idFechaFin').focus();
+        } else {
+          this.toastr.error("Fecha de Inicio no válida.");
+          this.formulario.get('fechaInicio').reset();
+          document.getElementById('idFechaInicio').focus();
+        }
+        break;
+    }
   }
   //Obtiene un registro por id
   private obtenerPorId(id) {

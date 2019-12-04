@@ -123,7 +123,7 @@
                           <div class="form-group has-float-label">
                             <label for="idFechaNacimiento" class="tamanio-label">Fecha de Nacimiento *</label>
                             <input id="idFechaNacimiento" type="date" formControlName="fechaNacimiento"
-                              autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura">
+                              autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura" (blur)="verificarFecha(1)">
                           </div>
                         </div>
                         <div class="col-md-4">
@@ -299,7 +299,7 @@
                       <div class="form-group has-float-label">
                         <label for="idFechaInicio" class="tamanio-label">Fecha de Inicio *</label>
                         <input id="idFechaInicio" type="date" formControlName="fechaInicio" autocomplete="off"
-                          class="form-control form-control-sm" [readonly]="soloLectura">
+                          class="form-control form-control-sm" [readonly]="soloLectura" (blur) ="verificarFecha(2)">
                       </div>
                     </div>
                     <div class="col-md-3">

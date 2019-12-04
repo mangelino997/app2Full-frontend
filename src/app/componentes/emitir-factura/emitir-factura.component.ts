@@ -309,7 +309,8 @@ export class EmitirFacturaComponent implements OnInit {
     }
   }  //Genera y retorna una fecha segun los parametros que recibe (dias - puede ser + ó -)
   private generarFecha(dias) {
-    let fechaActual = new Date();
+    console.log(this.fechaActual);
+    let fechaActual = new Date(this.fechaActual);
     let date = fechaActual.getDate() + dias;
     let fechaGenerada = fechaActual.getFullYear() + '-' + (fechaActual.getMonth() + 1) + '-' + (date < '10' ? '0' + date : date); //Al mes se le debe sumar 1
     return fechaGenerada;

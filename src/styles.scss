@@ -464,6 +464,10 @@ input::-webkit-inner-spin-button {
 .upper-case {
   text-transform: uppercase;
 }
+/* Define campos siempre en uppercase */
+.lower-case {
+  text-transform: lowercase;
+}
 /* Define un color particular para los campos de busqueda */
 .color-busqueda {
   background: #D6F3F5;
@@ -680,4 +684,16 @@ hr {
 #btn-close {
   margin-left: 4px;
   margin-right: 4px;
+}
+.form-control:disabled, .form-control[readonly] {
+  background-color: #f3f1f1;
+  opacity: 1;
+}
+.mat-select-disabled {
+  background: #f3f1f1 !important;
+  color: black !important;
+  opacity: 1 !important;
+}
+.blue-theme .mat-select-disabled .mat-select-value {
+  color: rgba(0, 0, 0, 0.81);
 }
