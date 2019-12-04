@@ -48,7 +48,7 @@ export class ConceptoAfipComponent implements OnInit {
   //Define las columnas de la tabla
   public columnas: string[] = ['id', 'nombre', 'codigoAfip', 'ver', 'mod'];
   //Define la matSort
-  @ViewChild(MatSort, {static: false}) sort: MatSort;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service
@@ -69,10 +69,18 @@ export class ConceptoAfipComponent implements OnInit {
       );
     //Autocompletado - Buscar por nombre
     this.autocompletado.valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.servicio.listarPorNombre(data).subscribe(res => {
-          this.resultados = res;
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.loaderService.show();
+          this.servicio.listarPorNombre(data).subscribe(res => {
+            this.resultados = res;
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
+        }
       }
     })
   }
@@ -87,8 +95,6 @@ export class ConceptoAfipComponent implements OnInit {
     this.formulario = this.afipConcepto.formulario;
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar', 0);
-    //Obtiene la lista completa de registros
-    // this.listar();
   }
   //Obtiene el listado de registros
   private listar() {
@@ -174,7 +180,7 @@ export class ConceptoAfipComponent implements OnInit {
         var respuesta = res.json();
         if (respuesta.codigo == 201) {
           this.reestablecerFormulario(respuesta.id);
-            document.getElementById('idNombre').focus();
+          document.getElementById('idNombre').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
         }
@@ -197,7 +203,7 @@ export class ConceptoAfipComponent implements OnInit {
         var respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario('');
-            document.getElementById('idAutocompletado').focus();
+          document.getElementById('idAutocompletado').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
         }
@@ -280,5 +286,5 @@ export class ConceptoAfipComponent implements OnInit {
     if (typeof valor.value != 'object') {
       valor.setValue(null);
     }
-  }  
+  }
 }

@@ -44,7 +44,7 @@ export class ViajePeajeComponent implements OnInit {
   //Define las columnas de la tabla
   public columnas: string[] = ['fecha', 'proveedor', 'puntoVenta', 'ticket', 'importe', 'EDITAR'];
   //Define la matSort
-  @ViewChild(MatSort, {static: false}) sort: MatSort;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
   //Constructor
   constructor(private viajePeajeModelo: ViajePeaje, private proveedorServicio: ProveedorService,
     private fechaServicio: FechaService, private servicio: ViajePeajeService, private toastr: ToastrService,
@@ -60,10 +60,13 @@ export class ViajePeajeComponent implements OnInit {
     this.formularioViajePeaje = this.viajePeajeModelo.formulario;
     //Autocompletado Proveedor (Peaje) - Buscar por alias
     this.formularioViajePeaje.get('proveedor').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.proveedorServicio.listarPorAlias(data).subscribe(response => {
-          this.resultadosProveedores = response;
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.proveedorServicio.listarPorAlias(data).subscribe(response => {
+            this.resultadosProveedores = response;
+          })
+        }
       }
     })
     //Limpia el formulario y las listas
@@ -117,7 +120,7 @@ export class ViajePeajeComponent implements OnInit {
     }
     this.formularioViajePeaje.get('tipoComprobante').setValue({ id: 17 });
     this.formularioViajePeaje.get('usuarioAlta').setValue(this.appService.getUsuario());
-    this.formularioViajePeaje.get('viaje').setValue({id: this.ID_VIAJE});
+    this.formularioViajePeaje.get('viaje').setValue({ id: this.ID_VIAJE });
     this.servicio.agregar(this.formularioViajePeaje.value).subscribe(
       res => {
         if (res.status == 201) {
@@ -227,7 +230,7 @@ export class ViajePeajeComponent implements OnInit {
   //Establece la lista de efectivos
   public establecerLista(lista, idViaje, pestaniaViaje): void {
     this.establecerValoresPorDefecto();
-    this.formularioViajePeaje.get('viaje').setValue({id: idViaje});
+    this.formularioViajePeaje.get('viaje').setValue({ id: idViaje });
     this.establecerIdViaje(idViaje);
     this.establecerCamposSoloLectura(pestaniaViaje);
     this.listar();
@@ -260,7 +263,7 @@ export class ViajePeajeComponent implements OnInit {
     this.formularioViajePeaje.reset();
     this.indicePeaje = null;
     this.btnPeaje = true;
-    this.formularioViajePeaje.get('viaje').setValue({id: this.ID_VIAJE});
+    this.formularioViajePeaje.get('viaje').setValue({ id: this.ID_VIAJE });
     this.establecerValoresPorDefecto();
     this.calcularImporteTotal();
     document.getElementById('idProveedorP').focus();
@@ -303,7 +306,7 @@ export class ViajePeajeComponent implements OnInit {
   public reestablecerFormulario(): void {
     this.vaciarListas();
     this.formularioViajePeaje.reset();
-    this.formularioViajePeaje.get('viaje').setValue({id: this.ID_VIAJE});
+    this.formularioViajePeaje.get('viaje').setValue({ id: this.ID_VIAJE });
     this.indicePeaje = null;
     this.btnPeaje = true;
   }

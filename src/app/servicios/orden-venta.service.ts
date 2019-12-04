@@ -44,6 +44,10 @@ export class OrdenVentaService {
   public obtenerSiguienteId() {
     return this.http.get(this.url + '/obtenerSiguienteId', this.options);
   }
+  //Obtiene una registro por id
+  public obtenerPorId(id) {
+    return this.http.get(this.url + '/obtenerPorId/' + id, this.options);
+  }
   //Obtiene la lista de registros
   public listar() {
     return this.http.get(this.url, this.options);
@@ -65,7 +69,7 @@ export class OrdenVentaService {
     return this.http.get(this.url + '/listarPorCliente/' + id, this.options);
   }
   //Agrega un registro
-  public agregar(elemento, usuarioAlta, empresa, cliente) {
+  public agregar(elemento, usuarioAlta, empresa, cliente, ordenesVentasTarifas) {
     let obj = Object.assign({}, elemento);
     let clienteOrdenVenta;
     let empresaOrdenVenta;
@@ -82,7 +86,7 @@ export class OrdenVentaService {
       };
       clienteOrdenVenta = null
     }
-    let ordenVentaTarifa = obj.ordenesVentasTarifas;
+    // let ordenVentaTarifa = obj.ordenesVentasTarifas;
     const formData = new FormData();
     if (clienteOrdenVenta)
       formData.append('clienteOrdenVenta', JSON.stringify(clienteOrdenVenta));
@@ -94,8 +98,8 @@ export class OrdenVentaService {
     else {
       formData.append('empresaOrdenVenta', null);
     }
-    if (ordenVentaTarifa)
-      formData.append('ordenVentaTarifa', JSON.stringify(ordenVentaTarifa));
+    if (ordenesVentasTarifas)
+      formData.append('ordenVentaTarifa', JSON.stringify(ordenesVentasTarifas));
     else {
       formData.append('ordenVentaTarifa', JSON.stringify(''));
     }

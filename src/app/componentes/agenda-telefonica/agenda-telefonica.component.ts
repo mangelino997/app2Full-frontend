@@ -80,20 +80,34 @@ export class AgendaTelefonicaComponent implements OnInit {
     this.seleccionarPestania(1, 'Agregar');
     //Defiene autocompletado localidad
     this.formulario.get('localidad').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.localidadServicio.listarPorNombre(data).subscribe(res => {
-          this.resultadosLocalidades = res;
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.loaderService.show();
+          this.localidadServicio.listarPorNombre(data).subscribe(res => {
+            this.resultadosLocalidades = res;
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
+        }
       }
     })
     //Defiene autocompletado
     this.autocompletado.valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.servicio.listarPorNombre(data).subscribe(res => {
-          this.resultados = res;
-        })
-      } else {
-        this.formulario.reset();
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.loaderService.show();
+          this.servicio.listarPorNombre(data).subscribe(res => {
+            this.resultados = res;
+            this.loaderService.hide();
+          })
+        } else {
+          this.formulario.reset();
+          this.loaderService.hide();
+        }
       }
     })
   }

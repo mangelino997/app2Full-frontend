@@ -88,10 +88,18 @@ export class ContactoClienteComponent implements OnInit {
     this.listarTiposContactos();
     //Autocompletado Cliente - Buscar por alias
     this.formulario.get('cliente').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.clienteServicio.listarPorAlias(data).subscribe(res => {
-          this.resultadosClientes = res.json();
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.loaderService.show();
+          this.clienteServicio.listarPorAlias(data).subscribe(res => {
+            this.resultadosClientes = res.json();
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
+        }
       }
     })
   }
@@ -382,7 +390,7 @@ export class ContactoClienteComponent implements OnInit {
         columnas: this.columnas
       }
       this.reporteServicio.abrirDialogo(datos);
-    }else{
+    } else {
       this.toastr.error("Complete el campo Cliente para filtrar los registros.");
     }
   }

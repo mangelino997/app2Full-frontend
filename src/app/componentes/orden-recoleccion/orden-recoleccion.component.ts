@@ -126,34 +126,46 @@ export class OrdenRecoleccionComponent implements OnInit {
     this.listarSucursales();
     //Autocompletado - Buscar por alias
     this.autocompletado.valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.servicio.listarPorAlias(data).subscribe(res => {
-          this.formulario.patchValue(res.json());
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.servicio.listarPorAlias(data).subscribe(res => {
+            this.formulario.patchValue(res.json());
+          })
+        }
       }
     })
     //Autcompletado - Buscar por Remitente
     this.formulario.get('cliente').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.clienteService.listarPorAlias(data).subscribe(res => {
-          this.resultadosClientes = res.json();
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.clienteService.listarPorAlias(data).subscribe(res => {
+            this.resultadosClientes = res.json();
+          })
+        }
       }
     });
     //Autcompletado - Buscar por Localidad
     this.formulario.get('localidad').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.localidadService.listarPorNombre(data).subscribe(res => {
-          this.resultadosLocalidades = res;
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.localidadService.listarPorNombre(data).subscribe(res => {
+            this.resultadosLocalidades = res;
+          })
+        }
       }
     });
     //Autcompletado - Buscar por Barrio
     this.formulario.get('barrio').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.barrioService.listarPorNombre(data).subscribe(res => {
-          this.resultadosBarrios = res;
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.barrioService.listarPorNombre(data).subscribe(res => {
+            this.resultadosBarrios = res;
+          })
+        }
       }
     })
   }

@@ -13,10 +13,11 @@
       <h5>{{pestaniaActual}} Compañía de Seguro</h5>
       <form [formGroup]="formulario" class="contenedor">
         <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
-          <label for="idAutocompletado" class="tamanio-label">Buscar por Nombre</label>
+          <label for="idAutocompletado" class="tamanio-label">Buscar</label>
           <input id="idAutocompletado" class="form-control form-control-sm color-busqueda" type="text" matInput
-            [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off">
-          <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)" (blur)="verificarSeleccion(autocompletado)">
+            [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off" placeholder="Por Nombre">
+          <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)"
+            (blur)="verificarSeleccion(autocompletado)">
             <mat-option *ngFor="let item of resultados" [value]="item" (onSelectionChange)="formulario.setValue(item)">
               {{item.nombre}}
             </mat-option>
@@ -53,24 +54,24 @@
       </div>
       <br>
       <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
-        <ng-container matColumnDef="ID" >
+        <ng-container matColumnDef="ID">
           <th mat-header-cell *matHeaderCellDef mat-sort-header class="col-id-width">#</th>
           <td mat-cell *matCellDef="let elemento" class="number-right">{{elemento.id}}</td>
         </ng-container>
-        <ng-container matColumnDef="NOMBRE" >
+        <ng-container matColumnDef="NOMBRE">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.nombre}}</td>
         </ng-container>
         <ng-container matColumnDef="EDITAR" stickyEnd>
-          <th mat-header-cell *matHeaderCellDef><button class="button-full-width" mat-raised-button color="primary"
-              (click)="abrirReporte()">Reporte</button></th>
+          <th mat-header-cell *matHeaderCellDef><button class="button-full-width"  [disabled]="listaCompleta.data.length==0"
+             mat-raised-button color="primary"  (click)="abrirReporte()">Reporte</button></th>
           <td mat-cell *matCellDef="let elemento">
             <button mat-icon-button class="mat-icon-button-table" (click)="activarConsultar(elemento)"
               matTooltip="Consultar" matTooltipPosition="above">
               <mat-icon>search</mat-icon>
             </button>
-            <button mat-icon-button class="mat-icon-button-table margin-left-3"
-              (click)="activarActualizar(elemento)" matTooltip="Editar" matTooltipPosition="above">
+            <button mat-icon-button class="mat-icon-button-table margin-left-3" (click)="activarActualizar(elemento)"
+              matTooltip="Editar" matTooltipPosition="above">
               <mat-icon>edit</mat-icon>
             </button>
           </td>

@@ -64,10 +64,18 @@ export class CondicionCompraComponent implements OnInit {
       });
     //Controla el autocompletado
     this.autocompletado.valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.servicio.listarPorNombre(data).subscribe(res => {
-          this.resultados = res;
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.loaderService.show();
+          this.servicio.listarPorNombre(data).subscribe(res => {
+            this.resultados = res;
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
+        }
       }
     });
   }
@@ -244,7 +252,7 @@ export class CondicionCompraComponent implements OnInit {
           document.getElementById("idNombre").classList.add('is-invalid');
           document.getElementById("idNombre").focus();
           this.toastr.error(error.mensaje);
-        }else{
+        } else {
           this.toastr.error(error.mensaje);
         }
         this.loaderService.hide();

@@ -74,10 +74,18 @@ export class CombustibleDialogo implements OnInit {
     this.formularioViajeCombustible = this.viajeCombustibleModelo.formulario;
     //Autocompletado Proveedor (Combustible) - Buscar por alias
     this.formularioViajeCombustible.get('proveedor').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.proveedorServicio.listarPorAlias(data).subscribe(response => {
-          this.resultadosProveedores = response;
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.loaderService.show();
+          this.proveedorServicio.listarPorAlias(data).subscribe(response => {
+            this.resultadosProveedores = response;
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
+        }
       }
     })
     //Limpia el formulario y las listas
@@ -96,10 +104,10 @@ export class CombustibleDialogo implements OnInit {
   //Obtiene la lista completa de registros segun el Id del Viaje (CABECERA)
   private listar() {
     this.loaderService.show();
-    this.ID_VIAJE? this.listarParaViaje(): this.listarParaReparto();
+    this.ID_VIAJE ? this.listarParaViaje() : this.listarParaReparto();
   }
   //Obtiene la lista completa de registros para un viaje
-  private listarParaViaje(){
+  private listarParaViaje() {
     this.servicio.listarCombustibles(this.ID_VIAJE).subscribe(
       res => {
         this.recargarListaCompleta(res.json());
@@ -113,7 +121,7 @@ export class CombustibleDialogo implements OnInit {
     );
   }
   //Obtiene la lista completa de registros para un reparto
-  private listarParaReparto(){
+  private listarParaReparto() {
     this.servicio.listarCombustiblesReparto(this.data.elemento.id).subscribe(
       res => {
         this.recargarListaCompleta(res.json());

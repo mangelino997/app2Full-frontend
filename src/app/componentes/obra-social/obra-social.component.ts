@@ -65,10 +65,13 @@ export class ObraSocialComponent implements OnInit {
       );
     //Autocompletado - Buscar por nombre
     this.autocompletado.valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.servicio.listarPorAlias(data).subscribe(res => {
-          this.resultados = res;
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.servicio.listarPorAlias(data).subscribe(res => {
+            this.resultados = res;
+          })
+        }
       }
     })
   }
@@ -245,7 +248,7 @@ export class ObraSocialComponent implements OnInit {
     this.toastr.error(respuesta.mensaje);
   }
   //Maneja el cambio en el autocompletado
-  public cambioAutocompletado(){
+  public cambioAutocompletado() {
     this.formulario.patchValue(this.autocompletado.value);
   }
   //Manejo de colores de campos y labels

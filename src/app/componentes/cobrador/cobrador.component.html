@@ -13,10 +13,10 @@
       <h5>{{pestaniaActual}} Cobrador</h5>
       <form [formGroup]="formulario" class="contenedor">
         <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
-          <label for="idAutocompletado" class="tamanio-label">Buscar por Nombre</label>
+          <label for="idAutocompletado" class="tamanio-label">Buscar</label>
           <input id="idAutocompletado" class="form-control form-control-sm color-busqueda" type="text" matInput
             [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off"
-            (blur)="verificarSeleccion(autocompletado)">
+            (blur)="verificarSeleccion(autocompletado)" placeholder="Por Nombre">
           <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)"
             (optionSelected)="cambioAutocompletado()">
             <mat-option *ngFor="let item of resultados" [value]="item">
@@ -26,7 +26,8 @@
         </div>
         <div class="form-group has-float-label">
           <label for="idCodigo" class="tamanio-label">Código</label>
-          <input id="idCodigo" type="text" formControlName="id" class="form-control form-control-sm number-right" readonly>
+          <input id="idCodigo" type="text" formControlName="id" class="form-control form-control-sm number-right"
+            readonly>
         </div>
         <div class="form-group has-float-label">
           <label id="labelNombre" for="idNombre" class="tamanio-label">Nombre *</label>
@@ -48,7 +49,7 @@
             class="form-control form-control-sm" [readonly]="soloLectura"
             (ngModelChange)="cambioCampo('idCorreoelectronico', 'labelCorreoelectronico')"
             pattern="^[a-z]+[a-z0-9._]+@[a-z0-9]+\.[a-z.]+[a-z]$"
-            (blur)="validarPatron('^[a-z]+[a-z0-9._]+@[a-z0-9]+\.[a-z.]+[a-z]$', 'correoElectronico')"  maxlength="60">
+            (blur)="validarPatron('^[a-z]+[a-z0-9._]+@[a-z0-9]+\.[a-z.]+[a-z]$', 'correoElectronico')" maxlength="60">
         </div>
 
         <div class="form-group has-float-label">
@@ -100,15 +101,15 @@
           <td mat-cell *matCellDef="let elemento">{{elemento.porDefectoClienteEventual ? 'Si' : 'No'}}</td>
         </ng-container>
         <ng-container matColumnDef="EDITAR" stickyEnd>
-          <th mat-header-cell *matHeaderCellDef><button class="button-full-width" mat-raised-button color="primary"
-              (click)="abrirReporte()">Reporte</button></th>
+          <th mat-header-cell *matHeaderCellDef><button [disabled]="listaCompleta.data.length==0"
+              class="button-full-width" mat-raised-button color="primary" (click)="abrirReporte()">Reporte</button></th>
           <td mat-cell *matCellDef="let elemento">
             <button mat-icon-button class="mat-icon-button-table" (click)="activarConsultar(elemento)"
               matTooltip="Consultar" matTooltipPosition="above">
               <mat-icon>search</mat-icon>
             </button>
-            <button mat-icon-button class="mat-icon-button-table margin-left-3"
-              (click)="activarActualizar(elemento)" matTooltip="Editar" matTooltipPosition="above">
+            <button mat-icon-button class="mat-icon-button-table margin-left-3" (click)="activarActualizar(elemento)"
+              matTooltip="Editar" matTooltipPosition="above">
               <mat-icon>edit</mat-icon>
             </button>
           </td>

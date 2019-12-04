@@ -90,10 +90,13 @@ export class VehiculoProveedorComponent implements OnInit {
       );
     //Autocompletado - Buscar por alias
     this.autocompletado.valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.servicio.listarPorAlias(data).subscribe(res => {
-          this.resultados = res;
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.servicio.listarPorAlias(data).subscribe(res => {
+            this.resultados = res;
+          })
+        }
       }
     })
   }
@@ -108,34 +111,46 @@ export class VehiculoProveedorComponent implements OnInit {
     this.formulario = this.modelo.formulario;
     //Autocompletado Proveedor - Buscar por alias
     this.formulario.get('proveedor').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.proveedorServicio.listarPorAlias(data).subscribe(res => {
-          this.resultadosProveedores = res;
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.proveedorServicio.listarPorAlias(data).subscribe(res => {
+            this.resultadosProveedores = res;
+          })
+        }
       }
     })
     //Autocompletado Chofer Proveedor - Buscar por alias
     this.formulario.get('choferProveedor').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.choferProveedorServicio.listarPorAlias(data).subscribe(res => {
-          this.resultadosChoferesProveedores = res;
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.choferProveedorServicio.listarPorAlias(data).subscribe(res => {
+            this.resultadosChoferesProveedores = res;
+          })
+        }
       }
     })
     //Autocompletado - Buscar por alias filtro remolque
     this.formulario.get('vehiculoRemolque').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.servicio.listarPorAliasFiltroRemolque(data).subscribe(response => {
-          this.resultadosVehiculosRemolques = response;
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.servicio.listarPorAliasFiltroRemolque(data).subscribe(response => {
+            this.resultadosVehiculosRemolques = response;
+          })
+        }
       }
     })
     //Autocompletado Compania Seguro - Buscar por nombre
     this.formulario.get('companiaSeguro').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.companiaSeguroServicio.listarPorNombre(data).subscribe(response => {
-          this.resultadosCompaniasSeguros = response;
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.companiaSeguroServicio.listarPorNombre(data).subscribe(response => {
+            this.resultadosCompaniasSeguros = response;
+          })
+        }
       }
     })
     //Establece los valores de la primera pestania activa
@@ -167,7 +182,7 @@ export class VehiculoProveedorComponent implements OnInit {
         this.listaCompleta = new MatTableDataSource(respuesta);
         this.listaCompleta.sort = this.sort;
         this.listaCompleta.paginator = this.paginator;
-        respuesta.length == 0? this.toastr.error("Sin registros para mostrar.") : '';
+        respuesta.length == 0 ? this.toastr.error("Sin registros para mostrar.") : '';
         this.loaderService.hide();
       },
       err => {
@@ -338,7 +353,7 @@ export class VehiculoProveedorComponent implements OnInit {
           document.getElementById("idAutocompletado").classList.add('is-invalid');
           document.getElementById("idAutocompletado").focus();
           this.toastr.error(error.mensaje);
-        } else{
+        } else {
           this.toastr.error(error.mensaje);
         }
         this.loaderService.hide();

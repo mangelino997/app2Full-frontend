@@ -355,10 +355,10 @@
               </mat-select>
             </div>
           </div>
-          <div class="col" style="max-width: 100px;">
+          <div class="col" style="max-width: 120px;">
             <div class="form-group has-float-label ">
               <label for="idTarifaOVta" class="tamanio-label">Tarifa O.Vta. <span
-                  *ngIf="ordenVenta.value">*</span></label>
+                  *ngIf="ordenVenta.value == true">*</span></label>
               <mat-select id="idTarifaOVta" class="form-control form-control-sm" [formControl]="tarifaOrdenVenta"
                 [compareWith]="compareFn" (selectionChange)="cambioTipoTarifa()">
                 <mat-option *ngFor="let item of tiposTarifa" [value]="item">

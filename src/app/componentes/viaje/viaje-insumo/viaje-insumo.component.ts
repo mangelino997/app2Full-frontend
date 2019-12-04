@@ -51,7 +51,7 @@ export class ViajeInsumoComponent implements OnInit {
   public columnas: string[] = ['orden', 'sucursal', 'fecha', 'proveedor', 'insumo', 'cantidad', 'precioUnitario', 'importe', 'observaciones',
     'anulado', 'obsAnulado', 'EDITAR'];
   //Define la matSort
-  @ViewChild(MatSort, {static: false}) sort: MatSort;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
   //Constructor
   constructor(private viajeInsumoModelo: ViajeInsumo, private proveedorServicio: ProveedorService,
     private fechaServicio: FechaService, private appComponent: AppComponent, private loaderService: LoaderService,
@@ -68,10 +68,13 @@ export class ViajeInsumoComponent implements OnInit {
     this.formularioViajeInsumo = this.viajeInsumoModelo.formulario;
     //Autocompletado Proveedor (Insumo) - Buscar por alias
     this.formularioViajeInsumo.get('proveedor').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.proveedorServicio.listarPorAlias(data).subscribe(response => {
-          this.resultadosProveedores = response;
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.proveedorServicio.listarPorAlias(data).subscribe(response => {
+            this.resultadosProveedores = response;
+          })
+        }
       }
     })
     //Limpia el formulario y las listas
@@ -275,7 +278,7 @@ export class ViajeInsumoComponent implements OnInit {
   private calcularImporteTotal(): void {
     let total = 0;
     this.listaCompleta.data.forEach(item => {
-      if(!item.estaAnulado) {
+      if (!item.estaAnulado) {
         total += parseFloat(item.importe);
       }
     })
@@ -287,7 +290,7 @@ export class ViajeInsumoComponent implements OnInit {
   public establecerLista(lista, idViaje, pestaniaViaje): void {
     this.establecerValoresPorDefecto();
     this.recargarListaCompleta(lista);
-    this.formularioViajeInsumo.get('viaje').setValue({id: idViaje});
+    this.formularioViajeInsumo.get('viaje').setValue({ id: idViaje });
     this.establecerIdViaje(idViaje);
     this.establecerCamposSoloLectura(pestaniaViaje);
     this.listar();
@@ -318,7 +321,7 @@ export class ViajeInsumoComponent implements OnInit {
   //Limpia el formulario
   public cancelar() {
     this.formularioViajeInsumo.reset();
-    this.formularioViajeInsumo.get('viaje').setValue({id: this.ID_VIAJE});
+    this.formularioViajeInsumo.get('viaje').setValue({ id: this.ID_VIAJE });
     this.indiceInsumo = null;
     this.btnInsumo = true;
     this.establecerValoresPorDefecto();

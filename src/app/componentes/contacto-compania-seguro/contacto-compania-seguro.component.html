@@ -136,15 +136,15 @@
         </ng-container>
         <ng-container matColumnDef="NOMBRE_CONTACTO">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Nombre Contacto</th>
-          <td mat-cell *matCellDef="let elemento">{{elemento.nombre}}</td>
+          <td mat-cell *matCellDef="let elemento" >{{elemento.nombre}}</td>
         </ng-container>
         <ng-container matColumnDef="TELEFONO_FIJO">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Teléfono Fijo</th>
-          <td mat-cell *matCellDef="let elemento">{{elemento.telefonoFijo}}</td>
+          <td mat-cell *matCellDef="let elemento" class="number-right">{{elemento.telefonoFijo}}</td>
         </ng-container>
         <ng-container matColumnDef="TELEFONO_MOVIL">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Teléfono Movil</th>
-          <td mat-cell *matCellDef="let elemento">{{elemento.telefonoMovil}}</td>
+          <td mat-cell *matCellDef="let elemento" class="number-right">{{elemento.telefonoMovil}}</td>
         </ng-container>
         <ng-container matColumnDef="CORREO_ELECTRONICO">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Correo Electrónico</th>
@@ -152,7 +152,7 @@
         </ng-container>
         <ng-container matColumnDef="EDITAR" stickyEnd>
           <th mat-header-cell *matHeaderCellDef><button class="button-full-width" mat-raised-button color="primary"
-              (click)="abrirReporte()">Reporte</button></th>
+            [disabled]="listaCompleta.data.length==0" (click)="abrirReporte()">Reporte</button></th>
           <td mat-cell *matCellDef="let elemento">
             <button mat-icon-button class="mat-icon-button-table" (click)="activarConsultar(elemento)"
               matTooltip="Consultar" matTooltipPosition="above">

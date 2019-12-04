@@ -94,28 +94,52 @@ export class ChoferProveedorComponent implements OnInit {
     //Autocompletado Proveedor - Buscar por nombre
     this.formulario.get('proveedor').valueChanges
       .subscribe(data => {
-        if (typeof data == 'string' && data.length > 2) {
-          this.proveedorServicio.listarPorAlias(data).subscribe(response => {
-            this.resultadosProveedores = response;
-          })
+        if (typeof data == 'string') {
+          data = data.trim();
+          if (data == '*' || data.length > 0) {
+            this.loaderService.show();
+            this.proveedorServicio.listarPorAlias(data).subscribe(response => {
+              this.resultadosProveedores = response;
+              this.loaderService.hide();
+            },
+              err => {
+                this.loaderService.hide();
+              })
+          }
         }
       })
     //Autocompletado Barrio - Buscar por nombre
     this.formulario.get('barrio').valueChanges
       .subscribe(data => {
-        if (typeof data == 'string' && data.length > 2) {
-          this.barrioServicio.listarPorNombre(data).subscribe(response => {
-            this.resultadosBarrios = response;
-          })
+        if (typeof data == 'string') {
+          data = data.trim();
+          if (data == '*' || data.length > 0) {
+            this.loaderService.show();
+            this.barrioServicio.listarPorNombre(data).subscribe(response => {
+              this.resultadosBarrios = response;
+              this.loaderService.hide();
+            },
+              err => {
+                this.loaderService.hide();
+              })
+          }
         }
       })
     //Autocompletado Localidad - Buscar por nombre
     this.formulario.get('localidad').valueChanges
       .subscribe(data => {
-        if (typeof data == 'string' && data.length > 2) {
-          this.localidadServicio.listarPorNombre(data).subscribe(response => {
-            this.resultadosLocalidades = response;
-          })
+        if (typeof data == 'string') {
+          data = data.trim();
+          if (data == '*' || data.length > 0) {
+            this.loaderService.show();
+            this.localidadServicio.listarPorNombre(data).subscribe(response => {
+              this.resultadosLocalidades = response;
+              this.loaderService.hide();
+            },
+              err => {
+                this.loaderService.hide();
+              })
+          }
         }
       })
     //Obtiene la lista de tipos de documentos

@@ -13,10 +13,10 @@
       <h5>{{pestaniaActual}} Barrio</h5>
       <form [formGroup]="formulario" class="contenedor">
         <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
-          <label for="idAutocompletado" class="tamanio-label">Buscar por Nombre</label>
+          <label for="idAutocompletado" class="tamanio-label">Buscar</label>
           <input id="idAutocompletado" class="form-control form-control-sm color-busqueda" type="text" matInput
             [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off"
-            (blur)="verificarSeleccion(autocompletado)">
+            (blur)="verificarSeleccion(autocompletado)" placeholder="Por Nombre">
           <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)"
             (optionSelected)="cambioAutocompletado()">
             <mat-option *ngFor="let item of resultados" [value]="item">
@@ -46,8 +46,8 @@
       </form>
     </div>
   </div>
-  <div class="row contenedor" [hidden]="indiceSeleccionado != 5">
-    <div class="col-md-6">
+  <div class="row justify-content-center contenedor" [hidden]="indiceSeleccionado != 5">
+    <div class="col-md-8">
       <div class="row" *ngIf="show">
         <div class="col text-center">
           <mat-progress-bar mode="indeterminate"></mat-progress-bar>
@@ -64,15 +64,15 @@
           <td mat-cell *matCellDef="let elemento">{{elemento.nombre}}</td>
         </ng-container>
         <ng-container matColumnDef="EDITAR" stickyEnd>
-          <th mat-header-cell *matHeaderCellDef><button class="button-full-width" mat-raised-button color="primary"
-              (click)="abrirReporte()">Reporte</button></th>
+          <th mat-header-cell *matHeaderCellDef><button [disabled]="listaCompleta.data.length==0"
+              class="button-full-width" mat-raised-button color="primary" (click)="abrirReporte()">Reporte</button></th>
           <td mat-cell *matCellDef="let elemento">
             <button mat-icon-button class="mat-icon-button-table" (click)="activarConsultar(elemento)"
               matTooltip="Consultar" matTooltipPosition="above">
               <mat-icon>search</mat-icon>
             </button>
-            <button mat-icon-button class="mat-icon-button-table margin-left-3"
-              (click)="activarActualizar(elemento)" matTooltip="Editar" matTooltipPosition="above">
+            <button mat-icon-button class="mat-icon-button-table margin-left-3" (click)="activarActualizar(elemento)"
+              matTooltip="Editar" matTooltipPosition="above">
               <mat-icon>edit</mat-icon>
             </button>
           </td>

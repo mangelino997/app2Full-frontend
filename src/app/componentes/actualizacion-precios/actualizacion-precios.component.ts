@@ -85,10 +85,18 @@ export class ActualizacionPreciosComponent implements OnInit {
     private toastr: ToastrService, public dialog: MatDialog, private loaderService: LoaderService) {
     //Defiene autocompletado de Clientes
     this.autocompletado.valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.clienteService.listarPorAlias(data).subscribe(res => {
-          this.resultados = res.json();
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.loaderService.show();
+          this.clienteService.listarPorAlias(data).subscribe(res => {
+            this.resultados = res.json();
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
+        }
       }
     })
   }
@@ -142,7 +150,6 @@ export class ActualizacionPreciosComponent implements OnInit {
     if (opcion == 0) {
       this.ordenVentaServicio.listarPorCliente(id).subscribe(
         res => {
-          console.log(res.json());
           this.listaCompleta = new MatTableDataSource(res.json());
           this.listaCompleta.sort = this.sort;
           this.listaCompleta.paginator = this.paginator;
@@ -152,8 +159,6 @@ export class ActualizacionPreciosComponent implements OnInit {
     } else {
       this.ordenVentaServicio.listarPorEmpresa(this.empresa.value.id).subscribe(
         res => {
-          console.log(res.json());
-
           this.listaCompleta = new MatTableDataSource(res.json());
           this.listaCompleta.sort = this.sort;
           this.listaCompleta.paginator = this.paginator;
