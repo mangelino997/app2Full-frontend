@@ -77,9 +77,14 @@ export class ViajeCombustibleComponent implements OnInit {
       if (typeof data == 'string') {
         data = data.trim();
         if (data == '*' || data.length > 0) {
+          this.loaderService.show();
           this.proveedorServicio.listarPorAlias(data).subscribe(response => {
             this.resultadosProveedores = response;
-          })
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
         }
       }
     })

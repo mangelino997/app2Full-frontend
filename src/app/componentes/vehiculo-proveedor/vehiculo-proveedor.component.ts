@@ -95,7 +95,11 @@ export class VehiculoProveedorComponent implements OnInit {
         if (data == '*' || data.length > 0) {
           this.servicio.listarPorAlias(data).subscribe(res => {
             this.resultados = res;
-          })
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
         }
       }
     })
@@ -114,9 +118,14 @@ export class VehiculoProveedorComponent implements OnInit {
       if (typeof data == 'string') {
         data = data.trim();
         if (data == '*' || data.length > 0) {
+          this.loaderService.show();
           this.proveedorServicio.listarPorAlias(data).subscribe(res => {
             this.resultadosProveedores = res;
-          })
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
         }
       }
     })
@@ -125,9 +134,14 @@ export class VehiculoProveedorComponent implements OnInit {
       if (typeof data == 'string') {
         data = data.trim();
         if (data == '*' || data.length > 0) {
+          this.loaderService.show();
           this.choferProveedorServicio.listarPorAlias(data).subscribe(res => {
             this.resultadosChoferesProveedores = res;
-          })
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
         }
       }
     })
@@ -136,9 +150,14 @@ export class VehiculoProveedorComponent implements OnInit {
       if (typeof data == 'string') {
         data = data.trim();
         if (data == '*' || data.length > 0) {
+          this.loaderService.show();
           this.servicio.listarPorAliasFiltroRemolque(data).subscribe(response => {
             this.resultadosVehiculosRemolques = response;
-          })
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
         }
       }
     })
@@ -147,9 +166,14 @@ export class VehiculoProveedorComponent implements OnInit {
       if (typeof data == 'string') {
         data = data.trim();
         if (data == '*' || data.length > 0) {
+          this.loaderService.show();
           this.companiaSeguroServicio.listarPorNombre(data).subscribe(response => {
             this.resultadosCompaniasSeguros = response;
-          })
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
         }
       }
     })

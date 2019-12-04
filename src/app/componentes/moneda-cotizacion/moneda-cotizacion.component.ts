@@ -52,10 +52,18 @@ export class MonedaCotizacionComponent implements OnInit {
     });
     //Controla el autocompletado
     this.autocompletado.valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.monedaCotizacionServicio.listarPorMoneda(data).subscribe(res => {
-          this.resultados = res.json();
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.loaderService.show();
+          this.monedaCotizacionServicio.listarPorMoneda(data).subscribe(res => {
+            this.resultados = res.json();
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
+        }
       }
     });
   }

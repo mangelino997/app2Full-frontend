@@ -155,18 +155,34 @@ export class EmitirFacturaComponent implements OnInit {
     this.listarAlicuotaIva();
     //Autcompletado - Buscar por Remitente
     this.formulario.get('clienteRemitente').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.clienteService.listarActivosPorAlias(data).subscribe(res => {
-          this.remitentes = res.json();
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.loaderService.show();
+          this.clienteService.listarActivosPorAlias(data).subscribe(res => {
+            this.remitentes = res.json();
+            this.loaderService.hide();
+          },
+          err=>{
+            this.loaderService.hide();
+          })
+        }
       }
     });
     //Autcompletado - Buscar por Destinatario
     this.formulario.get('clienteDestinatario').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.clienteService.listarActivosPorAlias(data).subscribe(res => {
-          this.destinatarios = res.json();
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.loaderService.show();
+          this.clienteService.listarActivosPorAlias(data).subscribe(res => {
+            this.destinatarios = res.json();
+            this.loaderService.hide();
+          },
+          err=>{
+            this.loaderService.hide();
+          })
+        }
       }
     });
   }

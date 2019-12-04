@@ -54,20 +54,20 @@ export class CuentaBancariaComponent implements OnInit {
   //Define la lista de resultados de busqueda para Cuentas Bancarias
   public resultados: Array<any> = [];
   //Define las columnas de la tabla
-  public columnas: string[] = ['ID','EMPRESA', 'BANCO', 'SUCURSAL', 'TIPO_CUENTA_BANCARIA', 'NUMERO_CUENTA', 'MONEDA', 'CBU', 'ALIAS_CBU', 'ESTA_ACTIVA', 'FECHA_APERTURA', 'EDITAR'];
+  public columnas: string[] = ['ID', 'EMPRESA', 'BANCO', 'SUCURSAL', 'TIPO_CUENTA_BANCARIA', 'NUMERO_CUENTA', 'MONEDA', 'CBU', 'ALIAS_CBU', 'ESTA_ACTIVA', 'FECHA_APERTURA', 'EDITAR'];
   //Define la matSort
-  @ViewChild(MatSort, {static: false}) sort: MatSort;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
   //Define la paginacion
-  @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Constructor
-  constructor(private subopcionPestaniaService: SubopcionPestaniaService, private appService: AppService, private loaderService: LoaderService, 
-    private cuentaBancaria: CuentaBancaria, private servicio: CuentaBancariaService, 
-    private bancoService: BancoService, private sucursalService: SucursalBancoService, 
-    private tipoCuentaBancariaService: TipoCuentaBancariaService, private monedaService:MonedaService, private toastr: ToastrService,
+  constructor(private subopcionPestaniaService: SubopcionPestaniaService, private appService: AppService, private loaderService: LoaderService,
+    private cuentaBancaria: CuentaBancaria, private servicio: CuentaBancariaService,
+    private bancoService: BancoService, private sucursalService: SucursalBancoService,
+    private tipoCuentaBancariaService: TipoCuentaBancariaService, private monedaService: MonedaService, private toastr: ToastrService,
     private reporteServicio: ReporteService) {
     //Establece la subscripcion a loader
     this.subscription = this.loaderService.loaderState
@@ -85,7 +85,7 @@ export class CuentaBancariaComponent implements OnInit {
         err => {
         }
       );
-   }
+  }
 
   ngOnInit() {
     //Define los campos para validaciones
@@ -100,54 +100,61 @@ export class CuentaBancariaComponent implements OnInit {
     this.listarMonedas();
     //Autocompletado - Buscar Bancos por nombre
     this.formulario.get('banco').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.bancoService.listarPorNombre(data).subscribe(response => {
-          this.bancos = response;
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.loaderService.show();
+          this.bancoService.listarPorNombre(data).subscribe(response => {
+            this.bancos = response;
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
+        }
       }
     })
-
   }
   //Inicializa valores por defecto
-  private inicializarValores(){
-    let empresa= this.appService.getEmpresa();
+  private inicializarValores() {
+    let empresa = this.appService.getEmpresa();
     this.empresa.setValue(empresa);
     this.formulario.get('empresa').setValue(empresa['razonSocial']);
     this.formulario.get('estaActiva').setValue(true);
   }
-  public cambioAutocompletado(){
+  public cambioAutocompletado() {
     this.sucursalService.listarPorBanco(this.formulario.value.banco.id).subscribe(
-      res=>{
+      res => {
         this.sucursales = res.json();
       }
     )
   }
   //Obtiene la lista de empresas
-  private listarTiposCuentaBancaria(){
+  private listarTiposCuentaBancaria() {
     this.tipoCuentaBancariaService.listar().subscribe(
-      res=>{
+      res => {
         this.tiposCuentaBancarias = res.json();
       }
     )
   }
   //Obtiene la lista de empresas
-  private listarMonedas(){
+  private listarMonedas() {
     this.monedaService.listar().subscribe(
-      res=>{
+      res => {
         this.monedas = res.json();
       }
     )
   }
   //Establece el estado de los cobos
-  private establecerEstadoCampos(estado){
-    if(estado){
+  private establecerEstadoCampos(estado) {
+    if (estado) {
       this.formulario.get('empresa').enable();
       this.formulario.get('sucursalBanco').enable();
       this.formulario.get('tipoCuentaBancaria').enable();
       this.formulario.get('moneda').enable();
       this.formulario.get('estaActiva').enable();
       this.formulario.get('banco').enable();
-    }else{
+    } else {
       this.formulario.get('empresa').disable();
       this.formulario.get('sucursalBanco').disable();
       this.formulario.get('tipoCuentaBancaria').disable();
@@ -195,7 +202,7 @@ export class CuentaBancariaComponent implements OnInit {
       default:
         break;
     }
-    
+
   }
   //Obtiene el siguiente id
   private obtenerSiguienteId() {
@@ -223,20 +230,20 @@ export class CuentaBancariaComponent implements OnInit {
     );
   }
   //Cambio de cuenta bancaria 
-  public cambioCuentaBancaria(){
+  public cambioCuentaBancaria() {
     this.formulario.patchValue(this.cuentaBan.value);
     this.formulario.value.banco = this.cuentaBan.value.sucursalBanco.banco; //Setea el banco
     this.formulario.get('banco').setValue(this.cuentaBan.value.sucursalBanco.banco);//Setea el banco
-    let empresa= this.appService.getEmpresa();
+    let empresa = this.appService.getEmpresa();
     this.empresa.setValue(empresa);
     this.formulario.get('empresa').setValue(empresa['razonSocial']);
-    this.establecerSucursal(this.cuentaBan.value.sucursalBanco.banco.id, this.cuentaBan.value.sucursalBanco ); //Obtiene la lista de sucursales para que pueda hacer la comparacion
+    this.establecerSucursal(this.cuentaBan.value.sucursalBanco.banco.id, this.cuentaBan.value.sucursalBanco); //Obtiene la lista de sucursales para que pueda hacer la comparacion
 
   }
   //Obtiene las sucursales del banco seleccionado y setea la correcta
-  private establecerSucursal(idBanco,sucursal){
+  private establecerSucursal(idBanco, sucursal) {
     this.sucursalService.listarPorBanco(idBanco).subscribe(
-      res=>{
+      res => {
         this.sucursales = res.json();
       }
     )
@@ -296,7 +303,7 @@ export class CuentaBancariaComponent implements OnInit {
         }
       },
       err => {
-        let error= err;
+        let error = err;
         document.getElementById("idCuentasBancarias").focus();
         this.toastr.error(error.mensaje);
       }
@@ -308,10 +315,10 @@ export class CuentaBancariaComponent implements OnInit {
     this.servicio.eliminar(this.formulario.value.id).subscribe(
       res => {
         var respuesta = res.json();
-          this.reestablecerFormulario(respuesta.id);
-          document.getElementById('idCuentasBancarias').focus();
-          this.toastr.success(respuesta.mensaje);
-          this.loaderService.hide();
+        this.reestablecerFormulario(respuesta.id);
+        document.getElementById('idCuentasBancarias').focus();
+        this.toastr.success(respuesta.mensaje);
+        this.loaderService.hide();
       },
       err => {
         this.lanzarError(err);
@@ -358,37 +365,37 @@ export class CuentaBancariaComponent implements OnInit {
     return this.appService.mascararEnteros(limite);
   }
   //Valida el CBU
-  public validarCBU(){
+  public validarCBU() {
     let cbu = this.formulario.value.cbu;
-    if(cbu){
+    if (cbu) {
       let respuesta = this.appService.validarCBU(cbu);
-      if(!respuesta) {
+      if (!respuesta) {
         document.getElementById('idCBU').focus();
         document.getElementById("idCBU").classList.add('label-error');
         document.getElementById("idCBU").classList.add('is-invalid');
         this.formulario.get('cbu').reset();
         this.toastr.error("CBU Incorrecto!");
-      }else{
+      } else {
         this.cambioCampo('idCBU', 'idCBU');
       }
-    }else{
+    } else {
       this.cambioCampo('idCBU', 'idCBU');
     }
   }
-   //Valida el Alias del CBU
-   public validarAliasCBU(){
+  //Valida el Alias del CBU
+  public validarAliasCBU() {
     let aliasCbu = this.formulario.value.aliasCBU;
-    if(aliasCbu){
+    if (aliasCbu) {
       let respuesta = this.appService.validarAliasCBU(aliasCbu);
-      if(!respuesta) {
-        let err = {codigo: 11010, mensaje: 'AliasCBU Incorrecto. Mínimo 6 carácteres, máximo 20 carácteres.'};
+      if (!respuesta) {
+        let err = { codigo: 11010, mensaje: 'AliasCBU Incorrecto. Mínimo 6 carácteres, máximo 20 carácteres.' };
         document.getElementById("idAliasCBU").classList.add('label-error');
         document.getElementById("idAliasCBU").classList.add('is-invalid');
         this.toastr.error(err.mensaje);
-      }else{
+      } else {
         this.cambioCampo('idAliasCBU', 'idAliasCBU');
       }
-    }else{
+    } else {
       this.cambioCampo('idAliasCBU', 'idAliasCBU');
     }
   }
@@ -436,26 +443,26 @@ export class CuentaBancariaComponent implements OnInit {
     if (typeof valor.value != 'object') {
       valor.setValue(null);
     }
-  }  
+  }
   //Prepara los datos para exportar
   private prepararDatos(listaCompleta): Array<any> {
     let lista = listaCompleta;
     let datos = [];
     lista.forEach(elemento => {
-        let f = {
-          id: elemento.id,
-          empresa: elemento.empresa.razonSocial,
-          banco: elemento.sucursalBanco.banco.nombre,
-          sucursal: elemento.sucursalBanco.nombre,
-          tipo_cuenta_bancaria: elemento.tipoCuentaBancaria.nombre,
-          numero_cuenta: elemento.numeroCuenta,
-          moneda: elemento.moneda.nombre,
-          cbu: elemento.cbu,
-          alias_cbu: elemento.aliasCBU,
-          esta_activa: elemento.estaActiva? 'Sí' : 'No',
-          fecha_apertura: elemento.fechaApertura
-        }
-        datos.push(f);
+      let f = {
+        id: elemento.id,
+        empresa: elemento.empresa.razonSocial,
+        banco: elemento.sucursalBanco.banco.nombre,
+        sucursal: elemento.sucursalBanco.nombre,
+        tipo_cuenta_bancaria: elemento.tipoCuentaBancaria.nombre,
+        numero_cuenta: elemento.numeroCuenta,
+        moneda: elemento.moneda.nombre,
+        cbu: elemento.cbu,
+        alias_cbu: elemento.aliasCBU,
+        esta_activa: elemento.estaActiva ? 'Sí' : 'No',
+        fecha_apertura: elemento.fechaApertura
+      }
+      datos.push(f);
     });
     return datos;
   }
@@ -471,6 +478,6 @@ export class CuentaBancariaComponent implements OnInit {
     }
     this.reporteServicio.abrirDialogo(datos);
   }
-  
+
 
 }

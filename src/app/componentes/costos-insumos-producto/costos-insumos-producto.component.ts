@@ -102,8 +102,13 @@ export class CostosInsumosProductoComponent implements OnInit {
       if (typeof data == 'string') {
         data = data.trim();
         if (data == '*' || data.length > 0) {
+          this.loaderService.show();
           this.servicio.listarPorAlias(data).subscribe(response => {
             this.resultados = response;
+            this.loaderService.hide();
+          },
+          err=>{
+            this.loaderService.hide();
           })
         }
       }

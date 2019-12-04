@@ -49,16 +49,33 @@ export class PlanillaCerradaComponent implements OnInit {
     this.establecerValoresPorDefecto();
     //Autocompletado chofer- Buscar por alias
     this.formulario.get('idChofer').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2 && this.formulario.value.esRepartoPropio) {
-        this.personalService.listarChoferesCortaDistanciaPorAlias(data).subscribe(response => {
-          this.resultadosChofer = response;
-          response.length == 0 ? this.toastr.error("No se encontraron registros.") : '';
-        })
-      } else if (typeof data == 'string' && data.length > 2 && !this.formulario.value.esRepartoPropio) {
-        this.choferProveedorService.listarActivosPorAlias(data).subscribe(response => {
-          this.resultadosChofer = response;
-          response.length == 0 ? this.toastr.error("No se encontraron registros.") : '';
-        })
+      if (typeof data == 'string' && this.formulario.value.esRepartoPropio) {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.loaderService.show();
+          this.personalService.listarChoferesCortaDistanciaPorAlias(data).subscribe(response => {
+            this.resultadosChofer = response;
+            response.length == 0 ? this.toastr.error("No se encontraron registros.") : '';
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
+        }
+      }
+      else if (typeof data == 'string' && !this.formulario.value.esRepartoPropio) {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.loaderService.show();
+          this.choferProveedorService.listarActivosPorAlias(data).subscribe(response => {
+            this.resultadosChofer = response;
+            response.length == 0 ? this.toastr.error("No se encontraron registros.") : '';
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
+        }
       }
     })
   }
@@ -90,7 +107,7 @@ export class PlanillaCerradaComponent implements OnInit {
   public listarPorFiltros() {
     this.loaderService.show();
     let chofer = null;
-    if(this.formulario.value.idChofer){
+    if (this.formulario.value.idChofer) {
       chofer = this.formulario.value.idChofer;
       this.formulario.get('idChofer').setValue(chofer.id);
     }

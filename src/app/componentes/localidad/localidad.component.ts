@@ -70,10 +70,18 @@ export class LocalidadComponent implements OnInit {
       );
     //Autocompletado - Buscar por nombre
     this.autocompletado.valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.servicio.listarPorNombre(data).subscribe(response => {
-          this.resultados = response;
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.loaderService.show();
+          this.servicio.listarPorNombre(data).subscribe(response => {
+            this.resultados = response;
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
+        }
       }
     })
   }
@@ -92,10 +100,18 @@ export class LocalidadComponent implements OnInit {
     this.listarProvincias();
     //Autocompletado Provincia - Buscar por nombre
     this.formulario.get('provincia').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.provinciaServicio.listarPorNombre(data).subscribe(response => {
-          this.resultadosProvincias = response;
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.loaderService.show();
+          this.provinciaServicio.listarPorNombre(data).subscribe(response => {
+            this.resultadosProvincias = response;
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
+        }
       }
     })
   }

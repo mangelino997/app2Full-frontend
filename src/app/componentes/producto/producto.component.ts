@@ -83,10 +83,18 @@ export class ProductoComponent implements OnInit {
       });
     //Controla el autocompletado
     this.autocompletado.valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.servicio.listarPorNombre(data).subscribe(res => {
-          this.resultados = res;
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.loaderService.show();
+          this.servicio.listarPorNombre(data).subscribe(res => {
+            this.resultados = res;
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
+        }
       }
     });
   }
@@ -126,7 +134,7 @@ export class ProductoComponent implements OnInit {
     this.formulario.patchValue(elemento);
 
     /* Cuando la pestaña es 'Consultar' muestra los ITC y precios */
-    if(this.indiceSeleccionado == 2){
+    if (this.indiceSeleccionado == 2) {
       let precioUnitarioVenta = elemento.precioUnitarioViaje;
       let precioUnitarioViaje = elemento.precioUnitarioVenta;
       let itcPorLitro = elemento.itcPorLitro;

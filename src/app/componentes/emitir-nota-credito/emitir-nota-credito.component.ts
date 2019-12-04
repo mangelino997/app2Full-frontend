@@ -18,6 +18,7 @@ import { ErrorPuntoVentaComponent } from '../error-punto-venta/error-punto-venta
 import { VentaComprobante } from 'src/app/modelos/ventaComprobante';
 import { Subscription } from 'rxjs';
 import { VentaComprobanteItemNC } from 'src/app/modelos/ventaComprobanteItemNC';
+import { LoaderService } from 'src/app/servicios/loader.service';
 
 @Component({
   selector: 'app-emitir-nota-credito',
@@ -46,7 +47,7 @@ export class EmitirNotaCreditoComponent implements OnInit {
   public listaCompleta = new MatTableDataSource([]);
   //Define las columnas de la tabla
   public columnas: string[] = ['FECHA_EMISION', 'FECHA_VTO_PAGOS', 'TIPO', 'PUNTO_VENTA', 'LETRA', 'NUMERO', 'IMPORTE', 'SALDO', 'TIPO_ITEM',
-   'CONCEPTO' ,'SUBTOTAL', 'ALIC_IVA', 'SUBTOTAL_IVA'];
+    'CONCEPTO', 'SUBTOTAL', 'ALIC_IVA', 'SUBTOTAL_IVA'];
   //Define la matSort
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   //Define el mostrar del circulo de progreso
@@ -94,7 +95,8 @@ export class EmitirNotaCreditoComponent implements OnInit {
   constructor(private ventaComprobante: VentaComprobante, private ventaCpteItemNC: VentaComprobanteItemNC, private fechaService: FechaService, private tipoComprobanteService: TipoComprobanteService, private appComponent: AppComponent,
     private afipComprobanteService: AfipComprobanteService, private puntoVentaService: PuntoVentaService, private clienteService: ClienteService,
     private appService: AppService, private provinciaService: ProvinciaService, private toastr: ToastrService, private ventaComprobanteService: VentaComprobanteService,
-    private ventaTipoItemervice: VentaTipoItemService, private alicuotasIvaService: AfipAlicuotaIvaService, private route: Router, public dialog: MatDialog) { }
+    private ventaTipoItemervice: VentaTipoItemService, private alicuotasIvaService: AfipAlicuotaIvaService, private route: Router, public dialog: MatDialog,
+    private loaderService: LoaderService) { }
   //Al inicializarse el componente
   ngOnInit() {
     //Define el formulario y validaciones
@@ -127,18 +129,21 @@ export class EmitirNotaCreditoComponent implements OnInit {
     this.listarAlicuotaIva();
     //Autcompletado - Buscar por Remitente
     this.formulario.get('cliente').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.clienteService.listarActivosPorAlias(data).subscribe(res => {
-          this.resultadosClientes = res.json();
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.loaderService.show();
+          this.clienteService.listarActivosPorAlias(data).subscribe(res => {
+            this.resultadosClientes = res.json();
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
+        }
       }
     });
   }
-
-
-
-
-
   //Obtiene la lista de Puntos de Venta
   private listarPuntosVenta() {
     this.puntoVentaService.listarHabilitadosPorSucursalEmpresaYFe(this.formulario.value.empresa.id, this.formulario.value.sucursal.id).subscribe(
@@ -468,7 +473,7 @@ export class EmitirNotaCreditoComponent implements OnInit {
   //   this.formulario.get('usuarioAlta').setValue(this.appComponent.getUsuario());
   //   document.getElementById('idFecha').focus();
   // }
-  
+
   //Establece los datos del cliente seleccionado
   public cargarDatosCliente() {
     if (this.formulario.get('puntoVenta').value != null || this.formulario.get('puntoVenta').value > 0) {
