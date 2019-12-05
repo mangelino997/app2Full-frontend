@@ -681,9 +681,8 @@ export class VehiculoComponent implements OnInit {
   }
   //Carga el archivo PDF 
   public readURL(event, campo): void {
-    let extension = event.target.files[0].name.split('.');
-    extension = extension[extension.length - 1];
-    if (event.target.files && event.target.files[0] && extension == 'pdf') {
+    let extension = this.formulario.get(campo).value.tipo;
+    if (extension == 'application/pdf') {
       const file = event.target.files[0];
       const reader = new FileReader();
       reader.onload = e => {

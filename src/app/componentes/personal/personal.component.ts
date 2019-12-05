@@ -20,7 +20,7 @@ import { AfipModContratacionService } from '../../servicios/afip-mod-contratacio
 import { AfipSiniestradoService } from '../../servicios/afip-siniestrado.service';
 import { AfipSituacionService } from '../../servicios/afip-situacion.service';
 import { AppService } from '../../servicios/app.service';
-import { FormGroup, FormControl } from '@angular/forms';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { Personal } from 'src/app/modelos/personal';
 import { MatSort, MatTableDataSource, MatDialog, MatPaginator } from '@angular/material';
@@ -58,6 +58,8 @@ export class PersonalComponent implements OnInit {
   public opciones: Array<any> = [];
   //Define un formulario para validaciones de campos
   public formulario: FormGroup;
+  //Define un formulario para filtrar (Listar)
+  public formularioFiltro: FormGroup;
   //Define un formulario para validaciones de campos
   public personalActualizar: FormGroup;
   //Define la lista completa de registros
@@ -187,6 +189,19 @@ export class PersonalComponent implements OnInit {
   ngOnInit() {
     //Define los campos para validaciones
     this.formulario = this.personal.formulario;
+    //Define los campos para filtrar la tabla 
+    this.formularioFiltro = new FormGroup({
+      sucursal: new FormControl('', Validators.required),
+      area: new FormControl('', Validators.required),
+      modContratacion: new FormControl('', Validators.required),
+      categoria:new FormControl('', Validators.required),
+      tipoEmpleado: new FormControl('', Validators.required)
+    });
+    this.formularioFiltro.get('sucursal').setValue(0);
+    this.formularioFiltro.get('area').setValue(0);
+    this.formularioFiltro.get('modContratacion').setValue(0);
+    this.formularioFiltro.get('categoria').setValue(0);
+    this.formularioFiltro.get('tipoEmpleado').setValue(0);
     //Autocompletado Barrio - Buscar por nombre
     this.formulario.get('barrio').valueChanges.subscribe(data => {
       if (typeof data == 'string') {
@@ -310,6 +325,13 @@ export class PersonalComponent implements OnInit {
   public mascararHora() {
     return this.appServicio.mascararHora();
   }
+  //Obtiene la mascara de hora-minuto
+  public desenmascararHora(formulario) {
+    let valor = formulario.value;
+    if (valor) {
+      formulario.setValue(this.appServicio.desenmascararHora(valor));
+    }
+  }
   //Formatea el numero a x decimales
   public establecerDecimales(formulario, cantidad) {
     let valor = formulario.value;
@@ -385,7 +407,6 @@ export class PersonalComponent implements OnInit {
       this.formulario.get('vtoLibretaSanidad').disable();
       this.formulario.get('vtoPsicoFisico').disable();
       this.formulario.get('esChoferLargaDistancia').disable();
-      this.formulario.get('esChoferLargaDistancia').setValue(false);
       this.btnPdfLibSanidad = false;
       this.btnPdfLicConducir = false;
       this.btnPdflinti = false;
@@ -410,7 +431,6 @@ export class PersonalComponent implements OnInit {
           document.getElementById('idLocalidadNacimiento').focus();
         } else {
           this.toastr.error("Fecha de nacimiento no válida.");
-          this.formulario.get('fechaNacimiento').reset();
           document.getElementById('idFechaNacimiento').focus();
         }
         break;
@@ -420,8 +440,16 @@ export class PersonalComponent implements OnInit {
           document.getElementById('idFechaFin').focus();
         } else {
           this.toastr.error("Fecha de Inicio no válida.");
-          this.formulario.get('fechaInicio').reset();
           document.getElementById('idFechaInicio').focus();
+        }
+        break;
+        case 3:
+        if (this.formulario.value.telefonoMovilFechaEntrega <
+           this.formulario.value.telefonoMovilFechaDevolucion) {
+          document.getElementById('idObservaciones').focus();
+        } else {
+          this.toastr.error("Fecha devolución de teléfono móvil no válida.");
+          document.getElementById('idTelefonoMovilFechaDevolucion').focus();
         }
         break;
     }
@@ -531,6 +559,7 @@ export class PersonalComponent implements OnInit {
       this.formulario.get('recibeAdelanto').enable();
       this.formulario.get('recibePrestamo').enable();
       this.formulario.get('esChofer').enable();
+      this.formulario.get('esChoferLargaDistancia').enable();
       this.formulario.get('turnoRotativo').enable();
       this.formulario.get('turnoFueraConvenio').enable();
       this.formulario.get('seguridadSocial').enable();
@@ -619,7 +648,6 @@ export class PersonalComponent implements OnInit {
         this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
         break;
       case 5:
-        this.listar();
         break;
       default:
         break;
@@ -716,6 +744,7 @@ export class PersonalComponent implements OnInit {
     this.formulario.get('empresa').setValue(this.appServicio.getEmpresa());
     this.formulario.get('esJubilado').setValue(false);
     this.formulario.get('esMensualizado').setValue(true);
+    console.log(this.formulario.value);
     this.servicio.agregar(this.formulario.value).then(
       res => {
         let respuesta = res.json();
@@ -910,9 +939,8 @@ export class PersonalComponent implements OnInit {
   }
   //Controla si el adjunto es un PDF o JPEG y llama al readURL apropiado
   public controlAdjunto(event) {
-    let adjunto = event;
-    let extension = adjunto.target.files[0].type.split("/");
-    if (extension[extension.length - 1] == 'pdf') {
+    let extension = this.formulario.get('pdfDni').value.tipo;
+    if (extension == 'application/pdf') {
       this.readPdfURL(event, 'pdfDni');
     } else {
       this.readImageURL(event, 'pdfDni');
@@ -939,9 +967,8 @@ export class PersonalComponent implements OnInit {
   }
   //Carga el archivo PDF 
   public readPdfURL(event, campo): void {
-    let extension = event.target.files[0].name.split('.');
-    extension = extension[extension.length - 1];
-    if (event.target.files && event.target.files[0] && extension == 'pdf') {
+    let extension = this.formulario.get(campo).value.tipo;
+    if (event.target.files && event.target.files[0] && extension == 'application/pdf') {
       const file = event.target.files[0];
       const reader = new FileReader();
       reader.onload = e => {
@@ -1025,8 +1052,8 @@ export class PersonalComponent implements OnInit {
   }
   //Obtiene el dni para mostrarlo
   public verDni() {
-    let extension = this.formulario.get('pdfDni').value.nombre.split(".");
-    if (extension[extension.length - 1] == 'pdf') {
+    let extension = this.formulario.get('pdfDni').value.tipo;
+    if (extension == 'application/pdf') {
       this.verPDF('pdfDni');
     } else {
       this.verFoto('pdfDni');
@@ -1200,5 +1227,20 @@ export class PersonalComponent implements OnInit {
       columnas: this.columnas
     }
     this.reporteServicio.abrirDialogo(datos);
+  }
+  //Abre el dialogo de reporte
+  public listarPorFiltros(): void {
+    this.loaderService.show();
+    this.servicio.listarPorFiltros(this.formularioFiltro).subscribe(
+      res => {
+        this.listaCompleta = new MatTableDataSource(res.json());
+        this.listaCompleta.sort = this.sort;
+        this.listaCompleta.paginator = this.paginator;
+        this.loaderService.hide();
+      },
+      err => {
+        this.loaderService.hide();
+      }
+    );
   }
 }
