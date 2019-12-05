@@ -35,7 +35,8 @@
             <div class="form-group has-float-label">
               <label id="labelNombre" for="idNombre" class="tamanio-label">Nombre *</label>
               <input id="idNombre" type="text" formControlName="nombre" autocomplete="off"
-                class="form-control form-control-sm" [readonly]="soloLectura" maxlength="45">
+                class="form-control form-control-sm" [readonly]="soloLectura" maxlength="45"
+                (ngModelChange)="cambioCampo('idNombre', 'labelNombre')">
             </div>
           </div>
         </div>

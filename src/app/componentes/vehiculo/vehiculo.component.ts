@@ -240,24 +240,26 @@ export class VehiculoComponent implements OnInit {
       this.empresas = res.json();
     })
   }
-  //Obtiene un registro por id
-  private obtenerPorId(id) {
+  //Obtiene un registro por id (trae los pdfs)
+  private obtenerPorId(elemento) {
     this.loaderService.show();
-    this.servicio.obtenerPorId(id).subscribe(
+    this.servicio.obtenerPorId(elemento.id).subscribe(
       res => {
         this.loaderService.hide();
-        let elemento = res.json();
-        this.formulario.patchValue(elemento);
-        this.establecerFotoYPdfs(elemento);
+        /* el primer parámetro le envía los pdfs y el segundo el resto de datos*/
+        this.establecerElementoYFotoYPdfs(res.json(), elemento);
       },
       err => {
         this.loaderService.hide();
       }
     );
   }
-  //Establece la foto y pdf (actilet consultar/actualizar)
-  private establecerFotoYPdfs(elemento): void {
-    this.autocompletado.setValue(elemento);
+  /* Establece el elemento,foto y pdfs. Recibe como primer parametro un objeto con los datos de 
+      los pdfs y como segundo parametro el elemento con los datos completos (menos los pdfs) */
+  private establecerElementoYFotoYPdfs(elemento, elementoDatoFalt): void {
+    this.formulario.setValue(elemento);
+
+    /* establece los pdfs */
     if (elemento.pdfTitulo) {
       this.formulario.get('pdfTitulo').patchValue(elemento.pdfTitulo);
       this.formulario.get('pdfTitulo.datos').setValue(atob(elemento.pdfTitulo.datos));
@@ -282,25 +284,34 @@ export class VehiculoComponent implements OnInit {
       this.formulario.get('pdfHabBromat').patchValue(elemento.pdfHabBromat);
       this.formulario.get('pdfHabBromat.datos').setValue(atob(elemento.pdfHabBromat.datos));
     }
+
+    /* establece los formControls */
     this.tipoVehiculo.setValue(elemento.configuracionVehiculo.tipoVehiculo);
     this.marcaVehiculo.setValue(elemento.configuracionVehiculo.marcaVehiculo);
-    this.listarConfiguracionesPorTipoVehiculoMarcaVehiculo();
-    this.listarCompaniasSeguroPorEmpresa();
-    let companiaSeguroPoliza = elemento.companiaSeguroPoliza;
-    this.companiaSeguro.patchValue(companiaSeguroPoliza.companiaSeguro);
-    this.listarPolizas();
-    this.formulario.get('companiaSeguroPoliza').setValue(elemento.companiaSeguroPoliza);
+
+    /* llama a métodos para completar las listas */
+    this.listarCompaniasSeguroPorEmpresa(elementoDatoFalt.empresa);
     this.establecerConfiguracion();
+    this.listarConfiguracionesPorTipoVehiculoMarcaVehiculo();
+
+    /* establece compañia de seguro */
+    this.companiaSeguro.patchValue(elemento.companiaSeguroPoliza.companiaSeguro);
+    this.listarPolizas();
+    this.formulario.value.companiaSeguroPoliza = elemento.companiaSeguroPoliza;
   }
   //Obtiene la lista de compania de seguros poliza por empresa
-  public listarCompaniasSeguroPorEmpresa(): void {
+  public listarCompaniasSeguroPorEmpresa(empresa): void {
+    let idEmpresa;
     this.loaderService.show();
     this.companiaSeguro.reset();
     this.companiasSeguros = [];
     this.companiasSegurosPolizas = [];
     this.formulario.get('companiaSeguroPoliza').reset();
-    if (this.formulario.value.empresa.id) {
-      this.companiaSeguroService.listarPorEmpresa(this.formulario.value.empresa.id).subscribe(res => {
+
+    /* establece el idEmpresa para la consulta al service */
+    empresa ? [idEmpresa = empresa.id, this.formulario.value.empresa = empresa] : idEmpresa = this.formulario.value.empresa.id;
+    if (idEmpresa) {
+      this.companiaSeguroService.listarPorEmpresa(idEmpresa).subscribe(res => {
         this.companiasSeguros = res.json();
         this.companiasSeguros.length == 0 ? this.toastr.warning("El Titular no tiene Compañía de Seguro asigandas.") : '';
       })
@@ -320,7 +331,7 @@ export class VehiculoComponent implements OnInit {
   public establecerElemento() {
     this.limpiarCampos();
     let elemento = this.autocompletado.value;
-    this.obtenerPorId(elemento.id);
+    this.obtenerPorId(elemento);
   }
   //Limpia los campos en cada seleccion de vehiculo (campo buscar)
   private limpiarCampos() {

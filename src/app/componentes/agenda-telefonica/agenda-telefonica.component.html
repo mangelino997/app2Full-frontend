@@ -84,7 +84,8 @@
               <label for="idLocalidad" class="tamanio-label">Localidad *</label>
               <input id="idLocalidad" class="form-control form-control-sm" type="text" matInput
                 [formControl]="formulario.get('localidad')" [matAutocomplete]="autoLocalidad" autocomplete="off"
-                [readonly]="soloLectura" (blur)="verificarSeleccion(formulario.get('localidad'))">
+                [readonly]="soloLectura" (blur)="verificarSeleccion(formulario.get('localidad'))"
+                placeholder="Buscar por nombre">
               <mat-autocomplete #autoLocalidad="matAutocomplete" [displayWith]="displayFa.bind(this)">
                 <mat-option *ngFor="let itemLocalidad of resultadosLocalidades" [value]="itemLocalidad">
                   {{itemLocalidad.nombre}}, {{itemLocalidad.provincia.nombre}}

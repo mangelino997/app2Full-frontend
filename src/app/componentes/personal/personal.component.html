@@ -94,7 +94,8 @@
                             <label for="idBarrio" class="tamanio-label">Barrio</label>
                             <input id="idBarrio" class="form-control form-control-sm" type="text" matInput
                               [formControl]="formulario.get('barrio')" [matAutocomplete]="autoBarrio" autocomplete="off"
-                              [readonly]="soloLectura" (blur)="verificarSeleccion(formulario.get('barrio'))">
+                              [readonly]="soloLectura" (blur)="verificarSeleccion(formulario.get('barrio'))"
+                              placeholder="Buscar por nombre">
                             <mat-autocomplete #autoBarrio="matAutocomplete" [displayWith]="displayFa.bind(this)">
                               <mat-option *ngFor="let itemBarrio of resultadosBarrios" [value]="itemBarrio">
                                 {{itemBarrio.nombre}}
@@ -107,7 +108,7 @@
                             <label for="idLocalidad" class="tamanio-label">Localidad *</label>
                             <input id="idLocalidad" class="form-control form-control-sm" type="text" matInput
                               [formControl]="formulario.get('localidad')" [matAutocomplete]="autoLocalidad"
-                              autocomplete="off" [readonly]="soloLectura"
+                              autocomplete="off" [readonly]="soloLectura" placeholder="Buscar por nombre"
                               (blur)="verificarSeleccion(formulario.get('localidad'))">
                             <mat-autocomplete #autoLocalidad="matAutocomplete" [displayWith]="displayFb.bind(this)">
                               <mat-option *ngFor="let itemLocalidad of resultadosLocalidades" [value]="itemLocalidad">
