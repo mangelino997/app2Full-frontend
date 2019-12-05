@@ -114,7 +114,7 @@
             <div class="form-group has-float-label">
               <label for="idEmpresa" class="tamanio-label">Titular *</label>
               <mat-select id="idEmpresa" class="form-control form-control-sm" formControlName="empresa"
-                [compareWith]="compareFn" (selectionChange)="listarCompaniasSeguroPorEmpresa()">
+                [compareWith]="compareFn" (selectionChange)="listarCompaniasSeguroPorEmpresa(null)">
                 <mat-option *ngFor="let itemEmpresa of empresas" [value]="itemEmpresa">
                   {{itemEmpresa.razonSocial}}
                 </mat-option>
@@ -196,7 +196,8 @@
               <label for="idPersonal" class="tamanio-label">Chofer Habitual</label>
               <input id="idPersonal" class="form-control form-control-sm" type="text" matInput
                 [formControl]="formulario.get('personal')" [matAutocomplete]="autoPersonal" autocomplete="off"
-                [readonly]="soloLectura" (blur)="verificarSeleccion(formulario.get('personal'))">
+                [readonly]="soloLectura" (blur)="verificarSeleccion(formulario.get('personal'))"
+                placeholder="Buscar por alias">
               <mat-autocomplete #autoPersonal="matAutocomplete" [displayWith]="displayF.bind(this)">
                 <mat-option *ngFor="let itemPersonal of resultadosPersonales" [value]="itemPersonal">
                   {{itemPersonal.alias}}

@@ -498,13 +498,12 @@ export class OrdenVentaComponent implements OnInit {
     this.listaTarifasDeOrdVta = null;
     this.ordenVentaTarifaService.listarPorOrdenVenta(this.ORDEN_VTA_CABECERA).subscribe(
       res => {
+        console.log(res.json());
         this.listaTarifasDeOrdVta = new MatTableDataSource(res.json());
         this.listaTarifasDeOrdVta.sort = this.sort;
-        if (this.listaTarifasDeOrdVta.data.length > 0) {
-          this.tipoTarifa.setValue(this.listaTarifasDeOrdVta.data[0].tipoTarifa.porEscala ? 'porEscala' : 'porTramo');
-          this.tipoTarifa.disable();
-          this.cambioTipoTarifa();
-        }
+        this.tipoTarifa.setValue(this.listaTarifasDeOrdVta.data[0].tipoTarifa.porEscala ? 'porEscala' : 'porTramo');
+        this.tipoTarifa.disable();
+        this.cambioTipoTarifa();
         this.loaderService.hide();
       },
       err => {
@@ -532,21 +531,17 @@ export class OrdenVentaComponent implements OnInit {
             let respuesta = res.json();
             respuesta.then(
               data => {
-                this.formularioTarifa.reset();
-                this.establecerOrdenVentaCabecera(data.id);
+                console.log(data);
+                let respuesta = data;
                 this.soloLectura = true;
-                this.servicio.obtenerPorId(data.id).subscribe(
-                  res => {
-                    console.log(res.json());
-                  }
-                );
-
-                // this.listarTarifasOrdenVenta();
                 this.formulario.disable();
                 this.tipoOrdenVenta.disable();
+                this.formularioTarifa.reset();
+                this.establecerOrdenVentaCabecera(respuesta.id);
+                this.listarTarifasOrdenVenta();
+                document.getElementById('idTipoTarifa').focus();
                 this.toastr.success("Registro agregado con éxito");
                 this.loaderService.hide();
-                document.getElementById('idTipoTarifa').focus();
               }
             );
           }
