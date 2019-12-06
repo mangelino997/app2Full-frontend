@@ -323,7 +323,8 @@ export class EmitirFacturaComponent implements OnInit {
       this.formulario.get('fechaEmision').setValue(this.fechaActual);
       document.getElementById('idFechaEmision').focus();
     }
-  }  //Genera y retorna una fecha segun los parametros que recibe (dias - puede ser + ó -)
+  }  
+  //Genera y retorna una fecha segun los parametros que recibe (dias - puede ser + ó -)
   private generarFecha(dias) {
     console.log(this.fechaActual);
     let fechaActual = new Date(this.fechaActual);

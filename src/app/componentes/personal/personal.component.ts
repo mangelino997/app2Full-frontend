@@ -194,7 +194,7 @@ export class PersonalComponent implements OnInit {
       idSucursal: new FormControl('', Validators.required),
       idArea: new FormControl('', Validators.required),
       idModContratacion: new FormControl('', Validators.required),
-      idCategoria:new FormControl('', Validators.required),
+      idCategoria: new FormControl('', Validators.required),
       tipoEmpleado: new FormControl('', Validators.required)
     });
     this.formularioFiltro.get('idSucursal').setValue(0);
@@ -424,28 +424,33 @@ export class PersonalComponent implements OnInit {
   }
   //Controla el rango valido para la fecha de emision cuando el punto de venta es feCAEA
   private verificarFecha(opcion) {
-    let nacimiento = this.formulario.value.fechaNacimiento;
     switch (opcion) {
+
+      /* opcion == 1 para validar Fecha de Nacimiento*/
       case 1:
-        if (nacimiento < this.fechaActual) {
+        if (this.formulario.value.fechaNacimiento < this.fechaActual) {
           document.getElementById('idLocalidadNacimiento').focus();
         } else {
-          this.toastr.error("Fecha de nacimiento no válida.");
+          this.toastr.error("Fecha no válida. Debe ser menor a fecha actual.");
+          this.formulario.get('fechaNacimiento').reset();
           document.getElementById('idFechaNacimiento').focus();
         }
         break;
+
+      /* opcion == 2 para validar Fecha de Inicio*/
       case 2:
-        if (this.formulario.value.fechaInicio < this.fechaActual +10 
-          && this.formulario.value.fechaInicio> nacimiento) {
+        let fechaInicio = this.formulario.value.fechaInicio;
+        if (fechaInicio <= this.generarFecha(10) && fechaInicio > this.formulario.value.fechaNacimiento) {
           document.getElementById('idFechaFin').focus();
         } else {
-          this.toastr.error("Fecha de Inicio no válida.");
+          this.toastr.error("Fecha de Inicio no válida. Debe ser entre Fecha Nacimiento y  Fecha Actual + 10 días.");
+          this.formulario.get('fechaInicio').reset();
           document.getElementById('idFechaInicio').focus();
         }
         break;
-        case 3:
+      case 3:
         if (this.formulario.value.telefonoMovilFechaEntrega <
-           this.formulario.value.telefonoMovilFechaDevolucion) {
+          this.formulario.value.telefonoMovilFechaDevolucion) {
           document.getElementById('idObservaciones').focus();
         } else {
           this.toastr.error("Fecha devolución de teléfono móvil no válida.");
@@ -453,6 +458,13 @@ export class PersonalComponent implements OnInit {
         }
         break;
     }
+  }
+  //Genera y retorna una fecha segun los parametros que recibe (dias - puede ser + ó -)
+  private generarFecha(dias) {
+    let fechaActual = new Date(this.fechaActual);
+    let date = fechaActual.getDate() + dias;
+    let fechaGenerada = fechaActual.getFullYear() + '-' + (fechaActual.getMonth() + 1) + '-' + date; //Al mes se le debe sumar 1
+    return fechaGenerada;
   }
   //Obtiene un registro por id
   private obtenerPorId(id) {
@@ -936,6 +948,22 @@ export class PersonalComponent implements OnInit {
       }
     }
   }
+  //Valida que Antiguedad Anterior Años sea menor a 60
+  public validarAntiguedadAnios() {
+    let elemento = Number(this.formulario.value.antiguedadAntAnio);
+    if (elemento > 59 && elemento) {
+      this.formulario.get('antiguedadAntAnio').reset();
+      this.toastr.error("El campo Antigüedad Anterior Años debe ser menor a 60.");
+    }
+  }
+  //Valida que Antiguedad Anterior Meses sea menor a 12
+  public validarAntiguedadMeses() {
+    let elemento = Number(this.formulario.value.antiguedadAntMes);
+    if (elemento > 11 && elemento) {
+      this.formulario.get('antiguedadAntMes').reset();
+      this.toastr.error("El campo Antigüedad Anterior Meses debe ser menor a 60.");
+    }
+  }
   //Controla si el adjunto es un PDF o JPEG y llama al readURL apropiado
   public controlAdjunto(event) {
     // let extension = this.formulario.get('pdfDni').value.tipo;
@@ -1052,8 +1080,10 @@ export class PersonalComponent implements OnInit {
   }
   //Obtiene el dni para mostrarlo
   public verDni() {
-    let extension = this.formulario.get('pdfDni').value.tipo;
-    if (extension == 'application/pdf') {
+    console.log(this.formulario.get('pdfDni').value);
+    let nombre = this.formulario.get('pdfDni').value.nombre;
+    let extension = nombre.split('.');
+    if (extension[1] == 'pdf') {
       this.verPDF('pdfDni');
     } else {
       this.verFoto('pdfDni');

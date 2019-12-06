@@ -65,14 +65,14 @@
                       <div class="form-group has-float-label">
                         <label for="idRazonSocial" class="tamanio-label-titulo">Apellido *</label>
                         <input id="idApellido" type="text" formControlName="apellido" autocomplete="off"
-                          class="form-control form-control-sm" [readonly]="soloLectura" maxlength="45">
+                          class="form-control form-control-sm" [readonly]="soloLectura" maxlength="22">
                       </div>
                     </div>
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label for="idNombre" class="tamanio-label-titulo">Nombre *</label>
                         <input id="idNombre" type="text" formControlName="nombre" autocomplete="off"
-                          class="form-control form-control-sm" [readonly]="soloLectura" maxlength="45">
+                          class="form-control form-control-sm" [readonly]="soloLectura" maxlength="22">
                       </div>
                     </div>
                   </div>
@@ -340,7 +340,7 @@
                       <div class="form-group has-float-label">
                         <label for="idAntiguedadAntAnio" class="tamanio-label">Antigüedad Anterior Años</label>
                         <input id="idAntiguedadAntAnio" [textMask]="mascararEnteros(2)" type="text"
-                          formControlName="antiguedadAntAnio" autocomplete="off"
+                          formControlName="antiguedadAntAnio" autocomplete="off" (blur)="validarAntiguedadAnios()"
                           class="form-control form-control-sm number-right" [readonly]="soloLectura" placeholder="0">
                       </div>
                     </div>
@@ -348,7 +348,7 @@
                       <div class="form-group has-float-label">
                         <label for="idAntiguedadAntMes" class="tamanio-label"> Antigüedad Anterior Meses</label>
                         <input id="idAntiguedadAntMes" [textMask]="mascararEnteros(2)" type="text"
-                          formControlName="antiguedadAntMes" autocomplete="off"
+                          formControlName="antiguedadAntMes" autocomplete="off" (blur)="validarAntiguedadMeses()"
                           class="form-control form-control-sm number-right" [readonly]="soloLectura" placeholder="0">
                       </div>
                     </div>
