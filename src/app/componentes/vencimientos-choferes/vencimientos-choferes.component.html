@@ -74,6 +74,35 @@
             </div>
           </div>
           <div class="col-md-3">
+            <div class="form-group has-float-label">
+              <label id="labelMovilEmpresa" for="idMovilEmpresa" class="tamanio-label">Móvil Empresa</label>
+              <input id="idMovilEmpresa" type="number" formControlName="telefonoMovilEmpresa" autocomplete="off"
+                class="form-control form-control-sm number-right" readonly>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-3">
+            <div class="form-group has-float-label">
+              <label for="idEsChofer" class="tamanio-label">Es Chofer *</label>
+              <mat-select id="idEsChofer" class="form-control form-control-sm" formControlName="esChofer"
+                (selectionChange)="cambioEsChofer()">
+                <mat-option [value]="false">No</mat-option>
+                <mat-option [value]="true">Si</mat-option>
+              </mat-select>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="form-group has-float-label">
+              <label for="idEsChoferLargaDistancia" class="tamanio-label">Es Chofer Larga Distancia *</label>
+              <mat-select id="idEsChoferLargaDistancia" class="form-control form-control-sm"
+                formControlName="esChoferLargaDistancia" (selectionChange)="cambioEsChofer()">
+                <mat-option [value]="false">No</mat-option>
+                <mat-option [value]="true">Si</mat-option>
+              </mat-select>
+            </div>
+          </div>
+          <div class="col-md-3">
             <div class="row justify-content-center">
               <input style="display: none;" type="file" (change)="controlAdjunto($event)" #fileInputDni />
               <button class="btn-height" mat-raised-button color="primary" (click)="fileInputDni.click()"
@@ -112,28 +141,6 @@
                 [disabled]="!formulario.get('pdfAltaTemprana.nombre').value" style="width: 60px;" matTooltip="Ver">
                 <i class="material-icons">visibility</i>
               </button>
-            </div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-md-3">
-            <div class="form-group has-float-label">
-              <label for="idEsChofer" class="tamanio-label">Es Chofer *</label>
-              <mat-select id="idEsChofer" class="form-control form-control-sm" formControlName="esChofer"
-                (selectionChange)="cambioEsChofer()">
-                <mat-option [value]="false">No</mat-option>
-                <mat-option [value]="true">Si</mat-option>
-              </mat-select>
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div class="form-group has-float-label">
-              <label for="idEsChoferLargaDistancia" class="tamanio-label">Es Chofer Larga Distancia *</label>
-              <mat-select id="idEsChoferLargaDistancia" class="form-control form-control-sm"
-                formControlName="esChoferLargaDistancia" (selectionChange)="cambioEsChofer()">
-                <mat-option [value]="false">No</mat-option>
-                <mat-option [value]="true">Si</mat-option>
-              </mat-select>
             </div>
           </div>
         </div>
