@@ -136,6 +136,11 @@ export class PersonalService {
     console.log('entra');
     return this.http.post(this.url + '/listarPorFiltros', formularioFiltro, this.options);
   }
+  //Obtiene un listado de acompañantes por alias
+  public listarChoferesPorFiltros(formularioFiltro) {
+    console.log('entra');
+    return this.http.post(this.url + '/listarChoferesPorFiltros', formularioFiltro, this.options);
+  }
   //Agrega un registro
   public agregar(elemento) {
     let obj = Object.assign({}, elemento);

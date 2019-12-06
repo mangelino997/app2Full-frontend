@@ -1228,7 +1228,7 @@ export class PersonalComponent implements OnInit {
     }
     this.reporteServicio.abrirDialogo(datos);
   }
-  //Abre el dialogo de reporte
+  //obtiene la lista por filtros
   public listarPorFiltros(): void {
     this.loaderService.show();
     console.log(this.formularioFiltro.value);
