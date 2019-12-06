@@ -255,7 +255,8 @@ export class VencimientosChoferesComponent implements OnInit {
   //Controla si el adjunto es un PDF o JPEG y llama al readURL apropiado
   public controlAdjunto(event) {
     let adjunto = event;
-    let extension = this.formulario.get('pdfDni').value.tipo;
+    // let extension = this.formulario.get('pdfDni').value.tipo;
+    let extension = event.target.files[0].type;
     if (extension == 'application/pdf') {
       this.readPdfURL(event, 'pdfDni');
     } else {
@@ -284,7 +285,8 @@ export class VencimientosChoferesComponent implements OnInit {
   }
   //Carga el archivo PDF 
   public readPdfURL(event, campo): void {
-    let extension = this.formulario.get(campo).value.tipo;
+    // let extension = this.formulario.get(campo).value.tipo;
+    let extension = event.target.files[0].type;
     if (event.target.files && event.target.files[0] && extension == 'application/pdf') {
       const file = event.target.files[0];
       const reader = new FileReader();

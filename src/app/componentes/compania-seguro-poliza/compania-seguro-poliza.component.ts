@@ -279,12 +279,20 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
   }
   //Obtiene un listado por compania de seguro
   public listarPorCompaniaSeguro() {
+    this.loaderService.show();
     this.listaCompleta = new MatTableDataSource([]);
-    this.servicio.listarPorCompaniaSeguroYEmpresa(this.formulario.value.companiaSeguro.id, this.formulario.value.empresa.id).subscribe(res => {
-      this.listaCompleta = new MatTableDataSource(res.json());
-      this.listaCompleta.sort = this.sort;
-      this.listaCompleta.data.length == 0 ? this.toastr.error("Sin registros para mostrar para la Empresa y Compañía Seguro.") : '';
-    })
+    this.servicio.listarPorCompaniaSeguroYEmpresa(this.formulario.value.companiaSeguro.id, this.formulario.value.empresa.id)
+      .subscribe(
+        res => {
+          this.listaCompleta = new MatTableDataSource(res.json());
+          this.listaCompleta.sort = this.sort;
+          this.listaCompleta.data.length == 0 ? this.toastr.error("Sin registros para mostrar para la Empresa y Compañía Seguro.") : '';
+          this.loaderService.hide();
+        },
+        err => {
+          this.toastr.error(err.json().mensaje);
+          this.loaderService.hide();
+        })
   }
   //Obtiene un listado por compania de seguro
   public listarPorCompaniaSeguroYEmpresa() {
@@ -329,10 +337,12 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
     this.servicio.obtenerPorId(id).subscribe(
       res => {
         let elemento = res.json();
+        !elemento.pdf ? elemento.pdf = {} : '';
         this.formulario.patchValue(elemento);
         this.establecerPdf(elemento);
       },
       err => {
+        this.toastr.error(err.json().mensaje);
       }
     );
   }
@@ -359,7 +369,7 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
   //Establece la foto y pdf (activar consultar/actualizar)
   private establecerPdf(elemento): void {
     if (elemento.pdf) {
-      this.formulario.get('pdf.datos').setValue(atob(elemento.pdf.datos));
+      elemento.pdf.datos ? this.formulario.get('pdf.datos').setValue(atob(elemento.pdf.datos)) : '';
     }
   }
   //Obtiene el pdf para mostrarlo
