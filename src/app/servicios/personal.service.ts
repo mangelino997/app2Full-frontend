@@ -133,7 +133,13 @@ export class PersonalService {
   }
   //Obtiene un listado de acompañantes por alias
   public listarPorFiltros(formularioFiltro) {
-    return this.http.post(this.url, formularioFiltro, this.options);
+    console.log('entra');
+    return this.http.post(this.url + '/listarPorFiltros', formularioFiltro, this.options);
+  }
+  //Obtiene un listado de acompañantes por alias
+  public listarChoferesPorFiltros(formularioFiltro) {
+    console.log('entra');
+    return this.http.post(this.url + '/listarChoferesPorFiltros', formularioFiltro, this.options);
   }
   //Agrega un registro
   public agregar(elemento) {

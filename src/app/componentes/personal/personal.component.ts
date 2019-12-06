@@ -191,16 +191,16 @@ export class PersonalComponent implements OnInit {
     this.formulario = this.personal.formulario;
     //Define los campos para filtrar la tabla 
     this.formularioFiltro = new FormGroup({
-      sucursal: new FormControl('', Validators.required),
-      area: new FormControl('', Validators.required),
-      modContratacion: new FormControl('', Validators.required),
-      categoria:new FormControl('', Validators.required),
+      idSucursal: new FormControl('', Validators.required),
+      idArea: new FormControl('', Validators.required),
+      idModContratacion: new FormControl('', Validators.required),
+      idCategoria:new FormControl('', Validators.required),
       tipoEmpleado: new FormControl('', Validators.required)
     });
-    this.formularioFiltro.get('sucursal').setValue(0);
-    this.formularioFiltro.get('area').setValue(0);
-    this.formularioFiltro.get('modContratacion').setValue(0);
-    this.formularioFiltro.get('categoria').setValue(0);
+    this.formularioFiltro.get('idSucursal').setValue(0);
+    this.formularioFiltro.get('idArea').setValue(0);
+    this.formularioFiltro.get('idModContratacion').setValue(0);
+    this.formularioFiltro.get('idCategoria').setValue(0);
     this.formularioFiltro.get('tipoEmpleado').setValue(0);
     //Autocompletado Barrio - Buscar por nombre
     this.formulario.get('barrio').valueChanges.subscribe(data => {
@@ -1228,11 +1228,13 @@ export class PersonalComponent implements OnInit {
     }
     this.reporteServicio.abrirDialogo(datos);
   }
-  //Abre el dialogo de reporte
+  //obtiene la lista por filtros
   public listarPorFiltros(): void {
     this.loaderService.show();
-    this.servicio.listarPorFiltros(this.formularioFiltro).subscribe(
+    console.log(this.formularioFiltro.value);
+    this.servicio.listarPorFiltros(this.formularioFiltro.value).subscribe(
       res => {
+        console.log(res.json());
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
         this.listaCompleta.paginator = this.paginator;

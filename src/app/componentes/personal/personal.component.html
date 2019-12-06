@@ -1016,11 +1016,11 @@
       <div class="row">
         <div class="col-md-2">
           <div class="form-group has-float-label">
-            <label for="idSucursalFiltro" class="tamanio-label">Sucursal donde trabaja *</label>
+            <label for="idSucursalFiltro" class="tamanio-label">Sucursal donde Trabaja *</label>
             <mat-select id="idSucursalFiltro" class="form-control form-control-sm"
-              [formControl]="formularioFiltro.get('sucursal')" [compareWith]="compareFn">
+              [formControl]="formularioFiltro.get('idSucursal')" [compareWith]="compareFn">
               <mat-option [value]="0">TODAS</mat-option>
-              <mat-option *ngFor="let itemSucursal of sucursales" [value]="itemSucursal">
+              <mat-option *ngFor="let itemSucursal of sucursales" [value]="itemSucursal.id">
                 {{itemSucursal.nombre}}
               </mat-option>
             </mat-select>
@@ -1030,9 +1030,9 @@
           <div class="form-group has-float-label ">
             <label for="idAreaFiltro" class="tamanio-label">Area *</label>
             <mat-select id="idAreaFiltro" class="form-control form-control-sm"
-              [formControl]="formularioFiltro.get('area')" [compareWith]="compareFn">
+              [formControl]="formularioFiltro.get('idArea')" [compareWith]="compareFn">
               <mat-option [value]="0">TODAS</mat-option>
-              <mat-option *ngFor="let itemArea of areas" [value]="itemArea">
+              <mat-option *ngFor="let itemArea of areas" [value]="itemArea.id">
                 {{itemArea.nombre}}
               </mat-option>
             </mat-select>
@@ -1042,9 +1042,9 @@
           <div class="form-group has-float-label ">
             <label for="idContratacionFiltro" class="tamanio-label">Mod. de Contratación *</label>
             <mat-select id="idContratacionFiltro" class="form-control form-control-sm"
-              [formControl]="formularioFiltro.get('modContratacion')" [compareWith]="compareFn">
+              [formControl]="formularioFiltro.get('idModContratacion')" [compareWith]="compareFn">
               <mat-option [value]="0">TODAS</mat-option>
-              <mat-option *ngFor="let itemContratacion of resultadosAfipModContrataciones" [value]="itemContratacion">
+              <mat-option *ngFor="let itemContratacion of resultadosAfipModContrataciones" [value]="itemContratacion.id">
                 {{itemContratacion.nombre}}
               </mat-option>
             </mat-select>
@@ -1054,9 +1054,9 @@
           <div class="form-group has-float-label">
             <label for="idCategoriaFiltro" class="tamanio-label">Categoría *</label>
             <mat-select id="idCategoriaFiltro" class="form-control form-control-sm"
-              [formControl]="formularioFiltro.get('categoria')" [compareWith]="compareFn">
+              [formControl]="formularioFiltro.get('idCategoria')" [compareWith]="compareFn">
               <mat-option [value]="0">TODAS</mat-option>
-              <mat-option *ngFor="let itemCategoria of resultadosCategorias" [value]="itemCategoria">
+              <mat-option *ngFor="let itemCategoria of resultadosCategorias" [value]="itemCategoria.id">
                 {{itemCategoria.nombre}}
               </mat-option>
             </mat-select>
@@ -1084,7 +1084,7 @@
       <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
         <ng-container matColumnDef="ID">
           <th mat-header-cell *matHeaderCellDef mat-sort-header class="col-id-width">#</th>
-          <td mat-cell *matCellDef="let elemento" class="number-right">{{elemento.id}}</td>
+          <td mat-cell *matCellDef="let elemento; let i = index" class="number-right"> {{i+1}}</td>
         </ng-container>
         <ng-container matColumnDef="NOMBRE">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</th>
