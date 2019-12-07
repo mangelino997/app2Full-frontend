@@ -18,15 +18,12 @@ import { ReporteService } from 'src/app/servicios/reporte.service';
   styleUrls: ['./moneda-cotizacion.component.css']
 })
 export class MonedaCotizacionComponent implements OnInit {
-<<<<<<< HEAD
   //Define la pestania actual
   public pestaniaActual:string = null;
   //Define campos solo lectura
   public soloLectura:boolean = false;
-=======
   //Define fecha actual
   public fechaActual: String;
->>>>>>> baaec35096a7013419a0d99daf851c45e76e94be
   //Define si mostrar el boton
   public mostrarAgregar: boolean = null;
   //Define un formulario para validaciones de campos
