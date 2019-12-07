@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FechaService } from 'src/app/servicios/fecha.service';
 import { ToastrService } from 'ngx-toastr';
 import { FormGroup, FormControl } from '@angular/forms';
@@ -170,7 +170,7 @@ export class OrdenRecoleccionComponent implements OnInit {
     })
   }
   //Obtiene el listado de registros
-  private listar() {
+  public listar() {
     this.loaderService.show();
     this.servicio.listar().subscribe(
       res => {

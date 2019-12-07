@@ -14,7 +14,6 @@ import { VentaTipoItemService } from 'src/app/servicios/venta-tipo-item.service'
 import { AfipAlicuotaIvaService } from 'src/app/servicios/afip-alicuota-iva.service';
 import { Router } from '@angular/router';
 import { MatDialog, MatTableDataSource, MatSort } from '@angular/material';
-import { ErrorPuntoVentaComponent } from '../error-punto-venta/error-punto-venta.component';
 import { VentaComprobante } from 'src/app/modelos/ventaComprobante';
 import { Subscription } from 'rxjs';
 import { VentaComprobanteItemNC } from 'src/app/modelos/ventaComprobanteItemNC';
@@ -53,7 +52,7 @@ export class EmitirNotaCreditoComponent implements OnInit {
   public show = false;
   //Define la subscripcion a loader.service
   private subscription: Subscription;
-
+  public puntosDeVenta:any;
 
   public checkboxComp: boolean = null;
   public checkboxCuenta: boolean = null;

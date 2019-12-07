@@ -16,6 +16,8 @@ import { ReporteService } from 'src/app/servicios/reporte.service';
   styleUrls: ['./zona.component.css']
 })
 export class ZonaComponent implements OnInit {
+  //Define el ultimo id
+  public ultimoId:string = null;
   //Define la pestania activa
   public activeLink: any = null;
   //Define el indice seleccionado de pestania
@@ -53,15 +55,15 @@ export class ZonaComponent implements OnInit {
     private appService: AppService, private toastr: ToastrService, private loaderService: LoaderService,
     private reporteServicio: ReporteService) {
     //Obtiene la lista de pestania por rol y subopcion
-    this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
-      .subscribe(
-        res => {
-          this.pestanias = res.json();
-          this.activeLink = this.pestanias[0].nombre;
-        },
-        err => {
-        }
-      );
+    // this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
+    //   .subscribe(
+    //     res => {
+    //       this.pestanias = res.json();
+    //       this.activeLink = this.pestanias[0].nombre;
+    //     },
+    //     err => {
+    //     }
+    //   );
     //Autocompletado - Buscar por nombre
     this.autocompletado.valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
@@ -84,8 +86,22 @@ export class ZonaComponent implements OnInit {
       version: new FormControl(),
       nombre: new FormControl('', [Validators.required, Validators.maxLength(45)])
     });
-    //Establece los valores de la primera pestania activa
-    this.seleccionarPestania(1, 'Agregar', 0);
+    this.loaderService.show();
+    //Obtiene los datos de la zona
+    this.servicio.obtenerDatos(this.appService.getRol().id, this.appService.getSubopcion()).subscribe(
+      res => {
+        let respuesta = res.json();
+        this.pestanias = respuesta.pestanias;
+        this.activeLink = this.pestanias[0].nombre;
+        this.ultimoId = respuesta.ultimoId;
+        //Establece los valores de la primera pestania activa
+        this.seleccionarPestania(1, 'Agregar', 0);
+        this.loaderService.hide();
+      },
+      err => {
+        this.loaderService.hide();
+      }
+    );
   }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
@@ -99,7 +115,7 @@ export class ZonaComponent implements OnInit {
   };
   //Establece valores al seleccionar una pestania
   public seleccionarPestania(id, nombre, opcion) {
-    this.reestablecerFormulario('');
+    this.reestablecerFormulario(null);
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
     if (opcion == 0) {
@@ -108,7 +124,7 @@ export class ZonaComponent implements OnInit {
     }
     switch (id) {
       case 1:
-        this.obtenerSiguienteId();
+        this.formulario.get('id').setValue(this.ultimoId);
         this.establecerValoresPestania(nombre, false, false, true, 'idNombre');
         break;
       case 2:
@@ -143,16 +159,6 @@ export class ZonaComponent implements OnInit {
         break;
     }
   }
-  //Obtiene el siguiente id
-  private obtenerSiguienteId() {
-    this.servicio.obtenerSiguienteId().subscribe(
-      res => {
-        this.formulario.get('id').setValue(res.json());
-      },
-      err => {
-      }
-    );
-  }
   //Obtiene el listado de registros
   private listar() {
     this.loaderService.show();
@@ -178,6 +184,7 @@ export class ZonaComponent implements OnInit {
       res => {
         var respuesta = res.json();
         if (respuesta.codigo == 201) {
+          this.ultimoId = respuesta.id;
           this.reestablecerFormulario(respuesta.id);
           document.getElementById('idNombre').focus();
           this.toastr.success(respuesta.mensaje);
@@ -203,7 +210,7 @@ export class ZonaComponent implements OnInit {
       res => {
         var respuesta = res.json();
         if (respuesta.codigo == 200) {
-          this.reestablecerFormulario('');
+          this.reestablecerFormulario(null);
           document.getElementById('idAutocompletado').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();

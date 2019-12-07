@@ -8,9 +8,11 @@ import { ViajeCombustible } from 'src/app/modelos/viajeCombustible';
 import { ProveedorService } from 'src/app/servicios/proveedor.service';
 import { InsumoProductoService } from 'src/app/servicios/insumo-producto.service';
 import { ViajeCombustibleService } from 'src/app/servicios/viaje-combustible';
+import { OrdenCombustibleComponent } from 'src/app/componentes/orden-combustible/orden-combustible.component';
+
 @NgModule({
   declarations: [
-    OrdenCombustibleModule
+    OrdenCombustibleComponent
   ],
   imports: [
     CommonModule,
@@ -34,8 +36,6 @@ import { ViajeCombustibleService } from 'src/app/servicios/viaje-combustible';
     ProveedorService,
     InsumoProductoService,
     ViajeCombustibleService,
-    
-
   ],
 })
 export class OrdenCombustibleModule { }

@@ -18,6 +18,10 @@ import { ReporteService } from 'src/app/servicios/reporte.service';
   styleUrls: ['./moneda-cotizacion.component.css']
 })
 export class MonedaCotizacionComponent implements OnInit {
+  //Define la pestania actual
+  public pestaniaActual:string = null;
+  //Define campos solo lectura
+  public soloLectura:boolean = false;
   //Define si mostrar el boton
   public mostrarAgregar: boolean = null;
   //Define un formulario para validaciones de campos

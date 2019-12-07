@@ -6,11 +6,9 @@ import { ReporteDialogoRoutingModule } from './reporte-dialogo-routing.module';
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
   MatSelectModule, MatProgressBarModule, MatIconModule, MatToolbarModule, MatDialogModule, MatButtonModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { ReporteDialogoComponent } from 'src/app/componentes/reporte-dialogo/reporte-dialogo.component';
 
 @NgModule({
   declarations: [
-    ReporteDialogoComponent,
   ],
   imports: [
     CommonModule,
@@ -28,8 +26,6 @@ import { ReporteDialogoComponent } from 'src/app/componentes/reporte-dialogo/rep
     MatToolbarModule,
     MatDialogModule
   ],
-  entryComponents: [
-    ReporteDialogoComponent
-  ]
+  entryComponents: [ ]
 })
 export class ReporteDialogoModule { }

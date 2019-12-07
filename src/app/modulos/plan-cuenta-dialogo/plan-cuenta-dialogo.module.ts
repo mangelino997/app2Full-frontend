@@ -6,11 +6,9 @@ import { PlanCuentaDialogoRoutingModule } from './plan-cuenta-dialogo-routing.mo
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
   MatSelectModule, MatProgressBarModule, MatTreeModule, MatIconModule, MatDialogModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { PlanCuentaDialogo } from 'src/app/componentes/plan-cuenta-dialogo/plan-cuenta-dialogo.component';
 
 @NgModule({
   declarations: [
-    PlanCuentaDialogo,
   ],
   imports: [
     CommonModule,

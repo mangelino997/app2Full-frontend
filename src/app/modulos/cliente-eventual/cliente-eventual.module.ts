@@ -18,7 +18,6 @@ import { ClienteService } from 'src/app/servicios/cliente.service';
 
 @NgModule({
   declarations: [
-    ClienteEventualModule,
   ],
   imports: [
     CommonModule,

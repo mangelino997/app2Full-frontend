@@ -81,11 +81,13 @@ import { ContrareembolsoDialogoComponent } from './componentes/emitir-factura/co
 import { TotalesCargaDialogoComponent } from './componentes/emitir-factura/totales-carga-dialogo/totales-carga-dialogo.component';
 import { TotalesConceptoDialogoComponent } from './componentes/emitir-factura/totales-concepto-dialogo/totales-concepto-dialogo.component';
 import { UsuariosActivosDialogoComponent } from './componentes/empresa/usuarios-activos-dialogo/usuarios-activos.component';
+import { BugImagenDialogoComponent } from './componentes/bugImagen-dialogo/bug-imagen-dialogo.component';
+import { CuentaBancariaDialogoComponent } from './componentes/cuenta-bancaria-dialogo/cuenta-bancaria-dialogo.component';
 
 const stompConfig: StompConfig = {
-  url: 'ws://localhost:8080/jitws/socket',
+  // url: 'ws://localhost:8080/jitws/socket',
   // url: 'ws://gestionws.appspot.com:8080/jitws/socket', //LOCAL
-  // url: 'ws://rigarws-draimo.appspot.com:8080/jitws/socket', //RIGAR
+  url: 'ws://rigarws-draimo.appspot.com:8080/jitws/socket', //RIGAR
   // url: 'ws://utews-draimo.appspot.com:8080/jitws/socket', //UTE
   headers: {},
   heartbeat_in: 0,
@@ -117,6 +119,8 @@ const stompConfig: StompConfig = {
     TotalesCargaDialogoComponent,
     TotalesConceptoDialogoComponent,
     UsuariosActivosDialogoComponent,
+    BugImagenDialogoComponent,
+    CuentaBancariaDialogoComponent
     // ListaRemitoDialogoComponent
   ],
   imports: [
@@ -224,6 +228,8 @@ const stompConfig: StompConfig = {
     TotalesCargaDialogoComponent,
     TotalesConceptoDialogoComponent,
     UsuariosActivosDialogoComponent,
+    BugImagenDialogoComponent,
+    CuentaBancariaDialogoComponent
   ]
 })
 export class AppModule { }

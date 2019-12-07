@@ -42,6 +42,10 @@ export class ZonaService {
   public subscribirse = (m: Message) => {
     this.listaCompleta.next(JSON.parse(m.body));
   }
+  //Obtiene los datos
+  public obtenerDatos(idRol, idSubopcion) {
+    return this.http.get(this.url + '/obtenerDatos/' + idRol + '/' + idSubopcion, this.options);
+  }
   //Obtiene el siguiente id
   public obtenerSiguienteId() {
     return this.http.get(this.url + '/obtenerSiguienteId', this.options);

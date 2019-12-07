@@ -33,7 +33,7 @@
                 <div class="input-group input-group-sm mb-3 ">
                   <div class="input-group-prepend margin-right">
                     <span class="input-group-text">
-                      <mat-icon>date_range</mat-icon>
+                      <!-- <mat-icon>date_range</mat-icon> -->
                     </span>
                   </div>
                   <input id="idFechaEmision" type="date" formControlName="fechaEmision" autocomplete="off"
@@ -279,7 +279,8 @@
               <label for="idViaje" class="tamanio-label">N° Viaje GS</label>
               <input id="idViaje" type="text" [formControl]="viajeRemito" placeholder="00"
                 [textMask]="mascararEnteroSinDecimales(11)" class="form-control form-control-sm number-right"
-                [readOnly]="soloLectura || itemFactura.id != 1 || itemFactura.id == 2">
+                [readOnly]="soloLectura">
+                <!-- [readOnly]="soloLectura || itemFactura.id != 1 || itemFactura.id == 2"> -->
               <!--[readOnly]="listaCompletaItems.data.length > 0" -->
             </div>
           </div>
