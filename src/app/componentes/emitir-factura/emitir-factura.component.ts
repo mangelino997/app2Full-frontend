@@ -158,18 +158,34 @@ export class EmitirFacturaComponent implements OnInit {
     this.listarAlicuotaIva();
     //Autcompletado - Buscar por Remitente
     this.formulario.get('clienteRemitente').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.clienteService.listarActivosPorAlias(data).subscribe(res => {
-          this.remitentes = res.json();
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.loaderService.show();
+          this.clienteService.listarActivosPorAlias(data).subscribe(res => {
+            this.remitentes = res.json();
+            this.loaderService.hide();
+          },
+          err=>{
+            this.loaderService.hide();
+          })
+        }
       }
     });
     //Autcompletado - Buscar por Destinatario
     this.formulario.get('clienteDestinatario').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.clienteService.listarActivosPorAlias(data).subscribe(res => {
-          this.destinatarios = res.json();
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.loaderService.show();
+          this.clienteService.listarActivosPorAlias(data).subscribe(res => {
+            this.destinatarios = res.json();
+            this.loaderService.hide();
+          },
+          err=>{
+            this.loaderService.hide();
+          })
+        }
       }
     });
   }
@@ -310,9 +326,11 @@ export class EmitirFacturaComponent implements OnInit {
       this.formulario.get('fechaEmision').setValue(this.fechaActual);
       document.getElementById('idFechaEmision').focus();
     }
-  }  //Genera y retorna una fecha segun los parametros que recibe (dias - puede ser + ó -)
+  }  
+  //Genera y retorna una fecha segun los parametros que recibe (dias - puede ser + ó -)
   private generarFecha(dias) {
-    let fechaActual = new Date();
+    console.log(this.fechaActual);
+    let fechaActual = new Date(this.fechaActual);
     let date = fechaActual.getDate() + dias;
     let fechaGenerada = fechaActual.getFullYear() + '-' + (fechaActual.getMonth() + 1) + '-' + (date < '10' ? '0' + date : date); //Al mes se le debe sumar 1
     return fechaGenerada;

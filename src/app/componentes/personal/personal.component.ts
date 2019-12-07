@@ -20,7 +20,7 @@ import { AfipModContratacionService } from '../../servicios/afip-mod-contratacio
 import { AfipSiniestradoService } from '../../servicios/afip-siniestrado.service';
 import { AfipSituacionService } from '../../servicios/afip-situacion.service';
 import { AppService } from '../../servicios/app.service';
-import { FormGroup, FormControl } from '@angular/forms';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { Personal } from 'src/app/modelos/personal';
 import { MatSort, MatTableDataSource, MatDialog, MatPaginator } from '@angular/material';
@@ -32,6 +32,7 @@ import { PdfService } from 'src/app/servicios/pdf.service';
 import { PdfDialogoComponent } from '../pdf-dialogo/pdf-dialogo.component';
 import { BugImagenDialogoComponent } from '../bugImagen-dialogo/bug-imagen-dialogo.component';
 import { ReporteService } from 'src/app/servicios/reporte.service';
+import { FechaService } from 'src/app/servicios/fecha.service';
 
 @Component({
   selector: 'app-personal',
@@ -57,6 +58,8 @@ export class PersonalComponent implements OnInit {
   public opciones: Array<any> = [];
   //Define un formulario para validaciones de campos
   public formulario: FormGroup;
+  //Define un formulario para filtrar (Listar)
+  public formularioFiltro: FormGroup;
   //Define un formulario para validaciones de campos
   public personalActualizar: FormGroup;
   //Define la lista completa de registros
@@ -69,6 +72,8 @@ export class PersonalComponent implements OnInit {
   public estadosCiviles: Array<any> = [];
   //Define la lista de tipos de documentos
   public tiposDocumentos: Array<any> = [];
+  //Define la fecha de hoy
+  public fechaActual: string = null;
   //Define la lista de sucursales
   public sucursales: Array<any> = [];
   //Define la lista de areas
@@ -127,7 +132,7 @@ export class PersonalComponent implements OnInit {
     private rolOpcionServicio: RolOpcionService, private barrioServicio: BarrioService,
     private localidadServicio: LocalidadService, private sexoServicio: SexoService, private loaderService: LoaderService,
     private estadoCivilServicio: EstadoCivilService, private tipoDocumentoServicio: TipoDocumentoService,
-    private sucursalServicio: SucursalService, private areaServicio: AreaService,
+    private sucursalServicio: SucursalService, private areaServicio: AreaService, private fechaService: FechaService,
     private categoriaServicio: CategoriaService, private sindicatoServicio: SindicatoService,
     private seguridadSocialServicio: SeguridadSocialService, private obraSocialServicio: ObraSocialService,
     private afipActividadServicio: AfipActividadService, private afipCondicionServicio: AfipCondicionService,
@@ -167,11 +172,14 @@ export class PersonalComponent implements OnInit {
       if (typeof data == 'string') {
         data = data.trim();
         if (data == '*' || data.length > 2) {
+          this.loaderService.show();
           this.servicio.listarPorActivosAliasYEmpresa(data, empresa.id).subscribe(
             res => {
               this.resultados = res;
+              this.loaderService.hide();
             },
             err => {
+              this.loaderService.hide();
             });
         }
       }
@@ -181,28 +189,70 @@ export class PersonalComponent implements OnInit {
   ngOnInit() {
     //Define los campos para validaciones
     this.formulario = this.personal.formulario;
+    //Define los campos para filtrar la tabla 
+    this.formularioFiltro = new FormGroup({
+      idSucursal: new FormControl('', Validators.required),
+      idArea: new FormControl('', Validators.required),
+      idModContratacion: new FormControl('', Validators.required),
+      idCategoria: new FormControl('', Validators.required),
+      tipoEmpleado: new FormControl('', Validators.required)
+    });
+    this.formularioFiltro.get('idSucursal').setValue(0);
+    this.formularioFiltro.get('idArea').setValue(0);
+    this.formularioFiltro.get('idModContratacion').setValue(0);
+    this.formularioFiltro.get('idCategoria').setValue(0);
+    this.formularioFiltro.get('tipoEmpleado').setValue(0);
     //Autocompletado Barrio - Buscar por nombre
     this.formulario.get('barrio').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.barrioServicio.listarPorNombre(data).subscribe(response => {
-          this.resultadosBarrios = response;
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.loaderService.show();
+          this.barrioServicio.listarPorNombre(data).subscribe(response => {
+            this.resultadosBarrios = response;
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
+        }
       }
     })
+    //Establece la fecha emision y registracion
+    this.fechaService.obtenerFecha().subscribe(res => {
+      this.formulario.get('fechaInicio').setValue(res.json());
+      this.fechaActual = res.json();
+    });
     //Autocompletado Localidad - Buscar por nombre
     this.formulario.get('localidad').valueChanges.subscribe(data => {
-      if (data && typeof data == 'string' && data.length > 2) {
-        this.localidadServicio.listarPorNombre(data).subscribe(response => {
-          this.resultadosLocalidades = response;
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.loaderService.show();
+          this.localidadServicio.listarPorNombre(data).subscribe(response => {
+            this.resultadosLocalidades = response;
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
+        }
       }
     })
     //Autocompletado Localidad Nacimiento - Buscar por nombre
     this.formulario.get('localidadNacimiento').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.localidadServicio.listarPorNombre(data).subscribe(response => {
-          this.resultadosLocalidades = response;
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.loaderService.show();
+          this.localidadServicio.listarPorNombre(data).subscribe(response => {
+            this.resultadosLocalidades = response;
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
+        }
       }
     })
     //Autocompletado Seguridad Social - Buscar por nombre
@@ -257,6 +307,7 @@ export class PersonalComponent implements OnInit {
     this.listarCategorias();
     //Establece los valores por defecto
     this.establecerValoresPorDefecto();
+
   }
   //Obtiene la mascara de enteros
   public mascararEnteros(intLimite) {
@@ -273,6 +324,13 @@ export class PersonalComponent implements OnInit {
   //Obtiene la mascara de hora-minuto
   public mascararHora() {
     return this.appServicio.mascararHora();
+  }
+  //Obtiene la mascara de hora-minuto
+  public desenmascararHora(formulario) {
+    let valor = formulario.value;
+    if (valor) {
+      formulario.setValue(this.appServicio.desenmascararHora(valor));
+    }
   }
   //Formatea el numero a x decimales
   public establecerDecimales(formulario, cantidad) {
@@ -349,7 +407,6 @@ export class PersonalComponent implements OnInit {
       this.formulario.get('vtoLibretaSanidad').disable();
       this.formulario.get('vtoPsicoFisico').disable();
       this.formulario.get('esChoferLargaDistancia').disable();
-      this.formulario.get('esChoferLargaDistancia').setValue(false);
       this.btnPdfLibSanidad = false;
       this.btnPdfLicConducir = false;
       this.btnPdflinti = false;
@@ -364,6 +421,50 @@ export class PersonalComponent implements OnInit {
       err => {
       }
     );
+  }
+  //Controla el rango valido para la fecha de emision cuando el punto de venta es feCAEA
+  private verificarFecha(opcion) {
+    switch (opcion) {
+
+      /* opcion == 1 para validar Fecha de Nacimiento*/
+      case 1:
+        if (this.formulario.value.fechaNacimiento < this.fechaActual) {
+          document.getElementById('idLocalidadNacimiento').focus();
+        } else {
+          this.toastr.error("Fecha no válida. Debe ser menor a fecha actual.");
+          this.formulario.get('fechaNacimiento').reset();
+          document.getElementById('idFechaNacimiento').focus();
+        }
+        break;
+
+      /* opcion == 2 para validar Fecha de Inicio*/
+      case 2:
+        let fechaInicio = this.formulario.value.fechaInicio;
+        if (fechaInicio <= this.generarFecha(10) && fechaInicio > this.formulario.value.fechaNacimiento) {
+          document.getElementById('idFechaFin').focus();
+        } else {
+          this.toastr.error("Fecha de Inicio no válida. Debe ser entre Fecha Nacimiento y  Fecha Actual + 10 días.");
+          this.formulario.get('fechaInicio').reset();
+          document.getElementById('idFechaInicio').focus();
+        }
+        break;
+      case 3:
+        if (this.formulario.value.telefonoMovilFechaEntrega <
+          this.formulario.value.telefonoMovilFechaDevolucion) {
+          document.getElementById('idObservaciones').focus();
+        } else {
+          this.toastr.error("Fecha devolución de teléfono móvil no válida.");
+          document.getElementById('idTelefonoMovilFechaDevolucion').focus();
+        }
+        break;
+    }
+  }
+  //Genera y retorna una fecha segun los parametros que recibe (dias - puede ser + ó -)
+  private generarFecha(dias) {
+    let fechaActual = new Date(this.fechaActual);
+    let date = fechaActual.getDate() + dias;
+    let fechaGenerada = fechaActual.getFullYear() + '-' + (fechaActual.getMonth() + 1) + '-' + date; //Al mes se le debe sumar 1
+    return fechaGenerada;
   }
   //Obtiene un registro por id
   private obtenerPorId(id) {
@@ -470,6 +571,7 @@ export class PersonalComponent implements OnInit {
       this.formulario.get('recibeAdelanto').enable();
       this.formulario.get('recibePrestamo').enable();
       this.formulario.get('esChofer').enable();
+      this.formulario.get('esChoferLargaDistancia').enable();
       this.formulario.get('turnoRotativo').enable();
       this.formulario.get('turnoFueraConvenio').enable();
       this.formulario.get('seguridadSocial').enable();
@@ -558,7 +660,6 @@ export class PersonalComponent implements OnInit {
         this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
         break;
       case 5:
-        this.listar();
         break;
       default:
         break;
@@ -847,11 +948,27 @@ export class PersonalComponent implements OnInit {
       }
     }
   }
+  //Valida que Antiguedad Anterior Años sea menor a 60
+  public validarAntiguedadAnios() {
+    let elemento = Number(this.formulario.value.antiguedadAntAnio);
+    if (elemento > 59 && elemento) {
+      this.formulario.get('antiguedadAntAnio').reset();
+      this.toastr.error("El campo Antigüedad Anterior Años debe ser menor a 60.");
+    }
+  }
+  //Valida que Antiguedad Anterior Meses sea menor a 12
+  public validarAntiguedadMeses() {
+    let elemento = Number(this.formulario.value.antiguedadAntMes);
+    if (elemento > 11 && elemento) {
+      this.formulario.get('antiguedadAntMes').reset();
+      this.toastr.error("El campo Antigüedad Anterior Meses debe ser menor a 60.");
+    }
+  }
   //Controla si el adjunto es un PDF o JPEG y llama al readURL apropiado
   public controlAdjunto(event) {
-    let adjunto = event;
-    let extension = adjunto.target.files[0].type.split("/");
-    if (extension[extension.length - 1] == 'pdf') {
+    // let extension = this.formulario.get('pdfDni').value.tipo;
+    let extension = event.target.files[0].type;
+    if (extension == 'application/pdf') {
       this.readPdfURL(event, 'pdfDni');
     } else {
       this.readImageURL(event, 'pdfDni');
@@ -878,9 +995,8 @@ export class PersonalComponent implements OnInit {
   }
   //Carga el archivo PDF 
   public readPdfURL(event, campo): void {
-    let extension = event.target.files[0].name.split('.');
-    extension = extension[extension.length - 1];
-    if (event.target.files && event.target.files[0] && extension == 'pdf') {
+    let extension = event.target.files[0].type;
+    if (event.target.files && event.target.files[0] && extension == 'application/pdf') {
       const file = event.target.files[0];
       const reader = new FileReader();
       reader.onload = e => {
@@ -964,8 +1080,10 @@ export class PersonalComponent implements OnInit {
   }
   //Obtiene el dni para mostrarlo
   public verDni() {
-    let extension = this.formulario.get('pdfDni').value.nombre.split(".");
-    if (extension[extension.length - 1] == 'pdf') {
+    console.log(this.formulario.get('pdfDni').value);
+    let nombre = this.formulario.get('pdfDni').value.nombre;
+    let extension = nombre.split('.');
+    if (extension[1] == 'pdf') {
       this.verPDF('pdfDni');
     } else {
       this.verFoto('pdfDni');
@@ -1139,5 +1257,22 @@ export class PersonalComponent implements OnInit {
       columnas: this.columnas
     }
     this.reporteServicio.abrirDialogo(datos);
+  }
+  //obtiene la lista por filtros
+  public listarPorFiltros(): void {
+    this.loaderService.show();
+    console.log(this.formularioFiltro.value);
+    this.servicio.listarPorFiltros(this.formularioFiltro.value).subscribe(
+      res => {
+        console.log(res.json());
+        this.listaCompleta = new MatTableDataSource(res.json());
+        this.listaCompleta.sort = this.sort;
+        this.listaCompleta.paginator = this.paginator;
+        this.loaderService.hide();
+      },
+      err => {
+        this.loaderService.hide();
+      }
+    );
   }
 }

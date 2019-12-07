@@ -35,7 +35,7 @@ export class OrdenCombustibleComponent implements OnInit {
   public columnas: string[] = ['sucursal', 'numeroOrden', 'fecha', 'proveedor', 'insumoProducto', 'cantidad', 'precioUnitario',
     'observaciones', 'anulado', 'obsAnulado', 'mod', 'ver'];
   //Define la matSort
-  @ViewChild(MatSort, {static: false}) sort: MatSort;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service
@@ -61,10 +61,18 @@ export class OrdenCombustibleComponent implements OnInit {
     this.listarInsProducto();
     //Alias - Buscar por alias
     this.formulario.get('proveedor').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.personalService.listarActivosPorAlias(data).subscribe(res => {
-          this.resultados = res;
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.loaderService.show();
+          this.personalService.listarActivosPorAlias(data).subscribe(res => {
+            this.resultados = res;
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
+        }
       }
     })
   }

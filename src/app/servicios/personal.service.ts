@@ -131,6 +131,16 @@ export class PersonalService {
       })
     })
   }
+  //Obtiene un listado de acompañantes por alias
+  public listarPorFiltros(formularioFiltro) {
+    console.log('entra');
+    return this.http.post(this.url + '/listarPorFiltros', formularioFiltro, this.options);
+  }
+  //Obtiene un listado de acompañantes por alias
+  public listarChoferesPorFiltros(formularioFiltro) {
+    console.log('entra');
+    return this.http.post(this.url + '/listarChoferesPorFiltros', formularioFiltro, this.options);
+  }
   //Agrega un registro
   public agregar(elemento) {
     let obj = Object.assign({}, elemento);
@@ -244,6 +254,8 @@ export class PersonalService {
       } else if (tipo[1] == 'pdf') {
         let blobPdf = new Blob([dni.datos], { type: 'application/pdf' });
         formData.append('dni', blobPdf, dni.nombre);
+      } else {
+      formData.append('dni', noBlobPdf, '');
       }
     } else {
       formData.append('dni', noBlobPdf, '');

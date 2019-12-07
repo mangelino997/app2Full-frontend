@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatSort, MatTableDataSource, MatDialog, MatPaginator } from '@angular/material';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { PersonalService } from 'src/app/servicios/personal.service';
 import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
@@ -38,6 +38,8 @@ export class VencimientosChoferesComponent implements OnInit {
   public opciones: Array<any> = [];
   //Define un formulario para validaciones de campos
   public formulario: FormGroup;
+  //Define un formulario para filtrar lista
+  public formularioFiltro: FormGroup;
   //Define la lista completa de registros
   public listaCompleta = new MatTableDataSource([]);
   //Define la lista de tipos de documentos
@@ -79,10 +81,15 @@ export class VencimientosChoferesComponent implements OnInit {
     this.autocompletado.valueChanges.subscribe(data => {
       if (typeof data == 'string') {
         data = data.trim();
+        this.loaderService.show();
         if (data == '*' || data.length > 0) {
           this.personalServicio.listarPorAlias(data).subscribe(response => {
             this.resultados = response;
-          })
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
         }
       }
     })
@@ -93,7 +100,7 @@ export class VencimientosChoferesComponent implements OnInit {
       .subscribe((state: LoaderState) => {
         this.show = state.show;
       });
-    this.loaderService.show();
+    // this.loaderService.show();
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
       .subscribe(
@@ -107,6 +114,17 @@ export class VencimientosChoferesComponent implements OnInit {
       );
     //Define el Formulario
     this.formulario = this.personal.formulario;
+    //Define el formulario para filtrar  en pestania listar
+    this.formularioFiltro = new FormGroup({
+      chofer: new FormControl('', Validators.required),
+      vtoFisico: new FormControl(),
+      vtoCurso: new FormControl(),
+      vtoCargaPeligrosa:new FormControl(),
+      vtoLicConducir: new FormControl(),
+      vtoLinti: new FormControl(),
+      vtoLibSanidad: new FormControl()
+    });
+    this.formularioFiltro.get('chofer').setValue(0);
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Consultar');
     //Obtiene la lista de tipos de documentos
@@ -128,33 +146,33 @@ export class VencimientosChoferesComponent implements OnInit {
     );
   }
   //Obtiene la lista de Choferes por Empresa logueada
-  private listar() {
-    this.loaderService.show();
-    let empresa = this.appService.getEmpresa();
-    this.personalServicio.listarChoferesPorEmpresa(empresa.id).subscribe(
-      res => {
-        if (this.indiceSeleccionado == 5) {
-          this.listaCompleta = new MatTableDataSource(res.json());
-          this.listaCompleta.sort = this.sort;
-          this.listaCompleta.paginator = this.paginator;
-        } else {
-          this.listaChoferes = res.json();
-        }
-        this.loaderService.hide();
-      },
-      err => {
-        let error = err.json();
-        this.toastr.error(error.mensaje);
-        this.loaderService.hide();
-      }
-    );
-  }
+  // private listar() {
+  //   this.loaderService.show();
+  //   let empresa = this.appService.getEmpresa();
+  //   this.personalServicio.listarChoferesPorEmpresa(empresa.id).subscribe(
+  //     res => {
+  //       if (this.indiceSeleccionado == 5) {
+  //         this.listaCompleta = new MatTableDataSource(res.json());
+  //         this.listaCompleta.sort = this.sort;
+  //         this.listaCompleta.paginator = this.paginator;
+  //       } else {
+  //         this.listaChoferes = res.json();
+  //       }
+  //       this.loaderService.hide();
+  //     },
+  //     err => {
+  //       let error = err.json();
+  //       this.toastr.error(error.mensaje);
+  //       this.loaderService.hide();
+  //     }
+  //   );
+  // }
   //Establece valores al seleccionar una pestania
   public seleccionarPestania(id, nombre) {
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
     this.reestablecerFormulario(undefined);
-    this.listar();
+    //this.listar();
     switch (id) {
       case 2:
         this.establecerValoresPestania(nombre, true, true, false);
@@ -250,8 +268,9 @@ export class VencimientosChoferesComponent implements OnInit {
   //Controla si el adjunto es un PDF o JPEG y llama al readURL apropiado
   public controlAdjunto(event) {
     let adjunto = event;
-    let extension = adjunto.target.files[0].type.split("/");
-    if (extension[extension.length - 1] == 'pdf') {
+    // let extension = this.formulario.get('pdfDni').value.tipo;
+    let extension = event.target.files[0].type;
+    if (extension == 'application/pdf') {
       this.readPdfURL(event, 'pdfDni');
     } else {
       this.readImageURL(event, 'pdfDni');
@@ -279,9 +298,9 @@ export class VencimientosChoferesComponent implements OnInit {
   }
   //Carga el archivo PDF 
   public readPdfURL(event, campo): void {
-    let extension = event.target.files[0].name.split('.');
-    extension = extension[extension.length - 1];
-    if (event.target.files && event.target.files[0] && extension == 'pdf') {
+    // let extension = this.formulario.get(campo).value.tipo;
+    let extension = event.target.files[0].type;
+    if (event.target.files && event.target.files[0] && extension == 'application/pdf') {
       const file = event.target.files[0];
       const reader = new FileReader();
       reader.onload = e => {
@@ -440,5 +459,22 @@ export class VencimientosChoferesComponent implements OnInit {
       columnas: this.columnas
     }
     this.reporteServicio.abrirDialogo(datos);
+  }
+  //obtiene la lista por filtros
+  public listarChoferesPorFiltros(): void {
+    this.loaderService.show();
+    console.log(this.formularioFiltro.value);
+    this.personalServicio.listarChoferesPorFiltros(this.formularioFiltro.value).subscribe(
+      res => {
+        console.log(res.json());
+        this.listaCompleta = new MatTableDataSource(res.json());
+        this.listaCompleta.sort = this.sort;
+        this.listaCompleta.paginator = this.paginator;
+        this.loaderService.hide();
+      },
+      err => {
+        this.loaderService.hide();
+      }
+    );
   }
 }

@@ -11,7 +11,7 @@
                             <input id="idTramoDadorCarga" class="form-control form-control-sm" type="text" matInput
                                 [formControl]="formulario.get('clienteDador')" [matAutocomplete]="autoDadorCarga"
                                 autocomplete="off" (blur)="verificarSeleccion(formulario.get('clienteDador'))"
-                                placeholder="Buscar por N° Cuenta, Razón Social, Nombre Fantasía o Número Documento">
+                                placeholder="Buscar por N° Cuenta, Razón Social, Alias, Nombre Fantasía o Número Documento">
                             <mat-autocomplete #autoDadorCarga="matAutocomplete" [displayWith]="displayFb.bind(this)">
                                 <mat-option *ngFor="let itemDadorCarga of resultadosClientes" [value]="itemDadorCarga">
                                     {{itemDadorCarga.alias}}
@@ -26,7 +26,7 @@
                                 [formControl]="formulario.get('clienteDestinatario')"
                                 [matAutocomplete]="autoDestinatario" autocomplete="off"
                                 (blur)="verificarSeleccion(formulario.get('clienteDestinatario'))"
-                                placeholder="Buscar por N° Cuenta, Razón Social, Nombre Fantasía o Número Documento">
+                                placeholder="Buscar por N° Cuenta, Razón Social, Alias, Nombre Fantasía o Número Documento">
                             <mat-autocomplete #autoDestinatario="matAutocomplete" [displayWith]="displayFb.bind(this)">
                                 <mat-option *ngFor="let itemDestinatario of resultadosClientes"
                                     [value]="itemDestinatario">

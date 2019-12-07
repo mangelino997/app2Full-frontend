@@ -74,44 +74,10 @@
             </div>
           </div>
           <div class="col-md-3">
-            <div class="row justify-content-center">
-              <input style="display: none;" type="file" (change)="controlAdjunto($event)" #fileInputDni />
-              <button class="btn-height" mat-raised-button color="primary" (click)="fileInputDni.click()"
-                [disabled]="indiceSeleccionado == 1" matTooltip="Adjuntar DNI">
-                <i class="material-icons" *ngIf="!formulario.get('pdfDni.nombre').value">cloud_upload</i>
-                <i class="material-icons" *ngIf="formulario.get('pdfDni.nombre').value"
-                  style="color: lightgreen">cloud_done</i>
-              </button>
-              <button class="btn-height" mat-raised-button color="warn" (click)="eliminarPdf('pdfDni.nombre')"
-                [disabled]="!formulario.get('pdfDni.nombre').value || indiceSeleccionado == 1" style="width: 40px;"
-                matTooltip="Quitar">
-                <i class="material-icons">close</i>
-              </button>
-              <button class="btn-height" mat-raised-button color="primary" (click)="verDni()"
-                [disabled]="!formulario.get('pdfDni.nombre').value" style="width: 40px;" matTooltip="Ver">
-                <i class="material-icons">visibility</i>
-              </button>
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div class="row justify-content-center">
-              <input style="display: none;" type="file" (change)="readPdfURL($event, 'pdfAltaTemprana')"
-                #fileInputAtaTemprana />
-              <button class="btn-height" mat-raised-button color="primary" (click)="fileInputAtaTemprana.click()"
-                [disabled]="indiceSeleccionado == 1 " matTooltip="Adjuntar Alta Temprana">
-                <i class="material-icons" *ngIf="!formulario.get('pdfAltaTemprana.nombre').value">cloud_upload</i>
-                <i class="material-icons" *ngIf="formulario.get('pdfAltaTemprana.nombre').value"
-                  style="color: lightgreen">cloud_done</i>
-              </button>
-              <button class="btn-height" mat-raised-button color="warn" (click)="eliminarPdf('pdfAltaTemprana.nombre')"
-                [disabled]="!formulario.get('pdfAltaTemprana.nombre').value ||indiceSeleccionado == 1"
-                style="width: 60px;" matTooltip="Quitar">
-                <i class="material-icons">close</i>
-              </button>
-              <button class="btn-height" mat-raised-button color="primary" (click)="verPDF('pdfAltaTemprana')"
-                [disabled]="!formulario.get('pdfAltaTemprana.nombre').value" style="width: 60px;" matTooltip="Ver">
-                <i class="material-icons">visibility</i>
-              </button>
+            <div class="form-group has-float-label">
+              <label id="labelMovilEmpresa" for="idMovilEmpresa" class="tamanio-label">Móvil Empresa</label>
+              <input id="idMovilEmpresa" type="number" formControlName="telefonoMovilEmpresa" autocomplete="off"
+                class="form-control form-control-sm number-right" readonly>
             </div>
           </div>
         </div>
@@ -134,6 +100,47 @@
                 <mat-option [value]="false">No</mat-option>
                 <mat-option [value]="true">Si</mat-option>
               </mat-select>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="row justify-content-center">
+              <input style="display: none;" type="file" (change)="controlAdjunto($event)" #fileInputDni />
+              <button class="btn-height" mat-raised-button color="primary" (click)="fileInputDni.click()"
+                [disabled]="!btnPdfDni || indiceSeleccionado == 2" matTooltip="Adjuntar DNI">
+                <i class="material-icons" *ngIf="!formulario.get('pdfDni.nombre').value">cloud_upload</i>
+                <i class="material-icons" *ngIf="formulario.get('pdfDni.nombre').value"
+                  style="color: lightgreen">cloud_done</i>
+              </button>
+              <button class="btn-height" mat-raised-button color="warn" (click)="eliminarPdf('pdfDni.nombre')"
+                [disabled]="!formulario.get('pdfDni.nombre').value || indiceSeleccionado == 2" style="width: 40px;"
+                matTooltip="Quitar">
+                <i class="material-icons">close</i>
+              </button>
+              <button class="btn-height" mat-raised-button color="primary" (click)="verDni()"
+                [disabled]="!formulario.get('pdfDni.nombre').value" style="width: 40px;" matTooltip="Ver">
+                <i class="material-icons">visibility</i>
+              </button>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="row justify-content-center">
+              <input style="display: none;" type="file" (change)="readPdfURL($event, 'pdfAltaTemprana')"
+                #fileInputAtaTemprana />
+              <button class="btn-height" mat-raised-button color="primary" (click)="fileInputAtaTemprana.click()"
+                [disabled]="!btnPdfAltaTemprana || indiceSeleccionado == 2 " matTooltip="Adjuntar Alta Temprana">
+                <i class="material-icons" *ngIf="!formulario.get('pdfAltaTemprana.nombre').value">cloud_upload</i>
+                <i class="material-icons" *ngIf="formulario.get('pdfAltaTemprana.nombre').value"
+                  style="color: lightgreen">cloud_done</i>
+              </button>
+              <button class="btn-height" mat-raised-button color="warn" (click)="eliminarPdf('pdfAltaTemprana.nombre')"
+                [disabled]="!formulario.get('pdfAltaTemprana.nombre').value ||indiceSeleccionado == 2"
+                style="width: 60px;" matTooltip="Quitar">
+                <i class="material-icons">close</i>
+              </button>
+              <button class="btn-height" mat-raised-button color="primary" (click)="verPDF('pdfAltaTemprana')"
+                [disabled]="!formulario.get('pdfAltaTemprana.nombre').value" style="width: 60px;" matTooltip="Ver">
+                <i class="material-icons">visibility</i>
+              </button>
             </div>
           </div>
         </div>
@@ -273,6 +280,69 @@
       <div class="row" *ngIf="show">
         <div class="col text-center">
           <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        </div>
+        </div>
+        <br>
+        <div class="row">
+        <div class="col-md-3">
+          <div class="form-group has-float-label ">
+            <label for="idTipoEmpleadoFlitro" class="tamanio-label">Choferes *</label>
+            <mat-select id="idTipoEmpleadoFlitro" class="form-control form-control-sm"
+              [formControl]="formularioFiltro.get('chofer')" [compareWith]="compareFn">
+              <mat-option [value]="0">TODOS</mat-option>
+              <mat-option [value]="1">CHOFERES CORTA DISTANCIA</mat-option>
+              <mat-option [value]="2">CHOFERES LARGA DISTANCIA</mat-option>
+            </mat-select>
+          </div>
+          </div>
+          <div class="col-md-3">
+            <div class="form-group has-float-label">
+              <label for="idVtoLINTI" class="tamanio-label">Vto. PsicoFísico *</label>
+              <input id="idVtoLINTI" type="date" [formControl]="formularioFiltro.get('vtoFisico')" autocomplete="off"
+                class="form-control form-control-sm">
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="form-group has-float-label">
+              <label for="idVtoLINTI" class="tamanio-label">Vto. Curso *</label>
+              <input id="idVtoLINTI" type="date" [formControl]="formularioFiltro.get('vtoCurso')" autocomplete="off"
+                class="form-control form-control-sm">
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="form-group has-float-label">
+              <label for="idVtoLINTI" class="tamanio-label">Vto. Curso Carga Peligrosa *</label>
+              <input id="idVtoLINTI" type="date" [formControl]="formularioFiltro.get('vtoCargaPeligrosa')" autocomplete="off"
+                class="form-control form-control-sm">
+            </div>
+          </div>
+          </div>
+          <div class="row">
+          <div class="col-md-3">
+            <div class="form-group has-float-label">
+              <label for="idVtoLINTI" class="tamanio-label">Vto. Licencia de Conducir *</label>
+              <input id="idVtoLINTI" type="date" [formControl]="formularioFiltro.get('vtoLicConducir')" autocomplete="off"
+                class="form-control form-control-sm">
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="form-group has-float-label">
+              <label for="idVtoLINTI" class="tamanio-label">Vto. LINTI *</label>
+              <input id="idVtoLINTI" type="date" [formControl]="formularioFiltro.get('vtoLinti')" autocomplete="off"
+                class="form-control form-control-sm">
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="form-group has-float-label">
+              <label for="idVtoLINTI" class="tamanio-label">Vto. Lib. Sanidad *</label>
+              <input id="idVtoLINTI" type="date" [formControl]="formularioFiltro.get('vtoLibSanidad')" autocomplete="off"
+                class="form-control form-control-sm">
+            </div>
+          </div>
+        <div class="col-md-1">
+          <button id="idBoton" mat-raised-button color="primary" formnovalidate (click)="listarChoferesPorFiltros()"
+            [disabled]="!formularioFiltro.valid">Listar
+          </button>
         </div>
       </div>
       <br>

@@ -18,7 +18,7 @@
               <label for="idProveedor" class="tamanio-label">Proveedor *</label>
               <input id="idProveedor" class="form-control form-control-sm" type="text" matInput
                 [formControl]="formulario.get('proveedor')" [matAutocomplete]="autoProveedor" autocomplete="off"
-                (blur)="verificarSeleccion(formulario.get('proveedor'))" placeholder="Buscar Proveedor">
+                (blur)="verificarSeleccion(formulario.get('proveedor'))" placeholder="Buscar por alias">
               <mat-autocomplete #autoProveedor="matAutocomplete" [displayWith]="displayF.bind(this)"
                 (optionSelected)="listarPorProveedor()">
                 <mat-option *ngFor="let itemProveedor of resultadosProveedores" [value]="itemProveedor">
@@ -79,7 +79,7 @@
               <label id="labelCorreoelectronico" for="idCorreoelectronico" class="tamanio-label">
                 Correo Electrónico</label>
               <input id="idCorreoelectronico" type="email" formControlName="correoelectronico" autocomplete="off"
-                [readonly]="soloLectura" class="form-control form-control-sm"
+                [readonly]="soloLectura" class="form-control form-control-sm lower-case"
                 (ngModelChange)="cambioCampo('idCorreoelectronico', 'labelCorreoelectronico')"
                 pattern="^[a-z]+[a-z0-9._]+@[a-z0-9]+\.[a-z.]+[a-z]$"
                 (blur)="validarPatron('^[a-z]+[a-z0-9._]+@[a-z0-9]+\.[a-z.]+[a-z]$', 'correoelectronico')" maxlength="60">
@@ -112,7 +112,7 @@
             <label for="idProveedor" class="tamanio-label">Proveedor *</label>
             <input id="idProveedor" class="form-control form-control-sm" type="text" matInput
               [formControl]="formulario.get('proveedor')" [matAutocomplete]="autoProveedor" autocomplete="off"
-              placeholder="Buscar por Proveedor">
+              placeholder="Buscar por alias">
             <mat-autocomplete #autoProveedor="matAutocomplete" [displayWith]="displayF.bind(this)"
               (optionSelected)="listarPorProveedor()">
               <mat-option *ngFor="let itemProveedor of resultadosProveedores" [value]="itemProveedor">

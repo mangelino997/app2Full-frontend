@@ -49,10 +49,18 @@ export class UsuarioEmpresasComponent implements OnInit {
     this.seleccionarPestania(1, 'Actualizar');
     //Autocompleta Usuario - Buscar por nombre
     this.formulario.get('usuario').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.usuarioServicio.listarPorNombre(data).subscribe(res => {
-          this.resultadosUsuarios = res;
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.loaderService.show();
+          this.usuarioServicio.listarPorNombre(data).subscribe(res => {
+            this.resultadosUsuarios = res;
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
+        }
       }
     });
   }

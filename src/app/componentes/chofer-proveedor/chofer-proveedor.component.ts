@@ -90,7 +90,7 @@ export class ChoferProveedorComponent implements OnInit {
     //Define los campos para validaciones
     this.formulario = this.choferProveedor.formulario;
     //Establece los valores de la primera pestania activa
-    this.seleccionarPestania(1, 'Agregar', 0);
+    this.seleccionarPestania(1, 'Agregar');
     //Autocompletado Proveedor - Buscar por nombre
     this.formulario.get('proveedor').valueChanges
       .subscribe(data => {
@@ -148,13 +148,14 @@ export class ChoferProveedorComponent implements OnInit {
   //Establece los valores al seleccionar un elemento del autocompletado
   public establecerValores(): void {
     this.formulario.patchValue(this.autocompletado.value);
+
   }
   //Vacia la lista de resultados de autocompletados
   private vaciarLista() {
-    this.resultados = new MatTableDataSource([]);
     this.resultadosProveedores = [];
     this.resultadosBarrios = [];
     this.resultadosLocalidades = [];
+    this.resultados = new MatTableDataSource([]);
   }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
@@ -162,20 +163,16 @@ export class ChoferProveedorComponent implements OnInit {
     this.mostrarAutocompletado = autocompletado;
     this.soloLectura = soloLectura;
     this.mostrarBoton = boton;
-    this.vaciarLista();
+    this.soloLectura? this.formulario.get('tipoDocumento').disable() : this.formulario.get('tipoDocumento').enable();
     setTimeout(function () {
       document.getElementById(componente).focus();
     }, 20);
   }
   //Establece valores al seleccionar una pestania
-  public seleccionarPestania(id, nombre, opcion) {
-    this.reestablecerFormulario(undefined);
+  public seleccionarPestania(id, nombre) {
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    if (opcion == 0) {
-      this.autocompletado.setValue(undefined);
-      this.vaciarLista();
-    }
+    this.reestablecerFormulario(undefined);
     switch (id) {
       case 1:
         this.obtenerSiguienteId();
@@ -191,7 +188,6 @@ export class ChoferProveedorComponent implements OnInit {
         this.establecerValoresPestania(nombre, true, true, true, 'idProveedor');
         break;
       case 5:
-        this.resultados = new MatTableDataSource([]);
         this.mostrarAutocompletado = true;
         setTimeout(function () {
           document.getElementById('idProveedor').focus();
@@ -342,7 +338,7 @@ export class ChoferProveedorComponent implements OnInit {
   private reestablecerFormulario(id) {
     this.formulario.reset();
     this.formulario.get('id').setValue(id);
-    this.autocompletado.setValue(undefined);
+    this.autocompletado.reset();
     this.vaciarLista();
   }
   //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
@@ -424,13 +420,13 @@ export class ChoferProveedorComponent implements OnInit {
   }
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
-    this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
+    this.seleccionarPestania(2, this.pestanias[1].nombre);
     this.autocompletado.setValue(elemento);
     this.formulario.patchValue(elemento);
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
-    this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
+    this.seleccionarPestania(3, this.pestanias[2].nombre);
     this.autocompletado.setValue(elemento);
     this.formulario.patchValue(elemento);
   }
@@ -479,9 +475,9 @@ export class ChoferProveedorComponent implements OnInit {
     var indice = this.indiceSeleccionado;
     if (keycode == 113) {
       if (indice < this.pestanias.length) {
-        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre, 0);
+        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre);
       } else {
-        this.seleccionarPestania(1, this.pestanias[0].nombre, 0);
+        this.seleccionarPestania(1, this.pestanias[0].nombre);
       }
     }
   }

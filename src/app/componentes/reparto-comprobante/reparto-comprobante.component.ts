@@ -240,6 +240,7 @@ export class RepartoComprobanteComponent implements OnInit {
           res => {
             if (res.text() != '') { //Controla que exista un viaje remito
               let respuesta = res.json();
+              console.log(respuesta);
               respuesta.length > 0 ?
                 [respuesta.forEach(element => {
                   this.formularioComprobante.get('viajeRemito').setValue(element);

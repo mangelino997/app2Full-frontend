@@ -92,9 +92,14 @@ export class SucursalClienteComponent implements OnInit {
       if (typeof data == 'string') {
         data = data.trim();
         if (data == '*' || data.length > 0) {
+          this.loaderService.show();
           this.clienteServicio.listarPorAlias(data).subscribe(response => {
             this.resultadosClientes = response.json();
-          })
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
         }
       }
     })
@@ -103,9 +108,14 @@ export class SucursalClienteComponent implements OnInit {
       if (typeof data == 'string') {
         data = data.trim();
         if (data == '*' || data.length > 0) {
+          this.loaderService.show();
           this.barrioServicio.listarPorNombre(data).subscribe(response => {
             this.resultadosBarrios = response;
-          })
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
         }
       }
     })
@@ -114,9 +124,14 @@ export class SucursalClienteComponent implements OnInit {
       if (typeof data == 'string') {
         data = data.trim();
         if (data == '*' || data.length > 0) {
+          this.loaderService.show();
           this.localidadServicio.listarPorNombre(data).subscribe(response => {
             this.resultadosLocalidades = response;
-          })
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
         }
       }
     })
@@ -147,6 +162,7 @@ export class SucursalClienteComponent implements OnInit {
     this.resultadosBarrios = [];
     this.resultadosClientes = [];
     this.resultadosLocalidades = [];
+    this.listaCompleta = new MatTableDataSource([]);
   }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {

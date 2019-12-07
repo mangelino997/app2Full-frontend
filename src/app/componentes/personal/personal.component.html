@@ -65,14 +65,14 @@
                       <div class="form-group has-float-label">
                         <label for="idRazonSocial" class="tamanio-label-titulo">Apellido *</label>
                         <input id="idApellido" type="text" formControlName="apellido" autocomplete="off"
-                          class="form-control form-control-sm" [readonly]="soloLectura" maxlength="45">
+                          class="form-control form-control-sm" [readonly]="soloLectura" maxlength="22">
                       </div>
                     </div>
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label for="idNombre" class="tamanio-label-titulo">Nombre *</label>
                         <input id="idNombre" type="text" formControlName="nombre" autocomplete="off"
-                          class="form-control form-control-sm" [readonly]="soloLectura" maxlength="45">
+                          class="form-control form-control-sm" [readonly]="soloLectura" maxlength="22">
                       </div>
                     </div>
                   </div>
@@ -94,7 +94,8 @@
                             <label for="idBarrio" class="tamanio-label">Barrio</label>
                             <input id="idBarrio" class="form-control form-control-sm" type="text" matInput
                               [formControl]="formulario.get('barrio')" [matAutocomplete]="autoBarrio" autocomplete="off"
-                              [readonly]="soloLectura" (blur)="verificarSeleccion(formulario.get('barrio'))">
+                              [readonly]="soloLectura" (blur)="verificarSeleccion(formulario.get('barrio'))"
+                              placeholder="Buscar por Nombre">
                             <mat-autocomplete #autoBarrio="matAutocomplete" [displayWith]="displayFa.bind(this)">
                               <mat-option *ngFor="let itemBarrio of resultadosBarrios" [value]="itemBarrio">
                                 {{itemBarrio.nombre}}
@@ -107,7 +108,7 @@
                             <label for="idLocalidad" class="tamanio-label">Localidad *</label>
                             <input id="idLocalidad" class="form-control form-control-sm" type="text" matInput
                               [formControl]="formulario.get('localidad')" [matAutocomplete]="autoLocalidad"
-                              autocomplete="off" [readonly]="soloLectura"
+                              autocomplete="off" [readonly]="soloLectura" placeholder="Buscar por Nombre"
                               (blur)="verificarSeleccion(formulario.get('localidad'))">
                             <mat-autocomplete #autoLocalidad="matAutocomplete" [displayWith]="displayFb.bind(this)">
                               <mat-option *ngFor="let itemLocalidad of resultadosLocalidades" [value]="itemLocalidad">
@@ -123,7 +124,8 @@
                           <div class="form-group has-float-label">
                             <label for="idFechaNacimiento" class="tamanio-label">Fecha de Nacimiento *</label>
                             <input id="idFechaNacimiento" type="date" formControlName="fechaNacimiento"
-                              autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura">
+                              autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura"
+                              (blur)="verificarFecha(1)">
                           </div>
                         </div>
                         <div class="col-md-4">
@@ -195,7 +197,8 @@
                               Documento *</label>
                             <input id="idNumeroDocumento" type="number" formControlName="numeroDocumento"
                               autocomplete="off" class="form-control form-control-sm number-right"
-                              [readonly]="soloLectura" (blur)="formulario.value.numeroDocumento? validarDocumento() : ''"
+                              [readonly]="soloLectura"
+                              (blur)="formulario.value.numeroDocumento? validarDocumento() : ''"
                               (ngModelChange)="cambioCampo('idNumeroDocumento', 'labelNumeroDocumento')">
                           </div>
                         </div>
@@ -299,7 +302,7 @@
                       <div class="form-group has-float-label">
                         <label for="idFechaInicio" class="tamanio-label">Fecha de Inicio *</label>
                         <input id="idFechaInicio" type="date" formControlName="fechaInicio" autocomplete="off"
-                          class="form-control form-control-sm" [readonly]="soloLectura">
+                          class="form-control form-control-sm" [readonly]="soloLectura" (blur)="verificarFecha(2)">
                       </div>
                     </div>
                     <div class="col-md-3">
@@ -337,7 +340,7 @@
                       <div class="form-group has-float-label">
                         <label for="idAntiguedadAntAnio" class="tamanio-label">Antigüedad Anterior Años</label>
                         <input id="idAntiguedadAntAnio" [textMask]="mascararEnteros(2)" type="text"
-                          formControlName="antiguedadAntAnio" autocomplete="off"
+                          formControlName="antiguedadAntAnio" autocomplete="off" (blur)="validarAntiguedadAnios()"
                           class="form-control form-control-sm number-right" [readonly]="soloLectura" placeholder="0">
                       </div>
                     </div>
@@ -345,7 +348,7 @@
                       <div class="form-group has-float-label">
                         <label for="idAntiguedadAntMes" class="tamanio-label"> Antigüedad Anterior Meses</label>
                         <input id="idAntiguedadAntMes" [textMask]="mascararEnteros(2)" type="text"
-                          formControlName="antiguedadAntMes" autocomplete="off"
+                          formControlName="antiguedadAntMes" autocomplete="off" (blur)="validarAntiguedadMeses()"
                           class="form-control form-control-sm number-right" [readonly]="soloLectura" placeholder="0">
                       </div>
                     </div>
@@ -824,7 +827,8 @@
                         <label for="idTelefonoMovilFechaDevolucion" class="tamanio-label">Fecha de Devolución</label>
                         <input id="idTelefonoMovilFechaDevolucion" type="date"
                           formControlName="telefonoMovilFechaDevolucion" autocomplete="off"
-                          class="form-control form-control-sm" [readonly]="soloLectura">
+                          class="form-control form-control-sm" [readonly]="soloLectura"
+                          (blur)="validarFecha('telefonoMovilFechaEntrega', 'telefonoMovilFechaDevolucion')">
                       </div>
                     </div>
                   </div>
@@ -865,6 +869,7 @@
                         <label for="idTurnoMEntrada" class="tamanio-label">Turno Mañana Entrada</label>
                         <input id="idTurnoMEntrada" [textMask]="{mask: mascararHora()}" type="text"
                           formControlName="turnoMEntrada" autocomplete="off"
+                          (blur)="desenmascararHora(formulario.get('turnoMEntrada'))"
                           class="form-control form-control-sm number-right" placeholder="00:00 hs"
                           [readonly]="soloLectura">
                       </div>
@@ -874,6 +879,7 @@
                         <label for="idTurnoMSalida" class="tamanio-label">Turno Mañana Salida</label>
                         <input id="idTurnoMSalida" [textMask]="{mask: mascararHora()}" type="text"
                           formControlName="turnoMSalida" autocomplete="off"
+                          (blur)="desenmascararHora(formulario.get('turnoMSalida'))"
                           class="form-control form-control-sm number-right" placeholder="00:00 hs"
                           [readonly]="soloLectura">
                       </div>
@@ -883,6 +889,7 @@
                         <label for="idTurnoTEntrada" class="tamanio-label">Turno Tarde Entrada</label>
                         <input id="idTurnoTEntrada" [textMask]="{mask: mascararHora()}" type="text"
                           formControlName="turnoTEntrada" autocomplete="off"
+                          (blur)="desenmascararHora(formulario.get('turnoTEntrada'))"
                           class="form-control form-control-sm number-right" placeholder="00:00 hs"
                           [readonly]="soloLectura">
                       </div>
@@ -891,7 +898,8 @@
                       <div class="form-group has-float-label">
                         <label for="idTurnoNSalida" class="tamanio-label">Turno Tarde Salida</label>
                         <input id="idTurnoNSalida" [textMask]="{mask: mascararHora()}" type="text"
-                          formControlName="turnoNSalida" autocomplete="off"
+                          formControlName="turnoTSalida" autocomplete="off"
+                          (blur)="desenmascararHora(formulario.get('turnoTSalida'))"
                           class="form-control form-control-sm number-right" placeholder="00:00 hs"
                           [readonly]="soloLectura">
                       </div>
@@ -903,6 +911,7 @@
                         <label for="idTurnoNEntrada" class="tamanio-label">Turno Noche Entrada</label>
                         <input id="idTurnoNEntrada" [textMask]="{mask: mascararHora()}" type="text"
                           formControlName="turnoNEntrada" autocomplete="off"
+                          (blur)="desenmascararHora(formulario.get('turnoNEntrada'))"
                           class="form-control form-control-sm number-right" placeholder="00:00 hs"
                           [readonly]="soloLectura">
                       </div>
@@ -912,6 +921,7 @@
                         <label for="idTurnoNSalida" class="tamanio-label">Turno Noche Salida</label>
                         <input id="idTurnoNSalida" [textMask]="{mask: mascararHora()}" type="text"
                           formControlName="turnoNSalida" autocomplete="off"
+                          (blur)="desenmascararHora(formulario.get('turnoNSalida'))"
                           class="form-control form-control-sm number-right" placeholder="00:00 hs"
                           [readonly]="soloLectura">
                       </div>
@@ -923,6 +933,7 @@
                         <label for="idTurnoSEntrada" class="tamanio-label">Turno Sábado Entrada</label>
                         <input id="idTurnoSEntrada" [textMask]="{mask: mascararHora()}" type="text"
                           formControlName="turnoSEntrada" autocomplete="off"
+                          (blur)="desenmascararHora(formulario.get('turnoSEntrada'))"
                           class="form-control form-control-sm number-right" placeholder="00:00 hs"
                           [readonly]="soloLectura">
                       </div>
@@ -932,6 +943,7 @@
                         <label for="idTurnoSSalida" class="tamanio-label">Turno Sábado Salida</label>
                         <input id="idTurnoSSalida" [textMask]="{mask: mascararHora()}" type="text"
                           formControlName="turnoSSalida" autocomplete="off"
+                          (blur)="desenmascararHora(formulario.get('turnoSSalida'))"
                           class="form-control form-control-sm number-right" placeholder="00:00 hs"
                           [readonly]="soloLectura">
                       </div>
@@ -941,6 +953,7 @@
                         <label for="idTurnoDEntrada" class="tamanio-label">Turno Domingo Entrada</label>
                         <input id="idTurnoDEntrada" [textMask]="{mask: mascararHora()}" type="text"
                           formControlName="turnoDEntrada" autocomplete="off"
+                          (blur)="desenmascararHora(formulario.get('turnoDEntrada'))"
                           class="form-control form-control-sm number-right" placeholder="00:00 hs"
                           [readonly]="soloLectura">
                       </div>
@@ -949,7 +962,8 @@
                       <div class="form-group has-float-label">
                         <label for="idTurnoDSalida" class="tamanio-label">Turno Domingo Salida</label>
                         <input id="idTurnoDSalida" [textMask]="{mask: mascararHora()}" type="text"
-                          formControlName="turnoDSalida" autocomplete="off" (blur)="mostar()"
+                          formControlName="turnoDSalida" autocomplete="off"
+                          (blur)="desenmascararHora(formulario.get('turnoDSalida'))"
                           class="form-control form-control-sm number-right" placeholder="00:00 hs"
                           [readonly]="soloLectura">
                       </div>
@@ -999,10 +1013,78 @@
         </div>
       </div>
       <br>
+      <div class="row">
+        <div class="col-md-2">
+          <div class="form-group has-float-label">
+            <label for="idSucursalFiltro" class="tamanio-label">Sucursal donde Trabaja *</label>
+            <mat-select id="idSucursalFiltro" class="form-control form-control-sm"
+              [formControl]="formularioFiltro.get('idSucursal')" [compareWith]="compareFn">
+              <mat-option [value]="0">TODAS</mat-option>
+              <mat-option *ngFor="let itemSucursal of sucursales" [value]="itemSucursal.id">
+                {{itemSucursal.nombre}}
+              </mat-option>
+            </mat-select>
+          </div>
+        </div>
+        <div class="col-md-2">
+          <div class="form-group has-float-label ">
+            <label for="idAreaFiltro" class="tamanio-label">Area *</label>
+            <mat-select id="idAreaFiltro" class="form-control form-control-sm"
+              [formControl]="formularioFiltro.get('idArea')" [compareWith]="compareFn">
+              <mat-option [value]="0">TODAS</mat-option>
+              <mat-option *ngFor="let itemArea of areas" [value]="itemArea.id">
+                {{itemArea.nombre}}
+              </mat-option>
+            </mat-select>
+          </div>
+        </div>
+        <div class="col-md-2">
+          <div class="form-group has-float-label ">
+            <label for="idContratacionFiltro" class="tamanio-label">Mod. de Contratación *</label>
+            <mat-select id="idContratacionFiltro" class="form-control form-control-sm"
+              [formControl]="formularioFiltro.get('idModContratacion')" [compareWith]="compareFn">
+              <mat-option [value]="0">TODAS</mat-option>
+              <mat-option *ngFor="let itemContratacion of resultadosAfipModContrataciones" [value]="itemContratacion.id">
+                {{itemContratacion.nombre}}
+              </mat-option>
+            </mat-select>
+          </div>
+        </div>
+        <div class="col-md-2">
+          <div class="form-group has-float-label">
+            <label for="idCategoriaFiltro" class="tamanio-label">Categoría *</label>
+            <mat-select id="idCategoriaFiltro" class="form-control form-control-sm"
+              [formControl]="formularioFiltro.get('idCategoria')" [compareWith]="compareFn">
+              <mat-option [value]="0">TODAS</mat-option>
+              <mat-option *ngFor="let itemCategoria of resultadosCategorias" [value]="itemCategoria.id">
+                {{itemCategoria.nombre}}
+              </mat-option>
+            </mat-select>
+          </div>
+        </div>
+        <div class="col-md-2">
+          <div class="form-group has-float-label ">
+            <label for="idTipoEmpleadoFlitro" class="tamanio-label">Tipo de Empleado *</label>
+            <mat-select id="idTipoEmpleadoFlitro" class="form-control form-control-sm"
+              [formControl]="formularioFiltro.get('tipoEmpleado')" [compareWith]="compareFn">
+              <mat-option [value]="0">TODOS</mat-option>
+              <mat-option [value]="1">CHOFERES CORTA DISTANCIA</mat-option>
+              <mat-option [value]="2">CHOFERES LARGA DISTANCIA</mat-option>
+              <mat-option [value]="3">RESTO NO CHOFERES</mat-option>
+            </mat-select>
+          </div>
+        </div>
+        <div class="col-md-1">
+          <button id="idBoton" mat-raised-button color="primary" formnovalidate (click)="listarPorFiltros()"
+            [disabled]="!formularioFiltro.valid">Listar
+          </button>
+        </div>
+      </div>
+      <br>
       <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
         <ng-container matColumnDef="ID">
           <th mat-header-cell *matHeaderCellDef mat-sort-header class="col-id-width">#</th>
-          <td mat-cell *matCellDef="let elemento" class="number-right">{{elemento.id}}</td>
+          <td mat-cell *matCellDef="let elemento; let i = index" class="number-right"> {{i+1}}</td>
         </ng-container>
         <ng-container matColumnDef="NOMBRE">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</th>
@@ -1033,7 +1115,7 @@
         <ng-container matColumnDef="EDITAR" stickyEnd>
           <th mat-header-cell *matHeaderCellDef>
             <button mat-raised-button color="primary" (click)="abrirReporte()"
-            [disabled]="listaCompleta.data.length==0">Reporte</button>
+              [disabled]="listaCompleta.data.length==0">Reporte</button>
           </th>
           <td mat-cell *matCellDef="let elemento">
             <button mat-icon-button class="mat-icon-button-table" (click)="activarConsultar(elemento)"

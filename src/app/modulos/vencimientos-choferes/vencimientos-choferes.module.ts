@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { VencimientosChoferesRoutingModule } from './vencimientos-choferes-routing.module';
 
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
-  MatSelectModule, MatProgressBarModule, MatButtonModule, MatIconModule } from '@angular/material';
+  MatSelectModule, MatProgressBarModule, MatButtonModule, MatIconModule, MatTooltipModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { VencimientosChoferesComponent } from 'src/app/componentes/vencimientos-choferes/vencimientos-choferes.component';
 import { PersonalService } from 'src/app/servicios/personal.service';
@@ -33,7 +33,8 @@ import { Pdf } from 'src/app/modelos/pdf';
     MatProgressBarModule,
     MatButtonModule,
     MatIconModule,
-    PdfViewerModule
+    PdfViewerModule,
+    MatTooltipModule
   ],
   providers: [
     PersonalService,

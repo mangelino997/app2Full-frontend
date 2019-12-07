@@ -73,10 +73,18 @@ export class RubroProductoComponent implements OnInit {
       );
     //Autocompletado - Buscar por nombre
     this.autocompletado.valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.servicio.listarPorNombre(data).subscribe(res => {
-          this.resultados = res;
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.loaderService.show();
+          this.servicio.listarPorNombre(data).subscribe(res => {
+            this.resultados = res;
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
+        }
       }
     })
   }
@@ -156,7 +164,7 @@ export class RubroProductoComponent implements OnInit {
           nombre: resultado.nombre
         }
         elemento.planCuentaCompra = planCuenta;
-        if(this.indiceSeleccionado == 3) {
+        if (this.indiceSeleccionado == 3) {
           this.loaderService.show();
           elemento.rubroProducto = {
             id: this.formulario.get('id').value,
@@ -165,7 +173,7 @@ export class RubroProductoComponent implements OnInit {
           this.rubroProductoCuentaContableService.actualizar(elemento).subscribe(
             res => {
               let respuesta = res.json();
-              if(respuesta.codigo == 200) {
+              if (respuesta.codigo == 200) {
                 this.toastr.success(MensajeExcepcion.ACTUALIZADO);
               } else {
                 elemento.planCuentaCompra = null;
@@ -185,12 +193,12 @@ export class RubroProductoComponent implements OnInit {
   //Elimina la cuenta contable de la empresa
   public eliminarPlanCuenta(elemento) {
     const id = elemento.id;
-    if(this.indiceSeleccionado == 3) {
+    if (this.indiceSeleccionado == 3) {
       this.loaderService.show();
       this.rubroProductoCuentaContableService.eliminar(id).subscribe(
         res => {
           let respuesta = res.json();
-          if(respuesta.codigo == 200) {
+          if (respuesta.codigo == 200) {
             elemento.planCuentaCompra = null;
             this.toastr.success(MensajeExcepcion.ELIMINADO);
           }

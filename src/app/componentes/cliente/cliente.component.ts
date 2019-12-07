@@ -81,6 +81,8 @@ export class ClienteComponent implements OnInit {
   public botonOpcionActivo: boolean = null;
   //Define el form control para las busquedas
   public autocompletado: FormControl = new FormControl();
+  //Define las listas de incialiacion 
+  public listadosDeInit: FormControl = new FormControl();
   //Define la lista de resultados de busqueda
   public resultados: Array<any> = [];
   //Define la lista de resultados de busqueda de barrio
@@ -95,8 +97,6 @@ export class ClienteComponent implements OnInit {
   public zonas: Array<any> = [];
   //Define la lista de resultados de busqueda de rubro
   public rubros: Array<any> = [];
-  //Define la lista de resultados de busqueda de orden venta
-  public resultadosOrdenesVentas: Array<any> = [];
   //Define la lista de resultados de busqueda de cuenta principal
   public resultadosCuentasGrupos: Array<any> = [];
   //Define la lista de resultados de busqueda de sucursal lugar pago
@@ -274,25 +274,54 @@ export class ClienteComponent implements OnInit {
       }
     })
     //Obtiene la lista de condiciones de iva
-    this.listarCondicionesIva();
-    //Obtiene la lista de tipos de documentos
-    this.listarTiposDocumentos();
-    //Obtiene la lista de resumenes de clientes
-    this.listarResumenesClientes();
-    //Obtiene la lista de situaciones de clientes
-    this.listarSituacionesClientes();
-    //Obtiene la lista de condiciones de venta
-    this.listarCondicionesVentas();
-    //Obtiene la lista de sucursales
-    this.listarSucursales();
-    //Obtiene la lista de cobradores
-    this.listarCobradores();
-    //Obtiene la lista de vendedores
-    this.listarVendedores();
-    //Obtiene la lista de zonas
-    this.listarZonas();
-    //Obtiene la lista de rubros
-    this.listarRubros();
+    // this.listarCondicionesIva();
+    // //Obtiene la lista de tipos de documentos
+    // this.listarTiposDocumentos();
+    // //Obtiene la lista de resumenes de clientes
+    // this.listarResumenesClientes();
+    // //Obtiene la lista de situaciones de clientes
+    // this.listarSituacionesClientes();
+    // //Obtiene la lista de condiciones de venta
+    // this.listarCondicionesVentas();
+    // //Obtiene la lista de sucursales
+    // this.listarSucursales();
+    // //Obtiene la lista de cobradores
+    // this.listarCobradores();
+    // //Obtiene la lista de vendedores
+    // this.listarVendedores();
+    // //Obtiene la lista de zonas
+    // this.listarZonas();
+    // //Obtiene la lista de rubros
+    // this.listarRubros();
+
+    /* Obtiene todos los listados: condiciones de iva - tipos de documentos- resumenes de clientes - 
+      situaciones de clientes - condiciones de venta - sucursales - cobradores -  vendedores - zonas - rubros */
+    this.listarParaInicializar();
+  }
+  //
+  private listarParaInicializar() {
+    this.loaderService.show();
+    this.servicio.listarParaInicializar().subscribe(
+      res => {
+        console.log(res.json());
+        let respuesta = res.json();
+        this.condicionesIva = respuesta.afipCondicionesIvas;
+        this.tiposDocumentos = respuesta.tipoDocumentos;
+        this.resumenesClientes = respuesta.resumenClientes;
+        this.situacionesClientes = respuesta.situacionClientes;
+        this.condicionesVentas = respuesta.condicionVentas;
+        this.resultadosSucursalesPago = respuesta.sucursales;
+        this.cobradores = respuesta.cobradores;
+        this.vendedores = respuesta.vendedores;
+        this.zonas = respuesta.zonas;
+        this.rubros = respuesta.rubros;
+        this.loaderService.hide();
+      },
+      err => {
+        this.toastr.error(err.json().mensaje);
+        this.loaderService.hide();
+      }
+    )
   }
   //Crea la lista de planes de cuenta
   public crearCuentasBancarias(): void {
@@ -560,7 +589,6 @@ export class ClienteComponent implements OnInit {
     this.resultados = [];
     this.resultadosBarrios = [];
     this.resultadosLocalidades = [];
-    this.resultadosOrdenesVentas = [];
     this.resultadosCuentasGrupos = [];
     this.resultadosCompaniasSeguros = [];
     this.cuentasBancarias = new MatTableDataSource([]);
@@ -986,13 +1014,13 @@ export class ClienteComponent implements OnInit {
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
     this.seleccionarPestania(2, this.pestanias[1].nombre, false);
-    this.autocompletado.setValue(elemento);
+    this.autocompletado.patchValue(elemento);
     this.establecerFormulario();
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
     this.seleccionarPestania(3, this.pestanias[2].nombre, false);
-    this.autocompletado.setValue(elemento);
+    this.autocompletado.patchValue(elemento);
     this.establecerFormulario();
   }
   //Cambio de elemento seleccionado en condicion venta

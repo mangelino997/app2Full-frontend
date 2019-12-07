@@ -83,10 +83,18 @@ export class ProductoComponent implements OnInit {
       });
     //Controla el autocompletado
     this.autocompletado.valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.servicio.listarPorNombre(data).subscribe(res => {
-          this.resultados = res;
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.loaderService.show();
+          this.servicio.listarPorNombre(data).subscribe(res => {
+            this.resultados = res;
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
+        }
       }
     });
   }
@@ -126,7 +134,7 @@ export class ProductoComponent implements OnInit {
     this.formulario.patchValue(elemento);
 
     /* Cuando la pestaña es 'Consultar' muestra los ITC y precios */
-    if(this.indiceSeleccionado == 2){
+    if (this.indiceSeleccionado == 2) {
       let precioUnitarioVenta = elemento.precioUnitarioViaje;
       let precioUnitarioViaje = elemento.precioUnitarioVenta;
       let itcPorLitro = elemento.itcPorLitro;
@@ -206,6 +214,8 @@ export class ProductoComponent implements OnInit {
         this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
         break;
       case 5:
+        /* si ya se establecieron los valores en el formularioFiltro, que recargue la lista */
+        this.formularioFiltro.valid ? this.listarPorRubroYMarcaLista() : '';
         setTimeout(function () {
           document.getElementById('idRubro').focus();
         }, 20);
@@ -400,12 +410,16 @@ export class ProductoComponent implements OnInit {
           this.listaCompleta = new MatTableDataSource([]);
           this.toastr.error("Sin registros para mostrar.");
         }
-
         this.loaderService.hide();
       },
       err => {
         this.loaderService.hide();
       });
+  }
+  /* Limpia la lista completa de la pestaña Listar con cada cambio en el campo de selección
+    Rubro o Marca*/
+  public limpiarFiltro() {
+    this.listaCompleta.data.length > 0 ? this.listaCompleta = new MatTableDataSource([]) : '';
   }
   //Funcion para comparar y mostrar elemento de campo select
   public compareFn = this.compararFn.bind(this);

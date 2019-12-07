@@ -18,7 +18,7 @@
               <label for="idAutocompletado" class="tamanio-label">Buscar Vehículo</label>
               <input id="idAutocompletado" class="form-control form-control-sm color-busqueda" type="text" matInput
                 [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off"
-                placeholder="Buscar por Dominio o Número Interno" (blur)="verificarSeleccion(autocompletado)">
+                placeholder="Buscar por Dominio, Número Interno o Alias" (blur)="verificarSeleccion(autocompletado)">
               <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayF.bind(this)"
                 (optionSelected)="establecerElemento()">
                 <mat-option *ngFor="let item of resultados" [value]="item">
@@ -33,7 +33,8 @@
             <div class="form-group has-float-label">
               <label for="idTipoVehiculo" class="tamanio-label">Tipo de Vehículo *</label>
               <mat-select id="idTipoVehiculo" class="form-control form-control-sm" [formControl]="tipoVehiculo"
-                [compareWith]="compareFn" (selectionChange)="tipoVehiculo.value? listarConfiguracionesPorTipoVehiculoMarcaVehiculo(): ''">
+                [compareWith]="compareFn"
+                (selectionChange)="tipoVehiculo.value? listarConfiguracionesPorTipoVehiculoMarcaVehiculo(): ''">
                 <mat-option *ngFor="let itemTipoVehiculo of tiposVehiculos" [value]="itemTipoVehiculo">
                   {{itemTipoVehiculo.nombre}}
                 </mat-option>
@@ -44,7 +45,8 @@
             <div class="form-group has-float-label">
               <label for="idMarcaVehiculo" class="tamanio-label">Marca de Vehículo *</label>
               <mat-select id="idMarcaVehiculo" class="form-control form-control-sm" [formControl]="marcaVehiculo"
-                [compareWith]="compareFn" (selectionChange)="marcaVehiculo.value? listarConfiguracionesPorTipoVehiculoMarcaVehiculo() : ''">
+                [compareWith]="compareFn"
+                (selectionChange)="marcaVehiculo.value? listarConfiguracionesPorTipoVehiculoMarcaVehiculo() : ''">
                 <mat-option *ngFor="let itemMarcaVehiculo of marcasVehiculos" [value]="itemMarcaVehiculo">
                   {{itemMarcaVehiculo.nombre}}
                 </mat-option>
@@ -97,8 +99,8 @@
               <label for="idNumeroMotor" class="tamanio-label">Número de Motor<span *ngIf="!esVehiculoRemolque">
                   *</span></label>
               <input id="idNumeroMotor" type="text" formControlName="numeroMotor" autocomplete="off"
-                class="form-control form-control-sm number-right upper-case" [readonly]="soloLectura || esVehiculoRemolque"
-                [required]="!esVehiculoRemolque" maxlength="25">
+                class="form-control form-control-sm number-right upper-case"
+                [readonly]="soloLectura || esVehiculoRemolque" [required]="!esVehiculoRemolque" maxlength="25">
             </div>
           </div>
           <div class="col-md-3">
@@ -114,7 +116,7 @@
             <div class="form-group has-float-label">
               <label for="idEmpresa" class="tamanio-label">Titular *</label>
               <mat-select id="idEmpresa" class="form-control form-control-sm" formControlName="empresa"
-                [compareWith]="compareFn" (selectionChange)="listarCompaniasSeguroPorEmpresa()">
+                [compareWith]="compareFn" (selectionChange)="listarCompaniasSeguroPorEmpresa(null, null)">
                 <mat-option *ngFor="let itemEmpresa of empresas" [value]="itemEmpresa">
                   {{itemEmpresa.razonSocial}}
                 </mat-option>
@@ -149,7 +151,8 @@
                 <input style="display: none;" type="file" (change)="readURL($event, 'pdfCedulaIdent')"
                   #fileInputCedulaIdent />
                 <button id="btn-adjuntar" mat-raised-button color="primary" (click)="fileInputCedulaIdent.click()"
-                  [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4" matTooltip="Adjuntar Cédula Identificación">
+                  [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4"
+                  matTooltip="Adjuntar Cédula Identificación">
                   <i class="material-icons" *ngIf="!formulario.get('pdfCedulaIdent.nombre').value">cloud_upload</i>
                   <i class="material-icons" *ngIf="formulario.get('pdfCedulaIdent.nombre').value"
                     style="color: lightgreen">cloud_done</i>
@@ -196,7 +199,8 @@
               <label for="idPersonal" class="tamanio-label">Chofer Habitual</label>
               <input id="idPersonal" class="form-control form-control-sm" type="text" matInput
                 [formControl]="formulario.get('personal')" [matAutocomplete]="autoPersonal" autocomplete="off"
-                [readonly]="soloLectura" (blur)="verificarSeleccion(formulario.get('personal'))">
+                [readonly]="soloLectura" (blur)="verificarSeleccion(formulario.get('personal'))"
+                placeholder="Buscar por alias">
               <mat-autocomplete #autoPersonal="matAutocomplete" [displayWith]="displayF.bind(this)">
                 <mat-option *ngFor="let itemPersonal of resultadosPersonales" [value]="itemPersonal">
                   {{itemPersonal.alias}}
@@ -209,7 +213,7 @@
               <label for="idVehiculoRemolque" class="tamanio-label">Remolque Habitual</label>
               <input id="idVehiculoRemolque" class="form-control form-control-sm" type="text" matInput
                 [formControl]="formulario.get('vehiculoRemolque')" [matAutocomplete]="autoVehiculoRemolque"
-                autocomplete="off" [readonly]="soloLectura"
+                autocomplete="off" [readonly]="soloLectura" placeholder="Buscar por alias"
                 (blur)="verificarSeleccion(formulario.get('vehiculoRemolque'))">
               <mat-autocomplete #autoVehiculoRemolque="matAutocomplete" [displayWith]="displayF.bind(this)">
                 <mat-option *ngFor="let itemVehiculoRemolque of resultadosVehiculosRemolques"
@@ -225,7 +229,7 @@
             <div class="form-group has-float-label">
               <label for="idCompaniaSeguro" class="tamanio-label">Compañía de Seguro *</label>
               <mat-select id="idCompaniaSeguro" class="form-control form-control-sm" [formControl]="companiaSeguro"
-                [compareWith]="compareFn" (selectionChange)="listarPolizas()">
+                [compareWith]="compareFn" (selectionChange)="listarPolizas(null)">
                 <mat-option *ngFor="let itemCompaniaSeguro of companiasSeguros" [value]="itemCompaniaSeguro">
                   {{itemCompaniaSeguro.nombre}}
                 </mat-option>
@@ -236,7 +240,7 @@
             <div class="form-group has-float-label">
               <label for="idCompaniaSeguroPoliza" class="tamanio-label">Póliza *</label>
               <mat-select id="idCompaniaSeguroPoliza" class="form-control form-control-sm"
-                formControlName="companiaSeguroPoliza" [compareWith]="compareFn">
+                formControlName="companiaSeguroPoliza" [compareWith]="compareFp">
                 <mat-option *ngFor="let itemCompaniaSeguroPoliza of companiasSegurosPolizas"
                   [value]="itemCompaniaSeguroPoliza">
                   {{itemCompaniaSeguroPoliza.numeroPoliza}}
@@ -301,7 +305,8 @@
                 <input style="display: none;" type="file" (change)="readURL($event, 'pdfVtoInspTecnica')"
                   #fileInputVtoInspTecnica />
                 <button id="btn-adjuntar" mat-raised-button color="primary" (click)="fileInputVtoInspTecnica.click()"
-                  [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4" matTooltip="Adjuntar Vto. Inspección Técnica">
+                  [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4"
+                  matTooltip="Adjuntar Vto. Inspección Técnica">
                   <i class="material-icons" *ngIf="!formulario.get('pdfVtoInspTecnica.nombre').value">cloud_upload</i>
                   <i class="material-icons" *ngIf="formulario.get('pdfVtoInspTecnica.nombre').value"
                     style="color: lightgreen">cloud_done</i>
@@ -367,7 +372,8 @@
                 <input style="display: none;" type="file" (change)="readURL($event, 'pdfHabBromat')"
                   #fileInputHabBromat />
                 <button id="btn-adjuntar" mat-raised-button color="primary" (click)="fileInputHabBromat.click()"
-                  [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4" matTooltip="Adjuntar Vto. Hab. Bromatológica">
+                  [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4"
+                  matTooltip="Adjuntar Vto. Hab. Bromatológica">
                   <i class="material-icons" *ngIf="!formulario.get('pdfHabBromat.nombre').value">cloud_upload</i>
                   <i class="material-icons" *ngIf="formulario.get('pdfHabBromat.nombre').value"
                     style="color: lightgreen">cloud_done</i>
@@ -476,7 +482,8 @@
             </ng-container>
             <ng-container matColumnDef="POLIZA">
               <th mat-header-cell *matHeaderCellDef mat-sort-header>Póliza</th>
-              <td mat-cell *matCellDef="let elemento" class="number-right">{{elemento.companiaSeguroPoliza.numeroPoliza}}
+              <td mat-cell *matCellDef="let elemento" class="number-right">
+                {{elemento.companiaSeguroPoliza.numeroPoliza}}
               </td>
             </ng-container>
             <ng-container matColumnDef="PDF_TITULO">
@@ -529,7 +536,7 @@
             </ng-container>
             <ng-container matColumnDef="EDITAR" stickyEnd>
               <th mat-header-cell *matHeaderCellDef><button class="button-full-width" mat-raised-button color="primary"
-                [disabled]="listaCompleta.data.length==0" (click)="abrirReporte()">Reporte</button></th>
+                  [disabled]="listaCompleta.data.length==0" (click)="abrirReporte()">Reporte</button></th>
               <td mat-cell *matCellDef="let elemento">
                 <button mat-icon-button class="mat-icon-button-table" (click)="activarConsultar(elemento)"
                   matTooltip="Consultar" matTooltipPosition="above">

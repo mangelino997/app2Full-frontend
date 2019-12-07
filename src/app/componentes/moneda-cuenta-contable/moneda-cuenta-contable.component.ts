@@ -113,10 +113,18 @@ export class MonedaCuentaContableComponent implements OnInit {
     //Autocompletado - Buscar por nombre cliente
     let empresa = this.appService.getEmpresa();
     this.autocompletado.valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.monedaCuentaContableServicio.listarPorNombreMoneda(data, empresa.id).subscribe(response => {
-          this.resultados = response.json();
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.loaderService.show();
+          this.monedaCuentaContableServicio.listarPorNombreMoneda(data, empresa.id).subscribe(response => {
+            this.resultados = response.json();
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
+        }
       }
     });
   }

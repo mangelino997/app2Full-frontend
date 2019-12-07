@@ -79,10 +79,18 @@ export class EmpresaComponent implements OnInit {
       );
     //Autocompletado - Buscar por alias
     this.autocompletado.valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.servicio.listarPorRazonSocial(data).subscribe(response => {
-          this.resultados = response;
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.loaderService.show();
+          this.servicio.listarPorRazonSocial(data).subscribe(response => {
+            this.resultados = response;
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
+        }
       }
     })
   }
@@ -99,18 +107,34 @@ export class EmpresaComponent implements OnInit {
     this.seleccionarPestania(1, 'Agregar');
     //Autocompletado Barrio - Buscar por nombre
     this.formulario.get('barrio').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.barrioServicio.listarPorNombre(data).subscribe(response => {
-          this.resultadosBarrios = response;
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.loaderService.show();
+          this.barrioServicio.listarPorNombre(data).subscribe(response => {
+            this.resultadosBarrios = response;
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
+        }
       }
     })
     //Autocompletado Localidad - Buscar por nombre
     this.formulario.get('localidad').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.localidadServicio.listarPorNombre(data).subscribe(response => {
-          this.resultadosLocalidades = response;
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.loaderService.show();
+          this.localidadServicio.listarPorNombre(data).subscribe(response => {
+            this.resultadosLocalidades = response;
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
+        }
       }
     })
     //Obtiene la lista de condiciones de iva

@@ -18,10 +18,15 @@ import { ReporteService } from 'src/app/servicios/reporte.service';
   styleUrls: ['./moneda-cotizacion.component.css']
 })
 export class MonedaCotizacionComponent implements OnInit {
+<<<<<<< HEAD
   //Define la pestania actual
   public pestaniaActual:string = null;
   //Define campos solo lectura
   public soloLectura:boolean = false;
+=======
+  //Define fecha actual
+  public fechaActual: String;
+>>>>>>> baaec35096a7013419a0d99daf851c45e76e94be
   //Define si mostrar el boton
   public mostrarAgregar: boolean = null;
   //Define un formulario para validaciones de campos
@@ -56,10 +61,18 @@ export class MonedaCotizacionComponent implements OnInit {
     });
     //Controla el autocompletado
     this.autocompletado.valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.monedaCotizacionServicio.listarPorMoneda(data).subscribe(res => {
-          this.resultados = res.json();
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.loaderService.show();
+          this.monedaCotizacionServicio.listarPorMoneda(data).subscribe(res => {
+            this.resultados = res.json();
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
+        }
       }
     });
   }
@@ -82,7 +95,8 @@ export class MonedaCotizacionComponent implements OnInit {
   public establecerFecha() {
     this.fechaServicio.obtenerFecha().subscribe(
       res => {
-        this.formulario.get('fecha').setValue(res.json());
+        this.fechaActual = res.json();
+        this.formulario.get('fecha').setValue(this.fechaActual);
       },
       err => {
         let error = err.json();
@@ -210,6 +224,13 @@ export class MonedaCotizacionComponent implements OnInit {
   private compararFn(a, b) {
     if (a != null && b != null) {
       return a.id === b.id;
+    }
+  }
+  //Valida que la fecha de cotización no sea posterior a la fecha actual
+  public validarFechaCotizacion(){
+    if(this.formulario.value.fecha > this.fechaActual){
+      this.toastr.error("Fecha de Cotización debe ser menor a fecha actual.");
+      this.formulario.get('fecha').reset();
     }
   }
   //Desenmascara los campos con mascara importe

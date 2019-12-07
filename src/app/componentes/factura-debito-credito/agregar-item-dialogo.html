@@ -9,10 +9,11 @@
                             <div class="form-group has-float-label">
                                 <label for="idInsumoProducto" class="tamanio-label">Insumo/Producto *</label>
                                 <input id="idInsumoProducto" class="form-control form-control-sm" type="text" matInput
-                                    [formControl]="formulario.get('insumoProducto')" [matAutocomplete]="autoInsumoProducto"
-                                    autocomplete="off" (click)="reestablecerFormulario()">
-                                <mat-autocomplete #autoInsumoProducto="matAutocomplete" [displayWith]="displayFn.bind(this)"
-                                    (optionSelected)="establecerValores()">
+                                    [formControl]="formulario.get('insumoProducto')"
+                                    [matAutocomplete]="autoInsumoProducto" autocomplete="off"
+                                    (click)="reestablecerFormulario()" placeholder="Buscar por alias">
+                                <mat-autocomplete #autoInsumoProducto="matAutocomplete"
+                                    [displayWith]="displayFn.bind(this)" (optionSelected)="establecerValores()">
                                     <mat-option *ngFor="let item of resultados" [value]="item">
                                         {{item.alias}}
                                     </mat-option>

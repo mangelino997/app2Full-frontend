@@ -85,8 +85,13 @@ export class RepartoComponent implements OnInit {
       if (typeof data == 'string') {
         data = data.trim();
         if (data == '*' || data.length > 0) {
+          this.loaderService.show();
           this.vehiculoService.listarPorAliasYEmpresa(data, empresa.id).subscribe(response => {
             this.resultadosVehiculo = response;
+            this.loaderService.hide();
+          },
+          err=>{
+            this.loaderService.hide();
           })
         }
       }
@@ -96,8 +101,13 @@ export class RepartoComponent implements OnInit {
       if (typeof data == 'string') {
         data = data.trim();
         if (data == '*' || data.length > 0) {
+          this.loaderService.show();
           this.vehiculoProveedorService.listarPorAlias(data).subscribe(response => {
             this.resultadosVehiculo = response;
+            this.loaderService.hide();
+          },
+          err=>{
+            this.loaderService.hide();
           })
         }
       }
@@ -107,8 +117,13 @@ export class RepartoComponent implements OnInit {
       if (typeof data == 'string') {
         data = data.trim();
         if (data == '*' || data.length > 0) {
+          this.loaderService.show();
           this.vehiculoService.listarPorAliasYEmpresaFiltroRemolque(data, empresa.id).subscribe(response => {
             this.resultadosRemolque = response;
+            this.loaderService.hide();
+          },
+          err=>{
+            this.loaderService.hide();
           })
         }
       }
@@ -118,8 +133,13 @@ export class RepartoComponent implements OnInit {
       if (typeof data == 'string') {
         data = data.trim();
         if (data == '*' || data.length > 0) {
+          this.loaderService.show();
           this.vehiculoProveedorService.listarPorAliasFiltroRemolque(data).subscribe(response => {
             this.resultadosRemolque = response;
+            this.loaderService.hide();
+          },
+          err=>{
+            this.loaderService.hide();
           })
         }
       }
@@ -129,8 +149,13 @@ export class RepartoComponent implements OnInit {
       if (typeof data == 'string') {
         data = data.trim();
         if (data == '*' || data.length > 0) {
+          this.loaderService.show();
           this.personalService.listarChoferesPorDistanciaPorAlias(data, false).subscribe(response => {
             this.resultadosChofer = response.json();
+            this.loaderService.hide();
+          },
+          err=>{
+            this.loaderService.hide();
           })
         }
       }
@@ -140,8 +165,13 @@ export class RepartoComponent implements OnInit {
       if (typeof data == 'string') {
         data = data.trim();
         if (data == '*' || data.length > 0) {
+          this.loaderService.show();
           this.choferProveedorService.listarActivosPorAlias(data).subscribe(response => {
             this.resultadosChofer = response;
+            this.loaderService.hide();
+          },
+          err=>{
+            this.loaderService.hide();
           })
         }
       }
@@ -501,6 +531,7 @@ export class AcompanianteDialogo {
   public agregar() {
     if (this.listaCompleta.data.length > 0) {
       this.listaCompleta.data.forEach(elemento => {
+        console.log(this.formulario.get('personal').value.id, elemento.personal.id);
         if (this.formulario.get('personal').value.id == elemento.personal.id) {
           this.formulario.reset();
           this.toastr.error("El acompañante seleccionado ya fue agregado a la lista.");

@@ -24,7 +24,7 @@ export class Vehiculo {
             empresa: new FormControl('', Validators.required),
             personal: new FormControl(),
             vehiculoRemolque: new FormControl(),
-            companiaSeguroPoliza: new FormControl(),
+            companiaSeguroPoliza: new FormControl('', Validators.required),
             vtoRTO: new FormControl('', Validators.required),
             numeroRuta: new FormControl('', [Validators.required, Validators.maxLength(15)]),
             vtoRuta: new FormControl('', Validators.required),

@@ -19,7 +19,7 @@
             <div class="form-group has-float-label">
               <label for="idFechaCotizacion" class="labelFechaCotizacion">Fecha Cotizacion *</label>
               <input id="idCodigo" type="date" formControlName="fecha" [readonly]="soloLectura"
-                class="form-control form-control-sm">
+                class="form-control form-control-sm" (blur)="validarFechaCotizacion()">
             </div>
           </div>
           <div class="col-md-3">

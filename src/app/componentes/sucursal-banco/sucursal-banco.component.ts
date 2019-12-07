@@ -79,10 +79,18 @@ export class SucursalBancoComponent implements OnInit {
     });
     //Autocompletado - Buscar por nombre banco
     this.formulario.get('banco').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.bancoServicio.listarPorNombre(data).subscribe(response => {
-          this.resultadosBancos = response;
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.loaderService.show();
+          this.bancoServicio.listarPorNombre(data).subscribe(response => {
+            this.resultadosBancos = response;
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
+        }
       }
     })
     //Establece los valores de la primera pestania activa
@@ -192,14 +200,18 @@ export class SucursalBancoComponent implements OnInit {
     if (this.mostrarAutocompletado) {
       this.servicio.listarPorBanco(elemento.id).subscribe(
         res => {
-          this.listaCompleta = new MatTableDataSource(res.json());
-          if (this.indiceSeleccionado == 5)
-            this.listaCompleta.sort = this.sort,
-              this.listaCompleta.paginator = this.paginator;
-          else
+          if (this.indiceSeleccionado == 5) {
+            this.listaCompleta = new MatTableDataSource(res.json());
+            this.listaCompleta.sort = this.sort;
+            this.listaCompleta.paginator = this.paginator;
+            res.json().length == 0 ? this.toastr.error("Sin registros para mostrar.") : '';
+          } else {
             this.sucursales = res.json();
+            res.json().length == 0 ? this.toastr.error("El Banco no tiene una lista de Sucursales.") : '';
+          }
         },
         err => {
+          this.toastr.error(err.json().mensaje);
         }
       )
     }

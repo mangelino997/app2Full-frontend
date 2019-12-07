@@ -109,10 +109,18 @@ export class PersonalFamiliarComponent implements OnInit {
     let empresa = this.appServicio.getEmpresa();
     //Autocompletado - Buscar por alias
     this.autocompletado.valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.personalServicio.listarPorActivosAliasYEmpresa(data, empresa.id).subscribe(response => {
-          this.resultados = response;
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.loaderService.show();
+          this.personalServicio.listarPorActivosAliasYEmpresa(data, empresa.id).subscribe(response => {
+            this.resultados = response;
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
+        }
       }
     })
   }
@@ -141,26 +149,50 @@ export class PersonalFamiliarComponent implements OnInit {
     this.listarTiposFamiliares();
     //Autocompletado - Buscar personal por alias
     this.formulario.get('personal').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.personalServicio.listarPorActivosAliasYEmpresa(data, empresa.id).subscribe(response => {
-          this.resultadosPersonal = response;
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.loaderService.show();
+          this.personalServicio.listarPorActivosAliasYEmpresa(data, empresa.id).subscribe(response => {
+            this.resultadosPersonal = response;
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
+        }
       }
     });
     //Autocompletado Localidad Nacimiento - Buscar por nombre
     this.formulario.get('localidadNacimiento').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.localidadServicio.listarPorNombre(data).subscribe(response => {
-          this.resultadosLocalidades = response;
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.loaderService.show();
+          this.localidadServicio.listarPorNombre(data).subscribe(response => {
+            this.resultadosLocalidades = response;
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
+        }
       }
     });
     //Autocompletado - Buscar personal por alias
     this.formularioFiltro.get('personal').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.personalServicio.listarPorActivosAliasYEmpresa(data, empresa.id).subscribe(response => {
-          this.resultadosPersonal = response;
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.loaderService.show();
+          this.personalServicio.listarPorActivosAliasYEmpresa(data, empresa.id).subscribe(response => {
+            this.resultadosPersonal = response;
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
+        }
       }
     });
   }

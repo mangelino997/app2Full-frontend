@@ -18,7 +18,7 @@
               <label for="idCompaniaSeguro" class="tamanio-label">Compañía de Seguro</label>
               <input id="idCompaniaSeguro" class="form-control form-control-sm" type="text" matInput
                 [formControl]="formulario.get('companiaSeguro')" [matAutocomplete]="autoCompaniaSeguro"
-                autocomplete="off" [readonly]="soloLectura"
+                autocomplete="off" [readonly]="soloLectura" placeholder="Buscar por Nombre"
                 (blur)="verificarSeleccion(formulario.get('companiaSeguro'))">
               <mat-autocomplete #autoCompaniaSeguro="matAutocomplete" [displayWith]="displayFn.bind(this)"
                 (optionSelected)="listarPorCompaniaSeguroYEmpresa()">
@@ -116,7 +116,7 @@
                   <label for="idCompaniaSeguroFiltro" class="tamanio-label">Compañía de Seguro</label>
                   <input id="idCompaniaSeguroFiltro" class="form-control form-control-sm" type="text" matInput
                     [formControl]="formulario.get('companiaSeguro')" [matAutocomplete]="autoCompaniaSeguroFiltro"
-                    autocomplete="off">
+                    autocomplete="off" placeholder="Buscar por Nombre">
                   <mat-autocomplete #autoCompaniaSeguroFiltro="matAutocomplete" [displayWith]="displayFn.bind(this)">
                     <mat-option *ngFor="let itemCompaniaSeguro of resultadosCompaniasSeguros"
                       [value]="itemCompaniaSeguro">
@@ -142,7 +142,8 @@
           </form>
         </div>
         <div class="col-md-2">
-          <button *ngIf="!show" mat-raised-button color="primary" (click)="listarPorCompaniaSeguro()">
+          <button *ngIf="!show" mat-raised-button color="primary" (click)="listarPorCompaniaSeguro()"
+          [disabled]="!formulario.get('companiaSeguro').value || !formulario.get('empresa').value">
             Buscar
           </button>
         </div>
@@ -185,7 +186,7 @@
                   matTooltip="Consultar" matTooltipPosition="above" *ngIf="indiceSeleccionado == 5">
                   <mat-icon>search</mat-icon>
                 </button>
-                <button mat-icon-button class="mat-icon-button-table margin-left-3" *ngIf="!soloLectura"
+                <button mat-icon-button class="mat-icon-button-table margin-left-3"
                   (click)="activarActualizar(elemento)" matTooltip="Editar" matTooltipPosition="above">
                   <mat-icon>edit</mat-icon>
                 </button>

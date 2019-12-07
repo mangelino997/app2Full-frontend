@@ -81,7 +81,8 @@
           <div class="form-group has-float-label col-md-5">
             <label for="idCliente" class="tamanio-label">Cliente</label>
             <input id="idCliente" type="text" class="form-control form-control-sm" matInput
-              [formControl]="formulario.get('cliente')" [matAutocomplete]="autoCliente" autocomplete="off">
+              [formControl]="formulario.get('cliente')" [matAutocomplete]="autoCliente" autocomplete="off"
+              placeholder="Buscar por alias">
             <mat-autocomplete #autoCliente="matAutocomplete" [displayWith]="displayF.bind(this)"
               (optionSelected)="cargarDatosCliente()">
               <mat-option *ngFor="let itemCliente of resultadosClientes" [value]="itemCliente">
