@@ -12,7 +12,7 @@
                 <label for="idTramo" class="tamanio-label">Tramo *</label>
                 <input id="idTramo" class="form-control form-control-sm" type="text" matInput
                     [formControl]="formularioViajeTramo.get('tramo')" [matAutocomplete]="autoTramo" autocomplete="off"
-                    [readonly]="soloLectura" placeholder="Buscar por Origen" placeholder="Buscar por nombre de origen"
+                    [readonly]="soloLectura" placeholder="Buscar por Origen" placeholder="Buscar por Nombre de Origen"
                     (blur)="verificarSeleccion(formularioViajeTramo.get('tramo'))">
                 <mat-autocomplete #autoTramo="matAutocomplete" [displayWith]="displayFn.bind(this)"
                     (optionSelected)="establecerKm()">

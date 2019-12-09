@@ -13,8 +13,8 @@ export class Personal {
         this.formulario = new FormGroup({
             id: new FormControl(),
             version: new FormControl(),
-            nombre: new FormControl('', [Validators.required, Validators.maxLength(20)]),
-            apellido: new FormControl('', [Validators.required, Validators.maxLength(20)]),
+            nombre: new FormControl('', [Validators.required, Validators.maxLength(22)]),
+            apellido: new FormControl('', [Validators.required, Validators.maxLength(22)]),
             nombreCompleto: new FormControl('', [Validators.maxLength(40)]),
             tipoDocumento: new FormControl('', Validators.required),
             numeroDocumento: new FormControl('', [Validators.required]),

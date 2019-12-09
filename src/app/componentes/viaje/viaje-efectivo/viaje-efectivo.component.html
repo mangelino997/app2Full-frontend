@@ -1,22 +1,4 @@
 <form [formGroup]="formularioViajeEfectivo">
-  <div class="row" *ngIf="data">
-    <div class="col-md-3 text-center">
-      <h5>Adelantos de Efectivos</h5>
-    </div>
-    <div class="col-md-9 text-center">
-      <h6 class="text-center" *ngIf="data.elemento.esRepartoPropio">
-        Reparto: {{data.elemento.numero}} - Vehículo: {{data.elemento.vehiculo.dominio}} :
-        {{data.elemento.vehiculo.numeroInterno}} - Chofer:
-        {{data.elemento.personal.alias}}
-      </h6>
-      <h6 class="text-center" *ngIf="!data.elemento.esRepartoPropio">
-        Reparto: {{data.elemento.numero}} - Vehículo: {{data.elemento.vehiculoProveedor.dominio}} :
-        {{data.elemento.vehiculoProveedor.numeroInterno}} -
-        Chofer: {{data.elemento.proveedor.alias}}
-      </h6>
-    </div>
-  </div>
-  <br>
   <div class="row">
     <div class="col-md-3">
       <div class="form-group has-float-label">

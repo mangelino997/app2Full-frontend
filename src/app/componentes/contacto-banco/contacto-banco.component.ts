@@ -90,15 +90,18 @@ export class ContactoBancoComponent implements OnInit {
     this.listarTiposContactos();
     //Autocompletado Sucursal Banco - Buscar por nombre
     this.formulario.get('sucursalBanco').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.loaderService.show();
-        this.sucursalBancoServicio.listarPorNombreBanco(data).subscribe(response => {
-          this.resultadosSucursalesBancos = response;
-          this.loaderService.hide();
-        },
-          err => {
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.loaderService.show();
+          this.sucursalBancoServicio.listarPorNombreBanco(data).subscribe(response => {
+            this.resultadosSucursalesBancos = response;
             this.loaderService.hide();
-          })
+          },
+            err => {
+              this.loaderService.hide();
+            })
+        }
       }
     })
   }

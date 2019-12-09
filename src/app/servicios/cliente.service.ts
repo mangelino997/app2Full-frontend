@@ -66,6 +66,10 @@ export class ClienteService {
   public listarPorAliasListaPrecio(alias) {
     return this.http.get(this.url + '/listarPorAliasListaPrecio/' + alias, this.options);
   }
+  //Obtiene todos los listados
+  public inicializar(idUsuario, idRol, idSubopcion) {
+    return this.http.get(this.url + '/inicializar/' + idUsuario + '/' + idRol + '/' + idSubopcion, this.options);
+  }
   //Obtiene una lista de registros por filtros
   public listarPorFiltros(elemento) {
     return this.http.post(this.url + '/listarPorFiltros', elemento, this.options);

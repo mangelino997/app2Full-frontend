@@ -3,6 +3,9 @@ import { AppService } from './servicios/app.service';
 import { Router, RouteConfigLoadStart, RouteConfigLoadEnd } from '@angular/router';
 import 'rxjs/Rx';
 import { ReporteService } from './servicios/reporte.service';
+import { Subscription } from 'rxjs/Rx';
+import { LoaderService } from './servicios/loader.service';
+import { LoaderState } from './modelos/loader';
 
 @Component({
   selector: 'app-root',
@@ -16,6 +19,10 @@ export class AppComponent implements OnInit {
   public subopcion = null;
   public rol:number = null;
   public tema:string;
+  //Define el mostrar del circulo de progreso
+  public show = false;
+  //Define la subscripcion a loader.service
+  private subscription: Subscription;
   //Muestra o no botones de reportes
   public mostrarBtnReportes:boolean = true;
   //Define la lista de botones para dialogos de reportes
@@ -24,7 +31,7 @@ export class AppComponent implements OnInit {
   public loadingRouteConfig: boolean;
   //Constructor
   constructor(private appService: AppService, private router: Router, 
-    private reporteServicio: ReporteService) {
+    private reporteServicio: ReporteService, private loaderService: LoaderService) {
     //Se subscribe al servicio de lista de registros
     // this.appService.listaCompleta.subscribe(res => {
     //   this.obtenerMenu(this.getRol());
@@ -46,6 +53,11 @@ export class AppComponent implements OnInit {
   }
   //Al inicializarse el componente
   ngOnInit(): void {
+    //Establece la subscripcion a loader
+    this.subscription = this.loaderService.loaderState
+      .subscribe((state: LoaderState) => {
+        this.show = state.show;
+      });
     this.router.events.subscribe(event => {
       if (event instanceof RouteConfigLoadStart) {
           this.loadingRouteConfig = true;
@@ -96,13 +108,20 @@ export class AppComponent implements OnInit {
   }
   //Obtiene la lista de modulos para armar el menu
   public obtenerMenu(id, token) {
+    this.loaderService.show();
     this.appService.obtenerMenu(id, token).subscribe(
       res => {
         this.modulos = res.json().modulos;
+        this.loaderService.hide();
       },
       err => {
+        this.loaderService.hide();
       }
     )
+  }
+  //Establece el menu
+  public establecerMenu(modulos): void {
+    this.modulos = modulos;
   }
   //Cambiar contraseña
   public cambiarContrasenia(): void {

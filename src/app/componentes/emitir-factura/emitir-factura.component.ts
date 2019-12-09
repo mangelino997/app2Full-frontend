@@ -74,6 +74,9 @@ export class EmitirFacturaComponent implements OnInit {
   public btnGS: boolean = null;
   //Define el boton 'Agregar Otro Remito' para habilitarlo o no
   public btnRemito: boolean = null;
+  /*
+  ************** REVISAR ITEMFACTURA - TAL VEZ NO SEA UN FORMCONTROL ***************
+  */
   //Define el combo de items a facturar como un formControl
   public itemFactura: FormControl = new FormControl();
   //Define un item, lo guarda para volver atras en caso de que se arrepienta de cambiar de item
@@ -323,7 +326,8 @@ export class EmitirFacturaComponent implements OnInit {
       this.formulario.get('fechaEmision').setValue(this.fechaActual);
       document.getElementById('idFechaEmision').focus();
     }
-  }  //Genera y retorna una fecha segun los parametros que recibe (dias - puede ser + ó -)
+  }  
+  //Genera y retorna una fecha segun los parametros que recibe (dias - puede ser + ó -)
   private generarFecha(dias) {
     console.log(this.fechaActual);
     let fechaActual = new Date(this.fechaActual);
@@ -805,7 +809,7 @@ export class EmitirFacturaComponent implements OnInit {
     this.calcularImporteIva();
   }
   //Calcula el 'Importe Iva' de cada item
-  private calcularImporteIva() {
+  public calcularImporteIva() {
     let subtotal = this.formularioVtaCpteItemFA.get('importeNetoGravado').value;
     let alicuotaIva = this.formularioVtaCpteItemFA.value.afipAlicuotaIva.alicuota
     let importeIva = subtotal * (alicuotaIva / 100);

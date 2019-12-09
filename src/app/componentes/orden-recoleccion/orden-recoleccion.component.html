@@ -1,3 +1,7 @@
+<!-- REVISAR ESTAS LINEAS -->
+<!-- <span class="input-group-text">
+  <mat-icon>date_range</mat-icon>
+</span> -->
 <div id="ordenrecoleccion" class="container-fluid" (window:keydown)="manejarEvento($event.keyCode)">
   <div class="row">
     <div class="col" class="centrar">
@@ -37,7 +41,7 @@
                   <div class="input-group input-group-sm mb-3">
                     <div class="input-group-prepend">
                       <span class="input-group-text">
-                        <mat-icon>date_range</mat-icon>
+                        <!-- <mat-icon>date_range</mat-icon> -->
                       </span>
                     </div>
                     <input id="idFechaEmision" type="text" [formControl]="fechaEmisionFormatoNuevo" autocomplete="off"
@@ -100,7 +104,7 @@
                   <label for="idBarrio" class="tamanio-label">Barrio </label>
                   <input id="idBarrio" class="form-control form-control-sm inline-block" type="text" matInput
                     [formControl]="formulario.get('barrio')" [matAutocomplete]="autoBarrio" autocomplete="off"
-                    (blur)="verificarSeleccion(formulario.get('barrio'))" placeholder="Buscar por nombre">
+                    (blur)="verificarSeleccion(formulario.get('barrio'))" placeholder="Buscar por Nombre">
                   <mat-autocomplete #autoBarrio="matAutocomplete" [displayWith]="displayFn.bind(this)">
                     <mat-option *ngFor="let itemBarrio of resultadosBarrios" [value]="itemBarrio">
                       {{itemBarrio.nombre}}
@@ -134,7 +138,7 @@
               <div class="input-group input-group-sm mb-3">
                 <div class="input-group-prepend">
                   <span class="input-group-text">
-                    <mat-icon>date_range</mat-icon>
+                    <!-- <mat-icon>date_range</mat-icon> -->
                   </span>
                 </div>
                 <input id="idFecha" type="date" formControlName="fecha" autocomplete="off" (change)="verificarFecha()"

@@ -259,6 +259,26 @@ export class VehiculoComponent implements OnInit {
   private establecerElementoYFotoYPdfs(elemento, elementoDatoFalt): void {
     this.formulario.setValue(elemento);
 
+    /* establece los formControls */
+    this.tipoVehiculo.setValue(elemento.configuracionVehiculo.tipoVehiculo);
+    this.marcaVehiculo.setValue(elemento.configuracionVehiculo.marcaVehiculo);
+
+    /* realiza el control de los pdfs*/
+    this.controlarPdf(elemento);
+
+    /* llama a métodos para completar las listas */
+    this.listarCompaniasSeguroPorEmpresa(elementoDatoFalt.empresa, elemento.companiaSeguroPoliza);
+    this.establecerConfiguracion();
+    this.listarConfiguracionesPorTipoVehiculoMarcaVehiculo();
+
+    /* establece compañia de seguro */
+    this.companiaSeguro.patchValue(elemento.companiaSeguroPoliza.companiaSeguro);
+    // this.listarPolizas();
+    // this.companiasSegurosPolizas.length > 0 ? this.formulario.value.companiaSeguroPoliza = elemento.companiaSeguroPoliza : '';
+    console.log(this.formulario.value, this.companiasSegurosPolizas);
+  }
+  //Controla la carga de los pdfs del elemento seleccionado 
+  private controlarPdf(elemento) {
     /* establece los pdfs */
     if (elemento.pdfTitulo) {
       this.formulario.get('pdfTitulo').patchValue(elemento.pdfTitulo);
@@ -284,23 +304,9 @@ export class VehiculoComponent implements OnInit {
       this.formulario.get('pdfHabBromat').patchValue(elemento.pdfHabBromat);
       this.formulario.get('pdfHabBromat.datos').setValue(atob(elemento.pdfHabBromat.datos));
     }
-
-    /* establece los formControls */
-    this.tipoVehiculo.setValue(elemento.configuracionVehiculo.tipoVehiculo);
-    this.marcaVehiculo.setValue(elemento.configuracionVehiculo.marcaVehiculo);
-
-    /* llama a métodos para completar las listas */
-    this.listarCompaniasSeguroPorEmpresa(elementoDatoFalt.empresa);
-    this.establecerConfiguracion();
-    this.listarConfiguracionesPorTipoVehiculoMarcaVehiculo();
-
-    /* establece compañia de seguro */
-    this.companiaSeguro.patchValue(elemento.companiaSeguroPoliza.companiaSeguro);
-    this.listarPolizas();
-    this.formulario.value.companiaSeguroPoliza = elemento.companiaSeguroPoliza;
   }
   //Obtiene la lista de compania de seguros poliza por empresa
-  public listarCompaniasSeguroPorEmpresa(empresa): void {
+  public listarCompaniasSeguroPorEmpresa(empresa, companiaSeguroPoliza): void {
     let idEmpresa;
     this.loaderService.show();
     this.companiaSeguro.reset();
@@ -309,23 +315,31 @@ export class VehiculoComponent implements OnInit {
     this.formulario.get('companiaSeguroPoliza').reset();
 
     /* establece el idEmpresa para la consulta al service */
-    empresa ? [idEmpresa = empresa.id, this.formulario.value.empresa = empresa] : idEmpresa = this.formulario.value.empresa.id;
+    empresa ?
+      [idEmpresa = empresa.id, this.formulario.value.empresa = empresa] : idEmpresa = this.formulario.value.empresa.id;
     if (idEmpresa) {
       this.companiaSeguroService.listarPorEmpresa(idEmpresa).subscribe(res => {
         this.companiasSeguros = res.json();
         this.companiasSeguros.length == 0 ? this.toastr.warning("El Titular no tiene Compañía de Seguro asigandas.") : '';
+        companiaSeguroPoliza ? this.listarPolizas(companiaSeguroPoliza) : '';
       })
     }
     this.loaderService.hide();
   }
-  //Obtiene la lista de polizas por compania de seguro
-  public listarPolizas(): void {
+  /*Obtiene la lista de polizas por compania de seguro. Puede recibir como parámetro la 'companiaSeguroPoliza'
+   (caso Actualizar o Listar) */
+  public listarPolizas(companiaSeguroPoliza): void {
     this.loaderService.show();
     let companiaSeguro = this.companiaSeguro.value;
     this.companiaSeguroPolizaServicio.listarPorCompaniaSeguro(companiaSeguro.id).subscribe(res => {
-      this.loaderService.hide();
       this.companiasSegurosPolizas = res.json();
-    });
+      companiaSeguroPoliza ? this.formulario.value.companiaSeguroPoliza = companiaSeguroPoliza : '';
+      this.loaderService.hide();
+    },
+      err => {
+        this.toastr.error(err.json().mensaje);
+        this.loaderService.hide();
+      });
   }
   //Establece el formulario al seleccionar elemento de autocompletado
   public establecerElemento() {
@@ -692,7 +706,8 @@ export class VehiculoComponent implements OnInit {
   }
   //Carga el archivo PDF 
   public readURL(event, campo): void {
-    let extension = this.formulario.get(campo).value.tipo;
+    // let extension = this.formulario.get(campo).value.tipo; /* no funciona ésta línea */
+    let extension = event.target.files[0].type;
     if (extension == 'application/pdf') {
       const file = event.target.files[0];
       const reader = new FileReader();
@@ -731,6 +746,15 @@ export class VehiculoComponent implements OnInit {
       }
     });
     dialogRef.afterClosed().subscribe(resultado => { });
+  }
+  //Define el mostrado de datos y comparacion en campo select de polizas
+  public compareFp = this.compararFp.bind(this);
+  private compararFp(a, b) {
+    console.log(this.companiasSegurosPolizas, this.formulario.value.companiaSeguroPoliza);
+    console.log(a , b);
+    if (a != null && b != null) {
+      return a === b;
+    }
   }
   //Define el mostrado de datos y comparacion en campo select
   public compareFn = this.compararFn.bind(this);

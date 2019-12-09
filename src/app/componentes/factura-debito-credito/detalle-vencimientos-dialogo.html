@@ -1,3 +1,6 @@
+<!-- 
+    REVISAR LINEA 41 
+-->
 <div class="row justify-content-center padd-20">
     <h5>Detalle Vencimientos</h5>
     <div class="col-md-12 text-center">
@@ -38,8 +41,8 @@
                             </div>
                         </div>
                         <div class="col">
-                            <button id="idBotonConfirmar" mat-raised-button color="primary" (click)="confirmar()"
-                                [disabled]="!condicionCompra || cantidadCuotas==0 || soloLectura">Confirmar</button>
+                            <button id="idBotonConfirmar" mat-raised-button color="primary" (click)="confirmar()">Confirmar</button>
+                                <!-- [disabled]="!condicionCompra || cantidadCuotas==0 || soloLectura">Confirmar</button> -->
                         </div>
                         <div class="col"></div>
                     </div>

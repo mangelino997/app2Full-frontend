@@ -18,7 +18,7 @@
               <label for="idAutocompletado" class="tamanio-label">Buscar </label>
               <input id="idAutocompletado" class="form-control form-control-sm color-busqueda" autocomplete="off"
                 type="text" matInput [formControl]="autocompletado" [matAutocomplete]="auto" placeholder=""
-                (blur)="verificarSeleccion(autocompletado)">
+                (blur)="verificarSeleccion(autocompletado)" placeholder="Por Nombre de Moneda">
               <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)"
                 (optionSelected)="establecerFormulario()">
                 <mat-option *ngFor="let item of resultados" [value]="item">

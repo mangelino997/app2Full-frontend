@@ -8,7 +8,7 @@ import {
   MatSelectModule, MatProgressBarModule, MatIconModule, MatButtonModule, MatDialogModule, MatRadioModule, MatCheckboxModule
 } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { EmitirFacturaComponent, ConceptosVariosDialogo, QuitarItemDialogo, ObservacionDialogo } from 'src/app/componentes/emitir-factura/emitir-factura.component';
+import { EmitirFacturaComponent, ConceptosVariosDialogo, QuitarItemDialogo, ObservacionDialogo, ViajeDialogo } from 'src/app/componentes/emitir-factura/emitir-factura.component';
 import { TextMaskModule } from 'angular2-text-mask';
 import { VentaComprobanteService } from 'src/app/servicios/venta-comprobante.service';
 import { ClienteService } from 'src/app/servicios/cliente.service';
@@ -36,7 +36,8 @@ import { ViajeTramoClienteRemitoService } from 'src/app/servicios/viaje-tramo-cl
     EmitirFacturaComponent,
     ConceptosVariosDialogo,
     QuitarItemDialogo,
-    ObservacionDialogo
+    ObservacionDialogo,
+    ViajeDialogo
   ],
   imports: [
     CommonModule,
@@ -78,13 +79,12 @@ import { ViajeTramoClienteRemitoService } from 'src/app/servicios/viaje-tramo-cl
     AfipCaeService,
     ViajeTramoRemitoService,
     ViajeTramoClienteRemitoService
-    
-
   ],
   entryComponents: [
     ConceptosVariosDialogo,
     QuitarItemDialogo,
-    ObservacionDialogo
+    ObservacionDialogo,
+    ViajeDialogo
   ]
 })
 export class EmitirFacturaModule { }

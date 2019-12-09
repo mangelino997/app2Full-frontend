@@ -95,7 +95,7 @@
                             <input id="idBarrio" class="form-control form-control-sm" type="text" matInput
                               [formControl]="formulario.get('barrio')" [matAutocomplete]="autoBarrio" autocomplete="off"
                               [readonly]="soloLectura" (blur)="verificarSeleccion(formulario.get('barrio'))"
-                              placeholder="Buscar por nombre">
+                              placeholder="Buscar por Nombre">
                             <mat-autocomplete #autoBarrio="matAutocomplete" [displayWith]="displayFa.bind(this)">
                               <mat-option *ngFor="let itemBarrio of resultadosBarrios" [value]="itemBarrio">
                                 {{itemBarrio.nombre}}
@@ -108,7 +108,7 @@
                             <label for="idLocalidad" class="tamanio-label">Localidad *</label>
                             <input id="idLocalidad" class="form-control form-control-sm" type="text" matInput
                               [formControl]="formulario.get('localidad')" [matAutocomplete]="autoLocalidad"
-                              autocomplete="off" [readonly]="soloLectura" placeholder="Buscar por nombre"
+                              autocomplete="off" [readonly]="soloLectura" placeholder="Buscar por Nombre"
                               (blur)="verificarSeleccion(formulario.get('localidad'))">
                             <mat-autocomplete #autoLocalidad="matAutocomplete" [displayWith]="displayFb.bind(this)">
                               <mat-option *ngFor="let itemLocalidad of resultadosLocalidades" [value]="itemLocalidad">
@@ -340,7 +340,7 @@
                       <div class="form-group has-float-label">
                         <label for="idAntiguedadAntAnio" class="tamanio-label">Antigüedad Anterior Años</label>
                         <input id="idAntiguedadAntAnio" [textMask]="mascararEnteros(2)" type="text"
-                          formControlName="antiguedadAntAnio" autocomplete="off"
+                          formControlName="antiguedadAntAnio" autocomplete="off" (blur)="validarAntiguedadAnios()"
                           class="form-control form-control-sm number-right" [readonly]="soloLectura" placeholder="0">
                       </div>
                     </div>
@@ -348,7 +348,7 @@
                       <div class="form-group has-float-label">
                         <label for="idAntiguedadAntMes" class="tamanio-label"> Antigüedad Anterior Meses</label>
                         <input id="idAntiguedadAntMes" [textMask]="mascararEnteros(2)" type="text"
-                          formControlName="antiguedadAntMes" autocomplete="off"
+                          formControlName="antiguedadAntMes" autocomplete="off" (blur)="validarAntiguedadMeses()"
                           class="form-control form-control-sm number-right" [readonly]="soloLectura" placeholder="0">
                       </div>
                     </div>

@@ -59,6 +59,15 @@ export class UsuarioService {
     this.options = new RequestOptions({headers: headers});
     return this.http.get(this.url + '/obtenerPorUsername/' + username, this.options);
   }
+  //Obtiene por username
+  public obtenerUsuario(username, token) {
+    //Establece los headers y el token
+    let headers: Headers = new Headers();
+    headers.append('Content-Type', 'application/json');
+    headers.append('Authorization', token);
+    this.options = new RequestOptions({headers: headers});
+    return this.http.get(this.url + '/obtenerUsuario/' + username, this.options);
+  }
   //Obtiene un listado por nombre
   public listarPorNombre(nombre) {
     return this.http.get(this.url + '/listarPorNombre/' + nombre, this.options).map(res => {

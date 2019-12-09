@@ -44,7 +44,6 @@ import { Pdf } from 'src/app/modelos/pdf';
     Foto,
     Pdf
   ],
-  entryComponents: [
-  ]
+  entryComponents: [ ]
 })
 export class VencimientosChoferesModule { }

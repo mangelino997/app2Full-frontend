@@ -6,11 +6,9 @@ import { CuentaBancariaDialogoRoutingModule } from './cuenta-bancaria-dialogo-ro
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
   MatSelectModule, MatProgressBarModule, MatDialogModule, MatIconModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { CuentaBancariaDialogoComponent } from 'src/app/componentes/cuenta-bancaria-dialogo/cuenta-bancaria-dialogo.component';
 
 @NgModule({
   declarations: [
-    CuentaBancariaDialogoComponent,
   ],
   imports: [
     CommonModule,

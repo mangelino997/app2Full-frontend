@@ -82,6 +82,7 @@ import { TotalesCargaDialogoComponent } from './componentes/emitir-factura/total
 import { TotalesConceptoDialogoComponent } from './componentes/emitir-factura/totales-concepto-dialogo/totales-concepto-dialogo.component';
 import { UsuariosActivosDialogoComponent } from './componentes/empresa/usuarios-activos-dialogo/usuarios-activos.component';
 import { BugImagenDialogoComponent } from './componentes/bugImagen-dialogo/bug-imagen-dialogo.component';
+import { CuentaBancariaDialogoComponent } from './componentes/cuenta-bancaria-dialogo/cuenta-bancaria-dialogo.component';
 
 const stompConfig: StompConfig = {
   url: 'ws://localhost:8080/jitws/socket',
@@ -119,6 +120,7 @@ const stompConfig: StompConfig = {
     TotalesConceptoDialogoComponent,
     UsuariosActivosDialogoComponent,
     BugImagenDialogoComponent,
+    CuentaBancariaDialogoComponent
     // ListaRemitoDialogoComponent
   ],
   imports: [
@@ -227,6 +229,7 @@ const stompConfig: StompConfig = {
     TotalesConceptoDialogoComponent,
     UsuariosActivosDialogoComponent,
     BugImagenDialogoComponent,
+    CuentaBancariaDialogoComponent
   ]
 })
 export class AppModule { }

@@ -33,7 +33,6 @@ import { MensajeExcepcion } from 'src/app/modelos/mensaje-excepcion';
 import { ClienteVtoPago } from 'src/app/modelos/clienteVtoPago';
 import { ClienteCuentaBancariaService } from 'src/app/servicios/cliente-cuenta-bancaria.service';
 import { ClienteVtoPagoService } from 'src/app/servicios/cliente-vto-pago.service';
-import { ConfirmarDialogoComponent } from '../confirmar-dialogo/confirmar-dialogo.component';
 
 @Component({
   selector: 'app-cliente',
@@ -41,6 +40,8 @@ import { ConfirmarDialogoComponent } from '../confirmar-dialogo/confirmar-dialog
   styleUrls: ['./cliente.component.css']
 })
 export class ClienteComponent implements OnInit {
+  //Define el ultimo id
+  public ultimoId:string = null;
   //Define la pestania activa
   public activeLink: any = null;
   //Define el indice seleccionado de pestania
@@ -81,6 +82,8 @@ export class ClienteComponent implements OnInit {
   public botonOpcionActivo: boolean = null;
   //Define el form control para las busquedas
   public autocompletado: FormControl = new FormControl();
+  //Define las listas de incialiacion 
+  public listadosDeInit: FormControl = new FormControl();
   //Define la lista de resultados de busqueda
   public resultados: Array<any> = [];
   //Define la lista de resultados de busqueda de barrio
@@ -95,8 +98,6 @@ export class ClienteComponent implements OnInit {
   public zonas: Array<any> = [];
   //Define la lista de resultados de busqueda de rubro
   public rubros: Array<any> = [];
-  //Define la lista de resultados de busqueda de orden venta
-  public resultadosOrdenesVentas: Array<any> = [];
   //Define la lista de resultados de busqueda de cuenta principal
   public resultadosCuentasGrupos: Array<any> = [];
   //Define la lista de resultados de busqueda de sucursal lugar pago
@@ -134,44 +135,27 @@ export class ClienteComponent implements OnInit {
     private reporteServicio: ReporteService, private clienteCuentaBancariaService: ClienteCuentaBancariaService,
     private clienteVtoPagoService: ClienteVtoPagoService) {
     //Obtiene la lista de pestania por rol y subopcion
-    this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
-      .subscribe(
-        res => {
-          this.pestanias = res.json();
-          this.pestanias.splice(3, 1);
-          this.activeLink = this.pestanias[0].nombre;
-        },
-        err => {
-        }
-      );
-    //Obtiene la lista de opciones por rol y subopcion
-    this.rolOpcionServicio.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
-      .subscribe(
-        res => {
-          this.opciones = res.json();
-          this.render = true;
-        },
-        err => {
-          this.render = true;
-        }
-      );
-    //Autocompletado - Buscar por alias
-    this.autocompletado.valueChanges.subscribe(data => {
-      if (typeof data == 'string') {
-        data = data.trim();
-        if (data == '*' || data.length > 0) {
-          this.loaderService.show();
-          this.servicio.listarPorAlias(data).subscribe(
-            res => {
-              this.resultados = res.json();
-              this.loaderService.hide();
-            },
-            err => {
-              this.loaderService.hide();
-            });
-        }
-      }
-    })
+    // this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
+    //   .subscribe(
+    //     res => {
+    //       this.pestanias = res.json();
+    //       this.pestanias.splice(3, 1);
+    //       this.activeLink = this.pestanias[0].nombre;
+    //     },
+    //     err => {
+    //     }
+    //   );
+    // //Obtiene la lista de opciones por rol y subopcion
+    // this.rolOpcionServicio.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
+    //   .subscribe(
+    //     res => {
+    //       this.opciones = res.json();
+    //       this.render = true;
+    //     },
+    //     err => {
+    //       this.render = true;
+    //     }
+    //   );
   }
   //Al iniciarse el componente
   ngOnInit() {
@@ -193,6 +177,28 @@ export class ClienteComponent implements OnInit {
     this.seleccionarPestania(1, 'Agregar', true);
     //Establece la primera opcion seleccionada
     this.seleccionarOpcion(1, 0);
+    /* 
+    * Obtiene todos los listados: condiciones de iva - tipos de documentos- resumenes de clientes - 
+    * situaciones de clientes - condiciones de venta - sucursales - cobradores -  vendedores - zonas - rubros
+    */
+    this.inicializar(this.appService.getUsuario().id, this.appService.getRol().id, this.appService.getSubopcion());
+    //Autocompletado - Buscar por alias
+    this.autocompletado.valueChanges.subscribe(data => {
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.loaderService.show();
+          this.servicio.listarPorAlias(data).subscribe(
+            res => {
+              this.resultados = res.json();
+              this.loaderService.hide();
+            },
+            err => {
+              this.loaderService.hide();
+            });
+        }
+      }
+    })
     //Autocompletado Barrio - Buscar por nombre
     this.formulario.get('barrio').valueChanges.subscribe(data => {
       if (typeof data == 'string') {
@@ -274,52 +280,99 @@ export class ClienteComponent implements OnInit {
       }
     })
     //Obtiene la lista de condiciones de iva
-    this.listarCondicionesIva();
-    //Obtiene la lista de tipos de documentos
-    this.listarTiposDocumentos();
-    //Obtiene la lista de resumenes de clientes
-    this.listarResumenesClientes();
-    //Obtiene la lista de situaciones de clientes
-    this.listarSituacionesClientes();
-    //Obtiene la lista de condiciones de venta
-    this.listarCondicionesVentas();
-    //Obtiene la lista de sucursales
-    this.listarSucursales();
-    //Obtiene la lista de cobradores
-    this.listarCobradores();
-    //Obtiene la lista de vendedores
-    this.listarVendedores();
-    //Obtiene la lista de zonas
-    this.listarZonas();
-    //Obtiene la lista de rubros
-    this.listarRubros();
+    // this.listarCondicionesIva();
+    // //Obtiene la lista de tipos de documentos
+    // this.listarTiposDocumentos();
+    // //Obtiene la lista de resumenes de clientes
+    // this.listarResumenesClientes();
+    // //Obtiene la lista de situaciones de clientes
+    // this.listarSituacionesClientes();
+    // //Obtiene la lista de condiciones de venta
+    // this.listarCondicionesVentas();
+    // //Obtiene la lista de sucursales
+    // this.listarSucursales();
+    // //Obtiene la lista de cobradores
+    // this.listarCobradores();
+    // //Obtiene la lista de vendedores
+    // this.listarVendedores();
+    // //Obtiene la lista de zonas
+    // this.listarZonas();
+    // //Obtiene la lista de rubros
+    // this.listarRubros();
   }
-  //Crea la lista de planes de cuenta
-  public crearCuentasBancarias(): void {
-    this.loaderService.show();
-    let usuario = this.appService.getUsuario();
-    let token = localStorage.getItem('token');
-    this.usuarioEmpresaService.listarEmpresasActivasDeUsuario(usuario.id, token).subscribe(
+  //Obtiene los datos necesarios para el componente
+  private inicializar(idUsuario, idRol, idSubopcion) {
+    this.render = true;
+    this.servicio.inicializar(idUsuario, idRol, idSubopcion).subscribe(
       res => {
-        let cuentasBancarias = [];
-        let empresas = res.json();
-        let formulario = null;
-        for (let i = 0; i < empresas.length; i++) {
-          formulario = {
-            empresa: empresas[i],
-            cliente: null,
-            cuentaBancaria: null
-          }
-          cuentasBancarias.push(formulario);
-        }
-        this.cuentasBancarias = new MatTableDataSource(cuentasBancarias);
-        this.loaderService.hide();
+        let respuesta = res.json();
+        //Establece las pestanias
+        this.pestanias = respuesta.pestanias;
+        this.pestanias.splice(3, 1);
+        this.activeLink = this.pestanias[0].nombre;
+        //Establece las opciones verticales
+        this.opciones = respuesta.opciones;
+        //Establece demas datos necesarios
+        this.condicionesIva = respuesta.afipCondicionesIvas;
+        this.tiposDocumentos = respuesta.tipoDocumentos;
+        this.resumenesClientes = respuesta.resumenClientes;
+        this.situacionesClientes = respuesta.situacionClientes;
+        this.condicionesVentas = respuesta.condicionVentas;
+        this.resultadosSucursalesPago = respuesta.sucursales;
+        this.cobradores = respuesta.cobradores;
+        this.vendedores = respuesta.vendedores;
+        this.zonas = respuesta.zonas;
+        this.rubros = respuesta.rubros;
+        //Crea cuenta bancaria
+        this.crearCuentasBancarias(respuesta.empresas);
+        this.render = false;
       },
       err => {
-        this.loaderService.hide();
+        this.toastr.error(err.json().mensaje);
+        this.render = false;
       }
-    );
+    )
   }
+  //Crea la lista de planes de cuenta
+  public crearCuentasBancarias(empresas): void {
+    let cuentasBancarias = [];
+    let formulario = null;
+    for (let i = 0; i < empresas.length; i++) {
+      formulario = {
+        empresa: empresas[i],
+          cliente: null,
+          cuentaBancaria: null
+      }
+      cuentasBancarias.push(formulario);
+    }
+    this.cuentasBancarias = new MatTableDataSource(cuentasBancarias);
+    this.loaderService.hide();
+  }
+  // public crearCuentasBancarias(): void {
+  //   this.loaderService.show();
+  //   let usuario = this.appService.getUsuario();
+  //   let token = localStorage.getItem('token');
+  //   this.usuarioEmpresaService.listarEmpresasActivasDeUsuario(usuario.id, token).subscribe(
+  //     res => {
+  //       let cuentasBancarias = [];
+  //       let empresas = res.json();
+  //       let formulario = null;
+  //       for (let i = 0; i < empresas.length; i++) {
+  //         formulario = {
+  //           empresa: empresas[i],
+  //           cliente: null,
+  //           cuentaBancaria: null
+  //         }
+  //         cuentasBancarias.push(formulario);
+  //       }
+  //       this.cuentasBancarias = new MatTableDataSource(cuentasBancarias);
+  //       this.loaderService.hide();
+  //     },
+  //     err => {
+  //       this.loaderService.hide();
+  //     }
+  //   );
+  // }
   //Abre el dialogo Cuenta Bancarias
   public seleccionarCuentaBancaria(elemento) {
     const dialogRef = this.dialog.open(CuentaBancariaDialogoComponent, {
@@ -535,7 +588,6 @@ export class ClienteComponent implements OnInit {
     this.formulario.get('creditoLimite').setValue(elemento.creditoLimite ? this.appService.establecerDecimales(elemento.creditoLimite, 2) : null);
     this.formulario.get('descuentoFlete').setValue(elemento.descuentoFlete ? this.appService.desenmascararPorcentaje(elemento.descuentoFlete.toString(), 2) : null);
     this.formulario.get('descuentoSubtotal').setValue(elemento.descuentoSubtotal ? this.appService.establecerDecimales(elemento.descuentoSubtotal, 2) : null);
-
     /* Si no tiene seguro propio que compañia/poliza/vencimiento no sean readOnly */
     this.cambioTipoSeguro();
     this.cuentasBancarias = new MatTableDataSource(elemento.clienteCuentasBancarias);
@@ -553,14 +605,13 @@ export class ClienteComponent implements OnInit {
     this.formulario.get('descuentoFlete').setValue(this.appService.establecerDecimales('0.00', 2));
     this.formulario.get('descuentoSubtotal').setValue(this.appService.establecerDecimales('0.00', 2));
     this.formulario.get('esReceptorFCE').setValue(false);
-    this.crearCuentasBancarias();
+    // this.crearCuentasBancarias();
   }
   //Vacia la lista de resultados de autocompletados
   private vaciarListas() {
     this.resultados = [];
     this.resultadosBarrios = [];
     this.resultadosLocalidades = [];
-    this.resultadosOrdenesVentas = [];
     this.resultadosCuentasGrupos = [];
     this.resultadosCompaniasSeguros = [];
     this.cuentasBancarias = new MatTableDataSource([]);
@@ -680,11 +731,11 @@ export class ClienteComponent implements OnInit {
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
     if (opcion) {
-      this.reestablecerFormulario(undefined);
+      this.reestablecerFormulario(null);
     }
     switch (id) {
       case 1:
-        this.obtenerSiguienteId();
+        // this.obtenerSiguienteId();
         this.establecerEstadoCampos(true);
         this.establecerValoresPestania(nombre, false, false, true, 'idRazonSocial');
         break;
@@ -779,6 +830,7 @@ export class ClienteComponent implements OnInit {
       res => {
         let respuesta = res.json();
         if (respuesta.codigo == 201) {
+          this.ultimoId = respuesta.id;
           this.reestablecerFormulario(respuesta.id);
           this.establecerValoresPorDefecto();
           this.establecerSituacionCliente();
@@ -805,7 +857,7 @@ export class ClienteComponent implements OnInit {
       res => {
         let respuesta = res.json();
         if (respuesta.codigo == 200) {
-          this.reestablecerFormulario(undefined);
+          this.reestablecerFormulario(null);
           document.getElementById('idAutocompletado').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
