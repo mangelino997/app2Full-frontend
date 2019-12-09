@@ -85,9 +85,9 @@ import { BugImagenDialogoComponent } from './componentes/bugImagen-dialogo/bug-i
 import { CuentaBancariaDialogoComponent } from './componentes/cuenta-bancaria-dialogo/cuenta-bancaria-dialogo.component';
 
 const stompConfig: StompConfig = {
-  // url: 'ws://localhost:8080/jitws/socket',
+  url: 'ws://localhost:8080/jitws/socket',
   // url: 'ws://gestionws.appspot.com:8080/jitws/socket', //LOCAL
-  url: 'ws://rigarws-draimo.appspot.com:8080/jitws/socket', //RIGAR
+  // url: 'ws://rigarws-draimo.appspot.com:8080/jitws/socket', //RIGAR
   // url: 'ws://utews-draimo.appspot.com:8080/jitws/socket', //UTE
   headers: {},
   heartbeat_in: 0,

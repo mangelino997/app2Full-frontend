@@ -12,8 +12,8 @@ export class ContactoCliente {
             cliente: new FormControl('', Validators.required),
             tipoContacto: new FormControl('', Validators.required),
             nombre: new FormControl('', [Validators.required, Validators.maxLength(45)]),
-            telefonoFijo: new FormControl('', Validators.maxLength(45)),
-            telefonoMovil: new FormControl('', Validators.maxLength(45)),
+            telefonoFijo: new FormControl('', Validators.maxLength(11)),
+            telefonoMovil: new FormControl('', Validators.maxLength(13)),
             correoelectronico: new FormControl('', Validators.maxLength(60)),
             usuarioAlta: new FormControl(),
             usuarioMod: new FormControl()

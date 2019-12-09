@@ -65,14 +65,14 @@
           <div class="col-md-4">
             <div class="form-group has-float-label">
               <label id="labelTelefonoFijo" for="idTelefonoFijo" class="tamanio-label">Teléfono Fijo</label>
-              <input id="idTelefonoFijo" type="tel" formControlName="telefonoFijo" autocomplete="off"
+              <input id="idTelefonoFijo" type="number" formControlName="telefonoFijo" autocomplete="off"
                 class="form-control form-control-sm number-right" [readonly]="soloLectura" maxlength="45">
             </div>
           </div>
           <div class="col-md-4">
             <div class="form-group has-float-label">
               <label id="labelTelefonoMovil" for="idTelefonoMovil" class="tamanio-label">Teléfono Móvil</label>
-              <input id="idTelefonoMovil" type="tel" formControlName="telefonoMovil" autocomplete="off"
+              <input id="idTelefonoMovil" type="number" formControlName="telefonoMovil" autocomplete="off"
                 class="form-control form-control-sm number-right" [readonly]="soloLectura" maxlength="45">
             </div>
           </div>
@@ -127,7 +127,7 @@
       <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
         <ng-container matColumnDef="ID">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
-          <td mat-cell *matCellDef="let elemento" class="number-right">{{elemento.id}}</td>
+          <td mat-cell *matCellDef="let elemento; let i=index" class="number-right">{{i+1}}</td>
         </ng-container>
         <ng-container matColumnDef="TIPO_CONTACTO">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Tipo Contacto</th>

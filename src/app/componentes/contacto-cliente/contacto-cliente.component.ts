@@ -184,8 +184,8 @@ export class ContactoClienteComponent implements OnInit {
     this.servicio.listarPorCliente(elemento.id).subscribe(res => {
       if (this.indiceSeleccionado == 5) {
         this.listaCompleta = new MatTableDataSource(res.json());
-        this.listaCompleta.paginator = this.paginator;
         this.listaCompleta.sort = this.sort;
+        this.listaCompleta.paginator = this.paginator;
       } else {
         this.contactos = res.json();
       }
