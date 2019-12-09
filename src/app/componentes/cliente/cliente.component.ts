@@ -172,6 +172,9 @@ export class ClienteComponent implements OnInit {
         }
       }
     })
+    /* Obtiene todos los listados: condiciones de iva - tipos de documentos- resumenes de clientes - 
+      situaciones de clientes - condiciones de venta - sucursales - cobradores -  vendedores - zonas - rubros */
+    this.listarParaInicializar();
   }
   //Al iniciarse el componente
   ngOnInit() {
@@ -293,10 +296,6 @@ export class ClienteComponent implements OnInit {
     // this.listarZonas();
     // //Obtiene la lista de rubros
     // this.listarRubros();
-
-    /* Obtiene todos los listados: condiciones de iva - tipos de documentos- resumenes de clientes - 
-      situaciones de clientes - condiciones de venta - sucursales - cobradores -  vendedores - zonas - rubros */
-    this.listarParaInicializar();
   }
   //
   private listarParaInicializar() {
