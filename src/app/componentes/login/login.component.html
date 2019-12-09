@@ -47,7 +47,7 @@
                     <mat-spinner diameter="40" *ngIf="show"></mat-spinner>
                   </div>
                   <button *ngIf="estaAutenticado && !show" id="idBotonI" mat-raised-button color="primary"
-                    name="buttonI" (click)="ingresar(elemento)" [disabled]="!formulario.valid">Ingresar</button>
+                    name="buttonI" (click)="ingresar()" [disabled]="!formulario.valid">Ingresar</button>
                 </div>
               </form>
             </div>

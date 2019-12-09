@@ -10,7 +10,7 @@ import { MatDialog } from '@angular/material';
 export class AppService {
   //Deifne la URL origen
   private URL_ORIGEN = 'http://localhost:4200'; //LOCAL: localhost// 192.168.0.123
-  // private URL_ORIGEN = 'https://rigar-draimo.appspot.com'; //RIGAR
+  // private URL_ORIGEN = 'http://www.rigar.neurojit.com'; //RIGAR
   // private URL_ORIGEN = 'https://ute-draimo.appspot.com'; //UTE
   //Define la IP
   private IP = 'http://localhost:8080'; //LOCAL

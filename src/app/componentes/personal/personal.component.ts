@@ -1,24 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { PersonalService } from '../../servicios/personal.service';
-import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
-import { RolOpcionService } from '../../servicios/rol-opcion.service';
 import { BarrioService } from '../../servicios/barrio.service';
 import { LocalidadService } from '../../servicios/localidad.service';
-import { SexoService } from '../../servicios/sexo.service';
-import { EstadoCivilService } from '../../servicios/estado-civil.service';
-import { TipoDocumentoService } from '../../servicios/tipo-documento.service';
-import { SucursalService } from '../../servicios/sucursal.service';
-import { AreaService } from '../../servicios/area.service';
-import { CategoriaService } from '../../servicios/categoria.service';
-import { SindicatoService } from '../../servicios/sindicato.service';
-import { SeguridadSocialService } from '../../servicios/seguridad-social.service';
-import { ObraSocialService } from '../../servicios/obra-social.service';
-import { AfipActividadService } from '../../servicios/afip-actividad.service';
-import { AfipCondicionService } from '../../servicios/afip-condicion.service';
-import { AfipLocalidadService } from '../../servicios/afip-localidad.service';
-import { AfipModContratacionService } from '../../servicios/afip-mod-contratacion.service';
-import { AfipSiniestradoService } from '../../servicios/afip-siniestrado.service';
-import { AfipSituacionService } from '../../servicios/afip-situacion.service';
 import { AppService } from '../../servicios/app.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
@@ -32,7 +15,6 @@ import { PdfService } from 'src/app/servicios/pdf.service';
 import { PdfDialogoComponent } from '../pdf-dialogo/pdf-dialogo.component';
 import { BugImagenDialogoComponent } from '../bugImagen-dialogo/bug-imagen-dialogo.component';
 import { ReporteService } from 'src/app/servicios/reporte.service';
-import { FechaService } from 'src/app/servicios/fecha.service';
 
 @Component({
   selector: 'app-personal',
@@ -40,6 +22,8 @@ import { FechaService } from 'src/app/servicios/fecha.service';
   styleUrls: ['./personal.component.css']
 })
 export class PersonalComponent implements OnInit {
+  //Define el ultimo id
+  public ultimoId:string = null;
   //Define la pestania activa
   public activeLink: any = null;
   //Define el indice seleccionado de pestania
@@ -126,46 +110,14 @@ export class PersonalComponent implements OnInit {
   public btnPdfLicConducir: boolean = null;
   public btnPdfLibSanidad: boolean = null;
   public btnPdflinti: boolean = null;
+  //Defiene el render
+  public render: boolean = false;
   //Constructor
-  constructor(private servicio: PersonalService, private subopcionPestaniaService: SubopcionPestaniaService,
-    private appServicio: AppService, private toastr: ToastrService, private personal: Personal,
-    private rolOpcionServicio: RolOpcionService, private barrioServicio: BarrioService,
-    private localidadServicio: LocalidadService, private sexoServicio: SexoService, private loaderService: LoaderService,
-    private estadoCivilServicio: EstadoCivilService, private tipoDocumentoServicio: TipoDocumentoService,
-    private sucursalServicio: SucursalService, private areaServicio: AreaService, private fechaService: FechaService,
-    private categoriaServicio: CategoriaService, private sindicatoServicio: SindicatoService,
-    private seguridadSocialServicio: SeguridadSocialService, private obraSocialServicio: ObraSocialService,
-    private afipActividadServicio: AfipActividadService, private afipCondicionServicio: AfipCondicionService,
-    private afipLocalidadServicio: AfipLocalidadService, private afipModContratacionServicio: AfipModContratacionService,
-    private afipSiniestradoServicio: AfipSiniestradoService, private afipSituacionServicio: AfipSituacionService,
-    private fotoService: FotoService, private pdfServicio: PdfService, public dialog: MatDialog, private reporteServicio: ReporteService) {
-    //Establece la subscripcion a loader
-    this.subscription = this.loaderService.loaderState
-      .subscribe((state: LoaderState) => {
-        this.show = state.show;
-      });
-    this.loaderService.show();
-    //Obtiene la lista de pestania por rol y subopcion
-    this.subopcionPestaniaService.listarPorRolSubopcion(this.appServicio.getRol().id, this.appServicio.getSubopcion())
-      .subscribe(
-        res => {
-          this.pestanias = res.json();
-          this.activeLink = this.pestanias[0].nombre;
-        },
-        err => {
-        }
-      );
-    //Obtiene la lista de opciones por rol y subopcion
-    this.rolOpcionServicio.listarPorRolSubopcion(this.appServicio.getRol().id, this.appServicio.getSubopcion())
-      .subscribe(
-        res => {
-          this.opciones = res.json();
-          this.loaderService.hide();
-        },
-        err => {
-          this.loaderService.hide();
-        }
-      );
+  constructor(private servicio: PersonalService,
+    private appServicio: AppService, private toastr: ToastrService, private personal: Personal, private appService: AppService,
+    private barrioServicio: BarrioService, private localidadServicio: LocalidadService, 
+    private loaderService: LoaderService, private fotoService: FotoService, private pdfServicio: PdfService,
+     public dialog: MatDialog, private reporteServicio: ReporteService) {
     //Autocompletado - Buscar por alias
     this.autocompletado.valueChanges.subscribe(data => {
       let empresa = this.appServicio.getEmpresa();
@@ -187,6 +139,11 @@ export class PersonalComponent implements OnInit {
   }
   //Al iniciarse el componente
   ngOnInit() {
+    //Establece la subscripcion a loader
+    this.subscription = this.loaderService.loaderState
+      .subscribe((state: LoaderState) => {
+        this.show = state.show;
+      });
     //Define los campos para validaciones
     this.formulario = this.personal.formulario;
     //Define los campos para filtrar la tabla 
@@ -202,6 +159,17 @@ export class PersonalComponent implements OnInit {
     this.formularioFiltro.get('idModContratacion').setValue(0);
     this.formularioFiltro.get('idCategoria').setValue(0);
     this.formularioFiltro.get('tipoEmpleado').setValue(0);
+    /* 
+    * Obtiene todos los listados: sexos - estados civiles- tipos de documentos - 
+    * sucursales - areas - sindicatos - categorias
+    */
+    this.inicializar(this.appService.getUsuario().id, this.appService.getRol().id, this.appService.getSubopcion());
+    //Establece los valores de la primera pestania activa
+    this.seleccionarPestania(1, 'Agregar');
+    //Establece la primera opcion seleccionada
+    this.seleccionarOpcion(15, 0);
+    //Establece los valores por defecto
+    this.establecerValoresPorDefecto();
     //Autocompletado Barrio - Buscar por nombre
     this.formulario.get('barrio').valueChanges.subscribe(data => {
       if (typeof data == 'string') {
@@ -218,11 +186,6 @@ export class PersonalComponent implements OnInit {
         }
       }
     })
-    //Establece la fecha emision y registracion
-    this.fechaService.obtenerFecha().subscribe(res => {
-      this.formulario.get('fechaInicio').setValue(res.json());
-      this.fechaActual = res.json();
-    });
     //Autocompletado Localidad - Buscar por nombre
     this.formulario.get('localidad').valueChanges.subscribe(data => {
       if (typeof data == 'string') {
@@ -255,59 +218,46 @@ export class PersonalComponent implements OnInit {
         }
       }
     })
-    //Autocompletado Seguridad Social - Buscar por nombre
-    this.seguridadSocialServicio.listar().subscribe(response => {
-      this.resultadosSeguridadesSociales = response.json();
-    })
-    //Autocompletado Obra Social - Buscar por nombre
-    this.obraSocialServicio.listar().subscribe(response => {
-      this.resultadosObrasSociales = response.json();
-    })
-    //Autocompletado Afip Actividad - Buscar por nombre
-    this.afipActividadServicio.listar().subscribe(response => {
-      this.resultadosAfipActividades = response.json();
-    })
-    //Autocompletado Afip Condicion - Buscar por nombre
-    this.afipCondicionServicio.listar().subscribe(response => {
-      this.resultadosAfipCondiciones = response.json();
-    })
-    //Autocompletado Afip Localidad - Buscar por nombre
-    this.afipLocalidadServicio.listar().subscribe(response => {
-      this.resultadosAfipLocalidades = response.json();
-    })
-    //Autocompletado Afip Mod Contratacion - Buscar por nombre
-    this.afipModContratacionServicio.listar().subscribe(response => {
-      this.resultadosAfipModContrataciones = response.json();
-    })
-    //Autocompletado Afip Siniestrado - Buscar por nombre
-    this.afipSiniestradoServicio.listar().subscribe(response => {
-      this.resultadosAfipSiniestrados = response.json();
-    })
-    //Autocompletado Afip Situacion - Buscar por nombre
-    this.afipSituacionServicio.listar().subscribe(response => {
-      this.resultadosAfipSituaciones = response.json();
-    })
-    //Establece los valores de la primera pestania activa
-    this.seleccionarPestania(1, 'Agregar');
-    //Establece la primera opcion seleccionada
-    this.seleccionarOpcion(15, 0);
-    //Obtiene la lista de sexos
-    this.listarSexos();
-    //Obtiene la lista de estados civiles
-    this.listarEstadosCiviles();
-    //Obtiene la lista de tipos de documentos
-    this.listarTiposDocumentos();
-    //Obtiene la lista de sucursales
-    this.listarSucursales();
-    //Obtiene la lista de areas
-    this.listarAreas();
-    //Obtiene la lista de sindicatos
-    this.listarSindicatos();
-    //Obtiene la lista de cateogrias
-    this.listarCategorias();
-    //Establece los valores por defecto
-    this.establecerValoresPorDefecto();
-
+  }
+  //Obtiene los datos necesarios para el componente
+  private inicializar(idUsuario, idRol, idSubopcion) {
+    this.render = true;
+    this.servicio.inicializar(idUsuario, idRol, idSubopcion).subscribe(
+      res => {
+        console.log(res.json());
+        let respuesta = res.json();
+        //Establece las pestanias
+        this.pestanias = respuesta.pestanias;
+        this.activeLink = this.pestanias[0].nombre;
+        //Establece las opciones verticales
+        this.opciones = respuesta.opciones;
+        //Establece demas datos necesarios
+        this.ultimoId = respuesta.ultimoId;
+        this.sexos = respuesta.sexos;
+        this.areas = respuesta.areas;
+        this.fechaActual = respuesta.fecha;
+        this.sucursales = respuesta.sucursales;
+        this.sindicatos = respuesta.sindicatos;
+        this.estadosCiviles = respuesta.estadoCiviles;
+        this.tiposDocumentos = respuesta.tipoDocumentos;
+        this.resultadosCategorias = respuesta.categorias;
+        this.resultadosObrasSociales = respuesta.obraSociales;
+        this.resultadosAfipSituaciones = respuesta.afipSituacion;
+        this.resultadosAfipActividades = respuesta.afipActividades;
+        this.resultadosAfipCondiciones = respuesta.afipCondiciones;
+        this.resultadosAfipLocalidades = respuesta.afipLocalidades;
+        this.resultadosAfipSiniestrados = respuesta.afipSiniestrados;
+        this.resultadosSeguridadesSociales = respuesta.seguridadSociales;
+        this.resultadosAfipModContrataciones = respuesta.afipModContrataciones;
+        this.formulario.get('fechaInicio').setValue(respuesta.fecha);
+        this.formulario.get('tipoDocumento').setValue(this.tiposDocumentos[7]);
+        this.render = false;
+      },
+      err => {
+        this.toastr.error(err.json().mensaje);
+        this.render = false;
+      }
+    )
   }
   //Obtiene la mascara de enteros
   public mascararEnteros(intLimite) {
@@ -412,18 +362,8 @@ export class PersonalComponent implements OnInit {
       this.btnPdflinti = false;
     }
   }
-  //Obtiene el listado de sexos
-  private listarSexos() {
-    this.sexoServicio.listar().subscribe(
-      res => {
-        this.sexos = res.json();
-      },
-      err => {
-      }
-    );
-  }
   //Controla el rango valido para la fecha de emision cuando el punto de venta es feCAEA
-  private verificarFecha(opcion) {
+  public verificarFecha(opcion) {
     switch (opcion) {
 
       /* opcion == 1 para validar Fecha de Nacimiento*/
@@ -474,67 +414,6 @@ export class PersonalComponent implements OnInit {
           let elemento = res.json();
           this.establecerFotoYPdfs(elemento);
         }
-      },
-      err => {
-      }
-    );
-  }
-  //Obtiene el listado de estados civiles
-  private listarEstadosCiviles() {
-    this.estadoCivilServicio.listar().subscribe(
-      res => {
-        this.estadosCiviles = res.json();
-      },
-      err => {
-      }
-    );
-  }
-  //Obtiene el listado de tipos de documentos
-  private listarTiposDocumentos() {
-    this.tipoDocumentoServicio.listar().subscribe(
-      res => {
-        this.tiposDocumentos = res.json();
-        this.formulario.get('tipoDocumento').setValue(this.tiposDocumentos[7]);
-      },
-      err => {
-      }
-    );
-  }
-  //Obtiene el listado de sucursales
-  private listarSucursales() {
-    this.sucursalServicio.listar().subscribe(
-      res => {
-        this.sucursales = res.json();
-      },
-      err => {
-      }
-    );
-  }
-  //Obtiene el listado de areas
-  private listarAreas() {
-    this.areaServicio.listar().subscribe(
-      res => {
-        this.areas = res.json();
-      },
-      err => {
-      }
-    );
-  }
-  //Obtiene el listado de sindicatos
-  private listarSindicatos() {
-    this.sindicatoServicio.listar().subscribe(
-      res => {
-        this.sindicatos = res.json();
-      },
-      err => {
-      }
-    );
-  }
-  //Obtiene el listado de categorias
-  private listarCategorias() {
-    this.categoriaServicio.listar().subscribe(
-      res => {
-        this.resultadosCategorias = res.json();
       },
       err => {
       }
@@ -636,10 +515,9 @@ export class PersonalComponent implements OnInit {
   public seleccionarPestania(id, nombre) {
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    this.reestablecerFormulario(undefined);
+    this.reestablecerFormulario(null);
     switch (id) {
       case 1:
-        this.obtenerSiguienteId();
         this.establecerValoresPorDefecto();
         this.establecerEstadoCampos(true, 1);
         this.establecerValoresPestania(nombre, false, false, true, 'idApellido');
@@ -724,30 +602,30 @@ export class PersonalComponent implements OnInit {
     }
   }
   //Obtiene el siguiente id
-  private obtenerSiguienteId() {
-    this.servicio.obtenerSiguienteId().subscribe(
-      res => {
-        this.formulario.get('id').setValue(res.json());
-      },
-      err => {
-      }
-    );
-  }
+  // private obtenerSiguienteId() {
+  //   this.servicio.obtenerSiguienteId().subscribe(
+  //     res => {
+  //       this.formulario.get('id').setValue(res.json());
+  //     },
+  //     err => {
+  //     }
+  //   );
+  // }
   //Obtiene el listado de registros
-  private listar() {
-    this.loaderService.show();
-    this.servicio.listar().subscribe(
-      res => {
-        this.listaCompleta = new MatTableDataSource(res.json());
-        this.listaCompleta.sort = this.sort;
-        this.listaCompleta.paginator = this.paginator;
-        this.loaderService.hide();
-      },
-      err => {
-        this.loaderService.hide();
-      }
-    );
-  }
+  // private listar() {
+  //   this.loaderService.show();
+  //   this.servicio.listar().subscribe(
+  //     res => {
+  //       this.listaCompleta = new MatTableDataSource(res.json());
+  //       this.listaCompleta.sort = this.sort;
+  //       this.listaCompleta.paginator = this.paginator;
+  //       this.loaderService.hide();
+  //     },
+  //     err => {
+  //       this.loaderService.hide();
+  //     }
+  //   );
+  // }
   //Agrega un registro
   private agregar() {
     this.loaderService.show();
@@ -761,6 +639,7 @@ export class PersonalComponent implements OnInit {
         let respuesta = res.json();
         if (res.status == 201) {
           respuesta.then(data => {
+            this.ultimoId = data.id;
             this.reestablecerFormulario(data.id);
             this.formulario.get('tipoDocumento').setValue(this.tiposDocumentos[7]);
             document.getElementById('idApellido').focus();
@@ -796,7 +675,7 @@ export class PersonalComponent implements OnInit {
         let respuesta = res.json();
         if (res.status == 200) {
           respuesta.then(data => {
-            this.reestablecerFormulario(undefined);
+            this.reestablecerFormulario(null);
             document.getElementById('idAutocompletado').focus();
             this.toastr.success(data.mensaje);
             this.loaderService.hide();
@@ -816,7 +695,7 @@ export class PersonalComponent implements OnInit {
       res => {
         let respuesta = res.json();
         if (res.status == 200) {
-          this.reestablecerFormulario(undefined);
+          this.reestablecerFormulario(null);
           this.toastr.success(respuesta.mensaje);
           document.getElementById('idAutocompletado').focus();
         }
@@ -837,10 +716,11 @@ export class PersonalComponent implements OnInit {
   }
   //Reestablece los campos agregar
   private reestablecerFormulario(id) {
+    this.resultados = [];
     this.formulario.reset();
     this.autocompletado.reset();
     this.nacionalidadNacimiento.reset();
-    this.resultados = [];
+    id ? this.formulario.get('id').setValue(id) : this.formulario.get('id').setValue(this.ultimoId);
   }
   //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
   private lanzarError(err) {
@@ -1080,7 +960,6 @@ export class PersonalComponent implements OnInit {
   }
   //Obtiene el dni para mostrarlo
   public verDni() {
-    console.log(this.formulario.get('pdfDni').value);
     let nombre = this.formulario.get('pdfDni').value.nombre;
     let extension = nombre.split('.');
     if (extension[1] == 'pdf') {
@@ -1261,10 +1140,8 @@ export class PersonalComponent implements OnInit {
   //obtiene la lista por filtros
   public listarPorFiltros(): void {
     this.loaderService.show();
-    console.log(this.formularioFiltro.value);
     this.servicio.listarPorFiltros(this.formularioFiltro.value).subscribe(
       res => {
-        console.log(res.json());
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
         this.listaCompleta.paginator = this.paginator;

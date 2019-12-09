@@ -14,13 +14,11 @@ import { ModuloService } from 'src/app/servicios/modulo.service';
 import { SubopcionService } from 'src/app/servicios/subopcion.service';
 import { SubmoduloService } from 'src/app/servicios/submodulo.service';
 import { BugImagenService } from 'src/app/servicios/bug-imagen.service';
-import { BugImagenDialogoComponent } from 'src/app/componentes/bugImagen-dialogo/bug-imagen-dialogo.component';
 import { BugImagen } from 'src/app/modelos/bugImagen';
 
 @NgModule({
   declarations: [
-    SoporteComponent,
-    BugImagenDialogoComponent
+    SoporteComponent
   ],
   imports: [
     CommonModule,
@@ -49,8 +47,6 @@ import { BugImagen } from 'src/app/modelos/bugImagen';
     BugImagenService,
     BugImagen
   ],
-  entryComponents: [
-    BugImagenDialogoComponent
-  ]
+  entryComponents: [ ]
 })
 export class SoporteModule { }

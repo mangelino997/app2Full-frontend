@@ -10,10 +10,6 @@ import { ProductoComponent } from 'src/app/componentes/producto/producto.compone
 import { TextMaskModule } from 'angular2-text-mask';
 import { ProductoService } from 'src/app/servicios/producto.service';
 import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
-import { RubroService } from 'src/app/servicios/rubro.service';
-import { UnidadMedidaService } from 'src/app/servicios/unidad-medida.service';
-import { MarcaProductoService } from 'src/app/servicios/marca-producto.service';
-import { RubroProductoService } from 'src/app/servicios/rubro-producto.service';
 import { InsumoProducto } from 'src/app/modelos/insumoProducto';
 
 @NgModule({
@@ -42,10 +38,6 @@ import { InsumoProducto } from 'src/app/modelos/insumoProducto';
     ProductoService,
     InsumoProducto,
     SubopcionPestaniaService,
-    RubroService,
-    UnidadMedidaService,
-    MarcaProductoService,
-    RubroProductoService
   ]
 })
 export class ProductoModule { }

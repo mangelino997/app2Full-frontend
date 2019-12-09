@@ -26,7 +26,6 @@ import { SituacionClienteService } from 'src/app/servicios/situacion-cliente.ser
 import { CompaniaSeguroService } from 'src/app/servicios/compania-seguro.service';
 import { CondicionVentaService } from 'src/app/servicios/condicion-venta.service';
 import { UsuarioEmpresaService } from 'src/app/servicios/usuario-empresa.service';
-import { CuentaBancariaDialogoComponent } from 'src/app/componentes/cuenta-bancaria-dialogo/cuenta-bancaria-dialogo.component';
 import { CuentaBancariaService } from 'src/app/servicios/cuenta-bancaria.service';
 import { OrdenVentaService } from 'src/app/servicios/orden-venta.service';
 import { ClienteOrdenVentaService } from 'src/app/servicios/cliente-orden-venta.service';
@@ -38,7 +37,6 @@ import { ClienteVtoPagoService } from 'src/app/servicios/cliente-vto-pago.servic
 @NgModule({
   declarations: [
     ClienteComponent,
-    CuentaBancariaDialogoComponent,
     ListasDePreciosDialog,
     CambiarOVporDefectoDialogo,
     VtoPagosDialogo
@@ -93,7 +91,6 @@ import { ClienteVtoPagoService } from 'src/app/servicios/cliente-vto-pago.servic
     ClienteVtoPagoService
   ],
   entryComponents: [
-    CuentaBancariaDialogoComponent,
     ListasDePreciosDialog,
     CambiarOVporDefectoDialogo,
     VtoPagosDialogo

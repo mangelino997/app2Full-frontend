@@ -6,13 +6,14 @@ import { UsuarioEmpresaRoutingModule } from './usuario-empresa-routing.module';
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
   MatSelectModule, MatProgressBarModule, MatButtonModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { UsuarioEmpresaComponent } from 'src/app/componentes/usuario-empresa/usuario-empresa.component';
+import { UsuarioEmpresaComponent, UsuarioEmpresaDialog } from 'src/app/componentes/usuario-empresa/usuario-empresa.component';
 import { UsuarioEmpresaService } from 'src/app/servicios/usuario-empresa.service';
 import { UsuarioEmpresa } from 'src/app/modelos/usuarioEmpresa';
 
 @NgModule({
   declarations: [
     UsuarioEmpresaComponent,
+    UsuarioEmpresaDialog
   ],
   imports: [
     CommonModule,
@@ -31,6 +32,9 @@ import { UsuarioEmpresa } from 'src/app/modelos/usuarioEmpresa';
   providers: [
     UsuarioEmpresaService,
     UsuarioEmpresa,
+  ],
+  entryComponents: [
+    UsuarioEmpresaDialog
   ]
 })
 export class UsuarioEmpresaModule { }

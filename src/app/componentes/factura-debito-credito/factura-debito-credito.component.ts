@@ -734,7 +734,7 @@ export class FacturaDebitoCreditoComponent implements OnInit {
     this.listaCompleta.data.length == 0 ? this.establecerImportesPorDefecto() : this.calcularImportes();
   }
   //Reestablece el formulario
-  private reestablecerFormulario() {
+  public reestablecerFormulario() {
     this.formulario.reset();
     this.formularioDatosProveedor.reset();
     this.obtenerFecha();
@@ -1148,7 +1148,7 @@ export class AgregarItemDialogo {
       this.formulario.get('afipAlicuotaIva').setValue(this.data.proveedor.afipCondicionIva) : '';
   }
   //Reestablece el Formulario y los FormControls
-  private reestablecerFormulario() {
+  public reestablecerFormulario() {
     this.netoITC.reset();
     this.formulario.reset();
     this.importeITC.reset();

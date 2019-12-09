@@ -463,10 +463,8 @@ export class VencimientosChoferesComponent implements OnInit {
   //obtiene la lista por filtros
   public listarChoferesPorFiltros(): void {
     this.loaderService.show();
-    console.log(this.formularioFiltro.value);
     this.personalServicio.listarChoferesPorFiltros(this.formularioFiltro.value).subscribe(
       res => {
-        console.log(res.json());
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
         this.listaCompleta.paginator = this.paginator;

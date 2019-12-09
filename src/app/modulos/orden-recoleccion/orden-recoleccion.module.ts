@@ -15,7 +15,6 @@ import { LocalidadService } from 'src/app/servicios/localidad.service';
 import { ClienteService } from 'src/app/servicios/cliente.service';
 import { BarrioService } from 'src/app/servicios/barrio.service';
 import { SucursalService } from 'src/app/servicios/sucursal.service';
-import { ClienteEventualComponent } from 'src/app/componentes/cliente-eventual/cliente-eventual.component';
 import { AfipCondicionIvaService } from 'src/app/servicios/afip-condicion-iva.service';
 import { TipoDocumentoService } from 'src/app/servicios/tipo-documento.service';
 import { ZonaService } from 'src/app/servicios/zona.service';
@@ -25,9 +24,7 @@ import { CobradorService } from 'src/app/servicios/cobrador.service';
 
 @NgModule({
   declarations: [
-    OrdenRecoleccionComponent,
-    ClienteEventualComponent,
-    
+    OrdenRecoleccionComponent
   ],
   imports: [
     CommonModule,
@@ -63,9 +60,6 @@ import { CobradorService } from 'src/app/servicios/cobrador.service';
     RubroService,
     ClienteEventual
   ],
-  entryComponents: [
-    ClienteEventualComponent,
-    
-  ]
+  entryComponents: []
 })
 export class OrdenRecoleccionModule { }

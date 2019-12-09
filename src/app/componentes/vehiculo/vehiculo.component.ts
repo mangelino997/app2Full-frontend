@@ -20,7 +20,6 @@ import { CompaniaSeguroService } from 'src/app/servicios/compania-seguro.service
 import { PdfService } from 'src/app/servicios/pdf.service';
 import { PdfDialogoComponent } from '../pdf-dialogo/pdf-dialogo.component';
 import { ReporteService } from 'src/app/servicios/reporte.service';
-import { ChoferProveedorService } from 'src/app/servicios/chofer-proveedor.service';
 
 @Component({
   selector: 'app-vehiculo',
@@ -28,6 +27,8 @@ import { ChoferProveedorService } from 'src/app/servicios/chofer-proveedor.servi
   styleUrls: ['./vehiculo.component.css']
 })
 export class VehiculoComponent implements OnInit {
+  //Define el ultimo id
+  public ultimoId: string = null;
   //Define la pestania activa
   public activeLink: any = null;
   //Define el indice seleccionado de pestania
@@ -92,6 +93,8 @@ export class VehiculoComponent implements OnInit {
   public show = false;
   //Define la subscripcion a loader.service
   private subscription: Subscription;
+  //Defiene el render
+  public render: boolean = false;
   //Define las columnas de la tabla
   public columnas: string[] = ['DOMINIO', 'ID', 'TIPO_VEHICULO', 'MARCA_VEHICULO', 'CONFIGURACION', 'COMPAÑIA_SEGURO', 'POLIZA', 'PDF_TITULO',
     'PDF_CEDULA_IDENT', 'PDF_VTO_RUTA', 'PDF_INSP_TECNICA', 'PDF_VTO_SENASA', 'PDF_HAB_BROMAT', 'EDITAR'];
@@ -108,15 +111,15 @@ export class VehiculoComponent implements OnInit {
     private configuracionVehiculoServicio: ConfiguracionVehiculoService, private pdfServicio: PdfService, public dialog: MatDialog,
     private personalServicio: PersonalService, private vehiculoModelo: Vehiculo, private appService: AppService, private reporteServicio: ReporteService) {
     //Obtiene la lista de pestania por rol y subopcion
-    this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
-      .subscribe(
-        res => {
-          this.pestanias = res.json();
-          this.activeLink = this.pestanias[0].nombre;
-        },
-        err => {
-        }
-      );
+    // this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
+    //   .subscribe(
+    //     res => {
+    //       this.pestanias = res.json();
+    //       this.activeLink = this.pestanias[0].nombre;
+    //     },
+    //     err => {
+    //     }
+    //   );
     //Autocompletado - Buscar por alias
     this.autocompletado.valueChanges.subscribe(data => {
       if (typeof data == 'string') {
@@ -149,6 +152,13 @@ export class VehiculoComponent implements OnInit {
       marcaVehiculo: new FormControl('', Validators.required),
       empresa: new FormControl('', Validators.required)
     });
+    /* 
+    * Obtiene todos los listados: sexos - estados civiles- tipos de documentos - 
+    * sucursales - areas - sindicatos - categorias
+    */
+    this.inicializar(this.appService.getRol().id, this.appService.getSubopcion());
+    //Establece los valores de la primera pestania activa
+    this.seleccionarPestania(1, 'Agregar');
     //Autocompletado - Buscar por alias filtro remolque
     this.formulario.get('vehiculoRemolque').valueChanges.subscribe(data => {
       if (typeof data == 'string') {
@@ -213,14 +223,35 @@ export class VehiculoComponent implements OnInit {
         }
       }
     })
-    //Establece los valores de la primera pestania activa
-    this.seleccionarPestania(1, 'Agregar');
     //Obtiene la lista de tipos de vehiculos
     this.listarTiposVehiculos();
     //Obtiene la lista de marcas de vehiculos
     this.listarMarcasVehiculos();
     //Obtiene la lista de empresas
     this.listarEmpresas();
+  }
+  //Obtiene los datos necesarios para el componente
+  private inicializar(idRol, idSubopcion) {
+    this.render = true;
+    this.servicio.inicializar(idRol, idSubopcion).subscribe(
+      res => {
+        let respuesta = res.json();
+        //Establece las pestanias
+        this.pestanias = respuesta.pestanias;
+        this.activeLink = this.pestanias[0].nombre;
+        //Establece demas datos necesarios
+        this.ultimoId = respuesta.ultimoId;
+        this.empresas = respuesta.empresas;
+        this.tiposVehiculos = respuesta.tipoVehiculos;
+        this.marcasVehiculos = respuesta.marcaVehiculos;
+        this.formulario.get('id').setValue(this.ultimoId);
+        this.render = false;
+      },
+      err => {
+        this.toastr.error(err.json().mensaje);
+        this.render = false;
+      }
+    )
   }
   //Obtiene la lista de tipos de vehiculos
   private listarTiposVehiculos() {
@@ -275,7 +306,6 @@ export class VehiculoComponent implements OnInit {
     this.companiaSeguro.patchValue(elemento.companiaSeguroPoliza.companiaSeguro);
     // this.listarPolizas();
     // this.companiasSegurosPolizas.length > 0 ? this.formulario.value.companiaSeguroPoliza = elemento.companiaSeguroPoliza : '';
-    console.log(this.formulario.value, this.companiasSegurosPolizas);
   }
   //Controla la carga de los pdfs del elemento seleccionado 
   private controlarPdf(elemento) {
@@ -402,7 +432,6 @@ export class VehiculoComponent implements OnInit {
     this.reestablecerFormulario(undefined);
     switch (id) {
       case 1:
-        this.obtenerSiguienteId();
         this.establecerCamposSoloLectura(false);
         this.establecerValoresPestania(nombre, false, false, true, true, 'idTipoVehiculo');
         break;
@@ -445,15 +474,15 @@ export class VehiculoComponent implements OnInit {
     }
   }
   //Obtiene el siguiente id
-  private obtenerSiguienteId() {
-    this.servicio.obtenerSiguienteId().subscribe(
-      res => {
-        this.formulario.get('id').setValue(res.json());
-      },
-      err => {
-      }
-    );
-  }
+  // private obtenerSiguienteId() {
+  //   this.servicio.obtenerSiguienteId().subscribe(
+  //     res => {
+  //       this.formulario.get('id').setValue(res.json());
+  //     },
+  //     err => {
+  //     }
+  //   );
+  // }
   //Obtiene el listado de registros
   public listarTodos() {
     this.loaderService.show();
@@ -547,6 +576,7 @@ export class VehiculoComponent implements OnInit {
         let respuesta = res.json();
         if (res.status == 201) {
           respuesta.then(data => {
+            this.ultimoId = data.id;
             this.reestablecerFormulario(data.id);
             document.getElementById('idTipoVehiculo').focus();
             this.toastr.success(data.mensaje);
@@ -750,8 +780,6 @@ export class VehiculoComponent implements OnInit {
   //Define el mostrado de datos y comparacion en campo select de polizas
   public compareFp = this.compararFp.bind(this);
   private compararFp(a, b) {
-    console.log(this.companiasSegurosPolizas, this.formulario.value.companiaSeguroPoliza);
-    console.log(a , b);
     if (a != null && b != null) {
       return a === b;
     }

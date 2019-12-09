@@ -27,15 +27,16 @@ export class LoginComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define el token
-  private token:any;
+  private token: any;
   //Define si tiene rol secundario
-  public rolSecundario:boolean = false;
+  public rolSecundario: boolean = false;
   //Define la lista de roles
-  public roles:Array<any> = [];
+  public roles: Array<any> = [];
+  //Define el LoginDTO
+  public loginDTO:any = {};
   //Constructor
   constructor(private loginService: LoginService, private usuarioService: UsuarioService,
-    private usuarioEmpresaService: UsuarioEmpresaService, private appService: AppService,
-    private router: Router, private loaderService: LoaderService,
+    private appService: AppService, private router: Router, private loaderService: LoaderService,
     private appComponent: AppComponent, private toast: ToastrService) {
   }
   //Al inicializarse el componente
@@ -66,61 +67,59 @@ export class LoginComponent implements OnInit {
           //Establece logueado en true
           this.loginService.setLogueado(true);
           this.estaAutenticado = true;
-          //Obtiene el usuario por username
-          this.usuarioService.obtenerPorUsername(username, this.token).subscribe(
-            res => {
-              let usuario = res.json();
-              this.appService.setUsuario(usuario);
-              if(!usuario.rolSecundario) {
-                this.rolSecundario = false;
-                //Establece el rol actual
-                this.appService.setRol(usuario.rol);
-                //Obtiene el menu del rol principal
-                this.appComponent.obtenerMenu(usuario.rol.id, this.token);
-              } else {
-                this.rolSecundario = true;
-                this.roles.push(usuario.rol);
-                this.roles.push(usuario.rolSecundario);
-              }
-              //Obtiene el listado de empresas activas por usuario
-              this.usuarioEmpresaService.listarEmpresasActivasDeUsuario(res.json().id, this.token).subscribe(
-                res => {
-                  this.empresas = res.json();
-                  setTimeout(function () {
-                    document.getElementById('idEmpresa').focus();
-                  }, 20);
-                  this.loaderService.hide();
-                },
-                err => {
-                  this.loaderService.hide();
-                }
-              );
-            },
-            err => {
-              this.loaderService.hide();
-            }
-          );
+          //Obtiene el usuario y sus datos
+          this.obtenerUsuario(username, this.token);
         } else {
           this.loginService.setLogueado(false);
           this.loaderService.hide();
         }
       },
-      err => {
-        this.loginService.setLogueado(false);
-        this.toast.error('o cuenta no habilitada', 'Usuario o contraseña incorrecto');
+        err => {
+          this.loginService.setLogueado(false);
+          this.toast.error('o cuenta no habilitada', 'Usuario o contraseña incorrecto');
+          this.loaderService.hide();
+        });
+  }
+  //Obtiene el usuario, sus empresas y su menu
+  private obtenerUsuario(username, token): void {
+    this.loaderService.show();
+    this.usuarioService.obtenerUsuario(username, token).subscribe(
+      res => {
+        let respuesta = res.json();
+        this.loginDTO = respuesta;
+        let usuario = respuesta.usuario;
+        this.appService.setUsuario(usuario);
+        if (!usuario.rolSecundario) {
+          this.rolSecundario = false;
+          //Establece el rol actual
+          this.appService.setRol(usuario.rol);
+          //Obtiene el menu del rol principal
+          this.appComponent.establecerMenu(respuesta.menuPrincipalDTO.modulos);
+        } else {
+          this.rolSecundario = true;
+          this.roles.push(usuario.rol);
+          this.roles.push(usuario.rolSecundario);
+        }
+        this.empresas = respuesta.empresas;
+        setTimeout(function () {
+          document.getElementById('idEmpresa').focus();
+        }, 20);
         this.loaderService.hide();
-      });
+      },
+      err => {
+        this.loaderService.hide();
+      }
+    );
   }
   //Define un metodo para ingreso una vez logueado el usuario y seleccionado una empresa
   public ingresar() {
     if (this.estaAutenticado === true) {
       //Obtiene el rol seleccionado
       let rol = this.formulario.get('rol').value;
-      if(rol) {
+      if (rol) {
         //Establece el rol
         this.appService.setRol(rol);
-        //Obtiene el menu
-        this.appComponent.obtenerMenu(rol.id, this.token);
+        //Establece el menu
       }
       //Establece la empresa
       let empresa = this.formulario.get('empresa').value;
@@ -149,7 +148,7 @@ export class LoginComponent implements OnInit {
   //Funcion para comparar y mostrar elemento de campo select
   public compareFn = this.compararFn.bind(this);
   private compararFn(a, b) {
-    if(a != null && b != null) {
+    if (a != null && b != null) {
       return a.id === b.id;
     }
   }

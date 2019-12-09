@@ -7,8 +7,6 @@ import { RepartoComprobanteRoutingModule } from './reparto-comprobante-routing-m
 import { RepartoComprobante } from 'src/app/modelos/repartoComprobante';
 @NgModule({
   declarations: [
-    // RepartoComprobanteComponent,
-    RepartoComprobanteModule
   ],
   imports: [
     CommonModule,
@@ -39,8 +37,6 @@ import { RepartoComprobante } from 'src/app/modelos/repartoComprobante';
     // SeguimientoOrdenRecoleccionService,
     // SeguimientoViajeRemitoService,
     // SeguimientoVentaComprobanteService,
-    
-
   ],
   entryComponents: [
   ]
