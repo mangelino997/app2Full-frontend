@@ -1,7 +1,5 @@
 import { Component, OnInit, ViewChild, Inject } from '@angular/core';
 import { ClienteService } from '../../servicios/cliente.service';
-import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
-import { RolOpcionService } from '../../servicios/rol-opcion.service';
 import { BarrioService } from '../../servicios/barrio.service';
 import { LocalidadService } from '../../servicios/localidad.service';
 import { CobradorService } from '../../servicios/cobrador.service';
@@ -122,9 +120,8 @@ export class ClienteComponent implements OnInit {
   //Defiene el render
   public render: boolean = false;
   //Constructor
-  constructor(private servicio: ClienteService, private subopcionPestaniaService: SubopcionPestaniaService,
-    private appService: AppService, private toastr: ToastrService,
-    private rolOpcionServicio: RolOpcionService, private barrioServicio: BarrioService,
+  constructor(private servicio: ClienteService, private appService: AppService, 
+    private toastr: ToastrService, private barrioServicio: BarrioService,
     private localidadServicio: LocalidadService, private cobradorServicio: CobradorService,
     private vendedorServicio: VendedorService, private zonaServicio: ZonaService,
     private rubroServicio: RubroService, private afipCondicionIvaServicio: AfipCondicionIvaService,
