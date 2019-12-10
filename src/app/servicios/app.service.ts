@@ -9,13 +9,15 @@ import { MatDialog } from '@angular/material';
 @Injectable()
 export class AppService {
   //Deifne la URL origen
-  private URL_ORIGEN = 'http://localhost:4200'; //LOCAL: localhost// 192.168.0.123
+  private URL_ORIGEN = 'http://localhost:4200'; //LOCAL
   // private URL_ORIGEN = 'http://www.rigar.neurojit.com'; //RIGAR
   // private URL_ORIGEN = 'https://ute-draimo.appspot.com'; //UTE
+  // private URL_ORIGEN = 'http://66.97.35.181:4200'; //DONWEB
   //Define la IP
   private IP = 'http://localhost:8080'; //LOCAL
   // private IP = 'https://rigarws-draimo.appspot.com'; //RIGAR
   // private IP = 'https://utews-draimo.appspot.com'; //UTE
+  // private IP = 'http://66.97.35.181:8080'; //DONWEB
   //Define la url base
   private URL_BASE = this.IP + '/jitws/auth';
   //Define la url de subcripcion a socket

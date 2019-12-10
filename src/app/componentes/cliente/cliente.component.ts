@@ -134,6 +134,11 @@ export class ClienteComponent implements OnInit {
     private loaderService: LoaderService, private usuarioEmpresaService: UsuarioEmpresaService,
     private reporteServicio: ReporteService, private clienteCuentaBancariaService: ClienteCuentaBancariaService,
     private clienteVtoPagoService: ClienteVtoPagoService) {
+      /* 
+      * Obtiene todos los listados: condiciones de iva - tipos de documentos- resumenes de clientes - 
+      * situaciones de clientes - condiciones de venta - sucursales - cobradores -  vendedores - zonas - rubros
+      */
+      this.inicializar(this.appService.getUsuario().id, this.appService.getRol().id, this.appService.getSubopcion());
     //Obtiene la lista de pestania por rol y subopcion
     // this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
     //   .subscribe(
@@ -173,15 +178,6 @@ export class ClienteComponent implements OnInit {
       condicionVenta: new FormControl('', Validators.required),
       esSeguroPropio: new FormControl('', Validators.required)
     });
-    //Establece los valores de la primera pestania activa
-    this.seleccionarPestania(1, 'Agregar', true);
-    //Establece la primera opcion seleccionada
-    this.seleccionarOpcion(1, 0);
-    /* 
-    * Obtiene todos los listados: condiciones de iva - tipos de documentos- resumenes de clientes - 
-    * situaciones de clientes - condiciones de venta - sucursales - cobradores -  vendedores - zonas - rubros
-    */
-    this.inicializar(this.appService.getUsuario().id, this.appService.getRol().id, this.appService.getSubopcion());
     //Autocompletado - Buscar por alias
     this.autocompletado.valueChanges.subscribe(data => {
       if (typeof data == 'string') {
@@ -306,6 +302,7 @@ export class ClienteComponent implements OnInit {
     this.servicio.inicializar(idUsuario, idRol, idSubopcion).subscribe(
       res => {
         let respuesta = res.json();
+        this.ultimoId = respuesta.ultimoId;
         //Establece las pestanias
         this.pestanias = respuesta.pestanias;
         this.pestanias.splice(3, 1);
@@ -325,6 +322,10 @@ export class ClienteComponent implements OnInit {
         this.rubros = respuesta.rubros;
         //Crea cuenta bancaria
         this.crearCuentasBancarias(respuesta.empresas);
+        //Establece los valores de la primera pestania activa
+        this.seleccionarPestania(1, 'Agregar', true);
+        //Establece la primera opcion seleccionada
+        this.seleccionarOpcion(1, 0);
         this.render = false;
       },
       err => {
@@ -736,6 +737,7 @@ export class ClienteComponent implements OnInit {
     switch (id) {
       case 1:
         // this.obtenerSiguienteId();
+        this.formulario.get('id').setValue(this.ultimoId);
         this.establecerEstadoCampos(true);
         this.establecerValoresPestania(nombre, false, false, true, 'idRazonSocial');
         break;
