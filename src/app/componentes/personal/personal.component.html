@@ -1,4 +1,5 @@
 <div id="personal" class="container-fluid" (window:keydown)="manejarEvento($event.keyCode)">
+  <mat-progress-bar mode="indeterminate" *ngIf="render"></mat-progress-bar>
   <div class="row">
     <div class="centrar">
       <nav mat-tab-nav-bar>
@@ -828,7 +829,7 @@
                         <input id="idTelefonoMovilFechaDevolucion" type="date"
                           formControlName="telefonoMovilFechaDevolucion" autocomplete="off"
                           class="form-control form-control-sm" [readonly]="soloLectura"
-                          (blur)="validarFecha('telefonoMovilFechaEntrega', 'telefonoMovilFechaDevolucion')">
+                          (blur)="verificarFecha(3)">
                       </div>
                     </div>
                   </div>
@@ -985,17 +986,17 @@
                     </div>
                   </div>
                 </div>
-                <div class="row">
+                <div class="row" *ngIf="!show">
                   <div class="centrar">
-                    <button id="idBoton" *ngIf="mostrarBoton && !show" mat-raised-button color="primary" formnovalidate
+                    <button id="idBoton" *ngIf="mostrarBoton" mat-raised-button color="primary" formnovalidate
                       (click)="accion(indiceSeleccionado)" [disabled]="!formulario.valid">
                       {{pestaniaActual}}
                     </button>
-                    <div class="row" *ngIf="show">
-                      <div class="col text-center">
-                        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
-                      </div>
-                    </div>
+                  </div>
+                </div>
+                <div class="row" *ngIf="show">
+                  <div class="col text-center">
+                    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
                   </div>
                 </div>
               </form>

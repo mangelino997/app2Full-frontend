@@ -247,7 +247,7 @@ export class PersonalComponent implements OnInit {
         this.resultadosAfipModContrataciones = respuesta.afipModContrataciones;
         this.formulario.get('fechaInicio').setValue(respuesta.fecha);
         this.formulario.get('tipoDocumento').setValue(this.tiposDocumentos[7]);
-        this.formulario.get('id').setValue(this.ultimoId);
+        this.formulario.get('id').setValue(respuesta.ultimoId);
         this.render = false;
       },
       err => {
@@ -276,6 +276,7 @@ export class PersonalComponent implements OnInit {
   public desenmascararHora(formulario) {
     let valor = formulario.value;
     if (valor) {
+      valor = valor.replace(new RegExp(/[_]/g), "0");
       formulario.setValue(this.appServicio.desenmascararHora(valor));
     }
   }
@@ -362,35 +363,31 @@ export class PersonalComponent implements OnInit {
   //Controla el rango valido para la fecha de emision cuando el punto de venta es feCAEA
   public verificarFecha(opcion) {
     switch (opcion) {
-
-      /* opcion == 1 para validar Fecha de Nacimiento*/
+      /* opcion == 1 para validar Fecha de Nacimiento */
       case 1:
         if (this.formulario.value.fechaNacimiento < this.fechaActual) {
           document.getElementById('idLocalidadNacimiento').focus();
         } else {
-          this.toastr.error("Fecha no válida. Debe ser menor a fecha actual.");
+          this.toastr.error("Debe ser menor a fecha actual", "Fecha no válida");
           this.formulario.get('fechaNacimiento').reset();
           document.getElementById('idFechaNacimiento').focus();
         }
         break;
-
-      /* opcion == 2 para validar Fecha de Inicio*/
+      /* opcion == 2 para validar Fecha de Inicio */
       case 2:
         let fechaInicio = this.formulario.value.fechaInicio;
         if (fechaInicio <= this.generarFecha(10) && fechaInicio > this.formulario.value.fechaNacimiento) {
           document.getElementById('idFechaFin').focus();
         } else {
-          this.toastr.error("Fecha de Inicio no válida. Debe ser entre Fecha Nacimiento y  Fecha Actual + 10 días.");
+          this.toastr.error("Debe ser entre Fecha Nacimiento y Fecha Actual + 10 días", "Fecha de Inicio no válida");
           this.formulario.get('fechaInicio').reset();
           document.getElementById('idFechaInicio').focus();
         }
         break;
+      // opcion == 3 -> Valida telefonoMovilFechaDevolucion
       case 3:
-        if (this.formulario.value.telefonoMovilFechaEntrega <
-          this.formulario.value.telefonoMovilFechaDevolucion) {
-          document.getElementById('idObservaciones').focus();
-        } else {
-          this.toastr.error("Fecha devolución de teléfono móvil no válida.");
+        if (this.formulario.value.telefonoMovilFechaEntrega > this.formulario.value.telefonoMovilFechaDevolucion) {
+          this.toastr.error("Debe ser mayor a Fecha de Entrega", "Fecha de Devolución no válida");
           document.getElementById('idTelefonoMovilFechaDevolucion').focus();
         }
         break;
