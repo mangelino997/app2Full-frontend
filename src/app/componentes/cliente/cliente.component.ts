@@ -41,7 +41,7 @@ import { ClienteVtoPagoService } from 'src/app/servicios/cliente-vto-pago.servic
 })
 export class ClienteComponent implements OnInit {
   //Define el ultimo id
-  public ultimoId:string = null;
+  public ultimoId: string = null;
   //Define la pestania activa
   public activeLink: any = null;
   //Define el indice seleccionado de pestania
@@ -78,6 +78,7 @@ export class ClienteComponent implements OnInit {
   public resumenesClientes: Array<any> = [];
   //Define la lista de situaciones de clientes
   public situacionesClientes: Array<any> = [];
+  
   //Define la opcion activa
   public botonOpcionActivo: boolean = null;
   //Define el form control para las busquedas
@@ -310,6 +311,7 @@ export class ClienteComponent implements OnInit {
         //Establece las opciones verticales
         this.opciones = respuesta.opciones;
         //Establece demas datos necesarios
+        this.ultimoId = respuesta.ultimoId;
         this.condicionesIva = respuesta.afipCondicionesIvas;
         this.tiposDocumentos = respuesta.tipoDocumentos;
         this.resumenesClientes = respuesta.resumenClientes;
@@ -320,6 +322,7 @@ export class ClienteComponent implements OnInit {
         this.vendedores = respuesta.vendedores;
         this.zonas = respuesta.zonas;
         this.rubros = respuesta.rubros;
+        this.formulario.get('id').setValue(this.ultimoId);
         //Crea cuenta bancaria
         this.crearCuentasBancarias(respuesta.empresas);
         //Establece los valores de la primera pestania activa
@@ -341,8 +344,8 @@ export class ClienteComponent implements OnInit {
     for (let i = 0; i < empresas.length; i++) {
       formulario = {
         empresa: empresas[i],
-          cliente: null,
-          cuentaBancaria: null
+        cliente: null,
+        cuentaBancaria: null
       }
       cuentasBancarias.push(formulario);
     }
@@ -731,9 +734,7 @@ export class ClienteComponent implements OnInit {
   public seleccionarPestania(id, nombre, opcion) {
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    if (opcion) {
-      this.reestablecerFormulario(null);
-    }
+    this.reestablecerFormulario(null);
     switch (id) {
       case 1:
         // this.obtenerSiguienteId();
@@ -937,7 +938,7 @@ export class ClienteComponent implements OnInit {
   //Reestablece el formulario
   private reestablecerFormulario(id) {
     this.formulario.reset();
-    this.formulario.get('id').setValue(id);
+    id ? this.formulario.get('id').setValue(id) : this.formulario.get('id').setValue(this.ultimoId);
     this.autocompletado.reset();
     this.vaciarListas();
     this.establecerSituacionCliente();

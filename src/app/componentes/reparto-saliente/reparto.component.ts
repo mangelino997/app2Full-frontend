@@ -531,7 +531,6 @@ export class AcompanianteDialogo {
   public agregar() {
     if (this.listaCompleta.data.length > 0) {
       this.listaCompleta.data.forEach(elemento => {
-        console.log(this.formulario.get('personal').value.id, elemento.personal.id);
         if (this.formulario.get('personal').value.id == elemento.personal.id) {
           this.formulario.reset();
           this.toastr.error("El acompañante seleccionado ya fue agregado a la lista.");

@@ -99,6 +99,10 @@ export class VehiculoService {
     return this.http.get(this.url + '/listarFiltro/' + idEmpresa + '/' + idTipo + '/' + idMarca,
       this.options);
   }
+  //Obtiene todos los listados
+  public inicializar( idRol, idSubopcion) {
+    return this.http.get(this.url + '/inicializar/' + idRol + '/' + idSubopcion, this.options);
+  }
   //Agrega un registro
   public agregar(elemento) {
     let obj = Object.assign({}, elemento);

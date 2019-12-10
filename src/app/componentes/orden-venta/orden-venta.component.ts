@@ -498,7 +498,6 @@ export class OrdenVentaComponent implements OnInit {
     this.listaTarifasDeOrdVta = null;
     this.ordenVentaTarifaService.listarPorOrdenVenta(this.ORDEN_VTA_CABECERA).subscribe(
       res => {
-        console.log(res.json());
         this.listaTarifasDeOrdVta = new MatTableDataSource(res.json());
         this.listaTarifasDeOrdVta.sort = this.sort;
         this.tipoTarifa.setValue(this.listaTarifasDeOrdVta.data[0].tipoTarifa.porEscala ? 'porEscala' : 'porTramo');
@@ -531,7 +530,6 @@ export class OrdenVentaComponent implements OnInit {
             let respuesta = res.json();
             respuesta.then(
               data => {
-                console.log(data);
                 let respuesta = data;
                 this.soloLectura = true;
                 this.formulario.disable();

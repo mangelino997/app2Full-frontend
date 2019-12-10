@@ -1,11 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { ProductoService } from 'src/app/servicios/producto.service';
-import { UnidadMedidaService } from 'src/app/servicios/unidad-medida.service';
-import { MarcaProductoService } from 'src/app/servicios/marca-producto.service';
-import { RubroProductoService } from 'src/app/servicios/rubro-producto.service';
 import { AppService } from 'src/app/servicios/app.service';
 import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
@@ -20,6 +16,8 @@ import { InsumoProducto } from 'src/app/modelos/insumoProducto';
   styleUrls: ['./producto.component.css']
 })
 export class ProductoComponent implements OnInit {
+  //Define el ultimo id
+  public ultimoId: string = null;
   //Define la pestania activa
   public activeLink: any = null;
   //Define el indice seleccionado de pestania
@@ -62,6 +60,8 @@ export class ProductoComponent implements OnInit {
   public empresas: Array<any> = [];
   //Define el mostrar del circulo de progreso
   public show = false;
+  //Defiene el render
+  public render: boolean = false;
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define las columnas de la tabla
@@ -71,16 +71,8 @@ export class ProductoComponent implements OnInit {
   //Define la paginacion
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Constructor
-  constructor(private appService: AppService, private modelo: InsumoProducto, private servicio: ProductoService,
-    private subopcionPestaniaService: SubopcionPestaniaService, private rubrosServicio: RubroProductoService,
-    private unidadMedidaServicio: UnidadMedidaService, private marcaServicio: MarcaProductoService, private toastr: ToastrService,
+  constructor(private appService: AppService, private modelo: InsumoProducto, private servicio: ProductoService, private toastr: ToastrService,
     private loaderService: LoaderService, private reporteServicio: ReporteService) {
-    //Obtiene la lista de pestanias
-    this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
-      .subscribe(res => {
-        this.pestanias = res.json();
-        this.activeLink = this.pestanias[0].nombre;
-      });
     //Controla el autocompletado
     this.autocompletado.valueChanges.subscribe(data => {
       if (typeof data == 'string') {
@@ -111,16 +103,34 @@ export class ProductoComponent implements OnInit {
       rubroProducto: new FormControl('', Validators.required),
       marcaProducto: new FormControl('', Validators.required),
     });
+    /* Obtiene todos los listados */
+    this.inicializar(this.appService.getRol().id, this.appService.getSubopcion());
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar');
     //Establece valores por defecto
     this.establecerValoresPorDefecto();
-    //Obtiene los rubros
-    this.listarRubros();
-    //Obtiene las marcas
-    this.listarMarcas();
-    //Obtiene las unidades de medida
-    this.listarUnidadesMedida();
+  }
+  //Obtiene los datos necesarios para el componente
+  private inicializar(idRol, idSubopcion) {
+    this.render = true;
+    this.servicio.inicializar(idRol, idSubopcion).subscribe(
+      res => {
+        console.log(res.json());
+        let respuesta = res.json();
+        //Establece las pestanias
+        this.pestanias = respuesta.pestanias;
+        //Establece demas datos necesarios
+        this.ultimoId = respuesta.ultimoId;
+        this.unidadesMedidas = respuesta.unidadMedidas;
+        this.marcas = respuesta.marcaProductos;
+        this.rubros = respuesta.rubroProductos;
+        this.render = false;
+      },
+      err => {
+        this.toastr.error(err.json().mensaje);
+        this.render = false;
+      }
+    )
   }
   //Establece los valores por defecto
   private establecerValoresPorDefecto(): void {
@@ -146,35 +156,35 @@ export class ProductoComponent implements OnInit {
     }
   }
   //Obtiene el listado de rubros
-  private listarRubros() {
-    this.rubrosServicio.listar().subscribe(
-      res => {
-        this.rubros = res.json();
-      },
-      err => {
-      }
-    );
-  }
-  //Obtiene el listado de marcas
-  private listarMarcas() {
-    this.marcaServicio.listar().subscribe(
-      res => {
-        this.marcas = res.json();
-      },
-      err => {
-      }
-    );
-  }
-  //Obtiene el listado de unidades de medida
-  private listarUnidadesMedida() {
-    this.unidadMedidaServicio.listar().subscribe(
-      res => {
-        this.unidadesMedidas = res.json();
-      },
-      err => {
-      }
-    );
-  }
+  // private listarRubros() {
+  //   this.rubrosServicio.listar().subscribe(
+  //     res => {
+  //       this.rubros = res.json();
+  //     },
+  //     err => {
+  //     }
+  //   );
+  // }
+  // //Obtiene el listado de marcas
+  // private listarMarcas() {
+  //   this.marcaServicio.listar().subscribe(
+  //     res => {
+  //       this.marcas = res.json();
+  //     },
+  //     err => {
+  //     }
+  //   );
+  // }
+  // //Obtiene el listado de unidades de medida
+  // private listarUnidadesMedida() {
+  //   this.unidadMedidaServicio.listar().subscribe(
+  //     res => {
+  //       this.unidadesMedidas = res.json();
+  //     },
+  //     err => {
+  //     }
+  //   );
+  // }
   //Vacia la lista de resultados de autocompletados
   public vaciarListas() {
     this.resultados = [];
@@ -226,13 +236,14 @@ export class ProductoComponent implements OnInit {
   }
   //Obtiene el siguiente id
   private obtenerSiguienteId() {
-    this.servicio.obtenerSiguienteId().subscribe(
-      res => {
-        this.formulario.get('id').setValue(res.json());
-      },
-      err => {
-      }
-    );
+    this.formulario.get('id').setValue(Number(this.ultimoId));
+    // this.servicio.obtenerSiguienteId().subscribe(
+    //   res => {
+    //     this.formulario.get('id').setValue(res.json());
+    //   },
+    //   err => {
+    //   }
+    // );
   }
   //Habilita o deshabilita los campos dependiendo de la pestaña
   private establecerEstadoCampos(estado) {
@@ -277,6 +288,7 @@ export class ProductoComponent implements OnInit {
       res => {
         let respuesta = res.json();
         if (respuesta.codigo == 201) {
+          this.ultimoId = respuesta.id;
           this.reestablecerFormulario(respuesta.id);
           this.establecerValoresPorDefecto();
           document.getElementById('idNombre').focus();
@@ -303,7 +315,7 @@ export class ProductoComponent implements OnInit {
       res => {
         let respuesta = res.json();
         if (respuesta.codigo == 200) {
-          this.reestablecerFormulario(undefined);
+          this.reestablecerFormulario(null);
           document.getElementById('idAutocompletado').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
@@ -357,7 +369,6 @@ export class ProductoComponent implements OnInit {
   private reestablecerFormulario(id) {
     this.formulario.reset();
     this.autocompletado.reset();
-    // this.formularioFiltro.reset();
     this.formulario.get('id').setValue(id);
     this.vaciarListas();
   }

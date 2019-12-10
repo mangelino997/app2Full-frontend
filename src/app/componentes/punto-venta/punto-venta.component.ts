@@ -24,6 +24,8 @@ export class PuntoVentaComponent implements OnInit {
   //Obtiene el componente autocompletado sucursal del dom
   // @ViewChild('autoCompleteInput', { read: MatAutocompleteTrigger })
   // autoComplete: MatAutocompleteTrigger;
+  //Define el ultimo id
+  public ultimoId: string = null;
   //Define la pestania activa
   public activeLink: any = null;
   //Define el indice seleccionado de pestania
@@ -69,6 +71,8 @@ export class PuntoVentaComponent implements OnInit {
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Define el mostrar del circulo de progreso
   public show = false;
+  //Defiene el render
+  public render: boolean = false;
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Constructor
@@ -77,16 +81,6 @@ export class PuntoVentaComponent implements OnInit {
     private sucursalServicio: SucursalService, private empresaServicio: EmpresaService,
     private afipComprobanteService: AfipComprobanteService, private tipoComprobanteService: TipoComprobanteService,
     private appService: AppService, private loaderService: LoaderService, private reporteServicio: ReporteService) {
-    //Obtiene la lista de pestania por rol y subopcion
-    this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
-      .subscribe(
-        res => {
-          this.pestanias = res.json();
-          this.activeLink = this.pestanias[0].nombre;
-        },
-        err => {
-        }
-      );
   }
   //Al iniciarse el componente
   ngOnInit() {
@@ -99,12 +93,30 @@ export class PuntoVentaComponent implements OnInit {
     this.formulario = this.puntoVenta.formulario;
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar');
-    //Obtiene la lista de sucursales
-    this.listarSucursales();
-    //Obtiene la lista de empresas
-    this.listarEmpresas();
-    //Obtiene la lista de tipos de comprobantes
-    this.listarTiposComprobantes();
+    /* Obtiene todos los listados */
+    this.inicializar(this.appService.getRol().id, this.appService.getSubopcion());
+  }
+  //Obtiene los datos necesarios para el componente
+  private inicializar(idRol, idSubopcion) {
+    this.render = true;
+    this.servicio.inicializar(idRol, idSubopcion).subscribe(
+      res => {
+        console.log(res.json());
+        let respuesta = res.json();
+        //Establece las pestanias
+        this.pestanias = respuesta.pestanias;
+        //Establece demas datos necesarios
+        this.ultimoId = respuesta.ultimoId;
+        this.sucursales = respuesta.sucursales;
+        this.empresas = respuesta.empresas;
+        this.tipoComprobantes = respuesta.tipoComprobantes;
+        this.render = false;
+      },
+      err => {
+        this.toastr.error(err.json().mensaje);
+        this.render = false;
+      }
+    )
   }
   //Obtiene la mascara de enteros
   public obtenerMascaraEnteros(intLimite) {
@@ -114,36 +126,6 @@ export class PuntoVentaComponent implements OnInit {
   private establecerValoresPorDefecto(): void {
     this.formulario.get('empresa').setValue(this.appService.getEmpresa());
     this.formulario.get('empresa').disable();
-  }
-  //Obtiene el listado de sucursales
-  private listarSucursales() {
-    this.sucursalServicio.listar().subscribe(
-      res => {
-        this.sucursales = res.json();
-      },
-      err => {
-      }
-    );
-  }
-  //Obtiene el listado de empresas
-  private listarEmpresas() {
-    this.empresaServicio.listar().subscribe(
-      res => {
-        this.empresas = res.json();
-      },
-      err => {
-      }
-    );
-  }
-  //Obtiene el listado de tipos de comprobantes
-  private listarTiposComprobantes() {
-    this.tipoComprobanteService.listarConNumeracionPuntoVenta().subscribe(
-      res => {
-        this.tipoComprobantes = res.json();
-      },
-      err => {
-      }
-    );
   }
   //Obtiene los afip comprobantes
   public obtenerAfipComprobantes() {
@@ -216,7 +198,7 @@ export class PuntoVentaComponent implements OnInit {
     this.establecerValoresPorDefecto();
     switch (id) {
       case 1:
-        this.obtenerSiguienteId();
+        // this.obtenerSiguienteId();
         this.establecerEstadoCampos(true);
         this.establecerValoresPestania(nombre, false, false, true, 'idSucursal');
         break;
@@ -317,6 +299,7 @@ export class PuntoVentaComponent implements OnInit {
       res => {
         let respuesta = res.json();
         if (respuesta.codigo == 201) {
+          this.ultimoId = respuesta.id;
           this.reestablecerFormulario();
           this.establecerEstadoCampos(true);
           document.getElementById('idSucursal').focus();

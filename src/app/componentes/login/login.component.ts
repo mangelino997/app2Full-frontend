@@ -120,7 +120,6 @@ export class LoginComponent implements OnInit {
         //Establece el rol
         this.appService.setRol(rol);
         //Establece el menu
-        console.log(rol);
       }
       //Establece la empresa
       let empresa = this.formulario.get('empresa').value;
