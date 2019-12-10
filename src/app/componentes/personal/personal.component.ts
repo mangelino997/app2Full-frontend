@@ -276,6 +276,7 @@ export class PersonalComponent implements OnInit {
   public desenmascararHora(formulario) {
     let valor = formulario.value;
     if (valor) {
+      valor = valor.replace(new RegExp(/[_]/g), "0");
       formulario.setValue(this.appServicio.desenmascararHora(valor));
     }
   }
@@ -386,7 +387,7 @@ export class PersonalComponent implements OnInit {
       // opcion == 3 -> Valida telefonoMovilFechaDevolucion
       case 3:
         if (this.formulario.value.telefonoMovilFechaEntrega > this.formulario.value.telefonoMovilFechaDevolucion) {
-          this.toastr.error("Debe ser menor a Fecha de Entrega", "Fecha de Devolución no válida");
+          this.toastr.error("Debe ser mayor a Fecha de Entrega", "Fecha de Devolución no válida");
           document.getElementById('idTelefonoMovilFechaDevolucion').focus();
         }
         break;
