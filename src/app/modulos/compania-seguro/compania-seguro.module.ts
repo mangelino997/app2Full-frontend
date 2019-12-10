@@ -8,7 +8,6 @@ import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModul
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CompaniaSeguroComponent } from 'src/app/componentes/compania-seguro/compania-seguro.component';
 import { CompaniaSeguroService } from 'src/app/servicios/compania-seguro.service';
-import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
 
 @NgModule({
   declarations: [
@@ -32,7 +31,6 @@ import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.s
   ],
   providers: [
     CompaniaSeguroService,
-    SubopcionPestaniaService
   ]
 })
 export class CompaniaSeguroModule { }

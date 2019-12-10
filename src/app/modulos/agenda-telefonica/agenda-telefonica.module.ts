@@ -8,7 +8,6 @@ import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModul
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AgendaTelefonicaComponent } from 'src/app/componentes/agenda-telefonica/agenda-telefonica.component';
 import { AgendaTelefonicaService } from 'src/app/servicios/agenda-telefonica.service';
-import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
 import { LocalidadService } from 'src/app/servicios/localidad.service';
 import { AgendaTelefonica } from 'src/app/modelos/agendaTelefonica';
 
@@ -33,10 +32,7 @@ import { AgendaTelefonica } from 'src/app/modelos/agendaTelefonica';
     MatTooltipModule
   ],
   providers: [
-    SubopcionPestaniaService,
     AgendaTelefonicaService,
-    AgendaTelefonicaService,
-    SubopcionPestaniaService,
     LocalidadService,
     AgendaTelefonica
   ]

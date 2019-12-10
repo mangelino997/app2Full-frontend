@@ -1652,19 +1652,24 @@ export class DetalleVencimientosDialogo {
   //Calcula la diferencia entre el total comprobante y la suma de los importes de las cuotas
   private calcularDiferenciaImporte() {
     let diferencia = 0;
-    this.servicio.obtenerDiferenciaImportes(this.listaCompleta.data).subscribe(
-      res => {
-        diferencia = res.json();
-        if (diferencia == 0) {
-          this.btnAceptar = true;
-          this.diferencia.setValue(this.appService.establecerDecimales('0.00', 2));
-        } else {
-          this.btnAceptar = false;
-          this.diferencia.setValue(this.appService.establecerDecimales(diferencia.toString(), 2));
-          this.toastr.error("El Total Préstamo no coincide con la suma de los importes.");
+    if (this.listaCompleta.data.length > 0) {
+      this.servicio.obtenerDiferenciaImportes(this.listaCompleta.data).subscribe(
+        res => {
+          diferencia = res.json();
+          if (diferencia == 0) {
+            this.btnAceptar = true;
+            this.diferencia.setValue(this.appService.establecerDecimales('0.00', 2));
+          } else {
+            this.btnAceptar = false;
+            this.diferencia.setValue(this.appService.establecerDecimales(diferencia.toString(), 2));
+            this.toastr.error("El Total Préstamo no coincide con la suma de los importes.");
+          }
         }
-      }
-    );
+      )
+    }else{
+      this.diferencia.setValue(this.appService.establecerDecimales(this.totalComprobante.value, 2));
+      this.toastr.error("Lista de vencimientos vacía.");
+    }
   }
   //Maneja el cambio en el campo de seleccion 'Condicion de compra'
   public cambioCondicionCompra() {

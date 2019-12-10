@@ -107,6 +107,7 @@ export class MonedaComponent implements OnInit {
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
     this.reestablecerFormulario(undefined);
+    this.listar(); 
     switch (id) {
       case 1:
         this.obtenerSiguienteId();
@@ -126,7 +127,6 @@ export class MonedaComponent implements OnInit {
         this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
         break;
       case 5:
-        this.listar();
         break;
       default:
         break;
@@ -190,11 +190,12 @@ export class MonedaComponent implements OnInit {
   //Agrega un registro
   private verificarPrincipal(opcionPestania) {
     let elemento = this.formulario.value;
-    this.listar();
+    console.log("entra", elemento, this.listaCompleta.data.length);
+
     if (elemento.porDefecto && this.listaCompleta.data.length > 0) {
       this.servicio.obtenerPorDefecto().subscribe(
         res => {
-          //moneda porDefecto=true (monedaPrincipal)
+          //obtiene la moneda porDefecto=true (monedaPrincipal)
           let respuesta = res.json();
 
           // Si el cobrador principal es el mismo que se quiere actualizar saltea el modal 'cambiarPrincipal'
@@ -251,7 +252,7 @@ export class MonedaComponent implements OnInit {
               porque no puede quedar sin moneda principal el sistema */
               moneda.id == res.json().id && moneda.porDefecto == 'false' && res.json().porDefecto ?
                 this.toastr.error("No se modificó el atributo moneda pricipal. No puede quedar sin moneda principal.") :
-                this.toastr.success("Campos restantes actualizados con éxito.");
+                this.toastr.success("Registro actualizado con éxito.");
             })
           document.getElementById('idAutocompletado').focus();
           this.loaderService.hide();

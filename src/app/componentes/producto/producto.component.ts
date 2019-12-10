@@ -155,36 +155,6 @@ export class ProductoComponent implements OnInit {
       this.formulario.get('itcNeto').setValue(this.appService.desenmascararPorcentaje(itcNeto.toString(), 2));
     }
   }
-  //Obtiene el listado de rubros
-  // private listarRubros() {
-  //   this.rubrosServicio.listar().subscribe(
-  //     res => {
-  //       this.rubros = res.json();
-  //     },
-  //     err => {
-  //     }
-  //   );
-  // }
-  // //Obtiene el listado de marcas
-  // private listarMarcas() {
-  //   this.marcaServicio.listar().subscribe(
-  //     res => {
-  //       this.marcas = res.json();
-  //     },
-  //     err => {
-  //     }
-  //   );
-  // }
-  // //Obtiene el listado de unidades de medida
-  // private listarUnidadesMedida() {
-  //   this.unidadMedidaServicio.listar().subscribe(
-  //     res => {
-  //       this.unidadesMedidas = res.json();
-  //     },
-  //     err => {
-  //     }
-  //   );
-  // }
   //Vacia la lista de resultados de autocompletados
   public vaciarListas() {
     this.resultados = [];
@@ -232,18 +202,6 @@ export class ProductoComponent implements OnInit {
       default:
         break;
     }
-  }
-  //Obtiene el siguiente id
-  private obtenerSiguienteId() {
-    console.log(this.ultimoId);
-    this.formulario.get('id').setValue(Number(this.ultimoId));
-    // this.servicio.obtenerSiguienteId().subscribe(
-    //   res => {
-    //     this.formulario.get('id').setValue(res.json());
-    //   },
-    //   err => {
-    //   }
-    // );
   }
   //Habilita o deshabilita los campos dependiendo de la pestaña
   private establecerEstadoCampos(estado) {

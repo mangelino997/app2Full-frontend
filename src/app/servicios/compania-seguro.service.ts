@@ -58,6 +58,10 @@ export class CompaniaSeguroService {
       })
     })
   }
+  //Obtiene todos los listados
+  public inicializar(idRol, idSubopcion) {
+    return this.http.get(this.url + '/inicializar/' + idRol + '/' + idSubopcion, this.options);
+  }
   //Obtiene una lista por empresa
   public listarPorEmpresa(idEmpresa) {
     return this.http.get(this.url + '/listarPorEmpresa/' + idEmpresa, this.options);

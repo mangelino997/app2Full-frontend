@@ -1,6 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { AgendaTelefonicaService } from '../../servicios/agenda-telefonica.service';
-import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { LocalidadService } from '../../servicios/localidad.service';
 import { FormGroup, FormControl } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
@@ -57,19 +56,9 @@ export class AgendaTelefonicaComponent implements OnInit {
   //Define la paginacion
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Constructor
-  constructor(private servicio: AgendaTelefonicaService, private subopcionPestaniaService: SubopcionPestaniaService,
+  constructor(private servicio: AgendaTelefonicaService,
     private localidadServicio: LocalidadService, private appService: AppService, private modelo: AgendaTelefonica,
     private toastr: ToastrService, private loaderService: LoaderService, private reporteServicio: ReporteService) {
-    //Obtiene la lista de pestania por rol y subopcion
-    // this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
-    //   .subscribe(
-    //     res => {
-    //       this.pestanias = res.json();
-    //       this.activeLink = this.pestanias[0].nombre;
-    //     },
-    //     err => {
-    //     }
-    //   );
   }
   //Al iniciarse el componente
   ngOnInit() {
@@ -80,8 +69,8 @@ export class AgendaTelefonicaComponent implements OnInit {
       });
     //Define el formulario y validaciones
     this.formulario = this.modelo.formulario;
-     /* Obtiene todos los listados */
-     this.inicializar(this.appService.getRol().id, this.appService.getSubopcion());
+    /* Obtiene todos los listados */
+    this.inicializar(this.appService.getRol().id, this.appService.getSubopcion());
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar');
     //Defiene autocompletado localidad
@@ -123,14 +112,10 @@ export class AgendaTelefonicaComponent implements OnInit {
     this.servicio.inicializar(idRol, idSubopcion).subscribe(
       res => {
         let respuesta = res.json();
-        console.log(respuesta);
         //Establece las pestanias
         this.pestanias = respuesta.pestanias;
         //Establece demas datos necesarios
         this.ultimoId = respuesta.ultimoId;
-        // this.unidadesMedidas = respuesta.unidadMedidas;
-        // this.marcas = respuesta.marcaProductos;
-        // this.rubros = respuesta.rubroProductos;
         this.formulario.get('id').setValue(this.ultimoId);
         this.render = false;
       },
@@ -175,14 +160,13 @@ export class AgendaTelefonicaComponent implements OnInit {
   public seleccionarPestania(id, nombre) {
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    this.reestablecerFormulario(undefined);
+    this.reestablecerFormulario(null);
     /*
     * Se vacia el formulario solo cuando se cambia de pestania, no cuando
     * cuando se hace click en ver o mod de la pestania lista
     */
     switch (id) {
       case 1:
-        this.obtenerSiguienteId();
         this.establecerValoresPestania(nombre, false, false, true, 'idNombre');
         break;
       case 2:
@@ -252,6 +236,7 @@ export class AgendaTelefonicaComponent implements OnInit {
       res => {
         let respuesta = res.json();
         if (respuesta.codigo == 201) {
+          this.ultimoId = respuesta.id;
           this.reestablecerFormulario(respuesta.id);
           document.getElementById('idNombre').focus();
           this.toastr.success(respuesta.mensaje);
@@ -271,7 +256,7 @@ export class AgendaTelefonicaComponent implements OnInit {
       res => {
         let respuesta = res.json();
         if (respuesta.codigo == 200) {
-          this.reestablecerFormulario(undefined);
+          this.reestablecerFormulario(null);
           document.getElementById('idAutocompletado').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
@@ -291,7 +276,7 @@ export class AgendaTelefonicaComponent implements OnInit {
       res => {
         let respuesta = res.json();
         if (respuesta.codigo == 200) {
-          this.reestablecerFormulario(undefined);
+          this.reestablecerFormulario(null);
           this.toastr.success(MensajeExcepcion.ELIMINADO);
         }
         document.getElementById('idAutocompletado').focus();
@@ -305,10 +290,10 @@ export class AgendaTelefonicaComponent implements OnInit {
   }
   //Reestablece el formulario
   private reestablecerFormulario(id) {
+    this.vaciarListas();
     this.formulario.reset();
     this.autocompletado.reset();
-    this.formulario.get('id').setValue(id);
-    this.vaciarListas();
+    id ? this.formulario.get('id').setValue(id) : this.formulario.get('id').setValue(this.ultimoId);
   }
   //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
   private lanzarError(err) {

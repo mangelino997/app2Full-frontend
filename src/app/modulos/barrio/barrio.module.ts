@@ -7,7 +7,6 @@ import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModul
   MatSelectModule, MatProgressBarModule, MatButtonModule, MatIconModule, MatTooltipModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BarrioService } from 'src/app/servicios/barrio.service';
-import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
 
 @NgModule({
   declarations: [
@@ -31,7 +30,6 @@ import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.s
   ],
   providers: [
     BarrioService,
-    SubopcionPestaniaService
   ]
 })
 export class BarrioModule { }

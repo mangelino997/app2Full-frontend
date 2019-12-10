@@ -8,7 +8,6 @@ import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModul
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RubroComponent } from 'src/app/componentes/rubro/rubro.component';
 import { RubroService } from 'src/app/servicios/rubro.service';
-import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
 
 @NgModule({
   declarations: [
@@ -31,7 +30,6 @@ import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.s
   ],
   providers: [
     RubroService,
-    SubopcionPestaniaService
   ]
 })
 export class RubroModule { }

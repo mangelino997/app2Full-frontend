@@ -54,16 +54,6 @@ export class ZonaComponent implements OnInit {
   constructor(private servicio: ZonaService, private subopcionPestaniaService: SubopcionPestaniaService,
     private appService: AppService, private toastr: ToastrService, private loaderService: LoaderService,
     private reporteServicio: ReporteService) {
-    //Obtiene la lista de pestania por rol y subopcion
-    // this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
-    //   .subscribe(
-    //     res => {
-    //       this.pestanias = res.json();
-    //       this.activeLink = this.pestanias[0].nombre;
-    //     },
-    //     err => {
-    //     }
-    //   );
     //Autocompletado - Buscar por nombre
     this.autocompletado.valueChanges.subscribe(data => {
       if (typeof data == 'string') {

@@ -1,9 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { PersonalService } from '../../servicios/personal.service';
-import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { LocalidadService } from '../../servicios/localidad.service';
-import { SexoService } from '../../servicios/sexo.service';
-import { TipoDocumentoService } from '../../servicios/tipo-documento.service';
 import { AppService } from '../../servicios/app.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
@@ -12,9 +9,6 @@ import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
 import { PersonalFamiliar } from 'src/app/modelos/personal-familiar';
-import { FechaService } from 'src/app/servicios/fecha.service';
-import { MesService } from 'src/app/servicios/mes.service';
-import { TipoFamiliarService } from 'src/app/servicios/tipo-familiar.service';
 import { PersonalFamiliarService } from 'src/app/servicios/personal-familiar.service';
 import { ReporteService } from 'src/app/servicios/reporte.service';
 
@@ -89,19 +83,7 @@ export class PersonalFamiliarComponent implements OnInit {
   constructor(private servicio: PersonalFamiliarService, private personalServicio: PersonalService,
     private personalFamiliar: PersonalFamiliar, private appService: AppService,
     private toastr: ToastrService, private localidadServicio: LocalidadService,
-    private loaderService: LoaderService, private anio: FechaService, private reporteServicio: ReporteService) {
-
-    //Obtiene la lista de pestania por rol y subopcion
-    // this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
-    //   .subscribe(
-    //     res => {
-    //       this.pestanias = res.json();
-    //       this.activeLink = this.pestanias[0].nombre;
-    //       this.loaderService.hide();
-    //     },
-    //     err => {
-    //     }
-    //   );
+    private loaderService: LoaderService, private reporteServicio: ReporteService) {
     let empresa = this.appService.getEmpresa();
     //Autocompletado - Buscar por alias
     this.autocompletado.valueChanges.subscribe(data => {
@@ -140,8 +122,6 @@ export class PersonalFamiliarComponent implements OnInit {
     this.inicializar(this.appService.getRol().id, this.appService.getSubopcion());
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar');
-    //Obtiene la lista de años
-    this.listarAnios();
     //Autocompletado - Buscar personal por alias
     this.formulario.get('personal').valueChanges.subscribe(data => {
       if (typeof data == 'string') {
@@ -196,7 +176,6 @@ export class PersonalFamiliarComponent implements OnInit {
     this.render = true;
     this.servicio.inicializar(idRol, idSubopcion).subscribe(
       res => {
-        console.log(res.json());
         let respuesta = res.json();
         //Establece las pestanias
         this.pestanias = respuesta.pestanias;
@@ -205,10 +184,10 @@ export class PersonalFamiliarComponent implements OnInit {
         this.familiares = respuesta.tipoFamiliares;
         this.sexos = respuesta.sexos;
         this.meses = respuesta.meses;
+        this.anios = respuesta.anios;
         this.tiposDocumentos = respuesta.tipoDocumentos;
         this.formulario.get('id').setValue(this.ultimoId);
         this.formulario.get('tipoDocumento').setValue(this.tiposDocumentos[7]);
-
         this.render = false;
       },
       err => {
@@ -216,15 +195,6 @@ export class PersonalFamiliarComponent implements OnInit {
         this.render = false;
       }
     )
-  }
-  //Obtiene la lista de años
-  private listarAnios() {
-    this.anio.listarAnios().subscribe(
-      res => {
-        console.log(res.json());
-        this.anios = res.json();
-      }
-    );
   }
   //Vacia la lista de resultados de autocompletados
   private vaciarListas() {
