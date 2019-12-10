@@ -828,7 +828,7 @@
                         <input id="idTelefonoMovilFechaDevolucion" type="date"
                           formControlName="telefonoMovilFechaDevolucion" autocomplete="off"
                           class="form-control form-control-sm" [readonly]="soloLectura"
-                          (blur)="validarFecha('telefonoMovilFechaEntrega', 'telefonoMovilFechaDevolucion')">
+                          (blur)="verificarFecha(3)">
                       </div>
                     </div>
                   </div>
