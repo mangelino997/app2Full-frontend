@@ -17,6 +17,8 @@ import { ReporteService } from 'src/app/servicios/reporte.service';
   styleUrls: ['./condicion-venta.component.css']
 })
 export class CondicionVentaComponent implements OnInit {
+  //Define el ultimo id
+  public ultimoId: string = null;
   //Define la pestania activa
   public activeLink: any = null;
   //Define el indice seleccionado de pestania
@@ -53,22 +55,14 @@ export class CondicionVentaComponent implements OnInit {
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Define el mostrar del circulo de progreso
   public show = false;
+  //Defiene el render
+  public render: boolean = false;
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Constructor
   constructor(private appService: AppService, private condicionVenta: CondicionVenta,
-    private servicio: CondicionVentaService, private subopcionPestaniaService: SubopcionPestaniaService,
-    private toastr: ToastrService, private loaderService: LoaderService, private reporteServicio: ReporteService) {
-    //Obtiene la lista de pestanias
-    this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
-      .subscribe(
-        res => {
-          this.pestanias = res.json();
-          this.activeLink = this.pestanias[0].nombre;
-        },
-        err => {
-        }
-      );
+    private servicio: CondicionVentaService, private toastr: ToastrService, private loaderService: LoaderService,
+    private reporteServicio: ReporteService) {
     //Controla el autocompletado
     this.autocompletado.valueChanges.subscribe(data => {
       if (typeof data == 'string') {
@@ -94,10 +88,29 @@ export class CondicionVentaComponent implements OnInit {
       });
     //Define el formulario y validaciones
     this.formulario = this.condicionVenta.formulario;
+    /* Obtiene todos los listados */
+    this.inicializar(this.appService.getRol().id, this.appService.getSubopcion());
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar', 0);
-    //Obtiene la lista completa de registros
-    // this.listar();
+  }
+  //Obtiene los datos necesarios para el componente
+  private inicializar(idRol, idSubopcion) {
+    this.render = true;
+    this.servicio.inicializar(idRol, idSubopcion).subscribe(
+      res => {
+        let respuesta = res.json();
+        //Establece las pestanias
+        this.pestanias = respuesta.pestanias;
+        //Establece demas datos necesarios
+        this.ultimoId = respuesta.ultimoId;
+        this.formulario.get('id').setValue(this.ultimoId);
+        this.render = false;
+      },
+      err => {
+        this.toastr.error(err.json().mensaje);
+        this.render = false;
+      }
+    )
   }
   //Obtiene el listado de registros
   private listar() {
@@ -107,6 +120,7 @@ export class CondicionVentaComponent implements OnInit {
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
         this.listaCompleta.paginator = this.paginator;
+        this.listaCompleta.data.length == 0 ? this.toastr.error("Sin registros para mostrar.") : '';
         this.loaderService.hide();
       },
       err => {
@@ -126,21 +140,11 @@ export class CondicionVentaComponent implements OnInit {
   };
   //Establece valores al seleccionar una pestania
   public seleccionarPestania(id, nombre, opcion) {
-    this.formulario.reset();
-    this.listar();
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    /*
-    * Se vacia el formulario solo cuando se cambia de pestania, no cuando
-    * cuando se hace click en ver o mod de la pestania lista
-    */
-    if (opcion == 0) {
-      this.autocompletado.setValue(undefined);
-      this.resultados = [];
-    }
+    this.reestablecerFormulario(null);
     switch (id) {
       case 1:
-        this.obtenerSiguienteId();
         this.establecerEstadoCampos(true);
         this.establecerValoresPestania(nombre, false, false, true, 'idNombre');
         break;
@@ -171,16 +175,6 @@ export class CondicionVentaComponent implements OnInit {
       this.formulario.get('esContado').disable();
     }
   }
-  //Obtiene el siguiente id
-  private obtenerSiguienteId() {
-    this.servicio.obtenerSiguienteId().subscribe(
-      res => {
-        this.formulario.get('id').setValue(res.json());
-      },
-      err => {
-      }
-    );
-  }
   //Funcion para determina que accion se requiere (Agregar, Actualizar, Eliminar)
   public accion(indice) {
     switch (indice) {
@@ -205,6 +199,7 @@ export class CondicionVentaComponent implements OnInit {
       res => {
         let respuesta = res.json();
         if (respuesta.codigo == 201) {
+          this.ultimoId = respuesta.id;
           this.reestablecerFormulario(respuesta.id);
           document.getElementById('idNombre').focus();
           this.toastr.success(respuesta.mensaje);
@@ -230,7 +225,7 @@ export class CondicionVentaComponent implements OnInit {
       res => {
         let respuesta = res.json();
         if (respuesta.codigo == 200) {
-          this.reestablecerFormulario('');
+          this.reestablecerFormulario(null);
           document.getElementById('idAutocompletado').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
@@ -276,10 +271,10 @@ export class CondicionVentaComponent implements OnInit {
   }
   //Reestablece los campos formularios
   private reestablecerFormulario(id) {
-    this.formulario.reset();
-    this.formulario.get('id').setValue(id);
-    this.autocompletado.setValue(undefined);
     this.resultados = [];
+    this.formulario.reset();
+    this.autocompletado.reset();
+    id ? this.formulario.get('id').setValue(id) : this.formulario.get('id').setValue(this.ultimoId);
   }
   //Manejo de colores de campos y labels
   public cambioCampo(id, label) {

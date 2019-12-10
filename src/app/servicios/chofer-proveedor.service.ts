@@ -66,6 +66,10 @@ export class ChoferProveedorService {
       })
     })
   }
+  //Obtiene todos los listados
+  public inicializar(idRol, idSubopcion) {
+    return this.http.get(this.url + '/inicializar/' + idRol + '/' + idSubopcion, this.options);
+  }
   //Obtiene una lista por id proveedor
   public listarPorProveedor(id) {
     return this.http.get(this.url + '/listarPorProveedor/' + id, this.options);

@@ -10,7 +10,6 @@ import { CondicionCompraComponent } from 'src/app/componentes/condicion-compra/c
 import { TextMaskModule } from 'angular2-text-mask';
 import { CondicionCompraService } from 'src/app/servicios/condicion-compra.service';
 import { CondicionCompra } from 'src/app/modelos/condicion-compra';
-import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
 
 @NgModule({
   declarations: [
@@ -35,7 +34,6 @@ import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.s
   providers: [
     CondicionCompraService,
     CondicionCompra,
-    SubopcionPestaniaService
   ]
 })
 export class CondicionCompraModule { }

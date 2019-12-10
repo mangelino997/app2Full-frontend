@@ -37,12 +37,10 @@ import { TipoDocumentoService } from 'src/app/servicios/tipo-documento.service';
   ],
   providers: [
     ChoferProveedorService,
-    SubopcionPestaniaService,
     ChoferProveedor,
     ProveedorService,
     BarrioService,
     LocalidadService,
-    TipoDocumentoService
   ]
 })
 export class ChoferProveedorModule { }

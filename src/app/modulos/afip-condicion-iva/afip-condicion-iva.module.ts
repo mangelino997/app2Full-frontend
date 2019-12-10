@@ -9,7 +9,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AfipCondicionIvaComponent } from 'src/app/componentes/afip-condicion-iva/afip-condicion-iva.component';
 import { AfipCondicionIvaService } from 'src/app/servicios/afip-condicion-iva.service';
 import { AfipCondicionIva } from 'src/app/modelos/afipCondicionIva';
-import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
 
 @NgModule({
   declarations: [
@@ -34,7 +33,6 @@ import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.s
   providers: [
     AfipCondicionIvaService,
     AfipCondicionIva,
-    SubopcionPestaniaService
   ]
 })
 export class AfipCondicionIvaModule { }

@@ -1,10 +1,8 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ChoferProveedorService } from '../../servicios/chofer-proveedor.service';
-import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { ProveedorService } from '../../servicios/proveedor.service';
 import { BarrioService } from '../../servicios/barrio.service';
 import { LocalidadService } from '../../servicios/localidad.service';
-import { TipoDocumentoService } from '../../servicios/tipo-documento.service';
 import { FormGroup, FormControl } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { AppService } from 'src/app/servicios/app.service';
@@ -21,6 +19,8 @@ import { ReporteService } from 'src/app/servicios/reporte.service';
   styleUrls: ['./chofer-proveedor.component.css']
 })
 export class ChoferProveedorComponent implements OnInit {
+  //Define el ultimo id
+  public ultimoId: string = null;
   //Define la pestania activa
   public activeLink: any = null;
   //Define el indice seleccionado de pestania
@@ -55,6 +55,8 @@ export class ChoferProveedorComponent implements OnInit {
   public resultadosChoferes: Array<any> = [];
   //Define el mostrar del circulo de progreso
   public show = false;
+  //Defiene el render
+  public render: boolean = false;
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define las columnas de la tabla
@@ -64,21 +66,10 @@ export class ChoferProveedorComponent implements OnInit {
   //Define la paginacion
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Constructor
-  constructor(private servicio: ChoferProveedorService, private subopcionPestaniaService: SubopcionPestaniaService,
+  constructor(private servicio: ChoferProveedorService,
     private choferProveedor: ChoferProveedor, private appService: AppService, private toastr: ToastrService,
     private proveedorServicio: ProveedorService, private barrioServicio: BarrioService,
-    private localidadServicio: LocalidadService, private tipoDocumentoServicio: TipoDocumentoService,
-    private loaderService: LoaderService, private reporteServicio: ReporteService) {
-    //Obtiene la lista de pestania por rol y subopcion
-    this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
-      .subscribe(
-        res => {
-          this.pestanias = res.json();
-          this.activeLink = this.pestanias[0].nombre;
-        },
-        err => {
-        }
-      );
+    private localidadServicio: LocalidadService, private loaderService: LoaderService, private reporteServicio: ReporteService) {
   }
   //Al iniciarse el componente
   ngOnInit() {
@@ -89,6 +80,8 @@ export class ChoferProveedorComponent implements OnInit {
       });
     //Define los campos para validaciones
     this.formulario = this.choferProveedor.formulario;
+    /* Obtiene todos los listados */
+    this.inicializar(this.appService.getRol().id, this.appService.getSubopcion());
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar');
     //Autocompletado Proveedor - Buscar por nombre
@@ -142,13 +135,31 @@ export class ChoferProveedorComponent implements OnInit {
           }
         }
       })
-    //Obtiene la lista de tipos de documentos
-    this.listarTiposDocumentos();
+  }
+  //Obtiene los datos necesarios para el componente
+  private inicializar(idRol, idSubopcion) {
+    this.render = true;
+    this.servicio.inicializar(idRol, idSubopcion).subscribe(
+      res => {
+        let respuesta = res.json();
+        //Establece las pestanias
+        this.pestanias = respuesta.pestanias;
+        //Establece demas datos necesarios
+        this.ultimoId = respuesta.ultimoId;
+        this.tiposDocumentos = respuesta.tipoDocumentos;
+        this.formulario.get('id').setValue(this.ultimoId);
+        this.formulario.get('tipoDocumento').setValue(this.tiposDocumentos[0]);
+        this.render = false;
+      },
+      err => {
+        this.toastr.error(err.json().mensaje);
+        this.render = false;
+      }
+    )
   }
   //Establece los valores al seleccionar un elemento del autocompletado
   public establecerValores(): void {
     this.formulario.patchValue(this.autocompletado.value);
-
   }
   //Vacia la lista de resultados de autocompletados
   private vaciarLista() {
@@ -163,7 +174,7 @@ export class ChoferProveedorComponent implements OnInit {
     this.mostrarAutocompletado = autocompletado;
     this.soloLectura = soloLectura;
     this.mostrarBoton = boton;
-    this.soloLectura? this.formulario.get('tipoDocumento').disable() : this.formulario.get('tipoDocumento').enable();
+    this.soloLectura ? this.formulario.get('tipoDocumento').disable() : this.formulario.get('tipoDocumento').enable();
     setTimeout(function () {
       document.getElementById(componente).focus();
     }, 20);
@@ -172,10 +183,9 @@ export class ChoferProveedorComponent implements OnInit {
   public seleccionarPestania(id, nombre) {
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    this.reestablecerFormulario(undefined);
+    this.reestablecerFormulario(null);
     switch (id) {
       case 1:
-        this.obtenerSiguienteId();
         this.establecerValoresPestania(nombre, false, false, true, 'idProveedor');
         break;
       case 2:
@@ -212,17 +222,6 @@ export class ChoferProveedorComponent implements OnInit {
       default:
         break;
     }
-  }
-  //Obtiene el listado de tipos de documentos
-  private listarTiposDocumentos() {
-    this.tipoDocumentoServicio.listar().subscribe(
-      res => {
-        this.tiposDocumentos = res.json();
-        this.formulario.get('tipoDocumento').setValue(this.tiposDocumentos[0]);
-      },
-      err => {
-      }
-    );
   }
   //Obtiene una lista de choferes por proveedor
   public listarPorProveedor() {
@@ -277,6 +276,7 @@ export class ChoferProveedorComponent implements OnInit {
       res => {
         var respuesta = res.json();
         if (respuesta.codigo == 201) {
+          this.ultimoId = respuesta.id;
           this.reestablecerFormulario(respuesta.id);
           document.getElementById('idProveedor').focus();
           this.toastr.success(respuesta.mensaje);
@@ -297,7 +297,7 @@ export class ChoferProveedorComponent implements OnInit {
       res => {
         var respuesta = res.json();
         if (respuesta.codigo == 200) {
-          this.reestablecerFormulario(undefined);
+          this.reestablecerFormulario(null);
           document.getElementById('idProveedor').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
@@ -336,10 +336,10 @@ export class ChoferProveedorComponent implements OnInit {
     );
   }
   private reestablecerFormulario(id) {
-    this.formulario.reset();
-    this.formulario.get('id').setValue(id);
-    this.autocompletado.reset();
     this.vaciarLista();
+    this.formulario.reset();
+    this.autocompletado.reset();
+    id ? this.formulario.get('id').setValue(id) : this.formulario.get('id').setValue(this.ultimoId);
   }
   //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
   private lanzarError(err) {

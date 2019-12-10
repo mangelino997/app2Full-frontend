@@ -1,8 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { CompaniaSeguroPolizaService } from '../../servicios/compania-seguro-poliza.service';
 import { CompaniaSeguroService } from '../../servicios/compania-seguro.service';
-import { EmpresaService } from '../../servicios/empresa.service';
-import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { FormGroup, FormControl } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { CompaniaSeguroPoliza } from 'src/app/modelos/companiaSeguroPoliza';
@@ -13,7 +11,6 @@ import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
 import { PdfService } from 'src/app/servicios/pdf.service';
 import { PdfDialogoComponent } from '../pdf-dialogo/pdf-dialogo.component';
-import { FechaService } from 'src/app/servicios/fecha.service';
 import { ReporteService } from 'src/app/servicios/reporte.service';
 
 @Component({
@@ -22,6 +19,8 @@ import { ReporteService } from 'src/app/servicios/reporte.service';
   styleUrls: ['./compania-seguro-poliza.component.css']
 })
 export class CompaniaSeguroPolizaComponent implements OnInit {
+  //Define el ultimo id
+  public ultimoId: string = null;
   //Define la pestania activa
   public activeLink: any = null;
   //Define el indice seleccionado de pestania
@@ -60,6 +59,8 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Define el mostrar del circulo de progreso
   public show = false;
+  //Defiene el render
+  public render: boolean = false;
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Defiene la poliza
@@ -69,25 +70,10 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
   //Define fecha actual
   public fechaActual: String;
   //Constructor
-  constructor(private servicio: CompaniaSeguroPolizaService,
-    private subopcionPestaniaService: SubopcionPestaniaService,
-    private toastr: ToastrService, private appService: AppService,
-    private companiaSeguroServicio: CompaniaSeguroService, private empresaServicio: EmpresaService,
+  constructor(private servicio: CompaniaSeguroPolizaService, private toastr: ToastrService,
+    private appService: AppService, private companiaSeguroServicio: CompaniaSeguroService,
     private companiaSeguroPolizaModelo: CompaniaSeguroPoliza, private loaderService: LoaderService,
-    private fechaService: FechaService,
-    private pdfServicio: PdfService, public dialog: MatDialog,
-    private reporteServicio: ReporteService) {
-    //Obtiene la lista de pestania por rol y subopcion
-    this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
-      .subscribe(
-        res => {
-          this.pestanias = res.json();
-          this.activeLink = this.pestanias[0].nombre;
-          this.loaderService.hide();
-        },
-        err => {
-        }
-      );
+    private pdfServicio: PdfService, public dialog: MatDialog, private reporteServicio: ReporteService) {
   }
   //Al iniciarse el componente
   ngOnInit() {
@@ -102,14 +88,8 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
     this.objetoPdf.setValue(this.companiaSeguroPolizaModelo.formulario.get('pdf').value);
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar');
-    //Obtiene la lista de empresas
-    this.listarEmpresas();
-    //Obtiene la fecha del dia actual
-    this.fechaService.obtenerFecha().subscribe(
-      res => {
-        this.fechaActual = res.json();
-      }, err => { }
-    )
+    /* Obtiene todos los listados */
+    this.inicializar(this.appService.getRol().id, this.appService.getSubopcion());
     //Autocompletado Compania Seguro - Buscar por nombre
     this.formulario.get('companiaSeguro').valueChanges.subscribe(data => {
       if (typeof data == 'string') {
@@ -127,13 +107,27 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
       }
     })
   }
-  //Obtiene la lista de empresas
-  private listarEmpresas() {
-    this.loaderService.show();
-    this.empresaServicio.listar().subscribe(res => {
-      this.empresas = res.json();
-      this.loaderService.hide();
-    })
+  //Obtiene los datos necesarios para el componente
+  private inicializar(idRol, idSubopcion) {
+    this.render = true;
+    this.servicio.inicializar(idRol, idSubopcion).subscribe(
+      res => {
+        let respuesta = res.json();
+        //Establece las pestanias
+        this.pestanias = respuesta.pestanias;
+        //Establece demas datos necesarios
+        this.ultimoId = respuesta.ultimoId;
+        this.fechaActual = respuesta.fecha;
+        this.empresas = respuesta.empresas;
+        // this.unidadesMedidas = respuesta.unidadMedidas;
+        this.formulario.get('id').setValue(this.ultimoId);
+        this.render = false;
+      },
+      err => {
+        this.toastr.error(err.json().mensaje);
+        this.render = false;
+      }
+    )
   }
   //Vacia la listas de resultados autocompletados
   private vaciarListas() {
@@ -155,10 +149,9 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
   public seleccionarPestania(id, nombre) {
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    this.reestablecerFormulario(undefined);
+    this.reestablecerFormulario(null);
     switch (id) {
       case 1:
-        this.obtenerSiguienteId();
         this.establecerValoresPestania(nombre, false, false, true, 'idCompaniaSeguro');
         break;
       case 2:
@@ -193,16 +186,6 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
         break;
     }
   }
-  //Obtiene el siguiente id
-  private obtenerSiguienteId() {
-    this.servicio.obtenerSiguienteId().subscribe(
-      res => {
-        this.formulario.get('id').setValue(res.json());
-      },
-      err => {
-      }
-    );
-  }
   //Agrega un registro
   private agregar() {
     this.loaderService.show();
@@ -212,6 +195,7 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
         var respuesta = res.json();
         if (res.status == 201) {
           respuesta.then(data => {
+            this.ultimoId = data.id;
             this.reestablecerFormulario(data.id);
             document.getElementById('idCompaniaSeguro').focus();
             this.toastr.success('Registro agregado con éxito');
@@ -232,7 +216,7 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
     this.servicio.actualizar(this.formulario.value).then(
       res => {
         if (res.status == 200) {
-          this.reestablecerFormulario(undefined);
+          this.reestablecerFormulario(null);
           document.getElementById('idCompaniaSeguro').focus();
           this.toastr.success('Registro actualizado con éxito');
         }
@@ -322,10 +306,11 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
   }
   //Reestablece los campos formularios
   private reestablecerFormulario(id) {
-    this.empresaBusqueda.reset();
-    this.formulario.reset();
-    this.poliza.reset();
     this.vaciarListas();
+    this.poliza.reset();
+    this.formulario.reset();
+    this.empresaBusqueda.reset();
+    id ? this.formulario.get('id').setValue(id) : this.formulario.get('id').setValue(this.ultimoId);
   }
   //Manejo de colores de campos y labels
   public cambioCampo(id, label) {

@@ -8,7 +8,6 @@ import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModul
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BancoComponent } from 'src/app/componentes/banco/banco.component';
 import { BancoService } from 'src/app/servicios/banco.service';
-import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
 
 @NgModule({
   declarations: [
@@ -32,7 +31,6 @@ import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.s
   ],
   providers: [
     BancoService,
-    SubopcionPestaniaService
   ]
 })
 export class BancoModule { }

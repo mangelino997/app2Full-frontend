@@ -1,5 +1,4 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { FormGroup, FormControl } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { AfipCondicionIvaService } from 'src/app/servicios/afip-condicion-iva.service';
@@ -17,6 +16,8 @@ import { ReporteService } from 'src/app/servicios/reporte.service';
   styleUrls: ['./afip-condicion-iva.component.css']
 })
 export class AfipCondicionIvaComponent implements OnInit {
+  //Define el ultimo id
+  public ultimoId: string = null;
   //Define la pestania activa
   public activeLink: any = null;
   //Define el indice seleccionado de pestania
@@ -39,6 +40,8 @@ export class AfipCondicionIvaComponent implements OnInit {
   public autocompletado: FormControl = new FormControl();
   //Define la lista de resultados de busqueda
   public resultados: Array<any> = [];
+  //Defiene el render
+  public render: boolean = false;
   //Define las columnas de la tabla
   public columnas: string[] = ['ID', 'NOMBRE', 'ABREVIATURA', 'EDITAR'];
   //Define la matSort
@@ -51,14 +54,8 @@ export class AfipCondicionIvaComponent implements OnInit {
   private subscription: Subscription;
   //Constructor
   constructor(private servicio: AfipCondicionIvaService, private afipCondicionIva: AfipCondicionIva, private loaderService: LoaderService,
-    private appService: AppService, private subopcionPestaniaService: SubopcionPestaniaService, private toastr: ToastrService,
+    private appService: AppService, private toastr: ToastrService,
     private reporteServicio: ReporteService) {
-    //Obtiene la lista de pestanias
-    this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
-      .subscribe(res => {
-        this.pestanias = res.json();
-        this.activeLink = this.pestanias[0].nombre;
-      });
     //Controla el autocompletado
     this.autocompletado.valueChanges.subscribe(data => {
       if (typeof data == 'string') {
@@ -85,8 +82,29 @@ export class AfipCondicionIvaComponent implements OnInit {
       });
     //Define el formulario y validaciones
     this.formulario = this.afipCondicionIva.formulario;
+    /* Obtiene todos los listados */
+    this.inicializar(this.appService.getRol().id, this.appService.getSubopcion());
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar');
+  }
+  //Obtiene los datos necesarios para el componente
+  private inicializar(idRol, idSubopcion) {
+    this.render = true;
+    this.servicio.inicializar(idRol, idSubopcion).subscribe(
+      res => {
+        let respuesta = res.json();
+        //Establece las pestanias
+        this.pestanias = respuesta.pestanias;
+        //Establece demas datos necesarios
+        this.ultimoId = respuesta.ultimoId;
+        this.formulario.get('id').setValue(this.ultimoId);
+        this.render = false;
+      },
+      err => {
+        this.toastr.error(err.json().mensaje);
+        this.render = false;
+      }
+    )
   }
   //Obtiene el listado de registros
   private listar() {
@@ -119,10 +137,9 @@ export class AfipCondicionIvaComponent implements OnInit {
   public seleccionarPestania(id, nombre) {
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    this.reestablecerFormulario(undefined);
+    this.reestablecerFormulario(null);
     switch (id) {
       case 1:
-        this.obtenerSiguienteId();
         this.establecerValoresPestania(nombre, false, false, true, 'idNombre');
         break;
       case 2:
@@ -175,6 +192,7 @@ export class AfipCondicionIvaComponent implements OnInit {
       res => {
         let respuesta = res.json();
         if (respuesta.codigo == 201) {
+          this.ultimoId = respuesta.id;
           this.reestablecerFormulario(respuesta.id);
           document.getElementById('idNombre').focus();
           this.toastr.success(respuesta.mensaje);
@@ -200,7 +218,7 @@ export class AfipCondicionIvaComponent implements OnInit {
       res => {
         let respuesta = res.json();
         if (respuesta.codigo == 200) {
-          this.reestablecerFormulario('');
+          this.reestablecerFormulario(null);
           document.getElementById('idAutocompletado').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
@@ -246,10 +264,10 @@ export class AfipCondicionIvaComponent implements OnInit {
   }
   //Reestablece los campos formularios
   private reestablecerFormulario(id) {
-    this.formulario.reset();
-    this.formulario.get('id').setValue(id);
-    this.autocompletado.setValue(undefined);
     this.resultados = [];
+    this.formulario.reset();
+    this.autocompletado.reset();
+    id ? this.formulario.get('id').setValue(id) : this.formulario.get('id').setValue(this.ultimoId);
   }
   //Manejo de colores de campos y labels
   public cambioCampo(id, label) {

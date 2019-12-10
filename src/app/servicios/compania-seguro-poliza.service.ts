@@ -72,6 +72,10 @@ export class CompaniaSeguroPolizaService {
       })
     })
   }
+  //Obtiene todos los listados
+  public inicializar(idRol, idSubopcion) {
+    return this.http.get(this.url + '/inicializar/' + idRol + '/' + idSubopcion, this.options);
+  }
   //Agrega un registro
   public agregar(formulario) {
     let obj = Object.assign({}, formulario);
