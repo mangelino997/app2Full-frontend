@@ -47,7 +47,6 @@ import { ProveedorCuentaContableService } from 'src/app/servicios/proveedor-cuen
     LocalidadService,
     BancoService,
     ProveedorService,
-    UsuarioEmpresaService,
     ProveedorCuentaContableService
   ],
   entryComponents: []

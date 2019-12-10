@@ -23,6 +23,8 @@ import { ReporteService } from 'src/app/servicios/reporte.service';
   templateUrl: './personal-familiar.component.html'
 })
 export class PersonalFamiliarComponent implements OnInit {
+  //Define el ultimo id
+  public ultimoId: string = null;
   //Define la pestania activa
   public activeLink: any = null;
   //Define el indice seleccionado de pestania
@@ -79,34 +81,28 @@ export class PersonalFamiliarComponent implements OnInit {
   public personasFamiliares: Array<any> = [];
   //Define el mostrar del circulo de progreso
   public show = false;
+  //Defiene el render
+  public render: boolean = false;
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Constructor
   constructor(private servicio: PersonalFamiliarService, private personalServicio: PersonalService,
-    private subopcionPestaniaService: SubopcionPestaniaService,
-    private personalFamiliar: PersonalFamiliar, private appServicio: AppService,
-    private toastr: ToastrService, private localidadServicio: LocalidadService, private sexoServicio: SexoService,
-    private loaderService: LoaderService, private tipoDocumentoServicio: TipoDocumentoService,
-    private anio: FechaService, private mes: MesService, private tipoFamiliar: TipoFamiliarService,
-    private reporteServicio: ReporteService) {
-    //Establece la subscripcion a loader
-    this.subscription = this.loaderService.loaderState
-      .subscribe((state: LoaderState) => {
-        this.show = state.show;
-      });
-    this.loaderService.show();
+    private personalFamiliar: PersonalFamiliar, private appService: AppService,
+    private toastr: ToastrService, private localidadServicio: LocalidadService,
+    private loaderService: LoaderService, private anio: FechaService, private reporteServicio: ReporteService) {
+
     //Obtiene la lista de pestania por rol y subopcion
-    this.subopcionPestaniaService.listarPorRolSubopcion(this.appServicio.getRol().id, this.appServicio.getSubopcion())
-      .subscribe(
-        res => {
-          this.pestanias = res.json();
-          this.activeLink = this.pestanias[0].nombre;
-          this.loaderService.hide();
-        },
-        err => {
-        }
-      );
-    let empresa = this.appServicio.getEmpresa();
+    // this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
+    //   .subscribe(
+    //     res => {
+    //       this.pestanias = res.json();
+    //       this.activeLink = this.pestanias[0].nombre;
+    //       this.loaderService.hide();
+    //     },
+    //     err => {
+    //     }
+    //   );
+    let empresa = this.appService.getEmpresa();
     //Autocompletado - Buscar por alias
     this.autocompletado.valueChanges.subscribe(data => {
       if (typeof data == 'string') {
@@ -126,27 +122,26 @@ export class PersonalFamiliarComponent implements OnInit {
   }
   //Al iniciarse el componente
   ngOnInit() {
-    let empresa = this.appServicio.getEmpresa();
+    //Establece la subscripcion a loader
+    this.subscription = this.loaderService.loaderState
+      .subscribe((state: LoaderState) => {
+        this.show = state.show;
+      });
+    let empresa = this.appService.getEmpresa();
     //Define los campos para validaciones
     this.formulario = this.personalFamiliar.formulario;
     //Define los campos para validaciones en el formulario filtro
     this.formularioFiltro = new FormGroup({
       personal: new FormControl('', Validators.required)
     });
-    //Establece los valores de la primera pestania activa
-    this.seleccionarPestania(1, 'Agregar');
     //Establece la primera opcion seleccionada
     this.seleccionarOpcion(15);
-    //Obtiene la lista de sexos
-    this.listarSexos();
-    //Obtiene la lista de tipos de documentos
-    this.listarTiposDocumentos();
-    //Obtiene la lista de meses
-    this.listarMeses();
+    /* Obtiene todos los listados */
+    this.inicializar(this.appService.getRol().id, this.appService.getSubopcion());
+    //Establece los valores de la primera pestania activa
+    this.seleccionarPestania(1, 'Agregar');
     //Obtiene la lista de años
     this.listarAnios();
-    //Obtiene la lista de tipos de familiares
-    this.listarTiposFamiliares();
     //Autocompletado - Buscar personal por alias
     this.formulario.get('personal').valueChanges.subscribe(data => {
       if (typeof data == 'string') {
@@ -196,49 +191,37 @@ export class PersonalFamiliarComponent implements OnInit {
       }
     });
   }
-  //Obtiene el listado de tipos de familiares
-  private listarTiposFamiliares() {
-    this.tipoFamiliar.listar().subscribe(
+  //Obtiene los datos necesarios para el componente
+  private inicializar(idRol, idSubopcion) {
+    this.render = true;
+    this.servicio.inicializar(idRol, idSubopcion).subscribe(
       res => {
-        this.familiares = res.json();
-      },
-      err => {
-      }
-    );
-  }
-  //Obtiene el listado de sexos
-  private listarSexos() {
-    this.sexoServicio.listar().subscribe(
-      res => {
-        this.sexos = res.json();
-      },
-      err => {
-      }
-    );
-  }
-  //Obtiene el listado de tipos de documentos
-  private listarTiposDocumentos() {
-    this.tipoDocumentoServicio.listar().subscribe(
-      res => {
-        this.tiposDocumentos = res.json();
+        console.log(res.json());
+        let respuesta = res.json();
+        //Establece las pestanias
+        this.pestanias = respuesta.pestanias;
+        //Establece demas datos necesarios
+        this.ultimoId = respuesta.ultimoId;
+        this.familiares = respuesta.tipoFamiliares;
+        this.sexos = respuesta.sexos;
+        this.meses = respuesta.meses;
+        this.tiposDocumentos = respuesta.tipoDocumentos;
+        this.formulario.get('id').setValue(this.ultimoId);
         this.formulario.get('tipoDocumento').setValue(this.tiposDocumentos[7]);
+
+        this.render = false;
       },
       err => {
+        this.toastr.error(err.json().mensaje);
+        this.render = false;
       }
-    );
-  }
-  //Obtiene la lista de meses
-  private listarMeses() {
-    this.mes.listar().subscribe(
-      res => {
-        this.meses = res.json();
-      }
-    );
+    )
   }
   //Obtiene la lista de años
   private listarAnios() {
     this.anio.listarAnios().subscribe(
       res => {
+        console.log(res.json());
         this.anios = res.json();
       }
     );
@@ -263,7 +246,7 @@ export class PersonalFamiliarComponent implements OnInit {
   }
   //Obtiene la mascara de enteros
   public mascararEnteros(intLimite) {
-    return this.appServicio.mascararEnteros(intLimite);
+    return this.appService.mascararEnteros(intLimite);
   }
   //Maneja el cambio en el autocompletado
   public cambioAutocompletado() {
@@ -291,7 +274,7 @@ export class PersonalFamiliarComponent implements OnInit {
   public seleccionarPestania(id, nombre) {
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    this.reestablecerFormulario(undefined);
+    this.reestablecerFormulario(null);
     switch (id) {
       case 1:
         this.establecerEstadoCampos(true);
@@ -376,7 +359,7 @@ export class PersonalFamiliarComponent implements OnInit {
       res => {
         if (res.status == 201) {
           let personal = this.formulario.value.personal;
-          this.reestablecerFormulario(undefined);
+          this.reestablecerFormulario(null);
           this.formulario.get('personal').setValue(personal);
           this.formulario.get('tipoDocumento').setValue(this.tiposDocumentos[7]);
           document.getElementById('idTipoFamiliar').focus();
@@ -397,7 +380,7 @@ export class PersonalFamiliarComponent implements OnInit {
       res => {
         let respuesta = res.json();
         if (res.status == 200) {
-          this.reestablecerFormulario(undefined);
+          this.reestablecerFormulario(null);
           document.getElementById('idPersonal').focus();
           this.toastr.success(respuesta.mensaje);
         }
@@ -417,7 +400,7 @@ export class PersonalFamiliarComponent implements OnInit {
       res => {
         let respuesta = res.json();
         if (res.status == 200) {
-          this.reestablecerFormulario(undefined);
+          this.reestablecerFormulario(null);
           document.getElementById('idPersonal').focus();
         }
         this.formulario.disable();
@@ -460,13 +443,13 @@ export class PersonalFamiliarComponent implements OnInit {
 
   //Reestablece los campos agregar
   private reestablecerFormulario(id) {
-    this.formulario.reset();
-    this.formularioFiltro.reset();
-    this.familiar.reset();
-    this.formulario.get('id').setValue(id);
-    this.autocompletado.reset();
-    this.nacionalidadNacimiento.reset();
     this.vaciarListas();
+    this.familiar.reset();
+    this.formulario.reset();
+    this.autocompletado.reset();
+    this.formularioFiltro.reset();
+    this.nacionalidadNacimiento.reset();
+    id ? this.formulario.get('id').setValue(id) : this.formulario.get('id').setValue(this.ultimoId);
   }
   //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
   private lanzarErrorDocumento(err) {
@@ -506,7 +489,7 @@ export class PersonalFamiliarComponent implements OnInit {
     if (documento) {
       switch (tipoDocumento.id) {
         case 1:
-          let respuesta = this.appServicio.validarCUIT(documento.toString());
+          let respuesta = this.appService.validarCUIT(documento.toString());
           if (!respuesta) {
             this.formulario.get('numeroDocumento').reset();
             let err = { codigo: 11007, mensaje: 'CUIT Incorrecto!' };
@@ -514,7 +497,7 @@ export class PersonalFamiliarComponent implements OnInit {
           }
           break;
         case 2:
-          let respuesta2 = this.appServicio.validarCUIT(documento.toString());
+          let respuesta2 = this.appService.validarCUIT(documento.toString());
           if (!respuesta2) {
             this.formulario.get('numeroDocumento').reset();
             let err = { codigo: 11012, mensaje: 'CUIL Incorrecto!' };
@@ -522,7 +505,7 @@ export class PersonalFamiliarComponent implements OnInit {
           }
           break;
         case 8:
-          let respuesta8 = this.appServicio.validarDNI(documento.toString());
+          let respuesta8 = this.appService.validarDNI(documento.toString());
           if (!respuesta8) {
             this.formulario.get('numeroDocumento').reset();
             let err = { codigo: 11010, mensaje: 'DNI Incorrecto!' };
@@ -537,7 +520,7 @@ export class PersonalFamiliarComponent implements OnInit {
     let cuil = this.formulario.get('cuil').value;
     //Primero valida que la cantidad de numeros sean validos
     if (cuil) {
-      let respuesta = this.appServicio.validarCUIT(cuil + '');
+      let respuesta = this.appService.validarCUIT(cuil + '');
       if (!respuesta) {
         this.formulario.get('cuil').reset();
         let err = { codigo: 11012, mensaje: 'CUIL Incorrecto!' };
@@ -659,8 +642,8 @@ export class PersonalFamiliarComponent implements OnInit {
     let lista = this.prepararDatos(this.listaCompleta.data);
     let datos = {
       nombre: 'Familiares Personal',
-      empresa: this.appServicio.getEmpresa().razonSocial,
-      usuario: this.appServicio.getUsuario().nombre,
+      empresa: this.appService.getEmpresa().razonSocial,
+      usuario: this.appService.getUsuario().nombre,
       datos: lista,
       columnas: this.columnas
     }

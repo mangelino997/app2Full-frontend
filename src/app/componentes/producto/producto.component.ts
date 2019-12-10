@@ -115,7 +115,6 @@ export class ProductoComponent implements OnInit {
     this.render = true;
     this.servicio.inicializar(idRol, idSubopcion).subscribe(
       res => {
-        console.log(res.json());
         let respuesta = res.json();
         //Establece las pestanias
         this.pestanias = respuesta.pestanias;
@@ -124,6 +123,7 @@ export class ProductoComponent implements OnInit {
         this.unidadesMedidas = respuesta.unidadMedidas;
         this.marcas = respuesta.marcaProductos;
         this.rubros = respuesta.rubroProductos;
+        this.formulario.get('id').setValue(this.ultimoId);
         this.render = false;
       },
       err => {
@@ -204,10 +204,9 @@ export class ProductoComponent implements OnInit {
   public seleccionarPestania(id, nombre) {
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    this.reestablecerFormulario(undefined);
+    this.reestablecerFormulario(null);
     switch (id) {
       case 1:
-        this.obtenerSiguienteId();
         this.establecerEstadoCampos(true);
         this.establecerValoresPestania(nombre, false, false, true, 'idNombre');
         break;
@@ -236,6 +235,7 @@ export class ProductoComponent implements OnInit {
   }
   //Obtiene el siguiente id
   private obtenerSiguienteId() {
+    console.log(this.ultimoId);
     this.formulario.get('id').setValue(Number(this.ultimoId));
     // this.servicio.obtenerSiguienteId().subscribe(
     //   res => {
@@ -367,10 +367,10 @@ export class ProductoComponent implements OnInit {
   }
   //Reestablece los campos formularios
   private reestablecerFormulario(id) {
+    this.vaciarListas();
     this.formulario.reset();
     this.autocompletado.reset();
-    this.formulario.get('id').setValue(id);
-    this.vaciarListas();
+    id ? this.formulario.get('id').setValue(id) : this.formulario.get('id').setValue(this.ultimoId);
   }
   //Manejo de colores de campos y labels
   public cambioCampo(id, label) {

@@ -1,13 +1,9 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { PuntoVentaService } from '../../servicios/punto-venta.service';
-import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
-import { SucursalService } from '../../servicios/sucursal.service';
-import { EmpresaService } from '../../servicios/empresa.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { AfipComprobanteService } from 'src/app/servicios/afip-comprobante.service';
 import { PuntoVenta } from 'src/app/modelos/puntoVenta';
-import { TipoComprobanteService } from 'src/app/servicios/tipo-comprobante.service';
 import { MatSort, MatTableDataSource, MatPaginator } from '@angular/material';
 import { AppService } from 'src/app/servicios/app.service';
 import { LoaderService } from 'src/app/servicios/loader.service';
@@ -76,11 +72,9 @@ export class PuntoVentaComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Constructor
-  constructor(private servicio: PuntoVentaService, private subopcionPestaniaService: SubopcionPestaniaService,
-    private toastr: ToastrService, private puntoVenta: PuntoVenta,
-    private sucursalServicio: SucursalService, private empresaServicio: EmpresaService,
-    private afipComprobanteService: AfipComprobanteService, private tipoComprobanteService: TipoComprobanteService,
-    private appService: AppService, private loaderService: LoaderService, private reporteServicio: ReporteService) {
+  constructor(private servicio: PuntoVentaService, private toastr: ToastrService, private puntoVenta: PuntoVenta,
+    private afipComprobanteService: AfipComprobanteService, private appService: AppService, private loaderService: LoaderService,
+    private reporteServicio: ReporteService) {
   }
   //Al iniciarse el componente
   ngOnInit() {
@@ -101,7 +95,6 @@ export class PuntoVentaComponent implements OnInit {
     this.render = true;
     this.servicio.inicializar(idRol, idSubopcion).subscribe(
       res => {
-        console.log(res.json());
         let respuesta = res.json();
         //Establece las pestanias
         this.pestanias = respuesta.pestanias;
@@ -110,6 +103,7 @@ export class PuntoVentaComponent implements OnInit {
         this.sucursales = respuesta.sucursales;
         this.empresas = respuesta.empresas;
         this.tipoComprobantes = respuesta.tipoComprobantes;
+        this.formulario.get('id').setValue(this.ultimoId);
         this.render = false;
       },
       err => {
@@ -194,18 +188,14 @@ export class PuntoVentaComponent implements OnInit {
   public seleccionarPestania(id, nombre) {
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    this.reestablecerFormulario();
+    this.reestablecerFormulario(null);
     this.establecerValoresPorDefecto();
     switch (id) {
       case 1:
-        // this.obtenerSiguienteId();
         this.establecerEstadoCampos(true);
         this.establecerValoresPestania(nombre, false, false, true, 'idSucursal');
         break;
       case 2:
-        // try {
-        //   this.autoComplete.closePanel();
-        // } catch(e) {}
         this.establecerEstadoCampos(false);
         this.establecerValoresPestania(nombre, true, true, false, 'idSucursal');
         break;
@@ -214,9 +204,6 @@ export class PuntoVentaComponent implements OnInit {
         this.establecerValoresPestania(nombre, true, false, true, 'idSucursal');
         break;
       case 4:
-        // try {
-        //   this.autoComplete.closePanel();
-        // } catch(e) {}
         this.establecerEstadoCampos(false);
         this.establecerValoresPestania(nombre, true, true, true, 'idSucursal');
         break;
@@ -300,7 +287,7 @@ export class PuntoVentaComponent implements OnInit {
         let respuesta = res.json();
         if (respuesta.codigo == 201) {
           this.ultimoId = respuesta.id;
-          this.reestablecerFormulario();
+          this.reestablecerFormulario(respuesta.id);
           this.establecerEstadoCampos(true);
           document.getElementById('idSucursal').focus();
           this.toastr.success(respuesta.mensaje);
@@ -321,7 +308,7 @@ export class PuntoVentaComponent implements OnInit {
       res => {
         let respuesta = res.json();
         if (respuesta.codigo == 200) {
-          this.reestablecerFormulario();
+          this.reestablecerFormulario(null);
           this.establecerEstadoCamposActualizar();
           document.getElementById('idSucursal').focus();
           this.toastr.success(respuesta.mensaje);
@@ -341,7 +328,7 @@ export class PuntoVentaComponent implements OnInit {
       res => {
         let respuesta = res.json();
         if (respuesta.codigo == 200) {
-          this.reestablecerFormulario();
+          this.reestablecerFormulario(null);
           this.establecerEstadoCamposActualizar();
           document.getElementById('idSucursal').focus();
           this.toastr.success(respuesta.mensaje);
@@ -359,7 +346,7 @@ export class PuntoVentaComponent implements OnInit {
     elemento.setValue((string + elemento.value).slice(cantidad));
   }
   //Reestablece el formulario
-  private reestablecerFormulario() {
+  private reestablecerFormulario(id) {
     this.vaciarListas();
     this.empresa.reset();
     this.sucursal.reset();
@@ -367,9 +354,10 @@ export class PuntoVentaComponent implements OnInit {
     this.autocompletado.reset();
     this.tipoComprobante.reset();
     this.establecerValoresPorDefecto();
+    id ? this.formulario.get('id').setValue(id) : this.formulario.get('id').setValue(this.ultimoId);
   }
   //Vacía las listas
-  private vaciarListas(){
+  private vaciarListas() {
     this.afipComprobantes = [];
     this.listaCompleta = new MatTableDataSource([]);
   }

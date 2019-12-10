@@ -10,7 +10,6 @@ import { Proveedor } from 'src/app/modelos/proveedor';
 import { LoaderService } from 'src/app/servicios/loader.service';
 import { Subscription } from 'rxjs';
 import { MatSort, MatTableDataSource, MatDialog, MatPaginator } from '@angular/material';
-import { UsuarioEmpresaService } from 'src/app/servicios/usuario-empresa.service';
 import { PlanCuentaDialogo } from '../plan-cuenta-dialogo/plan-cuenta-dialogo.component';
 import { ReporteService } from 'src/app/servicios/reporte.service';
 import { ProveedorCuentaContableService } from 'src/app/servicios/proveedor-cuenta-contable.service';
@@ -92,10 +91,10 @@ export class ProveedorComponent implements OnInit {
   //Define la paginacion
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Constructor
-  constructor(private servicio: ProveedorService,
-    private appService: AppService, private toastr: ToastrService, private barrioServicio: BarrioService,
+  constructor(
+    private servicio: ProveedorService, private appService: AppService, private toastr: ToastrService, private barrioServicio: BarrioService,
     private localidadServicio: LocalidadService, private bancoServicio: BancoService,
-    private proveedorModelo: Proveedor, private loaderService: LoaderService, private usuarioEmpresaService: UsuarioEmpresaService,
+    private proveedorModelo: Proveedor, private loaderService: LoaderService,
     private dialog: MatDialog, private reporteServicio: ReporteService, private proveedorCuentaContableService: ProveedorCuentaContableService) {
     //Autocompletado - Buscar por alias
     this.autocompletado.valueChanges.subscribe(data => {
@@ -130,12 +129,12 @@ export class ProveedorComponent implements OnInit {
       tipoProveedor: new FormControl('', Validators.required),
       condicionCompra: new FormControl('', Validators.required)
     });
+    //Establece la primera opcion seleccionada
+    this.seleccionarOpcion(8, 0);
     /* Obtiene todos los listados */
     this.inicializar(this.appService.getUsuario().id, this.appService.getRol().id, this.appService.getSubopcion());
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar');
-    //Establece la primera opcion seleccionada
-    this.seleccionarOpcion(8, 0);
     //Autocompletado Barrio - Buscar por nombre
     this.formulario.get('barrio').valueChanges.subscribe(data => {
       if (typeof data == 'string') {
@@ -206,7 +205,6 @@ export class ProveedorComponent implements OnInit {
     this.render = true;
     this.servicio.inicializar(idUsuario, idRol, idSubopcion).subscribe(
       res => {
-        console.log(res.json());
         let respuesta = res.json();
         //Establece las pestanias
         this.pestanias = respuesta.pestanias;
@@ -215,11 +213,12 @@ export class ProveedorComponent implements OnInit {
         //Establece demas datos necesarios
         this.ultimoId = respuesta.ultimoId;
         this.tiposProveedores = respuesta.tipoProveedores;
-        this.condicionesIva = respuesta.condicionesIva;
+        this.condicionesIva = respuesta.afipCondicionesIva;
         this.tiposDocumentos = respuesta.tipoDocumentos;
         this.condicionesCompras = respuesta.condicionCompras;
         this.tiposCuentasBancarias = respuesta.tipoCuentaBancarias;
         this.empresasPlanCuenta = respuesta.empresas;
+        this.formulario.get('id').setValue(this.ultimoId);
         this.formulario.get('condicionCompra').setValue(this.condicionesCompras[0]);
         //Crea cuenta bancaria
         this.crearCuentasContables(respuesta.empresas);
@@ -373,7 +372,6 @@ export class ProveedorComponent implements OnInit {
     this.reestablecerFormulario(null);
     switch (id) {
       case 1:
-        this.formulario.get('id').setValue(this.ultimoId);
         this.establecerEstadoCampos(true);
         this.establecerValoresPestania(nombre, false, false, true, 'idRazonSocial');
         break;
@@ -547,12 +545,12 @@ export class ProveedorComponent implements OnInit {
   }
   //Reestablece el formulario
   private reestablecerFormulario(id) {
-    this.formulario.reset();
-    id ? this.formulario.get('id').setValue(id) : this.formulario.get('id').setValue(this.ultimoId);
-    this.autocompletado.setValue(undefined);
     this.vaciarListas();
-    this.crearCuentasContables(this.empresasPlanCuenta);
+    this.formulario.reset();
     this.establecerValoresPorDefecto();
+    this.autocompletado.setValue(undefined);
+    this.crearCuentasContables(this.empresasPlanCuenta);
+    id ? this.formulario.get('id').setValue(id) : this.formulario.get('id').setValue(this.ultimoId);
   }
   //Reestablece e inicializa el formulario filtro
   private establecerFormularioFiltro() {

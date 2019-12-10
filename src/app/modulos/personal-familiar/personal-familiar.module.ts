@@ -41,13 +41,8 @@ import { TipoFamiliarService } from 'src/app/servicios/tipo-familiar.service';
   providers: [
     PersonalFamiliarService,
     PersonalService,
-    SubopcionPestaniaService,
     PersonalFamiliar,
     LocalidadService,
-    SexoService,
-    TipoDocumentoService,
-    MesService,
-    TipoFamiliarService
   ]
 })
 export class PersonalFamiliarModule { }

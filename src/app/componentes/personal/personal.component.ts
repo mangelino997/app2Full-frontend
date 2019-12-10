@@ -23,7 +23,7 @@ import { ReporteService } from 'src/app/servicios/reporte.service';
 })
 export class PersonalComponent implements OnInit {
   //Define el ultimo id
-  public ultimoId:string = null;
+  public ultimoId: string = null;
   //Define la pestania activa
   public activeLink: any = null;
   //Define el indice seleccionado de pestania
@@ -115,9 +115,9 @@ export class PersonalComponent implements OnInit {
   //Constructor
   constructor(private servicio: PersonalService,
     private appServicio: AppService, private toastr: ToastrService, private personal: Personal, private appService: AppService,
-    private barrioServicio: BarrioService, private localidadServicio: LocalidadService, 
+    private barrioServicio: BarrioService, private localidadServicio: LocalidadService,
     private loaderService: LoaderService, private fotoService: FotoService, private pdfServicio: PdfService,
-     public dialog: MatDialog, private reporteServicio: ReporteService) {
+    public dialog: MatDialog, private reporteServicio: ReporteService) {
     //Autocompletado - Buscar por alias
     this.autocompletado.valueChanges.subscribe(data => {
       let empresa = this.appServicio.getEmpresa();
@@ -159,15 +159,12 @@ export class PersonalComponent implements OnInit {
     this.formularioFiltro.get('idModContratacion').setValue(0);
     this.formularioFiltro.get('idCategoria').setValue(0);
     this.formularioFiltro.get('tipoEmpleado').setValue(0);
-    /* 
-    * Obtiene todos los listados: sexos - estados civiles- tipos de documentos - 
-    * sucursales - areas - sindicatos - categorias
-    */
+    //Establece la primera opcion seleccionada
+    this.seleccionarOpcion(15, 0);
+    /* Obtiene todos los listados */
     this.inicializar(this.appService.getUsuario().id, this.appService.getRol().id, this.appService.getSubopcion());
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar');
-    //Establece la primera opcion seleccionada
-    this.seleccionarOpcion(15, 0);
     //Establece los valores por defecto
     this.establecerValoresPorDefecto();
     //Autocompletado Barrio - Buscar por nombre
@@ -224,7 +221,6 @@ export class PersonalComponent implements OnInit {
     this.render = true;
     this.servicio.inicializar(idUsuario, idRol, idSubopcion).subscribe(
       res => {
-        console.log(res.json());
         let respuesta = res.json();
         //Establece las pestanias
         this.pestanias = respuesta.pestanias;
@@ -251,6 +247,7 @@ export class PersonalComponent implements OnInit {
         this.resultadosAfipModContrataciones = respuesta.afipModContrataciones;
         this.formulario.get('fechaInicio').setValue(respuesta.fecha);
         this.formulario.get('tipoDocumento').setValue(this.tiposDocumentos[7]);
+        this.formulario.get('id').setValue(this.ultimoId);
         this.render = false;
       },
       err => {

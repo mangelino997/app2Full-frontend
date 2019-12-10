@@ -110,16 +110,7 @@ export class VehiculoComponent implements OnInit {
     private companiaSeguroPolizaServicio: CompaniaSeguroPolizaService, private companiaSeguroService: CompaniaSeguroService,
     private configuracionVehiculoServicio: ConfiguracionVehiculoService, private pdfServicio: PdfService, public dialog: MatDialog,
     private personalServicio: PersonalService, private vehiculoModelo: Vehiculo, private appService: AppService, private reporteServicio: ReporteService) {
-    //Obtiene la lista de pestania por rol y subopcion
-    // this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
-    //   .subscribe(
-    //     res => {
-    //       this.pestanias = res.json();
-    //       this.activeLink = this.pestanias[0].nombre;
-    //     },
-    //     err => {
-    //     }
-    //   );
+    
     //Autocompletado - Buscar por alias
     this.autocompletado.valueChanges.subscribe(data => {
       if (typeof data == 'string') {
@@ -152,10 +143,7 @@ export class VehiculoComponent implements OnInit {
       marcaVehiculo: new FormControl('', Validators.required),
       empresa: new FormControl('', Validators.required)
     });
-    /* 
-    * Obtiene todos los listados: sexos - estados civiles- tipos de documentos - 
-    * sucursales - areas - sindicatos - categorias
-    */
+    /* Obtiene todos los listados */
     this.inicializar(this.appService.getRol().id, this.appService.getSubopcion());
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar');
@@ -224,11 +212,11 @@ export class VehiculoComponent implements OnInit {
       }
     })
     //Obtiene la lista de tipos de vehiculos
-    this.listarTiposVehiculos();
-    //Obtiene la lista de marcas de vehiculos
-    this.listarMarcasVehiculos();
-    //Obtiene la lista de empresas
-    this.listarEmpresas();
+    // this.listarTiposVehiculos();
+    // //Obtiene la lista de marcas de vehiculos
+    // this.listarMarcasVehiculos();
+    // //Obtiene la lista de empresas
+    // this.listarEmpresas();
   }
   //Obtiene los datos necesarios para el componente
   private inicializar(idRol, idSubopcion) {
@@ -429,7 +417,7 @@ export class VehiculoComponent implements OnInit {
   public seleccionarPestania(id, nombre) {
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    this.reestablecerFormulario(undefined);
+    this.reestablecerFormulario(null);
     switch (id) {
       case 1:
         this.establecerCamposSoloLectura(false);
@@ -614,7 +602,7 @@ export class VehiculoComponent implements OnInit {
       res => {
         let respuesta = res.json();
         if (res.status == 200) {
-          this.reestablecerFormulario(undefined);
+          this.reestablecerFormulario(null);
           document.getElementById('idAutocompletado').focus();
           this.toastr.success('Registro actualizado con éxito');
         } else if (res.status == 500) {
@@ -648,7 +636,7 @@ export class VehiculoComponent implements OnInit {
       res => {
         let respuesta = res.json();
         if (respuesta.codigo == 200) {
-          this.reestablecerFormulario(undefined);
+          this.reestablecerFormulario(null);
           document.getElementById('idAutocompletado').focus();
           this.toastr.success(respuesta.mensaje);
         }
@@ -674,16 +662,15 @@ export class VehiculoComponent implements OnInit {
   }
   //Reestablece el formulario
   private reestablecerFormulario(id) {
+    this.vaciarLista();
     this.formulario.reset();
-    this.formulario.get('id').setValue(id);
     this.autocompletado.reset();
     this.tipoVehiculo.setValue(undefined);
     this.marcaVehiculo.setValue(undefined);
     this.configuracion.setValue(undefined);
-
     /* deshabilita el control'Lista de Configuraciones' */
     this.formulario.get('configuracionVehiculo').disable();
-    this.vaciarLista();
+    id ? this.formulario.get('id').setValue(id) : this.formulario.get('id').setValue(this.ultimoId);
   }
   /*
   * Establece la configuracion de vehiculo al seleccionar un item de la lista
