@@ -110,7 +110,7 @@ export class VehiculoComponent implements OnInit {
     private companiaSeguroPolizaServicio: CompaniaSeguroPolizaService, private companiaSeguroService: CompaniaSeguroService,
     private configuracionVehiculoServicio: ConfiguracionVehiculoService, private pdfServicio: PdfService, public dialog: MatDialog,
     private personalServicio: PersonalService, private vehiculoModelo: Vehiculo, private appService: AppService, private reporteServicio: ReporteService) {
-    
+
     //Autocompletado - Buscar por alias
     this.autocompletado.valueChanges.subscribe(data => {
       if (typeof data == 'string') {
@@ -651,8 +651,10 @@ export class VehiculoComponent implements OnInit {
   }
   //Verifica que el año de fabricación tenga como minimo 4 caracteres
   public verificarAnioFabricacion() {
-    this.formulario.value.anioFabricacion.length != 4 ?
-      [this.toastr.error("El año de fabricación debe ser de 4 carácteres."), this.formulario.get('anioFabricacion').reset()] : '';
+    if (this.formulario.value.anioFabricacion) {
+      this.formulario.value.anioFabricacion.length != 4 ?
+        [this.toastr.error("El año de fabricación debe ser de 4 carácteres."), this.formulario.get('anioFabricacion').reset()] : '';
+    }
   }
   //Verifica si se selecciono un elemento del autocompletado
   public verificarSeleccion(valor): void {
@@ -668,6 +670,7 @@ export class VehiculoComponent implements OnInit {
     this.tipoVehiculo.setValue(undefined);
     this.marcaVehiculo.setValue(undefined);
     this.configuracion.setValue(undefined);
+
     /* deshabilita el control'Lista de Configuraciones' */
     this.formulario.get('configuracionVehiculo').disable();
     id ? this.formulario.get('id').setValue(id) : this.formulario.get('id').setValue(this.ultimoId);

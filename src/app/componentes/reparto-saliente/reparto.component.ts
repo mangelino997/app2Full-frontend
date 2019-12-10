@@ -90,9 +90,9 @@ export class RepartoComponent implements OnInit {
             this.resultadosVehiculo = response;
             this.loaderService.hide();
           },
-          err=>{
-            this.loaderService.hide();
-          })
+            err => {
+              this.loaderService.hide();
+            })
         }
       }
     })
@@ -106,9 +106,9 @@ export class RepartoComponent implements OnInit {
             this.resultadosVehiculo = response;
             this.loaderService.hide();
           },
-          err=>{
-            this.loaderService.hide();
-          })
+            err => {
+              this.loaderService.hide();
+            })
         }
       }
     })
@@ -122,9 +122,9 @@ export class RepartoComponent implements OnInit {
             this.resultadosRemolque = response;
             this.loaderService.hide();
           },
-          err=>{
-            this.loaderService.hide();
-          })
+            err => {
+              this.loaderService.hide();
+            })
         }
       }
     })
@@ -138,9 +138,9 @@ export class RepartoComponent implements OnInit {
             this.resultadosRemolque = response;
             this.loaderService.hide();
           },
-          err=>{
-            this.loaderService.hide();
-          })
+            err => {
+              this.loaderService.hide();
+            })
         }
       }
     })
@@ -154,9 +154,9 @@ export class RepartoComponent implements OnInit {
             this.resultadosChofer = response.json();
             this.loaderService.hide();
           },
-          err=>{
-            this.loaderService.hide();
-          })
+            err => {
+              this.loaderService.hide();
+            })
         }
       }
     })
@@ -170,9 +170,9 @@ export class RepartoComponent implements OnInit {
             this.resultadosChofer = response;
             this.loaderService.hide();
           },
-          err=>{
-            this.loaderService.hide();
-          })
+            err => {
+              this.loaderService.hide();
+            })
         }
       }
     })
@@ -530,18 +530,27 @@ export class AcompanianteDialogo {
   //Agrega Acompañantes a una lista
   public agregar() {
     if (this.listaCompleta.data.length > 0) {
-      this.listaCompleta.data.forEach(elemento => {
-        if (this.formulario.get('personal').value.id == elemento.personal.id) {
-          this.formulario.reset();
-          this.toastr.error("El acompañante seleccionado ya fue agregado a la lista.");
-          document.getElementById('idAcompaniante').focus();
-        } else {
-          this.agregarAcompaniante();
-        }
-      });
+      this.verificarListaAcompaniantes() ?
+        [
+          this.formulario.reset(),
+          this.toastr.error("El acompañante seleccionado ya fue agregado a la lista."),
+          document.getElementById('idAcompaniante').focus()] : this.agregarAcompaniante();
     } else {
       this.agregarAcompaniante();
     }
+  }
+  //Recorre la lista de Acompañantes y determina si ya fue asignado anteriormente un acompañante a la lista
+  private verificarListaAcompaniantes() {
+    /* establezco un boolean para determinar si se agrega el acompaniante o no, 
+       en caso que ya este agregado en la lista */
+    let bandera = false;
+    for (let i = 0; i < this.listaCompleta.data.length; i++) {
+      if (this.formulario.get('personal').value.id == this.listaCompleta.data[i].personal.id) {
+        bandera = true;
+        break;
+      }
+    }
+    return bandera;
   }
   //Agrega un acompañante a la lista
   private agregarAcompaniante() {

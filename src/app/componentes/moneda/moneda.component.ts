@@ -190,8 +190,6 @@ export class MonedaComponent implements OnInit {
   //Agrega un registro
   private verificarPrincipal(opcionPestania) {
     let elemento = this.formulario.value;
-    console.log("entra", elemento, this.listaCompleta.data.length);
-
     if (elemento.porDefecto && this.listaCompleta.data.length > 0) {
       this.servicio.obtenerPorDefecto().subscribe(
         res => {
