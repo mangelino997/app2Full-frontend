@@ -1,8 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ContactoCompaniaSeguroService } from '../../servicios/contacto-compania-seguro.service';
-import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { CompaniaSeguroService } from '../../servicios/compania-seguro.service';
-import { TipoContactoService } from '../../servicios/tipo-contacto.service';
 import { AppService } from '../../servicios/app.service';
 import { FormGroup, FormControl } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
@@ -19,6 +17,8 @@ import { ContactoCompaniaSeguro } from 'src/app/modelos/contactoCompaniaSeguro';
   styleUrls: ['./contacto-compania-seguro.component.css']
 })
 export class ContactoCompaniaSeguroComponent implements OnInit {
+  //Define el ultimo id
+  public ultimoId: string = null;
   //Define la pestania activa
   public activeLink: any = null;
   //Define el indice seleccionado de pestania
@@ -55,23 +55,14 @@ export class ContactoCompaniaSeguroComponent implements OnInit {
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Define el mostrar del circulo de progreso
   public show = false;
+  //Defiene el render
+  public render: boolean = false;
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Constructor
-  constructor(private servicio: ContactoCompaniaSeguroService, private subopcionPestaniaService: SubopcionPestaniaService,
-    private appServicio: AppService, private toastr: ToastrService, private modelo: ContactoCompaniaSeguro,
-    private companiaSeguroServicio: CompaniaSeguroService, private tipoContactoServicio: TipoContactoService,
-    private loaderService: LoaderService, private reporteServicio: ReporteService) {
-    //Obtiene la lista de pestania por rol y subopcion
-    this.subopcionPestaniaService.listarPorRolSubopcion(this.appServicio.getRol().id, this.appServicio.getSubopcion())
-      .subscribe(
-        res => {
-          this.pestanias = res.json();
-          this.activeLink = this.pestanias[0].nombre;
-        },
-        err => {
-        }
-      );
+  constructor(private servicio: ContactoCompaniaSeguroService,
+    private appService: AppService, private toastr: ToastrService, private modelo: ContactoCompaniaSeguro,
+    private companiaSeguroServicio: CompaniaSeguroService, private loaderService: LoaderService, private reporteServicio: ReporteService) {
   }
   //Al iniciarse el componente
   ngOnInit() {
@@ -82,10 +73,10 @@ export class ContactoCompaniaSeguroComponent implements OnInit {
       });
     //Define los campos para validaciones
     this.formulario = this.modelo.formulario;
+    /* Obtiene todos los listados */
+    this.inicializar(this.appService.getRol().id, this.appService.getSubopcion());
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar');
-    //Obtiene la lista de tipos de contactos
-    this.listarTiposContactos();
     //Autocompletado - Buscar por nombre compania seguro
     this.formulario.get('companiaSeguro').valueChanges.subscribe(data => {
       if (typeof data == 'string') {
@@ -103,19 +94,29 @@ export class ContactoCompaniaSeguroComponent implements OnInit {
       }
     })
   }
+  //Obtiene los datos necesarios para el componente
+  private inicializar(idRol, idSubopcion) {
+    this.render = true;
+    this.servicio.inicializar(idRol, idSubopcion).subscribe(
+      res => {
+        let respuesta = res.json();
+        //Establece las pestanias
+        this.pestanias = respuesta.pestanias;
+        //Establece demas datos necesarios
+        this.ultimoId = respuesta.ultimoId;
+        this.tiposContactos = respuesta.tipoContactos;
+        this.formulario.get('id').setValue(this.ultimoId);
+        this.render = false;
+      },
+      err => {
+        this.toastr.error(err.json().mensaje);
+        this.render = false;
+      }
+    )
+  }
   //Establecer el formulario al cambiar elemento de autocompletado
   public cambioAutocompletado() {
     this.formulario.setValue(this.autocompletado.value);
-  }
-  //Obtiene el listado de tipos de proveedores
-  private listarTiposContactos() {
-    this.tipoContactoServicio.listar().subscribe(
-      res => {
-        this.tiposContactos = res.json();
-      },
-      err => {
-      }
-    );
   }
   //Vacia la lista de resultados de autocompletados
   public vaciarListas() {
@@ -138,10 +139,9 @@ export class ContactoCompaniaSeguroComponent implements OnInit {
   public seleccionarPestania(id, nombre) {
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    this.reestablecerFormulario();
+    this.reestablecerFormulario(null);
     switch (id) {
       case 1:
-        this.obtenerSiguienteId();
         this.establecerValoresPestania(nombre, false, false, true, 'idCompaniaSeguro');
         break;
       case 2:
@@ -177,16 +177,6 @@ export class ContactoCompaniaSeguroComponent implements OnInit {
       default:
         break;
     }
-  }
-  //Obtiene el siguiente id
-  private obtenerSiguienteId() {
-    this.servicio.obtenerSiguienteId().subscribe(
-      res => {
-        this.formulario.get('id').setValue(res.json());
-      },
-      err => {
-      }
-    );
   }
   //Obtiene la lista por compania seguro
   public listarPorCompaniaSeguro() {
@@ -226,13 +216,14 @@ export class ContactoCompaniaSeguroComponent implements OnInit {
   private agregar() {
     this.loaderService.show();
     this.formulario.get('id').setValue(null);
-    this.formulario.get('usuarioAlta').setValue(this.appServicio.getUsuario());
+    this.formulario.get('usuarioAlta').setValue(this.appService.getUsuario());
     let companiaSeguro = this.formulario.value.companiaSeguro;
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
         if (respuesta.codigo == 201) {
-          this.reestablecerFormulario();
+          this.ultimoId = respuesta.id;
+          this.reestablecerFormulario(respuesta.id);
           this.formulario.get('companiaSeguro').setValue(companiaSeguro);
           document.getElementById('idTipoContacto').focus();
           this.toastr.success(respuesta.mensaje);
@@ -248,12 +239,12 @@ export class ContactoCompaniaSeguroComponent implements OnInit {
   //Actualiza un registro
   private actualizar() {
     this.loaderService.show();
-    this.formulario.get('usuarioMod').setValue(this.appServicio.getUsuario());
+    this.formulario.get('usuarioMod').setValue(this.appService.getUsuario());
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
         if (respuesta.codigo == 200) {
-          this.reestablecerFormulario();
+          this.reestablecerFormulario(null);
           document.getElementById('idCompaniaSeguro').focus();
           this.toastr.success(respuesta.mensaje);
         }
@@ -273,7 +264,7 @@ export class ContactoCompaniaSeguroComponent implements OnInit {
       res => {
         var respuesta = res.json();
         if (respuesta.codigo == 200) {
-          this.reestablecerFormulario();
+          this.reestablecerFormulario(null);
           document.getElementById('idNombre').focus();
           this.toastr.success(respuesta.mensaje);
         }
@@ -292,10 +283,11 @@ export class ContactoCompaniaSeguroComponent implements OnInit {
     );
   }
   //Reestablece el formulario
-  private reestablecerFormulario() {
+  private reestablecerFormulario(id) {
+    this.vaciarListas();
     this.formulario.reset();
     this.autocompletado.reset();
-    this.vaciarListas();
+    id ? this.formulario.get('id').setValue(id) : this.formulario.get('id').setValue(this.ultimoId);
   }
   //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
   private lanzarError(err) {
@@ -411,8 +403,8 @@ export class ContactoCompaniaSeguroComponent implements OnInit {
     if (this.formulario.value.companiaSeguro) {
       let datos = {
         nombre: 'Contactos - Compañia de Seguro: ' + this.formulario.value.companiaSeguro.nombre,
-        empresa: this.appServicio.getEmpresa().razonSocial,
-        usuario: this.appServicio.getUsuario().nombre,
+        empresa: this.appService.getEmpresa().razonSocial,
+        usuario: this.appService.getUsuario().nombre,
         datos: lista,
         columnas: this.columnas
       }

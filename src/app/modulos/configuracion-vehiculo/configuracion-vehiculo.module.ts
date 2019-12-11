@@ -9,9 +9,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ConfiguracionVehiculoComponent } from 'src/app/componentes/configuracion-vehiculo/configuracion-vehiculo.component';
 import { TextMaskModule } from 'angular2-text-mask';
 import { ConfiguracionVehiculoService } from 'src/app/servicios/configuracion-vehiculo.service';
-import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
-import { TipoVehiculoService } from 'src/app/servicios/tipo-vehiculo.service';
-import { MarcaVehiculoService } from 'src/app/servicios/marca-vehiculo.service';
 import { configuracionVehiculo } from 'src/app/modelos/configuracionVehiculo';
 
 @NgModule({
@@ -36,9 +33,6 @@ import { configuracionVehiculo } from 'src/app/modelos/configuracionVehiculo';
   ],
   providers: [
     ConfiguracionVehiculoService,
-    SubopcionPestaniaService,
-    TipoVehiculoService,
-    MarcaVehiculoService,
     configuracionVehiculo
   ]
 })

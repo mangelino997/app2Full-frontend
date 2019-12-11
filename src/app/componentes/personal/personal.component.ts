@@ -954,12 +954,12 @@ export class PersonalComponent implements OnInit {
   }
   //Obtiene el dni para mostrarlo
   public verDni() {
-    let nombre = this.formulario.get('pdfDni').value.nombre;
-    let extension = nombre.split('.');
-    if (extension[1] == 'pdf') {
-      this.verPDF('pdfDni');
-    } else {
-      this.verFoto('pdfDni');
+    let tipo;
+    this.formulario.value.pdfDni.tipo ? tipo = this.formulario.value.pdfDni.tipo : tipo = this.formulario.value.pdfDni.nombre;
+    if (tipo) {
+      let extension;
+      this.formulario.value.pdfDni.tipo ? extension = tipo.split('/') : extension = tipo.split('.');
+      extension[1] == 'pdf' ? this.verPDF('pdfDni') : this.verFoto('pdfDni');
     }
   }
   //Obtiene la foto para mostrarlo

@@ -1,8 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ConfiguracionVehiculoService } from '../../servicios/configuracion-vehiculo.service';
-import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
-import { TipoVehiculoService } from '../../servicios/tipo-vehiculo.service';
-import { MarcaVehiculoService } from '../../servicios/marca-vehiculo.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { MatSort, MatTableDataSource, MatPaginator } from '@angular/material';
@@ -19,6 +16,8 @@ import { ReporteService } from 'src/app/servicios/reporte.service';
   styleUrls: ['./configuracion-vehiculo.component.css']
 })
 export class ConfiguracionVehiculoComponent implements OnInit {
+  //Define el ultimo id
+  public ultimoId: string = null;
   //Define la pestania activa
   public activeLink: any = null;
   //Define el indice seleccionado de pestania
@@ -55,25 +54,17 @@ export class ConfiguracionVehiculoComponent implements OnInit {
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Define el mostrar del circulo de progreso
   public show = false;
+  //Defiene el render
+  public render: boolean = false;
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define la marca de vehiculo
   public marcaVehiculo: FormControl = new FormControl();
   //Constructor
-  constructor(private servicio: ConfiguracionVehiculoService, private subopcionPestaniaService: SubopcionPestaniaService,
+  constructor(private servicio: ConfiguracionVehiculoService,
     private toastr: ToastrService, private appService: AppService,
-    private tipoVehiculoServicio: TipoVehiculoService, private marcaVehiculoServicio: MarcaVehiculoService,
     private loaderService: LoaderService, private configuracionVehiculo: configuracionVehiculo, private reporteServicio: ReporteService) {
-    //Obtiene la lista de pestania por rol y subopcion
-    this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
-      .subscribe(
-        res => {
-          this.pestanias = res.json();
-          this.activeLink = this.pestanias[0].nombre;
-        },
-        err => {
-        }
-      );
+
   }
   //Al iniciarse el componente
   ngOnInit() {
@@ -84,6 +75,8 @@ export class ConfiguracionVehiculoComponent implements OnInit {
       });
     //Define los campos para validaciones
     this.formulario = this.configuracionVehiculo.formulario;
+    /* Obtiene todos los listados */
+    this.inicializar(this.appService.getRol().id, this.appService.getSubopcion());
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar');
     //Define el formulario listar
@@ -91,12 +84,27 @@ export class ConfiguracionVehiculoComponent implements OnInit {
       tipoVehiculo: new FormControl('', Validators.required),
       marcaVehiculo: new FormControl('', Validators.required)
     });
-    //Obtiene la lista completa de registros
-    //this.listar();
-    //Obtiene la lista de tipos de vehiculos
-    this.listarTiposVehiculos();
-    //Obtiene la lista de marcas de vehiculos
-    this.listarMarcasVehiculos();
+  }
+  //Obtiene los datos necesarios para el componente
+  private inicializar(idRol, idSubopcion) {
+    this.render = true;
+    this.servicio.inicializar(idRol, idSubopcion).subscribe(
+      res => {
+        let respuesta = res.json();
+        //Establece las pestanias
+        this.pestanias = respuesta.pestanias;
+        //Establece demas datos necesarios
+        this.ultimoId = respuesta.ultimoId;
+        this.marcasVehiculos = respuesta.marcaVehiculos;
+        this.tiposVehiculos = respuesta.tipoVehiculos;
+        this.formulario.get('id').setValue(this.ultimoId);
+        this.render = false;
+      },
+      err => {
+        this.toastr.error(err.json().mensaje);
+        this.render = false;
+      }
+    )
   }
   //Establece el formulario al seleccionar elemento de lista de configuraciones
   public establecerFormulario() {
@@ -108,25 +116,6 @@ export class ConfiguracionVehiculoComponent implements OnInit {
     this.formulario.get('largo').setValue(elemento.largo ? this.appService.establecerDecimales(elemento.largo, 2) : null);
     this.formulario.get('ancho').setValue(elemento.ancho ? this.appService.establecerDecimales(elemento.ancho, 2) : null);
     this.formulario.get('m3').setValue(elemento.m3 != 0 ? this.appService.establecerDecimales(elemento.m3, 2) : null);
-  }
-  //Obtiene la lista de tipos de vehiculos
-  private listarTiposVehiculos() {
-    this.tipoVehiculoServicio.listar().subscribe(
-      res => {
-        this.tiposVehiculos = res.json();
-      },
-      err => {
-      }
-    )
-  }
-  private listarMarcasVehiculos() {
-    this.marcaVehiculoServicio.listar().subscribe(
-      res => {
-        this.marcasVehiculos = res.json();
-      },
-      err => {
-      }
-    )
   }
   //Habilita o deshabilita los campos select dependiendo de la pestania actual
   private establecerEstadoCampos(estado) {
@@ -150,10 +139,9 @@ export class ConfiguracionVehiculoComponent implements OnInit {
   public seleccionarPestania(id, nombre) {
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    this.reestablecerFormulario();
+    this.reestablecerFormulario(null);
     switch (id) {
       case 1:
-        this.obtenerSiguienteId();
         this.establecerEstadoCampos(true);
         this.establecerValoresPestania(nombre, false, false, true, 'idTipoVehiculo');
         break;
@@ -195,16 +183,6 @@ export class ConfiguracionVehiculoComponent implements OnInit {
       default:
         break;
     }
-  }
-  //Obtiene el siguiente id
-  private obtenerSiguienteId() {
-    this.servicio.obtenerSiguienteId().subscribe(
-      res => {
-        this.formulario.get('id').setValue(res.json());
-      },
-      err => {
-      }
-    );
   }
   //Obtiene el listado de registros
   private listar() {
@@ -258,16 +236,18 @@ export class ConfiguracionVehiculoComponent implements OnInit {
     this.formulario.get('id').setValue(null);
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
-        var respuesta = res.json();
+        let respuesta = res.json();
         if (respuesta.codigo == 201) {
-          this.reestablecerFormulario();
+          this.ultimoId = respuesta.id;
+          console.log(respuesta);
+          this.reestablecerFormulario(respuesta.id);
           document.getElementById('idTipoVehiculo').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
         }
       },
       err => {
-        var respuesta = err.json();
+        let respuesta = err.json();
         this.toastr.error(respuesta.mensaje);
         this.loaderService.hide();
       }
@@ -278,16 +258,16 @@ export class ConfiguracionVehiculoComponent implements OnInit {
     this.loaderService.show();
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
-        var respuesta = res.json();
+        let respuesta = res.json();
         if (respuesta.codigo == 200) {
-          this.reestablecerFormulario();
+          this.reestablecerFormulario(null);
           document.getElementById('idTipoVehiculo').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
         }
       },
       err => {
-        var respuesta = err.json();
+        let respuesta = err.json();
         this.toastr.error(respuesta.mensaje);
         this.loaderService.hide();
       }
@@ -301,7 +281,7 @@ export class ConfiguracionVehiculoComponent implements OnInit {
       res => {
         let respuesta = res.json();
         if (respuesta.codigo == 200) {
-          this.reestablecerFormulario();
+          this.reestablecerFormulario(null);
           this.toastr.success(respuesta.mensaje);
         }
         this.loaderService.hide();
@@ -314,11 +294,12 @@ export class ConfiguracionVehiculoComponent implements OnInit {
     );
   }
   //Reestablece el formulario
-  private reestablecerFormulario() {
-    this.autocompletado.setValue(undefined);
+  private reestablecerFormulario(id) {
     this.formulario.reset();
     this.configuraciones = [];
+    this.autocompletado.reset();
     this.listaCompleta = new MatTableDataSource([]);
+    id ? this.formulario.get('id').setValue(id) : this.formulario.get('id').setValue(this.ultimoId);
   }
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
@@ -390,7 +371,7 @@ export class ConfiguracionVehiculoComponent implements OnInit {
   }
   //Maneja los evento al presionar una tacla (para pestanias y opciones)
   public manejarEvento(keycode) {
-    var indice = this.indiceSeleccionado;
+    let indice = this.indiceSeleccionado;
     if (keycode == 113) {
       if (indice < this.pestanias.length) {
         this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre);

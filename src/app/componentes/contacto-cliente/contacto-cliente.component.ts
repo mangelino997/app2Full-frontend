@@ -1,8 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ContactoClienteService } from '../../servicios/contacto-cliente.service';
-import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { ClienteService } from '../../servicios/cliente.service';
-import { TipoContactoService } from '../../servicios/tipo-contacto.service';
 import { AppService } from '../../servicios/app.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
@@ -19,6 +17,8 @@ import { ContactoCliente } from 'src/app/modelos/contactoCliente';
   styleUrls: ['./contacto-cliente.component.css']
 })
 export class ContactoClienteComponent implements OnInit {
+  //Define el ultimo id
+  public ultimoId: string = null;
   //Define la pestania activa
   public activeLink: any = null;
   //Define el indice seleccionado de pestania
@@ -55,23 +55,14 @@ export class ContactoClienteComponent implements OnInit {
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Define el mostrar del circulo de progreso
   public show = false;
+  //Defiene el render
+  public render: boolean = false;
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Constructor
-  constructor(private servicio: ContactoClienteService, private subopcionPestaniaService: SubopcionPestaniaService,
+  constructor(private servicio: ContactoClienteService,
     private toastr: ToastrService, private appService: AppService, private modelo: ContactoCliente,
-    private clienteServicio: ClienteService, private tipoContactoServicio: TipoContactoService,
-    private loaderService: LoaderService, private reporteServicio: ReporteService) {
-    //Obtiene la lista de pestania por rol y subopcion
-    this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
-      .subscribe(
-        res => {
-          this.pestanias = res.json();
-          this.activeLink = this.pestanias[0].nombre;
-        },
-        err => {
-        }
-      );
+    private clienteServicio: ClienteService, private loaderService: LoaderService, private reporteServicio: ReporteService) {
   }
   //Al iniciarse el componente
   ngOnInit() {
@@ -82,10 +73,10 @@ export class ContactoClienteComponent implements OnInit {
       });
     //Define los campos para validaciones
     this.formulario = this.modelo.formulario;
+    /* Obtiene todos los listados */
+    this.inicializar(this.appService.getRol().id, this.appService.getSubopcion());
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar');
-    //Obtiene la lista de tipos de contactos
-    this.listarTiposContactos();
     //Autocompletado Cliente - Buscar por alias
     this.formulario.get('cliente').valueChanges.subscribe(data => {
       if (typeof data == 'string') {
@@ -103,19 +94,29 @@ export class ContactoClienteComponent implements OnInit {
       }
     })
   }
+  //Obtiene los datos necesarios para el componente
+  private inicializar(idRol, idSubopcion) {
+    this.render = true;
+    this.servicio.inicializar(idRol, idSubopcion).subscribe(
+      res => {
+        let respuesta = res.json();
+        //Establece las pestanias
+        this.pestanias = respuesta.pestanias;
+        //Establece demas datos necesarios
+        this.ultimoId = respuesta.ultimoId;
+        this.tiposContactos = respuesta.tipoContactos;
+        this.formulario.get('id').setValue(this.ultimoId);
+        this.render = false;
+      },
+      err => {
+        this.toastr.error(err.json().mensaje);
+        this.render = false;
+      }
+    )
+  }
   //Establecer el formulario al cambiar elemento de autocompletado
   public cambioAutocompletado() {
     this.formulario.patchValue(this.autocompletado.value);
-  }
-  //Obtiene el listado de tipos de proveedores
-  private listarTiposContactos() {
-    this.tipoContactoServicio.listar().subscribe(
-      res => {
-        this.tiposContactos = res.json();
-      },
-      err => {
-      }
-    );
   }
   //Vacia la lista de resultados de autocompletados
   public vaciarListas() {
@@ -139,10 +140,9 @@ export class ContactoClienteComponent implements OnInit {
   public seleccionarPestania(id, nombre) {
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    this.reestablecerFormulario();
+    this.reestablecerFormulario(null);
     switch (id) {
       case 1:
-        this.obtenerSiguienteId();
         this.establecerValoresPestania(nombre, false, false, true, 'idCliente');
         break;
       case 2:
@@ -191,16 +191,6 @@ export class ContactoClienteComponent implements OnInit {
       }
     })
   }
-  //Obtiene el siguiente id
-  private obtenerSiguienteId() {
-    this.servicio.obtenerSiguienteId().subscribe(
-      res => {
-        this.formulario.get('id').setValue(res.json());
-      },
-      err => {
-      }
-    );
-  }
   //Agrega un registro
   private agregar() {
     this.loaderService.show();
@@ -211,7 +201,8 @@ export class ContactoClienteComponent implements OnInit {
       res => {
         let respuesta = res.json();
         if (respuesta.codigo == 201) {
-          this.reestablecerFormulario();
+          this.ultimoId = respuesta.id;
+          this.reestablecerFormulario(respuesta.id);
           this.formulario.get('cliente').setValue(cliente);
           document.getElementById('idTipoContacto').focus();
           this.toastr.success(respuesta.mensaje);
@@ -232,7 +223,7 @@ export class ContactoClienteComponent implements OnInit {
       res => {
         let respuesta = res.json();
         if (respuesta.codigo == 200) {
-          this.reestablecerFormulario();
+          this.reestablecerFormulario(null);
           document.getElementById('idCliente').focus();
           this.toastr.success(respuesta.mensaje);
         }
@@ -252,7 +243,7 @@ export class ContactoClienteComponent implements OnInit {
       res => {
         let respuesta = res.json();
         if (respuesta.codigo == 200) {
-          this.reestablecerFormulario();
+          this.reestablecerFormulario(null);
           document.getElementById('idNombre').focus();
           this.toastr.success(respuesta.mensaje);
         }
@@ -271,10 +262,11 @@ export class ContactoClienteComponent implements OnInit {
     );
   }
   //Reestablece el formulario
-  private reestablecerFormulario() {
+  private reestablecerFormulario(id) {
+    this.vaciarListas();
     this.formulario.reset();
     this.autocompletado.reset();
-    this.vaciarListas();
+    id ? this.formulario.get('id').setValue(id) : this.formulario.get('id').setValue(this.ultimoId);
   }
   //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
   private lanzarError(err) {

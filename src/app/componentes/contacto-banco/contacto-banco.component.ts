@@ -1,8 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ContactoBancoService } from '../../servicios/contacto-banco.service';
-import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { SucursalBancoService } from '../../servicios/sucursal-banco.service';
-import { TipoContactoService } from '../../servicios/tipo-contacto.service';
 import { AppService } from '../../servicios/app.service';
 import { FormGroup, FormControl } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
@@ -19,6 +17,8 @@ import { ContactoBanco } from 'src/app/modelos/contactoBanco';
   styleUrls: ['./contacto-banco.component.css']
 })
 export class ContactoBancoComponent implements OnInit {
+  //Define el ultimo id
+  public ultimoId: string = null;
   //Define la pestania activa
   public activeLink: any = null;
   //Define el indice seleccionado de pestania
@@ -57,23 +57,14 @@ export class ContactoBancoComponent implements OnInit {
   public show = false;
   //Define la variable para guardar el valor de un campo
   public guardarCampo: any;
+  //Defiene el render
+  public render: boolean = false;
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Constructor
-  constructor(private servicio: ContactoBancoService, private subopcionPestaniaService: SubopcionPestaniaService,
-    private appServicio: AppService, private toastr: ToastrService, private modelo: ContactoBanco,
-    private sucursalBancoServicio: SucursalBancoService, private tipoContactoServicio: TipoContactoService,
-    private loaderService: LoaderService, private reporteServicio: ReporteService) {
-    //Obtiene la lista de pestania por rol y subopcion
-    this.subopcionPestaniaService.listarPorRolSubopcion(this.appServicio.getRol().id, this.appServicio.getSubopcion())
-      .subscribe(
-        res => {
-          this.pestanias = res.json();
-          this.activeLink = this.pestanias[0].nombre;
-        },
-        err => {
-        }
-      );
+  constructor(private servicio: ContactoBancoService,
+    private appService: AppService, private toastr: ToastrService, private modelo: ContactoBanco,
+    private sucursalBancoServicio: SucursalBancoService, private loaderService: LoaderService, private reporteServicio: ReporteService) {
   }
   //Al iniciarse el componente
   ngOnInit() {
@@ -84,10 +75,10 @@ export class ContactoBancoComponent implements OnInit {
       });
     //Define los campos para validaciones
     this.formulario = this.modelo.formulario;
+    /* Obtiene todos los listados */
+    this.inicializar(this.appService.getRol().id, this.appService.getSubopcion());
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar');
-    //Obtiene la lista de tipos de contactos
-    this.listarTiposContactos();
     //Autocompletado Sucursal Banco - Buscar por nombre
     this.formulario.get('sucursalBanco').valueChanges.subscribe(data => {
       if (typeof data == 'string') {
@@ -105,19 +96,29 @@ export class ContactoBancoComponent implements OnInit {
       }
     })
   }
+  //Obtiene los datos necesarios para el componente
+  private inicializar(idRol, idSubopcion) {
+    this.render = true;
+    this.servicio.inicializar(idRol, idSubopcion).subscribe(
+      res => {
+        let respuesta = res.json();
+        //Establece las pestanias
+        this.pestanias = respuesta.pestanias;
+        //Establece demas datos necesarios
+        this.ultimoId = respuesta.ultimoId;
+        this.tiposContactos = respuesta.tipoContactos;
+        this.formulario.get('id').setValue(this.ultimoId);
+        this.render = false;
+      },
+      err => {
+        this.toastr.error(err.json().mensaje);
+        this.render = false;
+      }
+    )
+  }
   //Establecer el formulario al cambiar elemento de autocompletado
   public cambioAutocompletado() {
     this.formulario.setValue(this.autocompletado.value);
-  }
-  //Obtiene el listado de tipos de proveedores
-  private listarTiposContactos() {
-    this.tipoContactoServicio.listar().subscribe(
-      res => {
-        this.tiposContactos = res.json();
-      },
-      err => {
-      }
-    );
   }
   //Vacia la lista de resultados de autocompletados
   public vaciarListas() {
@@ -140,10 +141,9 @@ export class ContactoBancoComponent implements OnInit {
   public seleccionarPestania(id, nombre) {
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    this.reestablecerFormulario();
+    this.reestablecerFormulario(null);
     switch (id) {
       case 1:
-        this.obtenerSiguienteId();
         this.establecerValoresPestania(nombre, false, false, true, 'idSucursalBanco');
         break;
       case 2:
@@ -181,16 +181,6 @@ export class ContactoBancoComponent implements OnInit {
         break;
     }
   }
-  //Obtiene el siguiente id
-  private obtenerSiguienteId() {
-    this.servicio.obtenerSiguienteId().subscribe(
-      res => {
-        this.formulario.get('id').setValue(res.json());
-      },
-      err => {
-      }
-    );
-  }
   //Obtiene la lista de contactos por sucursal banco
   public listarPorSucursalBanco() {
     let elemento = this.formulario.value.sucursalBanco;
@@ -213,13 +203,14 @@ export class ContactoBancoComponent implements OnInit {
   private agregar() {
     this.loaderService.show();
     this.formulario.get('id').setValue(null);
-    this.formulario.get('usuarioAlta').setValue(this.appServicio.getUsuario());
+    this.formulario.get('usuarioAlta').setValue(this.appService.getUsuario());
     let sucursalBanco = this.formulario.value.sucursalBanco;
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         let respuesta = res.json();
         if (respuesta.codigo == 201) {
-          this.reestablecerFormulario();
+          this.ultimoId = respuesta.id;
+          this.reestablecerFormulario(respuesta.id);
           this.formulario.get('sucursalBanco').setValue(sucursalBanco);
           document.getElementById('idTipoContacto').focus();
           this.toastr.success(respuesta.mensaje);
@@ -235,12 +226,12 @@ export class ContactoBancoComponent implements OnInit {
   //Actualiza un registro
   private actualizar() {
     this.loaderService.show();
-    this.formulario.get('usuarioMod').setValue(this.appServicio.getUsuario());
+    this.formulario.get('usuarioMod').setValue(this.appService.getUsuario());
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
         let respuesta = res.json();
         if (respuesta.codigo == 200) {
-          this.reestablecerFormulario();
+          this.reestablecerFormulario(null);
           document.getElementById('idSucursalBanco').focus();
           this.toastr.success(respuesta.mensaje);
         }
@@ -260,7 +251,7 @@ export class ContactoBancoComponent implements OnInit {
       res => {
         let respuesta = res.json();
         if (respuesta.codigo == 200) {
-          this.reestablecerFormulario();
+          this.reestablecerFormulario(null);
           document.getElementById('idNombre').focus();
           this.toastr.success(respuesta.mensaje);
         }
@@ -279,10 +270,11 @@ export class ContactoBancoComponent implements OnInit {
     );
   }
   //Reestablece el formulario
-  private reestablecerFormulario() {
+  private reestablecerFormulario(id) {
+    this.vaciarListas();
     this.formulario.reset();
     this.autocompletado.reset();
-    this.vaciarListas();
+    id ? this.formulario.get('id').setValue(id) : this.formulario.get('id').setValue(this.ultimoId);
   }
   //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
   private lanzarError(err) {
@@ -405,8 +397,8 @@ export class ContactoBancoComponent implements OnInit {
     let lista = this.prepararDatos(this.listaCompleta.data);
     let datos = {
       nombre: 'Contactos: ' + this.formulario.value.sucursalBanco.banco.nombre + ' - ' + this.formulario.value.sucursalBanco.nombre,
-      empresa: this.appServicio.getEmpresa().razonSocial,
-      usuario: this.appServicio.getUsuario().nombre,
+      empresa: this.appService.getEmpresa().razonSocial,
+      usuario: this.appService.getUsuario().nombre,
       datos: lista,
       columnas: this.columnas
     }

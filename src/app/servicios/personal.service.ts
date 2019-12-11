@@ -74,7 +74,14 @@ export class PersonalService {
   public listarAcompaniantes() {
     return this.http.get(this.url + '/listarAcompaniantes', this.options);
   }
-
+  //Obtiene un listado por alias
+  public listarChoferesPorAliasYEmpresa(alias, idEmpresa) {
+    return this.http.get(this.url + '/listarChoferesPorAliasYEmpresa/' + alias + '/' + idEmpresa, this.options).map(res => {
+      return res.json().map(data => {
+        return data;
+      })
+    })
+  }
   //Obtiene un listado por alias
   public listarPorAlias(alias) {
     return this.http.get(this.url + '/listarPorAlias/' + alias, this.options).map(res => {
@@ -257,7 +264,7 @@ export class PersonalService {
         let blobPdf = new Blob([dni.datos], { type: 'application/pdf' });
         formData.append('dni', blobPdf, dni.nombre);
       } else {
-      formData.append('dni', noBlobPdf, '');
+        formData.append('dni', noBlobPdf, '');
       }
     } else {
       formData.append('dni', noBlobPdf, '');

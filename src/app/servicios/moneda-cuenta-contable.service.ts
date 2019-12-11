@@ -6,15 +6,15 @@ import { Message } from '@stomp/stompjs';
 import { StompService } from '@stomp/ng2-stompjs';
 
 @Injectable({
-    providedIn: 'root'
-  })
+  providedIn: 'root'
+})
 export class MonedaCuentaContableService {
   //Define la ruta al servicio web
-  private ruta:string = "/monedacuentacontable";
+  private ruta: string = "/monedacuentacontable";
   //Define la url base
-  private url:string = null;
+  private url: string = null;
   //Define la url para subcripcion a socket
-  private topic:string = null;
+  private topic: string = null;
   //Define el headers y token de autenticacion
   private options = null;
   //Define la subcripcion
@@ -22,7 +22,7 @@ export class MonedaCuentaContableService {
   //Define el mensaje de respuesta a la subcripcion
   private mensaje: Observable<Message>;
   //Define la lista completa
-  public listaCompleta:Subject<any> = new Subject<any>();
+  public listaCompleta: Subject<any> = new Subject<any>();
   //Constructor
   constructor(private http: Http, private appService: AppService, private stompService: StompService) {
     //Establece la url base
@@ -33,7 +33,7 @@ export class MonedaCuentaContableService {
     const headers: Headers = new Headers();
     headers.append('Content-Type', 'application/json');
     headers.append('Authorization', localStorage.getItem('token'));
-    this.options = new RequestOptions({headers: headers});
+    this.options = new RequestOptions({ headers: headers });
     //Subcribe al usuario a la lista completa
     this.mensaje = this.stompService.subscribe(this.topic + this.ruta + '/lista');
     this.subcripcion = this.mensaje.subscribe(this.subscribirse);
@@ -52,11 +52,11 @@ export class MonedaCuentaContableService {
   }
   //Obtiene registros por id de moneda
   public listarPorMoneda(id) {
-    return this.http.get(this.url + '/listarPorMoneda/'+ id, this.options);
+    return this.http.get(this.url + '/listarPorMoneda/' + id, this.options);
   }
   //Obtiene registros por nombre de moneda
   public listarPorNombreMoneda(nombre, empresa) {
-    return this.http.get(this.url + '/listarPorNombreMoneda/'+ nombre + '/' + empresa, this.options);
+    return this.http.get(this.url + '/listarPorNombreMoneda/' + nombre + '/' + empresa, this.options);
   }
   //Obtiene por Moneda y Empresa
   public listarPorEmpresa(empresa) {
@@ -65,6 +65,10 @@ export class MonedaCuentaContableService {
   //Obtiene por Moneda y Empresa
   public obtenerPorMonedaYEmpresa(moneda, empresa) {
     return this.http.get(this.url + '/obtenerPorMonedaYEmpresa/' + moneda + '/' + empresa, this.options);
+  }
+  //Obtiene todos los listados
+  public inicializar(idUsuario, idRol, idSubopcion) {
+    return this.http.get(this.url + '/inicializar/' + idUsuario + '/' + idRol + '/' + idSubopcion, this.options);
   }
   //Agrega un registro
   public agregar(elemento) {

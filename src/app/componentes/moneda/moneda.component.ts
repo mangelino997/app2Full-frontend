@@ -17,6 +17,8 @@ import { ReporteService } from 'src/app/servicios/reporte.service';
   styleUrls: ['./moneda.component.css']
 })
 export class MonedaComponent implements OnInit {
+  //Define el ultimo id
+  public ultimoId: string = null;
   //Define la pestania activa
   public activeLink: any = null;
   //Define el indice seleccionado de pestania
@@ -47,6 +49,8 @@ export class MonedaComponent implements OnInit {
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Define el mostrar del circulo de progreso
   public show = false;
+  //Defiene el render
+  public render: boolean = false;
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Constructor
@@ -89,8 +93,29 @@ export class MonedaComponent implements OnInit {
       });
     //Define el formulario y validaciones
     this.formulario = this.moneda.formulario;
+    /* Obtiene todos los listados */
+    this.inicializar(this.appService.getRol().id, this.appService.getSubopcion());
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar');
+  }
+  //Obtiene los datos necesarios para el componente
+  private inicializar(idRol, idSubopcion) {
+    this.render = true;
+    this.servicio.inicializar(idRol, idSubopcion).subscribe(
+      res => {
+        let respuesta = res.json();
+        //Establece las pestanias
+        this.pestanias = respuesta.pestanias;
+        //Establece demas datos necesarios
+        this.ultimoId = respuesta.ultimoId;
+        this.formulario.get('id').setValue(this.ultimoId);
+        this.render = false;
+      },
+      err => {
+        this.toastr.error(err.json().mensaje);
+        this.render = false;
+      }
+    )
   }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
@@ -106,11 +131,9 @@ export class MonedaComponent implements OnInit {
   public seleccionarPestania(id, nombre) {
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    this.reestablecerFormulario(undefined);
-    this.listar(); 
+    this.reestablecerFormulario(null);
     switch (id) {
       case 1:
-        this.obtenerSiguienteId();
         this.establecerEstadoCampos(true);
         this.establecerValoresPestania(nombre, false, false, true, 'idNombre');
         break;
@@ -127,6 +150,7 @@ export class MonedaComponent implements OnInit {
         this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
         break;
       case 5:
+        this.listar();
         break;
       default:
         break;
@@ -159,16 +183,6 @@ export class MonedaComponent implements OnInit {
       default:
         break;
     }
-  }
-  //Obtiene el siguiente id
-  private obtenerSiguienteId() {
-    this.servicio.obtenerSiguienteId().subscribe(
-      res => {
-        this.formulario.get('id').setValue(res.json());
-      },
-      err => {
-      }
-    );
   }
   //Obtiene el listado de registros
   private listar() {
@@ -225,6 +239,7 @@ export class MonedaComponent implements OnInit {
     this.servicio.agregar(moneda).subscribe(
       res => {
         let respuesta = res.json();
+        this.ultimoId = respuesta.id;
         this.reestablecerFormulario(respuesta.id);
         document.getElementById('idNombre').focus();
         this.toastr.success(respuesta.mensaje);
@@ -243,7 +258,7 @@ export class MonedaComponent implements OnInit {
       res => {
         let respuesta = res.json();
         if (respuesta.codigo == 200) {
-          this.reestablecerFormulario(undefined);
+          this.reestablecerFormulario(null);
           this.servicio.obtenerPorDefecto().subscribe(
             res => {
               /*Si el usuario modificó el campo porDefecto a false pero el service no modificó el atributo 
@@ -305,7 +320,7 @@ export class MonedaComponent implements OnInit {
     this.vaciarListas();
     this.formulario.reset();
     this.autocompletado.reset();
-    this.formulario.get('id').setValue(id);
+    id ? this.formulario.get('id').setValue(id) : this.formulario.get('id').setValue(this.ultimoId);
   }
   //Vacía las listas
   private vaciarListas() {

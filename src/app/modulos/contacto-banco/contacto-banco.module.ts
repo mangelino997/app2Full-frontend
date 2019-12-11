@@ -8,9 +8,7 @@ import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModul
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ContactoBancoComponent } from 'src/app/componentes/contacto-banco/contacto-banco.component';
 import { ContactoBancoService } from 'src/app/servicios/contacto-banco.service';
-import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
 import { SucursalBancoService } from 'src/app/servicios/sucursal-banco.service';
-import { TipoContactoService } from 'src/app/servicios/tipo-contacto.service';
 import { ContactoBanco } from 'src/app/modelos/contactoBanco';
 
 @NgModule({
@@ -34,9 +32,7 @@ import { ContactoBanco } from 'src/app/modelos/contactoBanco';
   ],
   providers: [
     ContactoBancoService,
-    SubopcionPestaniaService,
     SucursalBancoService,
-    TipoContactoService,
     ContactoBanco
   ]
 })

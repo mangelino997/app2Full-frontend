@@ -74,22 +74,40 @@ export class VencimientosChoferesComponent implements OnInit {
   public btnPdfAltaTemprana: boolean = null;
   public listaChoferes: Array<any> = [];
   //Constructor
-  constructor(private personalServicio: PersonalService, private subopcionPestaniaService: SubopcionPestaniaService,
+  constructor(private servicio: PersonalService, private subopcionPestaniaService: SubopcionPestaniaService,
     public dialog: MatDialog, private appService: AppService, private personal: Personal, private toastr: ToastrService,
     private loaderService: LoaderService, private tipoDocumentoServicio: TipoDocumentoService, private reporteServicio: ReporteService) {
     //Autocompletado - Buscar por alias
+    // this.autocompletado.valueChanges.subscribe(data => {
+    //   if (typeof data == 'string') {
+    //     data = data.trim();
+    //     this.loaderService.show();
+    //     if (data == '*' || data.length > 0) {
+    //       this.servicio.listarPorAlias(data).subscribe(response => {
+    //         this.resultados = response;
+    //         this.loaderService.hide();
+    //       },
+    //         err => {
+    //           this.loaderService.hide();
+    //         })
+    //     }
+    //   }
+    // })
+    //Autocompletado - Buscar por alias
     this.autocompletado.valueChanges.subscribe(data => {
+      let empresa = this.appService.getEmpresa();
       if (typeof data == 'string') {
         data = data.trim();
-        this.loaderService.show();
-        if (data == '*' || data.length > 0) {
-          this.personalServicio.listarPorAlias(data).subscribe(response => {
-            this.resultados = response;
-            this.loaderService.hide();
-          },
+        if (data == '*' || data.length > 2) {
+          this.loaderService.show();
+          this.servicio.listarChoferesPorAliasYEmpresa(data, empresa.id).subscribe(
+            res => {
+              this.resultados = res;
+              this.loaderService.hide();
+            },
             err => {
               this.loaderService.hide();
-            })
+            });
         }
       }
     })
@@ -119,7 +137,7 @@ export class VencimientosChoferesComponent implements OnInit {
       chofer: new FormControl('', Validators.required),
       vtoFisico: new FormControl(),
       vtoCurso: new FormControl(),
-      vtoCargaPeligrosa:new FormControl(),
+      vtoCargaPeligrosa: new FormControl(),
       vtoLicConducir: new FormControl(),
       vtoLinti: new FormControl(),
       vtoLibSanidad: new FormControl()
@@ -149,7 +167,7 @@ export class VencimientosChoferesComponent implements OnInit {
   // private listar() {
   //   this.loaderService.show();
   //   let empresa = this.appService.getEmpresa();
-  //   this.personalServicio.listarChoferesPorEmpresa(empresa.id).subscribe(
+  //   this.servicio.listarChoferesPorEmpresa(empresa.id).subscribe(
   //     res => {
   //       if (this.indiceSeleccionado == 5) {
   //         this.listaCompleta = new MatTableDataSource(res.json());
@@ -171,7 +189,7 @@ export class VencimientosChoferesComponent implements OnInit {
   public seleccionarPestania(id, nombre) {
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    this.reestablecerFormulario(undefined);
+    this.reestablecerFormulario(null);
     //this.listar();
     switch (id) {
       case 2:
@@ -218,7 +236,7 @@ export class VencimientosChoferesComponent implements OnInit {
   }
   //Obtiene un registro por id
   private obtenerPorId(id) {
-    this.personalServicio.obtenerPorId(id).subscribe(
+    this.servicio.obtenerPorId(id).subscribe(
       res => {
         let elemento = res.json();
         this.formulario.patchValue(elemento);
@@ -327,19 +345,25 @@ export class VencimientosChoferesComponent implements OnInit {
   }
   //Obtiene el dni para mostrarlo
   public verDni() {
-    if (this.formulario.get('pdfDni.tipo').value == 'application/pdf') {
-      this.verPDF('pdfDni');
-    } else {
-      const dialogRef = this.dialog.open(BugImagenDialogoComponent, {
-        width: '95%',
-        height: '95%',
-        data: {
-          nombre: this.formulario.get('pdfDni.nombre').value,
-          datos: this.formulario.get('pdfDni.datos').value
-        }
-      });
-      dialogRef.afterClosed().subscribe(resultado => { });
+    let tipo;
+    this.formulario.value.pdfDni.tipo ? tipo = this.formulario.value.pdfDni.tipo : tipo = this.formulario.value.pdfDni.nombre;
+    if (tipo) {
+      let extension;
+      this.formulario.value.pdfDni.tipo ? extension = tipo.split('/') : extension = tipo.split('.');
+      extension[1] == 'pdf' ? this.verPDF('pdfDni') : this.verFoto('pdfDni');
     }
+  }
+  //Obtiene la foto para mostrarlo
+  public verFoto(campo) {
+    const dialogRef = this.dialog.open(BugImagenDialogoComponent, {
+      width: '95%',
+      height: '95%',
+      data: {
+        nombre: this.formulario.get(campo + '.nombre').value,
+        datos: this.formulario.get(campo + '.datos').value
+      }
+    });
+    dialogRef.afterClosed().subscribe(resultado => { });
   }
   //Muestra el pdf en una pestana nueva
   public verPDF(campo) {
@@ -358,7 +382,7 @@ export class VencimientosChoferesComponent implements OnInit {
     this.loaderService.show();
     this.formulario.enable();
     this.formulario.get('usuarioMod').setValue(this.appService.getUsuario());
-    this.personalServicio.actualizar(this.formulario.value).then(
+    this.servicio.actualizar(this.formulario.value).then(
       res => {
         if (res.status == 200) {
           this.reestablecerFormulario(undefined);
@@ -378,13 +402,13 @@ export class VencimientosChoferesComponent implements OnInit {
   }
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
-    this.seleccionarPestania(2, this.pestanias[1].nombre);
+    this.seleccionarPestania(2, this.pestanias[0].nombre);
     this.obtenerPorId(elemento.id);
     this.autocompletado.setValue(elemento);
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
-    this.seleccionarPestania(3, this.pestanias[2].nombre);
+    this.seleccionarPestania(3, this.pestanias[1].nombre);
     this.obtenerPorId(elemento.id);
     this.autocompletado.setValue(elemento);
   }
@@ -463,7 +487,7 @@ export class VencimientosChoferesComponent implements OnInit {
   //obtiene la lista por filtros
   public listarChoferesPorFiltros(): void {
     this.loaderService.show();
-    this.personalServicio.listarChoferesPorFiltros(this.formularioFiltro.value).subscribe(
+    this.servicio.listarChoferesPorFiltros(this.formularioFiltro.value).subscribe(
       res => {
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;

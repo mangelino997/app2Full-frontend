@@ -1,8 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ContactoProveedorService } from '../../servicios/contacto-proveedor.service';
-import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { ProveedorService } from '../../servicios/proveedor.service';
-import { TipoContactoService } from '../../servicios/tipo-contacto.service';
 import { AppService } from '../../servicios/app.service';
 import { FormGroup, FormControl } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
@@ -19,6 +17,8 @@ import { ContactoProveedor } from 'src/app/modelos/contactoProveedor';
   styleUrls: ['./contacto-proveedor.component.css']
 })
 export class ContactoProveedorComponent implements OnInit {
+  //Define el ultimo id
+  public ultimoId: string = null;
   //Define la pestania activa
   public activeLink: any = null;
   //Define el indice seleccionado de pestania
@@ -57,23 +57,14 @@ export class ContactoProveedorComponent implements OnInit {
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Define el mostrar del circulo de progreso
   public show = false;
+  //Defiene el render
+  public render: boolean = false;
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Constructor
-  constructor(private servicio: ContactoProveedorService, private subopcionPestaniaService: SubopcionPestaniaService,
-    private appServicio: AppService, private toastr: ToastrService, private loaderService: LoaderService,
-    private proveedorServicio: ProveedorService, private tipoContactoServicio: TipoContactoService,
-    private modelo: ContactoProveedor, private reporteServicio: ReporteService) {
-    //Obtiene la lista de pestania por rol y subopcion
-    this.subopcionPestaniaService.listarPorRolSubopcion(this.appServicio.getRol().id, this.appServicio.getSubopcion())
-      .subscribe(
-        res => {
-          this.pestanias = res.json();
-          this.activeLink = this.pestanias[0].nombre;
-        },
-        err => {
-        }
-      );
+  constructor(private servicio: ContactoProveedorService,
+    private appService: AppService, private toastr: ToastrService, private loaderService: LoaderService,
+    private proveedorServicio: ProveedorService, private modelo: ContactoProveedor, private reporteServicio: ReporteService) {
   }
   //Al iniciarse el componente
   ngOnInit() {
@@ -84,10 +75,10 @@ export class ContactoProveedorComponent implements OnInit {
       });
     //Define los campos para validaciones
     this.formulario = this.modelo.formulario;
+    /* Obtiene todos los listados */
+    this.inicializar(this.appService.getRol().id, this.appService.getSubopcion());
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar');
-    //Obtiene la lista de tipos de contactos
-    this.listarTiposContactos();
     //Autocompletado Sucursal Banco - Buscar por nombre
     this.formulario.get('proveedor').valueChanges.subscribe(data => {
       if (typeof data == 'string') {
@@ -105,19 +96,29 @@ export class ContactoProveedorComponent implements OnInit {
       }
     })
   }
+  //Obtiene los datos necesarios para el componente
+  private inicializar(idRol, idSubopcion) {
+    this.render = true;
+    this.servicio.inicializar(idRol, idSubopcion).subscribe(
+      res => {
+        let respuesta = res.json();
+        //Establece las pestanias
+        this.pestanias = respuesta.pestanias;
+        //Establece demas datos necesarios
+        this.ultimoId = respuesta.ultimoId;
+        this.tiposContactos = respuesta.tipoContactos;
+        this.formulario.get('id').setValue(this.ultimoId);
+        this.render = false;
+      },
+      err => {
+        this.toastr.error(err.json().mensaje);
+        this.render = false;
+      }
+    )
+  }
   //Establecer el formulario al cambiar elemento de autocompletado
   public cambioAutocompletado() {
     this.formulario.patchValue(this.autocompletado.value);
-  }
-  //Obtiene el listado de tipos de proveedores
-  private listarTiposContactos() {
-    this.tipoContactoServicio.listar().subscribe(
-      res => {
-        this.tiposContactos = res.json();
-      },
-      err => {
-      }
-    );
   }
   //Vacia la lista de resultados de autocompletados
   public vaciarListas() {
@@ -141,10 +142,9 @@ export class ContactoProveedorComponent implements OnInit {
   public seleccionarPestania(id, nombre) {
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    this.reestablecerFormulario();
+    this.reestablecerFormulario(null);
     switch (id) {
       case 1:
-        this.obtenerSiguienteId();
         this.establecerValoresPestania(nombre, false, false, true, 'idProveedor');
         break;
       case 2:
@@ -181,16 +181,6 @@ export class ContactoProveedorComponent implements OnInit {
         break;
     }
   }
-  //Obtiene el siguiente id
-  private obtenerSiguienteId() {
-    this.servicio.obtenerSiguienteId().subscribe(
-      res => {
-        this.formulario.get('id').setValue(res.json());
-      },
-      err => {
-      }
-    );
-  }
   //Obtiene la lista de contactos por proveedor
   public listarPorProveedor() {
     if (this.mostrarAutocompletado) {
@@ -198,23 +188,12 @@ export class ContactoProveedorComponent implements OnInit {
       let elemento = this.formulario.get('proveedor').value;
       this.servicio.listarPorProveedor(elemento.id).subscribe(
         res => {
-          if (res.json().length > 0) {
-            if (this.indiceSeleccionado == 5) {
-              this.listaCompleta = new MatTableDataSource(res.json());
-              this.listaCompleta.paginator = this.paginator;
-              this.listaCompleta.sort = this.sort;
-            } else {
-              this.contactos = res.json();
-            }
-          } else {
-            let proveedor = this.formulario.value.proveedor;
-            this.contactos = [];
-            this.formulario.reset();
-            this.autocompletado.reset();
-            this.listaCompleta = new MatTableDataSource([]);
-            this.formulario.get('proveedor').setValue(proveedor);
-            this.toastr.error("El Proveedor no tiene contactos asignados.");
-          }
+          let r = res.text();
+
+          // this.listaCompleta = new MatTableDataSource(res.json());
+          // this.listaCompleta.paginator = this.paginator;
+          // this.listaCompleta.sort = this.sort;
+          // this.listaCompleta.data.length == 0 ? this.toastr.error("El Proveedor no tiene contactos asignados.") : '';
           this.loaderService.hide();
         },
         err => {
@@ -228,13 +207,14 @@ export class ContactoProveedorComponent implements OnInit {
   private agregar() {
     this.loaderService.show();
     this.formulario.get('id').setValue(null);
-    this.formulario.get('usuarioAlta').setValue(this.appServicio.getUsuario());
+    this.formulario.get('usuarioAlta').setValue(this.appService.getUsuario());
     let proveedor = this.formulario.value.proveedor;
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         let respuesta = res.json();
         if (respuesta.codigo == 201) {
-          this.reestablecerFormulario();
+          this.ultimoId = respuesta.id;
+          this.reestablecerFormulario(respuesta.id);
           this.formulario.get('proveedor').setValue(proveedor);
           document.getElementById('idTipoContacto').focus();
           this.toastr.success(respuesta.mensaje);
@@ -250,12 +230,12 @@ export class ContactoProveedorComponent implements OnInit {
   //Actualiza un registro
   private actualizar() {
     this.loaderService.show();
-    this.formulario.get('usuarioMod').setValue(this.appServicio.getUsuario());
+    this.formulario.get('usuarioMod').setValue(this.appService.getUsuario());
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
         let respuesta = res.json();
         if (respuesta.codigo == 200) {
-          this.reestablecerFormulario();
+          this.reestablecerFormulario(null);
           document.getElementById('idProveedor').focus();
           this.toastr.success(respuesta.mensaje);
         }
@@ -274,7 +254,7 @@ export class ContactoProveedorComponent implements OnInit {
       res => {
         let respuesta = res.json();
         if (respuesta.codigo == 200) {
-          this.reestablecerFormulario();
+          this.reestablecerFormulario(null);
           document.getElementById('idProveedor').focus();
           this.toastr.success(respuesta.mensaje);
         }
@@ -287,10 +267,11 @@ export class ContactoProveedorComponent implements OnInit {
     );
   }
   //Reestablece el formulario
-  private reestablecerFormulario() {
+  private reestablecerFormulario(id) {
+    this.vaciarListas();
     this.formulario.reset();
     this.autocompletado.reset();
-    this.vaciarListas();
+    id ? this.formulario.get('id').setValue(id) : this.formulario.get('id').setValue(this.ultimoId);
   }
   //Manejo de colores de campos y labels con patron erroneo
   public validarPatron(patron, campo) {
@@ -413,8 +394,8 @@ export class ContactoProveedorComponent implements OnInit {
     if (this.formulario.value.proveedor) {
       let datos = {
         nombre: 'Contactos - Proveedor: ' + this.formulario.value.proveedor.id + ' - ' + this.formulario.value.proveedor.razonSocial,
-        empresa: this.appServicio.getEmpresa().razonSocial,
-        usuario: this.appServicio.getUsuario().nombre,
+        empresa: this.appService.getEmpresa().razonSocial,
+        usuario: this.appService.getUsuario().nombre,
         datos: lista,
         columnas: this.columnas
       }

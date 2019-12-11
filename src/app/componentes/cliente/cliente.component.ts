@@ -76,7 +76,7 @@ export class ClienteComponent implements OnInit {
   public resumenesClientes: Array<any> = [];
   //Define la lista de situaciones de clientes
   public situacionesClientes: Array<any> = [];
-  
+
   //Define la opcion activa
   public botonOpcionActivo: boolean = null;
   //Define el form control para las busquedas
@@ -120,7 +120,7 @@ export class ClienteComponent implements OnInit {
   //Defiene el render
   public render: boolean = false;
   //Constructor
-  constructor(private servicio: ClienteService, private appService: AppService, 
+  constructor(private servicio: ClienteService, private appService: AppService,
     private toastr: ToastrService, private barrioServicio: BarrioService,
     private localidadServicio: LocalidadService, private cobradorServicio: CobradorService,
     private vendedorServicio: VendedorService, private zonaServicio: ZonaService,
@@ -132,33 +132,8 @@ export class ClienteComponent implements OnInit {
     private loaderService: LoaderService, private usuarioEmpresaService: UsuarioEmpresaService,
     private reporteServicio: ReporteService, private clienteCuentaBancariaService: ClienteCuentaBancariaService,
     private clienteVtoPagoService: ClienteVtoPagoService) {
-      /* 
-      * Obtiene todos los listados: condiciones de iva - tipos de documentos- resumenes de clientes - 
-      * situaciones de clientes - condiciones de venta - sucursales - cobradores -  vendedores - zonas - rubros
-      */
-      this.inicializar(this.appService.getUsuario().id, this.appService.getRol().id, this.appService.getSubopcion());
-    //Obtiene la lista de pestania por rol y subopcion
-    // this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
-    //   .subscribe(
-    //     res => {
-    //       this.pestanias = res.json();
-    //       this.pestanias.splice(3, 1);
-    //       this.activeLink = this.pestanias[0].nombre;
-    //     },
-    //     err => {
-    //     }
-    //   );
-    // //Obtiene la lista de opciones por rol y subopcion
-    // this.rolOpcionServicio.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
-    //   .subscribe(
-    //     res => {
-    //       this.opciones = res.json();
-    //       this.render = true;
-    //     },
-    //     err => {
-    //       this.render = true;
-    //     }
-    //   );
+    /* Obtiene todos los listados */
+    this.inicializar(this.appService.getUsuario().id, this.appService.getRol().id, this.appService.getSubopcion());
   }
   //Al iniciarse el componente
   ngOnInit() {

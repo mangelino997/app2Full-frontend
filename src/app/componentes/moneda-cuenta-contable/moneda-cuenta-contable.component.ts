@@ -1,9 +1,7 @@
 import { Component, OnInit, ViewChild, Inject } from '@angular/core';
-import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { FormGroup, FormControl } from '@angular/forms';
 import { MonedaCuentaContable } from 'src/app/modelos/moneda-cuenta-contable';
 import { MonedaCuentaContableService } from 'src/app/servicios/moneda-cuenta-contable.service';
-import { MonedaService } from 'src/app/servicios/moneda.service';
 import { MatSort, MatTableDataSource, MatDialog, MatPaginator } from '@angular/material';
 import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
@@ -53,6 +51,8 @@ export class Nodo {
   styleUrls: ['./moneda-cuenta-contable.component.css']
 })
 export class MonedaCuentaContableComponent implements OnInit {
+  //Define el ultimo id
+  public ultimoId: string = null;
   //Define la pestania activa
   public activeLink: any = null;
   //Define el indice seleccionado de pestania
@@ -93,23 +93,14 @@ export class MonedaCuentaContableComponent implements OnInit {
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Define el mostrar del circulo de progreso
   public show = false;
+  //Defiene el render
+  public render: boolean = false;
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Constructor
-  constructor(private monedaCuentaContableServicio: MonedaCuentaContableService, private monedaCuentaContable: MonedaCuentaContable,
-    private subopcionPestaniaService: SubopcionPestaniaService, private monedaServicio: MonedaService,
+  constructor(private servicio: MonedaCuentaContableService, private monedaCuentaContable: MonedaCuentaContable,
     private loaderService: LoaderService, private appService: AppService,
     public dialog: MatDialog, private toastr: ToastrService, private reporteServicio: ReporteService) {
-    //Obtiene la lista de pestanias
-    this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
-      .subscribe(
-        res => {
-          this.pestanias = res.json();
-          this.activeLink = this.pestanias[0].nombre;
-        },
-        err => {
-        }
-      );
     //Autocompletado - Buscar por nombre cliente
     let empresa = this.appService.getEmpresa();
     this.autocompletado.valueChanges.subscribe(data => {
@@ -117,7 +108,7 @@ export class MonedaCuentaContableComponent implements OnInit {
         data = data.trim();
         if (data == '*' || data.length > 0) {
           this.loaderService.show();
-          this.monedaCuentaContableServicio.listarPorNombreMoneda(data, empresa.id).subscribe(response => {
+          this.servicio.listarPorNombreMoneda(data, empresa.id).subscribe(response => {
             this.resultados = response.json();
             this.loaderService.hide();
           },
@@ -136,16 +127,37 @@ export class MonedaCuentaContableComponent implements OnInit {
       });
     //Define el formulario y validaciones
     this.formulario = this.monedaCuentaContable.formulario;
+    /* Obtiene todos los listados */
+    this.inicializar(this.appService.getUsuario().id, this.appService.getRol().id, this.appService.getSubopcion());
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar');
-    //Carga select con la lista de Monedas
-    this.listarMonedas();
+  }
+  //Obtiene los datos necesarios para el componente
+  private inicializar(idUsuario, idRol, idSubopcion) {
+    this.render = true;
+    this.servicio.inicializar(idUsuario, idRol, idSubopcion).subscribe(
+      res => {
+        let respuesta = res.json();
+        console.log(respuesta);
+        //Establece las pestanias
+        this.pestanias = respuesta.pestanias;
+        //Establece demas datos necesarios
+        this.ultimoId = respuesta.ultimoId;
+        this.listaMonedas = respuesta.monedas;
+        this.formulario.get('id').setValue(this.ultimoId);
+        this.render = false;
+      },
+      err => {
+        this.toastr.error(err.json().mensaje);
+        this.render = false;
+      }
+    )
   }
   //Obtiene el listado de registros
   private listar() {
     this.loaderService.show();
     let empresa = this.appService.getEmpresa();
-    this.monedaCuentaContableServicio.listarPorEmpresa(empresa.id).subscribe(
+    this.servicio.listarPorEmpresa(empresa.id).subscribe(
       res => {
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
@@ -159,20 +171,10 @@ export class MonedaCuentaContableComponent implements OnInit {
       }
     );
   }
-  //Obtiene el listado de registros
-  private listarMonedas() {
-    this.monedaServicio.listar().subscribe(
-      res => {
-        this.listaMonedas = res.json();
-      },
-      err => {
-      }
-    );
-  }
   //Controla el cambio en Moneda Cuenta Contable
   public cambioMonedaCuentaContable() {
     if (this.indiceSeleccionado > 1) {
-      this.monedaCuentaContableServicio.obtenerPorMonedaYEmpresa(this.formulario.value.moneda.id, this.formulario.value.empresa.id).subscribe(
+      this.servicio.obtenerPorMonedaYEmpresa(this.formulario.value.moneda.id, this.formulario.value.empresa.id).subscribe(
         res => {
           if (res.text()) {
             let respuesta = res.json();
@@ -251,7 +253,7 @@ export class MonedaCuentaContableComponent implements OnInit {
   //Agrega un registro
   private agregar(): void {
     this.loaderService.show();
-    this.monedaCuentaContableServicio.agregar(this.formulario.value).subscribe(
+    this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         let respuesta = res.json();
         if (respuesta.codigo == 201) {
@@ -272,7 +274,7 @@ export class MonedaCuentaContableComponent implements OnInit {
   private actualizar(): void {
     this.loaderService.show();
     this.formulario.get('moneda').enable();
-    this.monedaCuentaContableServicio.actualizar(this.formulario.value).subscribe(
+    this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
         let respuesta = res.json();
         if (respuesta.codigo == 200) {
@@ -293,7 +295,7 @@ export class MonedaCuentaContableComponent implements OnInit {
   //Elimina un registro
   private eliminar() {
     this.loaderService.show();
-    this.monedaCuentaContableServicio.eliminar(this.formulario.value.id).subscribe(
+    this.servicio.eliminar(this.formulario.value.id).subscribe(
       res => {
         let respuesta = res.json();
         if (respuesta.codigo == 200) {
@@ -312,9 +314,9 @@ export class MonedaCuentaContableComponent implements OnInit {
   }
   //Reestablece los campos formularios
   private reestablecerFormulario() {
+    this.resultados = [];
     this.formulario.reset();
     this.autocompletado.reset();
-    this.resultados = [];
     this.obtenerEmpresa();
   }
   //Establece el formulario
@@ -323,7 +325,6 @@ export class MonedaCuentaContableComponent implements OnInit {
     this.formulario.patchValue(elemento);
     this.formulario.value.moneda = elemento.moneda;
     this.indiceSeleccionado == 2 || this.indiceSeleccionado == 4 ? this.formulario.get('moneda').disable() : this.formulario.get('moneda').enable();
-
   }
   //Manejo de colores de campos y labels
   public cambioCampo(id, label) {

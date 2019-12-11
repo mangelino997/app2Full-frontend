@@ -19,9 +19,9 @@ import { ReporteService } from 'src/app/servicios/reporte.service';
 })
 export class MonedaCotizacionComponent implements OnInit {
   //Define la pestania actual
-  public pestaniaActual:string = null;
+  public pestaniaActual: string = null;
   //Define campos solo lectura
-  public soloLectura:boolean = false;
+  public soloLectura: boolean = false;
   //Define fecha actual
   public fechaActual: String;
   //Define si mostrar el boton
@@ -46,14 +46,16 @@ export class MonedaCotizacionComponent implements OnInit {
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Define el mostrar del circulo de progreso
   public show = false;
+  //Defiene el render
+  public render: boolean = false;
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Constructor
-  constructor(private appService: AppService, private monedaCotizacion: MonedaCotizacion, private monedaCotizacionServicio: MonedaCotizacionService,
+  constructor(private appService: AppService, private monedaCotizacion: MonedaCotizacion, private servicio: MonedaCotizacionService,
     private monedaServicio: MonedaService, private toastr: ToastrService, private fechaServicio: FechaService, private loaderService: LoaderService,
     private reporteServicio: ReporteService) {
     //Actualiza en tiempo real la tabla
-    this.monedaCotizacionServicio.listaCompleta.subscribe(res => {
+    this.servicio.listaCompleta.subscribe(res => {
       this.listaCompleta = res;
     });
     //Controla el autocompletado
@@ -62,7 +64,7 @@ export class MonedaCotizacionComponent implements OnInit {
         data = data.trim();
         if (data == '*' || data.length > 0) {
           this.loaderService.show();
-          this.monedaCotizacionServicio.listarPorMoneda(data).subscribe(res => {
+          this.servicio.listarPorMoneda(data).subscribe(res => {
             this.resultados = res.json();
             this.loaderService.hide();
           },
@@ -83,42 +85,33 @@ export class MonedaCotizacionComponent implements OnInit {
     this.mostrarAgregar = true;
     //Define el formulario y validaciones
     this.formulario = this.monedaCotizacion.formulario;
-    //Lista las Monedas
-    this.listarMonedas();
-    //Inicializamos con la fecha actual
-    this.establecerFecha();
+    /* Obtiene todos los listados */
+    this.inicializar();
   }
-  //Establecer Fecha
-  public establecerFecha() {
-    this.fechaServicio.obtenerFecha().subscribe(
+  //Obtiene los datos necesarios para el componente
+  private inicializar() {
+    this.render = true;
+    this.servicio.inicializar().subscribe(
       res => {
-        this.fechaActual = res.json();
+        let respuesta = res.json();
+        //Establece demas datos necesarios
+        this.listaMonedas = respuesta.monedas;
+        this.fechaActual = respuesta.fecha;
         this.formulario.get('fecha').setValue(this.fechaActual);
+        this.render = false;
       },
       err => {
-        let error = err.json();
-        this.toastr.error(error.mensaje);
+        this.toastr.error(err.json().mensaje);
+        this.render = false;
       }
-    );
-  }
-  //Obtiene el listado de Monedas
-  private listarMonedas() {
-    this.monedaServicio.listar().subscribe(
-      res => {
-        this.listaMonedas = res.json();
-      },
-      err => {
-        let error = err.json();
-        this.toastr.error(error.mensaje);
-      }
-    );
+    )
   }
   //Agrega un registro
   public agregar() {
     this.loaderService.show();
     this.formulario.get('id').setValue(null);
     this.formulario.get('usuarioAlta').setValue(this.appService.getUsuario());
-    this.monedaCotizacionServicio.agregar(this.formulario.value).subscribe(
+    this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         let respuesta = res.json();
         this.cambioSeleccionado();
@@ -135,7 +128,7 @@ export class MonedaCotizacionComponent implements OnInit {
   public actualizar() {
     this.loaderService.show();
     this.formulario.get('usuarioAlta').setValue(this.appService.getUsuario());
-    this.monedaCotizacionServicio.actualizar(this.formulario.value).subscribe(
+    this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
         let respuesta = res.json();
         this.cambioSeleccionado();
@@ -150,7 +143,7 @@ export class MonedaCotizacionComponent implements OnInit {
   }
   //Carga la tabla con los datos de la moneda seleccionada
   public cambioSeleccionado() {
-    this.monedaCotizacionServicio.listarPorMoneda(this.formulario.get('moneda').value.id).subscribe(res => {
+    this.servicio.listarPorMoneda(this.formulario.get('moneda').value.id).subscribe(res => {
       this.listaCompleta = new MatTableDataSource(res.json());
       this.listaCompleta.sort = this.sort;
     });
@@ -161,8 +154,8 @@ export class MonedaCotizacionComponent implements OnInit {
     this.formulario.get('valor').reset();
     this.autocompletado.setValue(undefined);
     this.resultados = [];
-    this.establecerFecha();
     this.mostrarAgregar = true;
+    this.formulario.get('fecha').setValue(this.fechaActual);
     document.getElementById('idNombre').focus();
   }
   //Establece el formulario al seleccionar elemento del autocompletado
@@ -191,7 +184,7 @@ export class MonedaCotizacionComponent implements OnInit {
   }
   //Elimina un elemento de la lista
   public eliminar(id) {
-    this.monedaCotizacionServicio.eliminar(id).subscribe(res => {
+    this.servicio.eliminar(id).subscribe(res => {
       let respuesta = res.json();
       this.toastr.success(respuesta.mensaje);
       this.cambioSeleccionado();
@@ -224,8 +217,8 @@ export class MonedaCotizacionComponent implements OnInit {
     }
   }
   //Valida que la fecha de cotización no sea posterior a la fecha actual
-  public validarFechaCotizacion(){
-    if(this.formulario.value.fecha > this.fechaActual){
+  public validarFechaCotizacion() {
+    if (this.formulario.value.fecha > this.fechaActual) {
       this.toastr.error("Fecha de Cotización debe ser menor a fecha actual.");
       this.formulario.get('fecha').reset();
     }

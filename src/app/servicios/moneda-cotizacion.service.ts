@@ -58,6 +58,10 @@ export class MonedaCotizacionService {
   public listarPorMoneda(id) {
     return this.http.get(this.url + '/listarPorMoneda/' + id, this.options);
   }
+  //Obtiene todos los listados
+  public inicializar() {
+    return this.http.get(this.url + '/inicializar', this.options);
+  }
   //Agrega un registro
   public agregar(elemento) {
     return this.http.post(this.url, elemento, this.options);
