@@ -28,7 +28,7 @@
           </div>
         </div>
         <div class="row" [hidden]="indiceSeleccionado == 2 || indiceSeleccionado == 5">
-          <div class="col" *ngIf="indiceSeleccionado == 1">
+          <div class="col-md-2" *ngIf="indiceSeleccionado == 1">
             <div class="form-group has-float-label">
               <label for="idAnioFiscal" class="tamanio-label">Año Fiscal *</label>
               <mat-select id="idAnioFiscal" class="form-control form-control-sm number-right" formControlName="anio"
@@ -39,7 +39,7 @@
               </mat-select>
             </div>
           </div>
-          <div class="col-md-3">
+          <div class="col">
             <div class="form-group has-float-label">
               <label id="labelImporte" for="idGananciaNetaAcumulada" class="descripcion-label">Ganancia Neta Acumulada *</label>
               <input id="idGananciaNetaAcumulada" type="text" formControlName="importe" autocomplete="off"
@@ -47,7 +47,7 @@
                 [textMask]="mascararImporte(10)" (blur)="controlImporte()" placeholder="$0.00">
             </div>
           </div>
-          <div class="col-md-3">
+          <div class="col">
             <div class="form-group has-float-label">
               <label id="labelImporteFijo" for="idImporteFijo" class="descripcion-label">Importe Fijo a Pagar *</label>
               <input id="idImporteFijo" type="text" formControlName="importeFijo" autocomplete="off"
@@ -55,7 +55,7 @@
                 [textMask]="mascararImporte(10)" (blur)="controlImporteFijo()" placeholder="$0.00">
             </div>
           </div>
-          <div class="col-md-3">
+          <div class="col">
             <div class="form-group has-float-label">
               <label for="idAlicuotaPagar" class="tamanio-label">Alicuota a Pagar s/Excedente *</label>
               <mat-select id="idAlicuotaPagar" class="form-control form-control-sm number-right"

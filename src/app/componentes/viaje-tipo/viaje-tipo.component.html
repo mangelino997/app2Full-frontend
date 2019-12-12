@@ -89,13 +89,14 @@
         </ng-container>
         <ng-container matColumnDef="COSTO_POR_KM_PROPIO">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Costo por Km Vehículos Propios</th>
-          <td mat-cell *matCellDef="let elemento" class="number-right">$ {{elemento.costoPorKmPropio | number: '1.3-4'}}
+          <td mat-cell *matCellDef="let elemento" class="number-right">$ 
+            {{elemento.costoPorKmPropio ? (elemento.costoPorKmPropio | number: '1.3-4') : '0.00'}}
           </td>
         </ng-container>
         <ng-container matColumnDef="COSTO_POR_KM_TERCERO">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Costo por Km Vehículos Terceros</th>
           <td mat-cell *matCellDef="let elemento" class="number-right">$
-            {{elemento.costoPorKmTercero | number: '1.3-4'}}</td>
+            {{elemento.costoPorKmTercero? (elemento.costoPorKmTercero | number: '1.3-4') : '0.00'}}</td>
         </ng-container>
         <ng-container matColumnDef="EDITAR" stickyEnd>
           <th mat-header-cell *matHeaderCellDef><button class="button-full-width" mat-raised-button color="primary"

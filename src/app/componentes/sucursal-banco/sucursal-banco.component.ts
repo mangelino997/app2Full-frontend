@@ -1,6 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { SucursalBancoService } from '../../servicios/sucursal-banco.service';
-import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { BancoService } from '../../servicios/banco.service';
 import { AppService } from '../../servicios/app.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
@@ -17,6 +16,8 @@ import { ReporteService } from 'src/app/servicios/reporte.service';
   styleUrls: ['./sucursal-banco.component.css']
 })
 export class SucursalBancoComponent implements OnInit {
+  //Define el ultimo id
+  public ultimoId: string = null;
   //Define la pestania activa
   public activeLink: any = null;
   //Define el indice seleccionado de pestania
@@ -45,6 +46,8 @@ export class SucursalBancoComponent implements OnInit {
   public resultadosBancos: Array<any> = [];
   //Define el mostrar del circulo de progreso
   public show = false;
+  //Defiene el render
+  public render: boolean = false;
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define las columnas de la tabla
@@ -54,22 +57,16 @@ export class SucursalBancoComponent implements OnInit {
   //Define la paginacion
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Constructor
-  constructor(private servicio: SucursalBancoService, private subopcionPestaniaService: SubopcionPestaniaService,
-    private appService: AppService, private toastr: ToastrService,
-    private bancoServicio: BancoService, private loaderService: LoaderService, private reporteServicio: ReporteService) {
-    //Obtiene la lista de pestania por rol y subopcion
-    this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
-      .subscribe(
-        res => {
-          this.pestanias = res.json();
-          this.activeLink = this.pestanias[0].nombre;
-        },
-        err => {
-        }
-      );
-  }
+  constructor(private servicio: SucursalBancoService,
+    private appService: AppService, private toastr: ToastrService, private bancoServicio: BancoService,
+    private loaderService: LoaderService, private reporteServicio: ReporteService) { }
   //Al iniciarse el componente
   ngOnInit() {
+    //Establece la subscripcion a loader
+    this.subscription = this.loaderService.loaderState
+      .subscribe((state: LoaderState) => {
+        this.show = state.show;
+      });
     //Define los campos para validaciones
     this.formulario = new FormGroup({
       id: new FormControl(),
@@ -93,13 +90,29 @@ export class SucursalBancoComponent implements OnInit {
         }
       }
     })
+    /* Obtiene todos los listados */
+    this.inicializar(this.appService.getRol().id, this.appService.getSubopcion());
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar');
-    //Establece la subscripcion a loader
-    this.subscription = this.loaderService.loaderState
-      .subscribe((state: LoaderState) => {
-        this.show = state.show;
-      });
+  }
+  //Obtiene los datos necesarios para el componente
+  private inicializar(idRol, idSubopcion) {
+    this.render = true;
+    this.servicio.inicializar(idRol, idSubopcion).subscribe(
+      res => {
+        let respuesta = res.json();
+        //Establece las pestanias
+        this.pestanias = respuesta.pestanias;
+        //Establece demas datos necesarios
+        this.ultimoId = respuesta.ultimoId;
+        this.formulario.get('id').setValue(this.ultimoId);
+        this.render = false;
+      },
+      err => {
+        this.toastr.error(err.json().mensaje);
+        this.render = false;
+      }
+    )
   }
   //Establece el formulario
   public establecerFormulario() {
@@ -108,6 +121,7 @@ export class SucursalBancoComponent implements OnInit {
   //Vacia la lista de resultados de autocompletados
   private vaciarListas() {
     this.resultados = [];
+    this.sucursales = [];
     this.resultadosBancos = [];
   }
   //Funcion para establecer los valores de las pestañas
@@ -125,10 +139,9 @@ export class SucursalBancoComponent implements OnInit {
   public seleccionarPestania(id, nombre) {
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    this.reestablecerFormulario(undefined);
+    this.reestablecerFormulario(null);
     switch (id) {
       case 1:
-        this.obtenerSiguienteId();
         this.establecerValoresPestania(nombre, false, false, true, 'idBanco');
         break;
       case 2:
@@ -141,7 +154,6 @@ export class SucursalBancoComponent implements OnInit {
         this.establecerValoresPestania(nombre, true, true, true, 'idBanco');
         break;
       case 5:
-        this.sucursales = [];
         this.listaCompleta = new MatTableDataSource([]);
         this.mostrarAutocompletado = true;
         setTimeout(function () {
@@ -167,33 +179,6 @@ export class SucursalBancoComponent implements OnInit {
       default:
         break;
     }
-  }
-  //Obtiene el siguiente id
-  private obtenerSiguienteId() {
-    this.servicio.obtenerSiguienteId().subscribe(
-      res => {
-        this.formulario.get('id').setValue(res.json());
-      },
-      err => {
-      }
-    );
-  }
-  //Obtiene el listado de registros
-  private listar() {
-    this.loaderService.show();
-    this.servicio.listar().subscribe(
-      res => {
-        this.listaCompleta = new MatTableDataSource(res.json());
-        this.listaCompleta.sort = this.sort;
-        this.listaCompleta.paginator = this.paginator;
-        this.loaderService.hide();
-      },
-      err => {
-        let error = err.json();
-        this.toastr.error(error.mensaje);
-        this.loaderService.hide();
-      }
-    );
   }
   //Obtiene una lista por banco
   public listarPorBanco(elemento) {
@@ -224,6 +209,7 @@ export class SucursalBancoComponent implements OnInit {
       res => {
         var respuesta = res.json();
         if (respuesta.codigo == 201) {
+          this.ultimoId = respuesta.id;
           this.reestablecerFormulario(respuesta.id);
           document.getElementById('idBanco').focus();
           this.toastr.success(respuesta.mensaje);
@@ -243,7 +229,7 @@ export class SucursalBancoComponent implements OnInit {
       res => {
         var respuesta = res.json();
         if (respuesta.codigo == 200) {
-          this.reestablecerFormulario('');
+          this.reestablecerFormulario(null);
           document.getElementById('idBanco').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
@@ -289,10 +275,10 @@ export class SucursalBancoComponent implements OnInit {
   }
   //Reestablece el formulario
   private reestablecerFormulario(id) {
-    this.formulario.reset();
-    this.formulario.get('id').setValue(id);
-    this.autocompletado.reset();
     this.vaciarListas();
+    this.formulario.reset();
+    this.autocompletado.reset();
+    id ? this.formulario.get('id').setValue(id) : this.formulario.get('id').setValue(this.ultimoId);
   }
   //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
   private lanzarError(err) {

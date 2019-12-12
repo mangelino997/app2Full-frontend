@@ -3,15 +3,12 @@ import { FormGroup, FormControl } from '@angular/forms';
 import { MatTableDataSource, MatSort, MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatPaginator } from '@angular/material';
 import { Subscription } from 'rxjs';
 import { AppService } from 'src/app/servicios/app.service';
-import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
-import { FechaService } from 'src/app/servicios/fecha.service';
 import { ToastrService } from 'ngx-toastr';
 import { LoaderService } from 'src/app/servicios/loader.service';
 import { MesService } from 'src/app/servicios/mes.service';
 import { AfipDeduccionPersonalTabla } from 'src/app/modelos/afipDeduccionPersonalTabla';
 import { AfipTipoBeneficioDeduccionService } from 'src/app/servicios/afip-tipo-beneficio-deduccion.service';
 import { LoaderState } from 'src/app/modelos/loader';
-import { AfipTipoBeneficioService } from 'src/app/servicios/afip-tipo-beneficio.service';
 import { AfipDeduccionPersonalService } from 'src/app/servicios/afip-deduccion-personal.service';
 import { ReporteService } from 'src/app/servicios/reporte.service';
 import { ConfirmarDialogoComponent } from '../confirmar-dialogo/confirmar-dialogo.component';
@@ -22,6 +19,8 @@ import { ConfirmarDialogoComponent } from '../confirmar-dialogo/confirmar-dialog
   styleUrls: ['./deduccion-personal-tabla.component.css']
 })
 export class DeduccionPersonalTablaComponent implements OnInit {
+  //Define el ultimo id
+  public ultimoId: string = null;
   //Define la pestania activa
   public activeLink: any = null;
   //Define el indice seleccionado de pestania
@@ -69,22 +68,15 @@ export class DeduccionPersonalTablaComponent implements OnInit {
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Define el mostrar del circulo de progreso
   public show = false;
+  //Defiene el render
+  public render: boolean = false;
   //Define la subscripcion a loader.service
   private subscription: Subscription;
-  constructor(private appService: AppService, private subopcionPestaniaService: SubopcionPestaniaService, private fechaService: FechaService,
-    private toastr: ToastrService, private loaderService: LoaderService, private servicio: AfipTipoBeneficioDeduccionService,
-    private modelo: AfipDeduccionPersonalTabla, private mesService: MesService, private afipTipoBenecioService: AfipTipoBeneficioService,
-    private afipDeduccionPersonalService: AfipDeduccionPersonalService, public dialog: MatDialog, private reporteServicio: ReporteService) {
-    //Obtiene la lista de pestanias
-    this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
-      .subscribe(
-        res => {
-          this.pestanias = res.json();
-          this.activeLink = this.pestanias[0].nombre;
-        },
-        err => {
-        }
-      );
+  constructor(private appService: AppService, 
+    private toastr: ToastrService, private loaderService: LoaderService,
+    private servicio: AfipTipoBeneficioDeduccionService, private modelo: AfipDeduccionPersonalTabla,
+    private afipDeduccionPersonalService: AfipDeduccionPersonalService,
+    public dialog: MatDialog, private reporteServicio: ReporteService) {
   }
   ngOnInit() {
     //Establece la subscripcion a loader
@@ -94,62 +86,34 @@ export class DeduccionPersonalTablaComponent implements OnInit {
       });
     //Define el formulario y validaciones
     this.formulario = this.modelo.formulario;
-    //Define el formulario para el metodo buscar (filtro)
-    // this.formulario
+    /* Obtiene todos los listados */
+    this.inicializar(this.appService.getRol().id, this.appService.getSubopcion())
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar');
-    //Obtiene la lista de Años Fiscales
-    this.listarAnios();
-    //Obtiene la lista de Tipos de Beneficios
-    this.listarTipoBeneficios();
-    //Obtiene la lista de Deducciones Personales
-    this.listarDeduccionPersonales();
-    //Obtiene la lista de Meses
-    this.listarMeses();
     //Inicializa el importeAnualMensual
     this.formulario.get('importeAnualMensual').setValue(false);
   }
-  //carga la lista de Años Fiscales
-  private listarAnios() {
-    this.fechaService.listarAnioFiscal().subscribe(
+  //Obtiene los datos necesarios para el componente
+  private inicializar(idRol, idSubopcion) {
+    this.render = true;
+    this.afipDeduccionPersonalService.inicializarTabla(idRol, idSubopcion).subscribe(
       res => {
-        this.anios = res.json();
+        let respuesta = res.json();
+        //Establece las pestanias
+        this.pestanias = respuesta.pestanias;
+        console.log(respuesta);
+        //Establece demas datos necesarios
+        this.anios = respuesta.anios;
+        this.meses = respuesta.meses;
+        this.ultimoId = respuesta.ultimoId;
+        this.tiposBeneficios = respuesta.tipoBeneficios;
+        this.deduccionesPersonales = respuesta.afipDeduccionPersonales;
+        this.formulario.get('id').setValue(this.ultimoId);
+        this.render = false;
       },
       err => {
-        this.toastr.error("Error al obtener la lista de año fiscal");
-      }
-    )
-  }
-  //carga la lista de Tipos de Beneficios
-  private listarTipoBeneficios() {
-    this.afipTipoBenecioService.listar().subscribe(
-      res => {
-        this.tiposBeneficios = res.json();
-      },
-      err => {
-        this.toastr.error("Error al obtener la lista de tipo de beneficios");
-      }
-    )
-  }
-  //carga la lista de Deducciones Personales
-  private listarDeduccionPersonales() {
-    this.afipDeduccionPersonalService.listar().subscribe(
-      res => {
-        this.deduccionesPersonales = res.json();
-      },
-      err => {
-        this.toastr.error("Error al obtener la lista de deducciones personales");
-      }
-    )
-  }
-  //carga la lista de meses en pestaña listar
-  private listarMeses() {
-    this.mesService.listar().subscribe(
-      res => {
-        this.meses = res.json();
-      },
-      err => {
-        this.toastr.error("Error al obtener la lista de meses");
+        this.toastr.error(err.json().mensaje);
+        this.render = false;
       }
     )
   }
@@ -211,7 +175,7 @@ export class DeduccionPersonalTablaComponent implements OnInit {
     let afipTipoBeneficio = this.formulario.value.afipTipoBeneficio;
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
-        var respuesta = res.json();
+        let respuesta = res.json();
         this.reestablecerFormulario();
         this.establecerValoresCampos(anio, afipTipoBeneficio);
         this.toastr.success(respuesta.mensaje);
@@ -234,7 +198,7 @@ export class DeduccionPersonalTablaComponent implements OnInit {
     let afipTipoBeneficio = this.formulario.value.afipTipoBeneficio;
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
-        var respuesta = res.json();
+        let respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario();
           this.establecerValoresCampos(anio, afipTipoBeneficio);
@@ -295,7 +259,7 @@ export class DeduccionPersonalTablaComponent implements OnInit {
   }
   //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
   private lanzarError(err) {
-    var respuesta = err.json();
+    let respuesta = err.json();
     if (respuesta.codigo == 11002) {
       document.getElementById("labelAnioFiscal").classList.add('label-error');
       document.getElementById("idAnioFiscal").classList.add('is-invalid');
@@ -305,14 +269,14 @@ export class DeduccionPersonalTablaComponent implements OnInit {
   }
   //Reestablece los campos formularios
   private reestablecerFormulario() {
-    this.formulario.reset();
     this.idMod = null;
-    this.resultados = [];
     this.anio.reset();
+    this.resultados = [];
+    this.formulario.reset();
     this.tipoBeneficio.reset();
-    this.listaCompleta = new MatTableDataSource([]);
     this.formulario.get('anio').enable();
     this.formulario.get('afipTipoBeneficio').enable();
+    this.listaCompleta = new MatTableDataSource([]);
     this.indiceSeleccionado == 3 ? this.formulario.get('afipDeduccionPersonal').disable() : this.formulario.get('afipDeduccionPersonal').enable();
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
@@ -385,7 +349,7 @@ export class DeduccionPersonalTablaComponent implements OnInit {
   }
   //Maneja los evento al presionar una tacla (para pestanias y opciones)
   public manejarEvento(keycode) {
-    var indice = this.indiceSeleccionado;
+    let indice = this.indiceSeleccionado;
     if (keycode == 113) {
       if (indice < this.pestanias.length) {
         this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre);

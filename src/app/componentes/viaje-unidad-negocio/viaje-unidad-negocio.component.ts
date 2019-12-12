@@ -17,6 +17,8 @@ import { ReporteService } from 'src/app/servicios/reporte.service';
   styleUrls: ['./viaje-unidad-negocio.component.css']
 })
 export class ViajeUnidadNegocioComponent implements OnInit {
+  //Define el ultimo id
+  public ultimoId: string = null;
   //Define la pestania activa
   public activeLink: any = null;
   //Define el indice seleccionado de pestania
@@ -41,6 +43,8 @@ export class ViajeUnidadNegocioComponent implements OnInit {
   public resultados: Array<any> = [];
   //Define el mostrar del circulo de progreso
   public show = false;
+  //Defiene el render
+  public render: boolean = false;
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define las columnas de la tabla
@@ -51,14 +55,8 @@ export class ViajeUnidadNegocioComponent implements OnInit {
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Constructor
   constructor(private servicio: ViajeUnidadNegocioService, private viajeUnidadNegocio: ViajeUnidadNegocio, private appService: AppService,
-    private subopcionPestaniaService: SubopcionPestaniaService, private toastr: ToastrService, private loaderService: LoaderService,
+    private toastr: ToastrService, private loaderService: LoaderService,
     private reporteServicio: ReporteService) {
-    //Obtiene la lista de pestania por rol y subopcion
-    this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
-      .subscribe(res => {
-        this.pestanias = res.json();
-        this.activeLink = this.pestanias[0].nombre;
-      });
     //Autocompletado - Buscar por nombre
     this.autocompletado.valueChanges.subscribe(data => {
       if (typeof data == 'string') {
@@ -85,8 +83,29 @@ export class ViajeUnidadNegocioComponent implements OnInit {
       });
     //Define el formulario y validaciones
     this.formulario = this.viajeUnidadNegocio.formulario;
+    /* Obtiene todos los listados */
+    this.inicializar(this.appService.getRol().id, this.appService.getSubopcion());
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar');
+  }
+  //Obtiene los datos necesarios para el componente
+  private inicializar(idRol, idSubopcion) {
+    this.render = true;
+    this.servicio.inicializar(idRol, idSubopcion).subscribe(
+      res => {
+        let respuesta = res.json();
+        //Establece las pestanias
+        this.pestanias = respuesta.pestanias;
+        //Establece demas datos necesarios
+        this.ultimoId = respuesta.ultimoId;
+        this.formulario.get('id').setValue(this.ultimoId);
+        this.render = false;
+      },
+      err => {
+        this.toastr.error(err.json().mensaje);
+        this.render = false;
+      }
+    )
   }
   //Obtiene el listado de registros
   private listar() {
@@ -119,10 +138,9 @@ export class ViajeUnidadNegocioComponent implements OnInit {
   public seleccionarPestania(id, nombre) {
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    this.reestablecerFormulario(undefined);
+    this.reestablecerFormulario(null);
     switch (id) {
       case 1:
-        this.obtenerSiguienteId();
         this.establecerValoresPestania(nombre, false, false, true, 'idNombre');
         break;
       case 2:
@@ -165,6 +183,7 @@ export class ViajeUnidadNegocioComponent implements OnInit {
       res => {
         var respuesta = res.json();
         if (respuesta.codigo == 201) {
+          this.ultimoId = respuesta.id;
           this.reestablecerFormulario(respuesta.id);
           document.getElementById('idNombre').focus();
           this.toastr.success(respuesta.mensaje);
@@ -188,7 +207,7 @@ export class ViajeUnidadNegocioComponent implements OnInit {
       res => {
         var respuesta = res.json();
         if (respuesta.codigo == 200) {
-          this.reestablecerFormulario('');
+          this.reestablecerFormulario(null);
           document.getElementById('idAutocompletado').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
@@ -236,18 +255,12 @@ export class ViajeUnidadNegocioComponent implements OnInit {
       valor.setValue(null);
     }
   }
-  //Obtiene el siguiente id
-  private obtenerSiguienteId() {
-    this.servicio.obtenerSiguienteId().subscribe(res => {
-      this.formulario.get('id').setValue(res.json());
-    });
-  }
   //Reestablece los campos formularios
   private reestablecerFormulario(id) {
-    this.formulario.reset();
-    this.formulario.get('id').setValue(id);
-    this.autocompletado.reset();
     this.resultados = [];
+    this.formulario.reset();
+    this.autocompletado.reset();
+    id ? this.formulario.get('id').setValue(id) : this.formulario.get('id').setValue(this.ultimoId);
   }
   //Manejo de colores de campos y labels
   public cambioCampo(id, label) {

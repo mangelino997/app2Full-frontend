@@ -58,6 +58,10 @@ export class TipoVehiculoService {
       })
     })
   }
+   //Obtiene todos los listados
+   public inicializar(idRol, idSubopcion) {
+    return this.http.get(this.url + '/inicializar/' + idRol + '/' + idSubopcion, this.options);
+  }
   //Agrega un registro
   public agregar(elemento) {
     return this.http.post(this.url, elemento, this.options);
