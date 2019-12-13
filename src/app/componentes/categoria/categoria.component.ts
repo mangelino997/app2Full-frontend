@@ -1,6 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { CategoriaService } from '../../servicios/categoria.service';
-import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { FormGroup, FormControl } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { AppService } from 'src/app/servicios/app.service';
@@ -17,6 +16,8 @@ import { ReporteService } from 'src/app/servicios/reporte.service';
   styleUrls: ['./categoria.component.css']
 })
 export class CategoriaComponent implements OnInit {
+  //Define el ultimo id
+  public ultimoId: string = null;
   //Define la pestania activa
   public activeLink: any = null;
   //Define el indice seleccionado de pestania
@@ -43,6 +44,8 @@ export class CategoriaComponent implements OnInit {
   public resultados: Array<any> = [];
   //Define el mostrar del circulo de progreso
   public show = false;
+  //Defiene el render
+  public render: boolean = false;
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define las columnas de la tabla
@@ -52,21 +55,9 @@ export class CategoriaComponent implements OnInit {
   //Define la paginacion
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Constructor
-  constructor(private servicio: CategoriaService, private subopcionPestaniaService: SubopcionPestaniaService,
-    private toastr: ToastrService, private appServicio: AppService,
-    private categoria: Categoria, private loaderService: LoaderService, private reporteServicio: ReporteService) {
-    //Obtiene la lista de pestania por rol y subopcion
-    this.subopcionPestaniaService.listarPorRolSubopcion(this.appServicio.getRol().id, this.appServicio.getSubopcion())
-      .subscribe(
-        res => {
-          this.pestanias = res.json();
-          this.activeLink = this.pestanias[0].nombre;
-          //Establece los valores de la primera pestania activa
-          this.seleccionarPestania(this.pestanias[0].id, this.pestanias[0].nombre, 0);
-        },
-        err => {
-        }
-      );
+  constructor(private servicio: CategoriaService, private toastr: ToastrService,
+    private appService: AppService, private categoria: Categoria,
+    private loaderService: LoaderService, private reporteServicio: ReporteService) {
     //Autocompletado - Buscar por nombre
     this.autocompletado.valueChanges.subscribe(data => {
       if (typeof data == 'string') {
@@ -93,24 +84,41 @@ export class CategoriaComponent implements OnInit {
       });
     //Define el formulario y validaciones
     this.formulario = this.categoria.formulario;
+    /* Obtiene todos los listados */
+    this.inicializar(this.appService.getRol().id, this.appService.getSubopcion());
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar', 0);
-    //Obtiene la lista completa de registros
-    // this.listar();
-    //Establece los valores por defecto
-    // this.establecerValoresPorDefecto();
+  }
+  //Obtiene los datos necesarios para el componente
+  private inicializar(idRol, idSubopcion) {
+    this.render = true;
+    this.servicio.inicializar(idRol, idSubopcion).subscribe(
+      res => {
+        let respuesta = res.json();
+        //Establece las pestanias
+        this.pestanias = respuesta.pestanias;
+        //Establece demas datos necesarios
+        this.ultimoId = respuesta.ultimoId;
+        this.formulario.get('id').setValue(this.ultimoId);
+        this.render = false;
+      },
+      err => {
+        this.toastr.error(err.json().mensaje);
+        this.render = false;
+      }
+    )
   }
   //Mascara un porcentaje
   public mascararPorcentaje() {
-    return this.appServicio.mascararPorcentaje();
+    return this.appService.mascararPorcentajeDosEnteros();
   }
   //Establece los decimales de porcentaje
   public establecerPorcentaje(formulario, cantidad): void {
-    formulario.setValue(this.appServicio.desenmascararPorcentaje(formulario.value, cantidad));
+    formulario.setValue(this.appService.desenmascararPorcentaje(formulario.value, cantidad));
   }
   //Mascara enteros
   public mascararEnteros(limite) {
-    return this.appServicio.mascararEnteros(limite);
+    return this.appService.mascararEnteros(limite);
   }
   //Establece los valores por defecto
   private establecerValoresPorDefecto() {
@@ -150,16 +158,11 @@ export class CategoriaComponent implements OnInit {
   };
   //Establece valores al seleccionar una pestania
   public seleccionarPestania(id, nombre, opcion) {
-    this.formulario.reset();
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    if (opcion == 0) {
-      this.autocompletado.setValue(undefined);
-      this.resultados = [];
-    }
+    this.reestablecerFormulario(null);
     switch (id) {
       case 1:
-        this.obtenerSiguienteId();
         this.establecerValoresPestania(nombre, false, false, true, 'idNombre');
         break;
       case 2:
@@ -194,16 +197,6 @@ export class CategoriaComponent implements OnInit {
         break;
     }
   }
-  //Obtiene el siguiente id
-  private obtenerSiguienteId() {
-    this.servicio.obtenerSiguienteId().subscribe(
-      res => {
-        this.formulario.get('id').setValue(res.json());
-      },
-      err => {
-      }
-    );
-  }
   //Obtiene el listado de registros
   private listar() {
     this.loaderService.show();
@@ -230,6 +223,7 @@ export class CategoriaComponent implements OnInit {
       res => {
         let respuesta = res.json();
         if (respuesta.codigo == 201) {
+          this.ultimoId = respuesta.id;
           this.reestablecerFormulario(respuesta.id);
           document.getElementById('idNombre').focus();
           this.toastr.success(respuesta.mensaje);
@@ -257,7 +251,7 @@ export class CategoriaComponent implements OnInit {
       res => {
         let respuesta = res.json();
         if (respuesta.codigo == 200) {
-          this.reestablecerFormulario(undefined);
+          this.reestablecerFormulario(null);
           document.getElementById('idAutocompletado').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
@@ -284,7 +278,7 @@ export class CategoriaComponent implements OnInit {
       res => {
         let respuesta = res.json();
         if (respuesta.codigo == 200) {
-          this.reestablecerFormulario(undefined);
+          this.reestablecerFormulario(null);
           document.getElementById('idAutocompletado').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
@@ -298,14 +292,14 @@ export class CategoriaComponent implements OnInit {
   }
   //Reestablece los campos formularios
   private reestablecerFormulario(id) {
-    this.formulario.reset();
-    this.formulario.get('id').setValue(id);
-    this.autocompletado.setValue(undefined);
     this.resultados = [];
+    this.formulario.reset();
+    this.autocompletado.reset();
+    id ? this.formulario.get('id').setValue(id) : this.formulario.get('id').setValue(this.ultimoId);
   }
   //Formatea el numero a x decimales
   public setDecimales(valor, cantidad) {
-    valor.target.value = this.appServicio.setDecimales(valor.target.value, cantidad);
+    valor.target.value = this.appService.setDecimales(valor.target.value, cantidad);
   }
   //Manejo de colores de campos y labels
   public cambioCampo(id, label) {
@@ -351,7 +345,7 @@ export class CategoriaComponent implements OnInit {
   }
   //Retorna el numero a x decimales
   public returnDecimales(valor: number, cantidad: number) {
-    return this.appServicio.establecerDecimales(valor, cantidad);
+    return this.appService.establecerDecimales(valor, cantidad);
   }
   //Prepara los datos para exportar
   private prepararDatos(listaCompleta): Array<any> {
@@ -375,8 +369,8 @@ export class CategoriaComponent implements OnInit {
     let lista = this.prepararDatos(this.listaCompleta.data);
     let datos = {
       nombre: 'Categorias',
-      empresa: this.appServicio.getEmpresa().razonSocial,
-      usuario: this.appServicio.getUsuario().nombre,
+      empresa: this.appService.getEmpresa().razonSocial,
+      usuario: this.appService.getUsuario().nombre,
       datos: lista,
       columnas: this.columnas
     }

@@ -3,7 +3,6 @@ import { ViajeTipoService } from 'src/app/servicios/viaje-tipo.service';
 import { FormGroup, FormControl } from '@angular/forms';
 import { MatTableDataSource, MatSort, MatPaginator } from '@angular/material';
 import { Subscription } from 'rxjs';
-import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
 import { AppService } from 'src/app/servicios/app.service';
 import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
@@ -17,6 +16,8 @@ import { ReporteService } from 'src/app/servicios/reporte.service';
   styleUrls: ['./viaje-tipo.component.css']
 })
 export class ViajeTipoComponent implements OnInit {
+  //Define el ultimo id
+  public ultimoId: string = null;
   //Define la pestania activa
   public activeLink: any = null;
   //Define el indice seleccionado de pestania
@@ -41,6 +42,8 @@ export class ViajeTipoComponent implements OnInit {
   public resultados: Array<any> = [];
   //Define el mostrar del circulo de progreso
   public show = false;
+  //Defiene el render
+  public render: boolean = false;
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define las columnas de la tabla
@@ -50,26 +53,16 @@ export class ViajeTipoComponent implements OnInit {
   //Define la paginacion
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Constructor
-  constructor(private viajeTipoServicio: ViajeTipoService, private subopcionPestaniaService: SubopcionPestaniaService,
+  constructor(private servicio: ViajeTipoService,
     private appService: AppService, private loaderService: LoaderService, private toastr: ToastrService, private viajeTipo: ViajeTipo,
     private reporteServicio: ReporteService) {
-    //Obtiene la lista de pestania por rol y subopcion
-    this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
-      .subscribe(
-        res => {
-          this.pestanias = res.json();
-          this.activeLink = this.pestanias[0].nombre;
-        },
-        err => {
-        }
-      );
     //Autocompletado - Buscar por nombre
     this.autocompletado.valueChanges.subscribe(data => {
       if (typeof data == 'string') {
         data = data.trim();
         if (data == '*' || data.length > 0) {
           this.loaderService.show();
-          this.viajeTipoServicio.listarPorNombre(data).subscribe(res => {
+          this.servicio.listarPorNombre(data).subscribe(res => {
             this.resultados = res;
             this.loaderService.hide();
           },
@@ -88,8 +81,29 @@ export class ViajeTipoComponent implements OnInit {
         this.show = state.show;
       });
     this.formulario = this.viajeTipo.formulario;
+    /* Obtiene todos los listados */
+    this.inicializar(this.appService.getRol().id, this.appService.getSubopcion());
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar', 0);
+  }
+  //Obtiene los datos necesarios para el componente
+  private inicializar(idRol, idSubopcion) {
+    this.render = true;
+    this.servicio.inicializar(idRol, idSubopcion).subscribe(
+      res => {
+        let respuesta = res.json();
+        //Establece las pestanias
+        this.pestanias = respuesta.pestanias;
+        //Establece demas datos necesarios
+        this.ultimoId = respuesta.ultimoId;
+        this.formulario.get('id').setValue(this.ultimoId);
+        this.render = false;
+      },
+      err => {
+        this.toastr.error(err.json().mensaje);
+        this.render = false;
+      }
+    )
   }
   //Establece el formulario
   public establecerFormulario(): void {
@@ -112,10 +126,9 @@ export class ViajeTipoComponent implements OnInit {
   public seleccionarPestania(id, nombre, opcion) {
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    this.reestablecerFormulario(undefined);
+    this.reestablecerFormulario(null);
     switch (id) {
       case 1:
-        this.obtenerSiguienteId();
         this.establecerValoresPestania(nombre, false, false, true, 'idNombre');
         break;
       case 2:
@@ -150,20 +163,10 @@ export class ViajeTipoComponent implements OnInit {
         break;
     }
   }
-  //Obtiene el siguiente id
-  private obtenerSiguienteId() {
-    this.viajeTipoServicio.obtenerSiguienteId().subscribe(
-      res => {
-        this.formulario.get('id').setValue(res.json());
-      },
-      err => {
-      }
-    );
-  }
   //Obtiene el listado de registros
   private listar() {
     this.loaderService.show();
-    this.viajeTipoServicio.listar().subscribe(
+    this.servicio.listar().subscribe(
       res => {
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
@@ -181,10 +184,11 @@ export class ViajeTipoComponent implements OnInit {
   private agregar() {
     this.loaderService.show();
     this.formulario.get('id').setValue(null);
-    this.viajeTipoServicio.agregar(this.formulario.value).subscribe(
+    this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         let respuesta = res.json();
         if (respuesta.codigo == 201) {
+          this.ultimoId = respuesta.id;
           this.reestablecerFormulario(respuesta.id);
           document.getElementById('idNombre').focus();
           this.toastr.success(respuesta.mensaje);
@@ -208,11 +212,11 @@ export class ViajeTipoComponent implements OnInit {
   //Actualiza un registro
   private actualizar() {
     this.loaderService.show();
-    this.viajeTipoServicio.actualizar(this.formulario.value).subscribe(
+    this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
         let respuesta = res.json();
         if (respuesta.codigo == 200) {
-          this.reestablecerFormulario('');
+          this.reestablecerFormulario(null);
           document.getElementById('idAutocompletado').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
@@ -236,7 +240,7 @@ export class ViajeTipoComponent implements OnInit {
   private eliminar() {
     this.loaderService.show();
     let formulario = this.formulario.value;
-    this.viajeTipoServicio.eliminar(formulario.id).subscribe(
+    this.servicio.eliminar(formulario.id).subscribe(
       res => {
         let respuesta = res.json();
         if (respuesta.codigo == 200) {
@@ -271,7 +275,7 @@ export class ViajeTipoComponent implements OnInit {
     this.vaciarListas();
     this.formulario.reset();
     this.autocompletado.reset();
-    this.formulario.get('id').setValue(id);
+    id ? this.formulario.get('id').setValue(id) : this.formulario.get('id').setValue(this.ultimoId);
   }
   //Vacía las listas
   private vaciarListas() {

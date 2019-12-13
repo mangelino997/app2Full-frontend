@@ -8,11 +8,11 @@ import { StompService } from '@stomp/ng2-stompjs';
 @Injectable()
 export class ChequeraService {
   //Define la ruta al servicio web
-  private ruta:string = "/chequera";
+  private ruta: string = "/chequera";
   //Define la url base
-  private url:string = null;
+  private url: string = null;
   //Define la url para subcripcion a socket
-  private topic:string = null;
+  private topic: string = null;
   //Define el headers y token de autenticacion
   private options = null;
   //Define la lista obtenida por nombre
@@ -22,7 +22,7 @@ export class ChequeraService {
   //Define el mensaje de respuesta a la subcripcion
   private mensaje: Observable<Message>;
   //Define la lista completa
-  public listaCompleta:Subject<any> = new Subject<any>();
+  public listaCompleta: Subject<any> = new Subject<any>();
   //Constructor
   constructor(private http: Http, private appService: AppService, private stompService: StompService) {
     //Establece la url base
@@ -33,7 +33,7 @@ export class ChequeraService {
     const headers: Headers = new Headers();
     headers.append('Content-Type', 'application/json');
     headers.append('Authorization', localStorage.getItem('token'));
-    this.options = new RequestOptions({headers: headers});
+    this.options = new RequestOptions({ headers: headers });
     //Subcribe al usuario a la lista completa
     this.mensaje = this.stompService.subscribe(this.topic + this.ruta + '/lista');
     this.subcripcion = this.mensaje.subscribe(this.subscribirse);
@@ -57,6 +57,10 @@ export class ChequeraService {
   //Obtiene un listado por cuentaBancaria
   public listarPorCuentaBancaria(idCuentaBancaria) {
     return this.http.get(this.url + '/listarPorCuentaBancaria/' + idCuentaBancaria, this.options);
+  }
+  //Obtiene todos los listados
+  public inicializar(idUsuario, idRol, idSubopcion) {
+    return this.http.get(this.url + '/inicializar/' + idUsuario + '/' + idRol + '/' + idSubopcion, this.options);
   }
   //Agrega un registro
   public agregar(elemento) {

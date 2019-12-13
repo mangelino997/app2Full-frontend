@@ -2,11 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { VehiculoProveedorService } from '../../servicios/vehiculo-proveedor.service';
 import { ChoferProveedorService } from '../../servicios/chofer-proveedor.service';
 import { ConfiguracionVehiculoService } from '../../servicios/configuracion-vehiculo.service';
-import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { ProveedorService } from '../../servicios/proveedor.service';
-import { TipoVehiculoService } from '../../servicios/tipo-vehiculo.service';
-import { MarcaVehiculoService } from '../../servicios/marca-vehiculo.service';
-import { LocalidadService } from '../../servicios/localidad.service';
 import { CompaniaSeguroService } from '../../servicios/compania-seguro.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
@@ -24,6 +20,8 @@ import { VehiculoProveedor } from 'src/app/modelos/vehiculoProveedor';
   styleUrls: ['./vehiculo-proveedor.component.css']
 })
 export class VehiculoProveedorComponent implements OnInit {
+  //Define el ultimo id
+  public ultimoId: string = null;
   //Define la pestania activa
   public activeLink: any = null;
   //Define el indice seleccionado de pestania
@@ -62,6 +60,8 @@ export class VehiculoProveedorComponent implements OnInit {
   public configuracionesVehiculos: Array<any> = [];
   //Define el mostrar del circulo de progreso
   public show = false;
+  //Defiene el render
+  public render: boolean = false;
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define las columnas de la tabla
@@ -71,23 +71,12 @@ export class VehiculoProveedorComponent implements OnInit {
   //Define la paginacion
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Constructor
-  constructor(private servicio: VehiculoProveedorService, private subopcionPestaniaService: SubopcionPestaniaService,
-    private toastr: ToastrService, private loaderService: LoaderService, private modelo: VehiculoProveedor,
-    private tipoVehiculoServicio: TipoVehiculoService, private marcaVehiculoServicio: MarcaVehiculoService,
-    private proveedorServicio: ProveedorService,
+  constructor(private servicio: VehiculoProveedorService,
+    private toastr: ToastrService, private loaderService: LoaderService,
+    private modelo: VehiculoProveedor, private proveedorServicio: ProveedorService,
     private companiaSeguroServicio: CompaniaSeguroService, private choferProveedorServicio: ChoferProveedorService,
     private configuracionVehiculoServicio: ConfiguracionVehiculoService, private appService: AppService,
     private reporteServicio: ReporteService) {
-    //Obtiene la lista de pestania por rol y subopcion
-    this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
-      .subscribe(
-        res => {
-          this.pestanias = res.json();
-          this.activeLink = this.pestanias[0].nombre;
-        },
-        err => {
-        }
-      );
     //Autocompletado - Buscar por alias
     this.autocompletado.valueChanges.subscribe(data => {
       if (typeof data == 'string') {
@@ -113,6 +102,10 @@ export class VehiculoProveedorComponent implements OnInit {
       });
     //Define los campos para validaciones
     this.formulario = this.modelo.formulario;
+    /* Obtiene todos los listados */
+    this.inicializar(this.appService.getRol().id, this.appService.getSubopcion());
+    //Establece los valores de la primera pestania activa
+    this.seleccionarPestania(1, 'Agregar');
     //Autocompletado Proveedor - Buscar por alias
     this.formulario.get('proveedor').valueChanges.subscribe(data => {
       if (typeof data == 'string') {
@@ -177,24 +170,27 @@ export class VehiculoProveedorComponent implements OnInit {
         }
       }
     })
-    //Establece los valores de la primera pestania activa
-    this.seleccionarPestania(1, 'Agregar');
-    //Obtiene la lista de tipos de vehiculos
-    this.listarTiposVehiculos();
-    //Obtiene la lista de marcas de vehiculos
-    this.listarMarcasVehiculos();
   }
-  //Obtiene la lista de tipos de vehiculos
-  private listarTiposVehiculos() {
-    this.tipoVehiculoServicio.listar().subscribe(res => {
-      this.tiposVehiculos = res.json();
-    })
-  }
-  //Obtiene la lista de marcas de vehiculos
-  private listarMarcasVehiculos() {
-    this.marcaVehiculoServicio.listar().subscribe(res => {
-      this.marcasVehiculos = res.json();
-    })
+  //Obtiene los datos necesarios para el componente
+  private inicializar(idRol, idSubopcion) {
+    this.render = true;
+    this.servicio.inicializar(idRol, idSubopcion).subscribe(
+      res => {
+        let respuesta = res.json();
+        //Establece las pestanias
+        this.pestanias = respuesta.pestanias;
+        //Establece demas datos necesarios
+        this.ultimoId = respuesta.ultimoId;
+        this.tiposVehiculos = respuesta.tipoVehiculos;
+        this.marcasVehiculos = respuesta.marcaVehiculos;
+        this.formulario.get('id').setValue(this.ultimoId);
+        this.render = false;
+      },
+      err => {
+        this.toastr.error(err.json().mensaje);
+        this.render = false;
+      }
+    )
   }
   //Obtiene la lista por proveedor
   public listarPorProveedor(): void {
@@ -250,10 +246,9 @@ export class VehiculoProveedorComponent implements OnInit {
   public seleccionarPestania(id, nombre) {
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    this.reestablecerFormulario(undefined);
+    this.reestablecerFormulario(null);
     switch (id) {
       case 1:
-        this.obtenerSiguienteId();
         this.establecerEstadoCampos(true);
         this.establecerValoresPestania(nombre, false, false, true, 'idProveedor');
         break;
@@ -294,16 +289,6 @@ export class VehiculoProveedorComponent implements OnInit {
         break;
     }
   }
-  //Obtiene el siguiente id
-  private obtenerSiguienteId() {
-    this.servicio.obtenerSiguienteId().subscribe(
-      res => {
-        this.formulario.get('id').setValue(res.json());
-      },
-      err => {
-      }
-    );
-  }
   //Agrega un registro
   private agregar() {
     this.loaderService.show();
@@ -313,6 +298,7 @@ export class VehiculoProveedorComponent implements OnInit {
       res => {
         let respuesta = res.json();
         if (respuesta.codigo == 201) {
+          this.ultimoId = respuesta.id;
           this.reestablecerFormulario(respuesta.id);
           document.getElementById('idProveedor').focus();
           this.toastr.success(respuesta.mensaje);
@@ -339,7 +325,7 @@ export class VehiculoProveedorComponent implements OnInit {
       res => {
         let respuesta = res.json();
         if (respuesta.codigo == 200) {
-          this.reestablecerFormulario('');
+          this.reestablecerFormulario(null);
           document.getElementById('idAutocompletado').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
@@ -407,10 +393,10 @@ export class VehiculoProveedorComponent implements OnInit {
   }
   //Reestablece el formulario
   private reestablecerFormulario(id) {
-    this.formulario.reset();
-    this.formulario.get('id').setValue(id);
-    this.autocompletado.setValue(undefined);
     this.vaciarListas();
+    this.formulario.reset();
+    this.autocompletado.reset();
+    id ? this.formulario.get('id').setValue(id) : this.formulario.get('id').setValue(this.ultimoId);
   }
   //Manejo de colores de campos y labels
   public cambioCampo(id, label) {

@@ -3,8 +3,10 @@ import { CommonModule } from '@angular/common';
 
 import { DeduccionPersonalTablaRoutingModule } from './deduccion-personal-tabla-routing.module';
 
-import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
-  MatSelectModule, MatProgressBarModule, MatButtonModule, MatDialogModule, MatIconModule } from '@angular/material';
+import {
+  MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule,
+  MatSelectModule, MatProgressBarModule, MatButtonModule, MatDialogModule, MatIconModule
+} from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DeduccionPersonalTablaComponent, ImporteAnualDialogo } from 'src/app/componentes/deduccion-personal-tabla/deduccion-personal-tabla.component';
 import { TextMaskModule } from 'angular2-text-mask';

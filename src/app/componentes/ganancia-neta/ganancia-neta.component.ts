@@ -20,6 +20,8 @@ import { ReporteService } from 'src/app/servicios/reporte.service';
   styleUrls: ['./ganancia-neta.component.css']
 })
 export class GananciaNetaComponent implements OnInit {
+  //Define el ultimo id
+  public ultimoId: string = null;
   //Define la pestania activa
   public activeLink: any = null;
   //Define el indice seleccionado de pestania
@@ -64,24 +66,14 @@ export class GananciaNetaComponent implements OnInit {
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Define el mostrar del circulo de progreso
   public show = false;
+  //Defiene el render
+  public render: boolean = false;
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Constructor
-  constructor(private appService: AppService, private subopcionPestaniaService: SubopcionPestaniaService, private fechaService: FechaService,
-    private toastr: ToastrService, private loaderService: LoaderService, private servicio: AfipGananciaNetaService,
-    private modelo: AfipGananciaNeta, private alicuotaGananciaService: AfipAlicuotaGananciaService, private mesService: MesService,
-    private reporteServicio: ReporteService) {
-    //Obtiene la lista de pestanias
-    this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
-      .subscribe(
-        res => {
-          this.pestanias = res.json();
-          this.activeLink = this.pestanias[0].nombre;
-        },
-        err => {
-        }
-      );
-  }
+  constructor(private appService: AppService, private toastr: ToastrService,
+    private loaderService: LoaderService, private servicio: AfipGananciaNetaService,
+    private modelo: AfipGananciaNeta, private reporteServicio: ReporteService) { }
   //Al incializarse el componente
   ngOnInit() {
     //Establece la subscripcion a loader
@@ -97,55 +89,36 @@ export class GananciaNetaComponent implements OnInit {
       gananciaNeta: new FormControl('', Validators.required),
       mes: new FormControl('', Validators.required),
     });
+    /* Obtiene todos los listados */
+    this.inicializar(this.appService.getRol().id, this.appService.getSubopcion());
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar');
-    //Obtiene la lista de Años Fiscales
-    this.listarAnios();
-    //Obtiene la lista de Alicuotas
-    this.listarAlicuotasGanancia();
-    //Obtiene la lista de meses
-    this.listarMeses();
   }
-  //carga la lista de Años Fiscales
-  public listarAnios() {
-    this.fechaService.listarAnioFiscal().subscribe(
+  //Obtiene los datos necesarios para el componente
+  private inicializar(idRol, idSubopcion) {
+    this.render = true;
+    this.servicio.inicializar(idRol, idSubopcion).subscribe(
       res => {
-        this.anioFiscal = res.json();
+        let respuesta = res.json();
+        //Establece las pestanias
+        this.pestanias = respuesta.pestanias;
+        //Establece demas datos necesarios
+        this.ultimoId = respuesta.ultimoId;
+        this.anioFiscal = respuesta.anios;
+        this.alicuotasGanancia = respuesta.alicuotaGanancias;
+        this.meses = respuesta.meses;
+        this.formulario.get('id').setValue(this.ultimoId);
+        this.render = false;
       },
       err => {
-        this.toastr.error(err.json().message);
+        this.toastr.error(err.json().mensaje);
+        this.render = false;
       }
     )
   }
-  //carga la lista de Alicuotas 
-  public listarAlicuotasGanancia() {
-    this.alicuotaGananciaService.listar().subscribe(
-      res => {
-        this.alicuotasGanancia = res.json();
-      },
-      err => {
-        this.toastr.error(err.json().message);
-      }
-    )
-  }
-  //carga la lista de meses en pestaña listar
-  private listarMeses() {
-    this.mesService.listar().subscribe(
-      res => {
-        this.meses = res.json();
-      },
-      err => {
-        this.toastr.error(err.json().message);
-      }
-    )
-  }
-  
   //Controla el cambio en el campo "anio"
   public cambioAnio(elemento) {
-    if (elemento) {
-      this.anio.setValue(elemento);
-    }
-    this.listaCompleta = new MatTableDataSource([]);
+    elemento ? this.anio.setValue(elemento) : this.listaCompleta = new MatTableDataSource([]);
   }
   //Controla el cambio en el campo "anio" pestaña listar
   public cambioAnioFiltro() {
@@ -326,21 +299,22 @@ export class GananciaNetaComponent implements OnInit {
   }
   //Reestablece los campos de los formularios y limpia la lista de resultados de 
   private reestablecerFormulario() {
+    this.anio.reset();
+    this.idMod = null;
     this.formulario.reset();
     this.formularioFiltro.reset();
     this.formularioFiltro.get('gananciaNeta').setValue(false);
-    this.cambioGananciaNetaFiltro();
-    this.anio.reset();
-    this.idMod = null;
     this.listaCompleta = new MatTableDataSource([]);
+    this.cambioGananciaNetaFiltro();
   }
   //Controla que el campo "importe" (Ganancia Neta Acumulada) no sea menor o igual a cero
   public controlImporte() {
-    this.establecerDecimales(this.formulario.get('importe'), 2); //Quita la máscara
-    if (this.formulario.value.importe <= 0) {
-      this.formulario.get('importe').setValue(null);
-      this.toastr.error("La Ganancia Neta Acumulada debe ser mayor a cero");
-      document.getElementById('idImporte').focus();
+    if (this.formulario.value.importe) {
+      let importe = this.formulario.value.importe;
+      this.formulario.get('importe').setValue(this.appService.establecerDecimales(importe, 2));
+      this.formulario.value.importe <= 0 ? [
+        this.formulario.get('importe').setValue(null),
+        this.toastr.error("La Ganancia Neta Acumulada debe ser mayor a cero")] : '';
     }
   }
   //Controla que el campo "importeFijo" no sea mayor a "importe" ni menor a cero (puede ser cero)
@@ -348,14 +322,14 @@ export class GananciaNetaComponent implements OnInit {
     let importe = Number(this.formulario.value.importe);
     if (!importe) {
       this.toastr.warning("Primero debe ingresar la Ganancia Neta Acumulada");
-      document.getElementById('idImporte').focus();
+      this.formulario.get('importeFijo').reset();
+      document.getElementById('idGananciaNetaAcumulada').focus();
     } else {
       this.establecerDecimales(this.formulario.get('importeFijo'), 2); //Quita la máscara
       let importeFijo = Number(this.formulario.value.importeFijo);
       if (importeFijo > importe || importeFijo < 0) {
-        this.formulario.get('importeFijo').setValue(null);
+        this.formulario.get('importeFijo').reset();
         this.toastr.error("El Importe Fijo debe ser menor Ganancia Neta Acumulada y mayor o igual a cero");
-        document.getElementById('idImporteFijo').focus();
       }
     }
   }
@@ -364,8 +338,13 @@ export class GananciaNetaComponent implements OnInit {
     this.idMod = elemento.id;
     this.formulario.enable();
     this.formulario.patchValue(elemento);
-    this.establecerDecimales(this.formulario.get('importe'), 2);
-    this.establecerDecimales(this.formulario.get('importeFijo'), 2);
+    this.formulario.get('importe').setValue(
+      this.appService.establecerDecimales(elemento.importe ? elemento.importe : '0.00', 2));
+    this.formulario.get('importeFijo').setValue(
+      this.appService.establecerDecimales(elemento.importeFijo ? elemento.importeFijo : '0.00', 2));
+    console.log(this.formulario.value);
+    // this.establecerDecimales(this.formulario.get('importe'), 2);
+    // this.establecerDecimales(this.formulario.get('importeFijo'), 2);
   }
   //elimina el registro seleccionado
   public activarEliminar(idElemento) {

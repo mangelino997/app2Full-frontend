@@ -188,12 +188,10 @@ export class ContactoProveedorComponent implements OnInit {
       let elemento = this.formulario.get('proveedor').value;
       this.servicio.listarPorProveedor(elemento.id).subscribe(
         res => {
-          let r = res.text();
-
-          // this.listaCompleta = new MatTableDataSource(res.json());
-          // this.listaCompleta.paginator = this.paginator;
-          // this.listaCompleta.sort = this.sort;
-          // this.listaCompleta.data.length == 0 ? this.toastr.error("El Proveedor no tiene contactos asignados.") : '';
+          this.listaCompleta = new MatTableDataSource(res.json());
+          this.listaCompleta.paginator = this.paginator;
+          this.listaCompleta.sort = this.sort;
+          this.listaCompleta.data.length == 0 ? this.toastr.error("El Proveedor no tiene contactos asignados.") : '';
           this.loaderService.hide();
         },
         err => {

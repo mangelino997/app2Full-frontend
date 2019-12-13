@@ -32,7 +32,6 @@ import { BancoService } from 'src/app/servicios/banco.service';
   ],
   providers: [
     SucursalBancoService,
-    SubopcionPestaniaService,
     BancoService
   ]
 })
