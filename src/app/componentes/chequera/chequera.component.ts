@@ -94,25 +94,25 @@ export class ChequeraComponent implements OnInit {
       });
     //Define los campos para validaciones
     this.formulario = this.chequera.formulario;
+    this.empresa = this.appService.getEmpresa();
+
     /* Obtiene todos los listados */
-    this.inicializar(this.appService.getUsuario().id, this.appService.getRol().id, this.appService.getSubopcion());
+    this.inicializar(this.appService.getEmpresa().id, this.appService.getRol().id, this.appService.getSubopcion());
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar');
     //Establece la empresa por defecto
     this.establecerEmpresa();
     //Obtiene la lista de Cuentas Bancarias
-    // this.listarCuentasBancarias();
+    this.listarCuentasBancarias();
     //Obtiene las diferentes cuentas bancarias de la empresa para realizar la Consultas
     this.listarCuentasBancariasConsultas();
     //Obtiene las diferentes cuentas bancarias de la empresa con chequeras para realizar la Consultas
     this.listarCuentasConChequerasConsultas();
-    //Obtiene la lista de Tipos de Chequeras
-    this.listarTiposChequeras();
   }
   //Obtiene los datos necesarios para el componente
-  private inicializar(idUsuario, idRol, idSubopcion) {
+  private inicializar(idEmpresa, idRol, idSubopcion) {
     this.render = true;
-    this.servicio.inicializar(idUsuario, idRol, idSubopcion).subscribe(
+    this.servicio.inicializar(idEmpresa, idRol, idSubopcion).subscribe(
       res => {
         let respuesta = res.json();
         console.log(respuesta);
@@ -120,9 +120,11 @@ export class ChequeraComponent implements OnInit {
         this.pestanias = respuesta.pestanias;
         //Establece demas datos necesarios
         this.ultimoId = respuesta.ultimoId;
-        this.cuentasBancarias = respuesta.chequeras;
-        this.listaCuentasBancariasEmpresa = respuesta.cuentaBancariaConCheques;
-        this.listaChequerasCuentaBancaria = respuesta. 
+        this.tiposChequeras = respuesta.tipoChequeras;
+        this.listaCuentasConChequeraEmpresa = respuesta.cuentaBancariaConCheques;
+        this.listaCuentasBancariasEmpresa = respuesta.chequeras;
+        this.cuentasBancarias = respuesta.cuentaBancariaConsultas;
+
         this.formulario.get('id').setValue(this.ultimoId);
         this.render = false;
       },
@@ -137,11 +139,21 @@ export class ChequeraComponent implements OnInit {
     this.empresa = this.appService.getEmpresa();
     this.empresaDatos.setValue(this.empresa.razonSocial);
   }
+  //Obtiene la lista de Cuentas Bancarias
+  private listarCuentasBancarias() {
+    this.cuentaBancariaService.listarPorEmpresa(this.appService.getEmpresa().id).subscribe(
+      res => {
+        console.log("cuentas bancarias: " + res.json());
+        // this.cuentasBancarias = res.json();
+      }
+    )
+  }
   private listarCuentasBancariasConsultas() {
     this.empresa = this.appService.getEmpresa();
     this.servicio.listarPorEmpresa(this.empresa.id).subscribe(
       res => {
-        this.listaCuentasBancariasEmpresa = res.json();
+        console.log("chequeras: " + res.json());
+        // this.listaCuentasBancariasEmpresa = res.json();
       }
     )
   }
@@ -149,7 +161,8 @@ export class ChequeraComponent implements OnInit {
     this.empresa = this.appService.getEmpresa();
     this.cuentaBancariaService.listarConChequerasPorEmpresa(this.empresa.id).subscribe(
       res => {
-        this.listaCuentasConChequeraEmpresa = res.json();
+        console.log("cuentas bancarias con chequeras: " + res.json());
+        // this.listaCuentasConChequeraEmpresa = res.json();
       }
     )
   }
@@ -157,14 +170,6 @@ export class ChequeraComponent implements OnInit {
     this.servicio.listarPorCuentaBancaria(idCuentaBancaria).subscribe(
       res => {
         this.listaChequerasCuentaBancaria = res.json();
-      }
-    )
-  }
-  //Obtiene la lista de Tipos de Chequeras
-  private listarTiposChequeras() {
-    this.tipoChequeraService.listar().subscribe(
-      res => {
-        this.tiposChequeras = res.json();
       }
     )
   }
@@ -196,11 +201,10 @@ export class ChequeraComponent implements OnInit {
   public seleccionarPestania(id, nombre) {
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    this.establecerEmpresa();
-    this.reestablecerFormulario(undefined);
+    // this.establecerEmpresa();
+    this.reestablecerFormulario(null);
     switch (id) {
       case 1:
-        this.obtenerSiguienteId();
         this.establecerValoresPestania(nombre, false, false, true, 'idCuentaBancaria');
         break;
       case 2:
@@ -272,6 +276,7 @@ export class ChequeraComponent implements OnInit {
       res => {
         let respuesta = res.json();
         if (respuesta.codigo == 201) {
+          this.ultimoId = respuesta.id;
           this.reestablecerFormulario(respuesta.id);
           document.getElementById('idCuentaBancaria').focus();
           this.empresaDatos.setValue(this.empresa.abreviatura);
@@ -293,7 +298,7 @@ export class ChequeraComponent implements OnInit {
       res => {
         let respuesta = res.json();
         if (respuesta.codigo == 200) {
-          this.reestablecerFormulario(undefined);
+          this.reestablecerFormulario(null);
           document.getElementById('idAutocompletado').focus();
           this.empresaDatos.setValue(this.empresa.abreviatura);
           this.toastr.success(respuesta.mensaje);
@@ -313,7 +318,7 @@ export class ChequeraComponent implements OnInit {
       res => {
         let respuesta = res.json();
         if (respuesta.codigo == 200) {
-          this.reestablecerFormulario(undefined);
+          this.reestablecerFormulario(null);
           document.getElementById('idAutocompletado').focus();
           this.empresaDatos.setValue(this.empresa.abreviatura);
           this.toastr.success(respuesta.mensaje);
@@ -371,12 +376,13 @@ export class ChequeraComponent implements OnInit {
   //Reestablece el formulario
   private reestablecerFormulario(id) {
     this.formulario.reset();
-    this.formulario.get('id').setValue(id);
     this.cuentaSeleccionada.reset();
     this.chequeraSeleccionada.reset();
-    this.listaCuentasConChequeraEmpresa = [];
     this.listaChequerasCuentaBancaria = [];
-    this.listarCuentasConChequerasConsultas();
+    // this.listaCuentasConChequeraEmpresa = [];
+    // this.listarCuentasConChequerasConsultas();
+    this.empresaDatos.setValue(this.empresa.razonSocial);
+    id ? this.formulario.get('id').setValue(id) : this.formulario.get('id').setValue(this.ultimoId);
   }
   //Manejo de colores de campos y labels con error
   public cambioCampo(id, label) {

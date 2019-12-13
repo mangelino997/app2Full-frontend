@@ -9,9 +9,10 @@ export class OrdenRecoleccion {
         this.formulario = new FormGroup({
             id: new FormControl(),
             version: new FormControl(),
+            alias: new FormControl(),
             fechaEmision: new FormControl(),
-            cliente: new FormControl(),
-            fecha: new FormControl(),
+            cliente: new FormControl('', Validators.required),
+            fecha: new FormControl('', Validators.required),
             domicilio: new FormControl(),
             localidad: new FormControl(),
             barrio: new FormControl(),
@@ -24,15 +25,15 @@ export class OrdenRecoleccion {
             kilosEfectivo: new FormControl(),
             m3: new FormControl(),
             valorDeclarado: new FormControl('', Validators.required),
-            sucursalDestino: new FormControl(),
-            entregarEnDomicilio: new FormControl(),
-            pagoEnOrigen: new FormControl(),
+            sucursalDestino: new FormControl('', Validators.required),
+            entregarEnDomicilio: new FormControl('', Validators.required),
+            pagoEnOrigen: new FormControl('', Validators.required),
             estaEnReparto: new FormControl(),
             observaciones: new FormControl(),
             tipoComprobante: new FormControl(),
             sucursal: new FormControl(),
             empresa: new FormControl(),
-            usuario: new FormControl()
+            usuario: new FormControl(),
         })
     }
 }

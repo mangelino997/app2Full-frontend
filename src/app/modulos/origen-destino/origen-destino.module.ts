@@ -8,7 +8,6 @@ import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModul
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { OrigenDestinoComponent } from 'src/app/componentes/origen-destino/origen-destino.component';
 import { OrigenDestinoService } from 'src/app/servicios/origen-destino.service';
-import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
 import { ProvinciaService } from 'src/app/servicios/provincia.service';
 
 @NgModule({
@@ -32,7 +31,6 @@ import { ProvinciaService } from 'src/app/servicios/provincia.service';
   ],
   providers: [
     OrigenDestinoService,
-    SubopcionPestaniaService,
     ProvinciaService
   ]
 })

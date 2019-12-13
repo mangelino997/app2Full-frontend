@@ -1,6 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { OrigenDestinoService } from '../../servicios/origen-destino.service';
-import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { ProvinciaService } from '../../servicios/provincia.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
@@ -17,6 +16,8 @@ import { ReporteService } from 'src/app/servicios/reporte.service';
   styleUrls: ['./origen-destino.component.css']
 })
 export class OrigenDestinoComponent implements OnInit {
+  //Define el ultimo id
+  public ultimoId: string = null;
   //Define la pestania activa
   public activeLink: any = null;
   //Define el indice seleccionado de pestania
@@ -49,22 +50,14 @@ export class OrigenDestinoComponent implements OnInit {
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Define el mostrar del circulo de progreso
   public show = false;
+  //Defiene el render
+  public render: boolean = false;
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Constructor
-  constructor(private servicio: OrigenDestinoService, private subopcionPestaniaService: SubopcionPestaniaService,
+  constructor(private servicio: OrigenDestinoService,
     private provinciaServicio: ProvinciaService, private appService: AppService, private toastr: ToastrService,
     private loaderService: LoaderService, private reporteServicio: ReporteService) {
-    //Obtiene la lista de pestania por rol y subopcion
-    this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
-      .subscribe(
-        res => {
-          this.pestanias = res.json();
-          this.activeLink = this.pestanias[0].nombre;
-        },
-        err => {
-        }
-      );
     //Autocompletado - Buscar por nombre
     this.autocompletado.valueChanges.subscribe(data => {
       if (typeof data == 'string') {
@@ -96,6 +89,8 @@ export class OrigenDestinoComponent implements OnInit {
       nombre: new FormControl('', [Validators.required, Validators.maxLength(45)]),
       provincia: new FormControl('', Validators.required)
     });
+    /* Obtiene todos los listados */
+    this.inicializar(this.appService.getRol().id, this.appService.getSubopcion());
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar');
     //Autocompletado Provincia - Buscar por nombre
@@ -114,6 +109,25 @@ export class OrigenDestinoComponent implements OnInit {
         }
       }
     })
+  }
+  //Obtiene los datos necesarios para el componente
+  private inicializar(idRol, idSubopcion) {
+    this.render = true;
+    this.servicio.inicializar(idRol, idSubopcion).subscribe(
+      res => {
+        let respuesta = res.json();
+        //Establece las pestanias
+        this.pestanias = respuesta.pestanias;
+        //Establece demas datos necesarios
+        this.ultimoId = respuesta.ultimoId;
+        this.formulario.get('id').setValue(this.ultimoId);
+        this.render = false;
+      },
+      err => {
+        this.toastr.error(err.json().mensaje);
+        this.render = false;
+      }
+    )
   }
   public vaciarListas() {
     this.resultados = [];
@@ -134,10 +148,9 @@ export class OrigenDestinoComponent implements OnInit {
   public seleccionarPestania(id, nombre) {
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    this.reestablecerFormulario(undefined);
+    this.reestablecerFormulario(null);
     switch (id) {
       case 1:
-        this.obtenerSiguienteId();
         this.establecerValoresPestania(nombre, false, false, true, 'idNombre');
         break;
       case 2:
@@ -174,16 +187,6 @@ export class OrigenDestinoComponent implements OnInit {
         break;
     }
   }
-  //Obtiene el siguiente id
-  private obtenerSiguienteId() {
-    this.servicio.obtenerSiguienteId().subscribe(
-      res => {
-        this.formulario.get('id').setValue(res.json());
-      },
-      err => {
-      }
-    );
-  }
   //Agrega un registro
   private agregar() {
     this.loaderService.show();
@@ -192,6 +195,7 @@ export class OrigenDestinoComponent implements OnInit {
       res => {
         let respuesta = res.json();
         if (respuesta.codigo == 201) {
+          this.ultimoId = respuesta.id;
           this.reestablecerFormulario(respuesta.id);
           document.getElementById('idNombre').focus();
           this.toastr.success(respuesta.mensaje);
@@ -211,7 +215,7 @@ export class OrigenDestinoComponent implements OnInit {
       res => {
         let respuesta = res.json();
         if (respuesta.codigo == 200) {
-          this.reestablecerFormulario(undefined);
+          this.reestablecerFormulario(null);
           document.getElementById('idAutocompletado').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
@@ -230,7 +234,7 @@ export class OrigenDestinoComponent implements OnInit {
       res => {
         let respuesta = res.json();
         if (respuesta.codigo == 200) {
-          this.reestablecerFormulario(undefined);
+          this.reestablecerFormulario(null);
           document.getElementById('idAutocompletado').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
@@ -244,10 +248,10 @@ export class OrigenDestinoComponent implements OnInit {
   }
   //Reestablece el formulario
   private reestablecerFormulario(id) {
-    this.formulario.reset();
-    this.formulario.get('id').setValue(id);
-    this.autocompletado.reset();
     this.vaciarListas();
+    this.formulario.reset();
+    this.autocompletado.reset();
+    id ? this.formulario.get('id').setValue(id) : this.formulario.get('id').setValue(this.ultimoId);
   }
   //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
   private lanzarError(err) {

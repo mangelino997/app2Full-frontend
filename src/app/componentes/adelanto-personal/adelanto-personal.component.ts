@@ -2,7 +2,6 @@ import { Component, OnInit, ViewChild, Inject } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { MatTableDataSource, MatSort, MatDialogRef, MAT_DIALOG_DATA, MatDialog, MatPaginator } from '@angular/material';
 import { Subscription } from 'rxjs';
-import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
 import { AppService } from 'src/app/servicios/app.service';
 import { ToastrService } from 'ngx-toastr';
 import { LoaderService } from 'src/app/servicios/loader.service';
@@ -12,7 +11,6 @@ import { PersonalAdelanto } from 'src/app/modelos/personalAdelanto';
 import { PersonalService } from 'src/app/servicios/personal.service';
 import { BasicoCategoriaService } from 'src/app/servicios/basico-categoria.service';
 import { FechaService } from 'src/app/servicios/fecha.service';
-import { SucursalService } from 'src/app/servicios/sucursal.service';
 import { ReporteService } from 'src/app/servicios/reporte.service';
 import { ObservacionesDialogo } from '../observaciones-dialogo/observaciones-dialogo.component';
 
@@ -22,6 +20,8 @@ import { ObservacionesDialogo } from '../observaciones-dialogo/observaciones-dia
   styleUrls: ['./adelanto-personal.component.css']
 })
 export class AdelantoPersonalComponent implements OnInit {
+  //Define el ultimo id
+  public ultimoId: string = null;
   //Define la lista de sucursales
   public sucursales: Array<any> = [];
   //Define la lista de categorias
@@ -88,20 +88,11 @@ export class AdelantoPersonalComponent implements OnInit {
   //Defiene el render
   public render: boolean = false;
   //Constructor
-  constructor(private subopcionPestaniaService: SubopcionPestaniaService, private appService: AppService, private toastr: ToastrService,
-    private loaderService: LoaderService, private modelo: PersonalAdelanto, private servicio: PersonalAdelantoService, public dialog: MatDialog,
-    private personalService: PersonalService, private basicoCategoriaService: BasicoCategoriaService, private fechaService: FechaService,
-    private sucursalService: SucursalService, private reporteServicio: ReporteService) {
-    //Obtiene la lista de pestania por rol y subopcion
-    this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
-      .subscribe(
-        res => {
-          this.pestanias = res.json();
-          this.activeLink = this.pestanias[0].nombre;
-        },
-        err => {
-        }
-      );
+  constructor(private appService: AppService, private toastr: ToastrService,
+    private loaderService: LoaderService, private modelo: PersonalAdelanto, private servicio: PersonalAdelantoService,
+    public dialog: MatDialog, private personalService: PersonalService,
+    private basicoCategoriaService: BasicoCategoriaService, private fechaService: FechaService,
+    private reporteServicio: ReporteService) {
     //Autocompletado
     this.autocompletado.valueChanges.subscribe(data => {
       if (typeof data == 'string') {
@@ -148,10 +139,10 @@ export class AdelantoPersonalComponent implements OnInit {
       estado: new FormControl('', Validators.required),
       alias: new FormControl(),
     });
+    /* Obtiene todos los listados */
+    this.inicializar(this.appService.getRol().id, this.appService.getSubopcion());
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar');
-    //Obtiene la lista de Sucursal Emision
-    this.listarSucursalesEmision();
     //Alias - Buscar por alias, empresa y sucursal
     let empresa = this.appService.getEmpresa();
     let usuario = this.appService.getUsuario();
@@ -160,24 +151,35 @@ export class AdelantoPersonalComponent implements OnInit {
         data = data.trim();
         if (data == '*' || data.length > 0) {
           this.loaderService.show();
-          this.personalService.listarActivosPorAliasEmpresaYSucursal(data, empresa.id, usuario.sucursal.id).subscribe(res => {
-            this.resultados = res;
-            this.loaderService.hide();
-          },
-            err => {
+          this.personalService.listarActivosPorAliasEmpresaYSucursal(
+            data, empresa.id, usuario.sucursal.id).subscribe(res => {
+              this.resultados = res;
               this.loaderService.hide();
-            })
+            },
+              err => {
+                this.loaderService.hide();
+              })
         }
       }
     })
   }
-  //Carga la lista de Sucursales de Emision
-  private listarSucursalesEmision() {
-    this.sucursalService.listar().subscribe(
+  //Obtiene los datos necesarios para el componente
+  private inicializar(idRol, idSubopcion) {
+    this.render = true;
+    this.servicio.inicializar(idRol, idSubopcion).subscribe(
       res => {
-        this.sucursales = res.json();
+        let respuesta = res.json();
+        //Establece las pestanias
+        this.pestanias = respuesta.pestanias;
+        //Establece demas datos necesarios
+        this.ultimoId = respuesta.ultimoId;
+        this.sucursales = respuesta.sucursales;
+        this.formulario.get('id').setValue(this.ultimoId);
+        this.render = false;
       },
       err => {
+        this.toastr.error(err.json().mensaje);
+        this.render = false;
       }
     )
   }
@@ -206,9 +208,9 @@ export class AdelantoPersonalComponent implements OnInit {
   };
   //Establece valores al seleccionar una pestania
   public seleccionarPestania(id, nombre) {
-    this.reestablecerFormulario(undefined);
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
+    this.reestablecerFormulario(null);
     switch (id) {
       case 1:
         this.establecerValoresPestania(nombre, true, false, true, 'idAutocompletado');
@@ -292,6 +294,7 @@ export class AdelantoPersonalComponent implements OnInit {
         res => {
           let respuesta = res.json();
           if (res.status == 201) {
+            this.ultimoId = respuesta.id;
             this.reestablecerFormulario(respuesta.id);
             this.toastr.success("Registro agregado con éxito.");
             document.getElementById("idAutocompletado").focus();
@@ -309,6 +312,7 @@ export class AdelantoPersonalComponent implements OnInit {
       this.servicio.agregar(this.formulario.value).subscribe(
         res => {
           let respuesta = res.json();
+          this.ultimoId = respuesta.id;
           this.reestablecerFormulario(respuesta.id);
           this.toastr.success("Registro agregado con éxito.");
           document.getElementById("idAutocompletado").focus();
@@ -441,6 +445,7 @@ export class AdelantoPersonalComponent implements OnInit {
     this.obtenerFechaActual();
     this.formulario.get('sucursal').setValue(sucursal);
     this.formulario.get('empresa').setValue(empresa);
+    id ? this.formulario.get('id').setValue(id) : this.formulario.get('id').setValue(this.ultimoId);
     if (this.indiceSeleccionado == 1) {
       this.formulario.get('observacionesAnulado').setValidators([]);
       this.formulario.get('fechaVto').setValidators([]);

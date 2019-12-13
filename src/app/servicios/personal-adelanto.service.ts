@@ -52,6 +52,10 @@ export class PersonalAdelantoService {
   public listarLotes(fechaDesde, fechaHasta, idEmpresa){
     return this.http.get(this.url + '/listarLotes/' + fechaDesde + '/' + fechaHasta + '/' + idEmpresa, this.options);
   }
+  //Obtiene todos los listados
+  public inicializar(idRol, idSubopcion) {
+    return this.http.get(this.url + '/inicializar/' + idRol + '/' + idSubopcion, this.options);
+  }
   //Obtiene la lista de registros por filtros
   public listarPorFiltros(elemento){
     return this.http.post(this.url + '/listarPorFiltros', elemento , this.options);

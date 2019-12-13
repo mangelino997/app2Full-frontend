@@ -22,6 +22,8 @@ import { UsuariosActivosDialogoComponent } from './usuarios-activos-dialogo/usua
   styleUrls: ['./empresa.component.css']
 })
 export class EmpresaComponent implements OnInit {
+  //Define el ultimo id
+  public ultimoId: string = null;
   //Define la pestania activa
   public activeLink: any = null;
   //Define el indice seleccionado de pestania
@@ -51,6 +53,8 @@ export class EmpresaComponent implements OnInit {
   public resultadosBarrios: Array<any> = [];
   //Define la lista de resultados de busqueda de barrio
   public resultadosLocalidades: Array<any> = [];
+  //Defiene el render
+  public render: boolean = false;
   //Define las columnas de la tabla
   public columnas: string[] = ['ID', 'RAZON_SOCIAL', 'DOMICILIO', 'BARRIO', 'LOCALIDAD', 'CUIT', 'INICIO_ACTIVIDAD', 'ESTA_ACTIVA', 'USUARIOS', 'EDITAR'];
   //Define la matSort
@@ -62,21 +66,10 @@ export class EmpresaComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Constructor
-  constructor(private servicio: EmpresaService, private subopcionPestaniaService: SubopcionPestaniaService,
-    private appService: AppService, private toastr: ToastrService, private barrioServicio: BarrioService, private localidadServicio: LocalidadService,
-    private afipCondicionIvaServicio: AfipCondicionIvaService, private empresaModelo: Empresa, public dialog: MatDialog,
+  constructor(private servicio: EmpresaService,
+    private appService: AppService, private toastr: ToastrService, private barrioServicio: BarrioService,
+    private localidadServicio: LocalidadService, private empresaModelo: Empresa, public dialog: MatDialog,
     private loaderService: LoaderService, private reporteServicio: ReporteService) {
-    //Obtiene la lista de pestania por rol y subopcion
-    this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
-      .subscribe(
-        res => {
-          this.pestanias = res.json();
-          this.pestanias.splice(3, 1);
-          this.activeLink = this.pestanias[0].nombre;
-        },
-        err => {
-        }
-      );
     //Autocompletado - Buscar por alias
     this.autocompletado.valueChanges.subscribe(data => {
       if (typeof data == 'string') {
@@ -103,6 +96,8 @@ export class EmpresaComponent implements OnInit {
       });
     //Define los campos para validaciones
     this.formulario = this.empresaModelo.formulario;
+    /* Obtiene todos los listados */
+    this.inicializar(this.appService.getRol().id, this.appService.getSubopcion());
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar');
     //Autocompletado Barrio - Buscar por nombre
@@ -137,8 +132,28 @@ export class EmpresaComponent implements OnInit {
         }
       }
     })
-    //Obtiene la lista de condiciones de iva
-    this.listarCondicionesIva();
+  }
+  //Obtiene los datos necesarios para el componente
+  private inicializar(idRol, idSubopcion) {
+    this.render = true;
+    this.servicio.inicializar(idRol, idSubopcion).subscribe(
+      res => {
+        let respuesta = res.json();
+        console.log(respuesta);
+        //Establece las pestanias
+        this.pestanias = respuesta.pestanias;
+        this.pestanias.splice(3, 1);
+        //Establece demas datos necesarios
+        this.ultimoId = respuesta.ultimoId;
+        this.condicionesIva = respuesta.afipCondicionIvas;
+        this.formulario.get('id').setValue(this.ultimoId);
+        this.render = false;
+      },
+      err => {
+        this.toastr.error(err.json().mensaje);
+        this.render = false;
+      }
+    )
   }
   //Obtiene la mascara de enteros
   public mascararEnteros(limite) {
@@ -154,16 +169,6 @@ export class EmpresaComponent implements OnInit {
     this.resultadosBarrios = [];
     this.resultadosLocalidades = [];
     this.listaCompleta = new MatTableDataSource([]);
-  }
-  //Obtiene el listado de condiciones de iva
-  private listarCondicionesIva() {
-    this.afipCondicionIvaServicio.listar().subscribe(
-      res => {
-        this.condicionesIva = res.json();
-      },
-      err => {
-      }
-    );
   }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, btnUsuarios, componente) {
@@ -190,10 +195,9 @@ export class EmpresaComponent implements OnInit {
   public seleccionarPestania(id, nombre) {
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    this.reestablecerFormulario(undefined);
+    this.reestablecerFormulario(null);
     switch (id) {
       case 1:
-        this.obtenerSiguienteId();
         this.establecerEstadoCampos(true);
         this.establecerValoresPestania(nombre, false, false, true, false, 'idRazonSocial');
         break;
@@ -232,16 +236,6 @@ export class EmpresaComponent implements OnInit {
         break;
     }
   }
-  //Obtiene el siguiente id
-  private obtenerSiguienteId() {
-    this.servicio.obtenerSiguienteId().subscribe(
-      res => {
-        this.formulario.get('id').setValue(res.json());
-      },
-      err => {
-      }
-    );
-  }
   //Obtiene el listado de registros
   private listar() {
     this.loaderService.show();
@@ -264,6 +258,7 @@ export class EmpresaComponent implements OnInit {
       res => {
         let respuesta = res.json();
         if (respuesta.codigo == 201) {
+          this.ultimoId = respuesta.id;
           this.reestablecerFormulario(respuesta.id);
           document.getElementById('idRazonSocial').focus();
           this.toastr.success(respuesta.mensaje);
@@ -283,7 +278,7 @@ export class EmpresaComponent implements OnInit {
       res => {
         let respuesta = res.json();
         if (respuesta.codigo == 200) {
-          this.reestablecerFormulario(undefined);
+          this.reestablecerFormulario(null);
           document.getElementById('idAutocompletado').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
@@ -302,7 +297,7 @@ export class EmpresaComponent implements OnInit {
       res => {
         let respuesta = res.json();
         if (respuesta.codigo == 200) {
-          this.reestablecerFormulario(undefined);
+          this.reestablecerFormulario(null);
           document.getElementById('idAutocompletado').focus();
           this.toastr.success(respuesta.mensaje);
         }
@@ -319,7 +314,7 @@ export class EmpresaComponent implements OnInit {
     this.vaciarListas();
     this.formulario.reset();
     this.autocompletado.reset();
-    this.formulario.get('id').setValue(id);
+    id ? this.formulario.get('id').setValue(id) : this.formulario.get('id').setValue(this.ultimoId);
   }
   //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
   private lanzarError(err) {

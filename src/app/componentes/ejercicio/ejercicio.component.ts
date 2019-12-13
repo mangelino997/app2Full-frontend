@@ -1,10 +1,8 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { FormGroup, FormControl } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { EjercicioService } from 'src/app/servicios/ejercicio.service';
 import { Ejercicio } from 'src/app/modelos/ejercicio';
-import { MesService } from 'src/app/servicios/mes.service';
 import { MatSort, MatTableDataSource, MatPaginator } from '@angular/material';
 import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
@@ -18,6 +16,8 @@ import { ReporteService } from 'src/app/servicios/reporte.service';
   styleUrls: ['./ejercicio.component.css']
 })
 export class EjercicioComponent implements OnInit {
+  //Define el ultimo id
+  public ultimoId: string = null;
   //Define la pestania activa
   public activeLink: any = null;
   //Define el indice seleccionado de pestania
@@ -52,22 +52,14 @@ export class EjercicioComponent implements OnInit {
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Define el mostrar del circulo de progreso
   public show = false;
+  //Defiene el render
+  public render: boolean = false;
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Constructor
-  constructor(private servicio: EjercicioService, private subopcionPestaniaService: SubopcionPestaniaService, private mesService: MesService,
-    private ejercicio: Ejercicio, private appService: AppService, private toastr: ToastrService, private loaderService: LoaderService,
+  constructor(private servicio: EjercicioService, private ejercicio: Ejercicio,
+    private appService: AppService, private toastr: ToastrService, private loaderService: LoaderService,
     private reporteServicio: ReporteService) {
-    //Obtiene la lista de pestania por rol y subopcion
-    this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
-      .subscribe(
-        res => {
-          this.pestanias = res.json();
-          this.activeLink = this.pestanias[0].nombre;
-        },
-        err => {
-        }
-      );
     let empresa = this.appService.getEmpresa();
     //Autocompletado - Buscar por nombre
     this.autocompletado.valueChanges.subscribe(data => {
@@ -95,12 +87,31 @@ export class EjercicioComponent implements OnInit {
       });
     //Define los campos para validaciones
     this.formulario = this.ejercicio.formulario;
+    /* Obtiene todos los listados */
+    this.inicializar(this.appService.getRol().id, this.appService.getSubopcion());
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar');
-    //Obtiene la lista completa de años
-    this.listarAnios();
-    //Obtiene la lista completa de meses
-    this.listarMeses();
+  }
+  //Obtiene los datos necesarios para el componente
+  private inicializar(idRol, idSubopcion) {
+    this.render = true;
+    this.servicio.inicializar(idRol, idSubopcion).subscribe(
+      res => {
+        let respuesta = res.json();
+        //Establece las pestanias
+        this.pestanias = respuesta.pestanias;
+        //Establece demas datos necesarios
+        this.ultimoId = respuesta.ultimoId;
+        this.anios = respuesta.anios;
+        this.meses = respuesta.meses;
+        this.formulario.get('id').setValue(this.ultimoId);
+        this.render = false;
+      },
+      err => {
+        this.toastr.error(err.json().mensaje);
+        this.render = false;
+      }
+    )
   }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
@@ -116,10 +127,9 @@ export class EjercicioComponent implements OnInit {
   public seleccionarPestania(id, nombre) {
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    this.reestablecerFormulario(undefined);
+    this.reestablecerFormulario(null);
     switch (id) {
       case 1:
-        this.obtenerSiguienteId();
         //Por defecto cantidad de meses es 12
         this.formulario.get('cantidadMeses').setValue(12);
         this.establecerEstadoCampos(true);
@@ -174,16 +184,6 @@ export class EjercicioComponent implements OnInit {
         break;
     }
   }
-  //Obtiene el siguiente id
-  private obtenerSiguienteId() {
-    this.servicio.obtenerSiguienteId().subscribe(
-      res => {
-        this.formulario.get('id').setValue(res.json());
-      },
-      err => {
-      }
-    );
-  }
   //Obtiene el listado de registros
   private listar() {
     this.loaderService.show();
@@ -202,26 +202,6 @@ export class EjercicioComponent implements OnInit {
       }
     );
   }
-  //Obtiene el listado de años
-  private listarAnios() {
-    this.servicio.listarAnios().subscribe(
-      res => {
-        this.anios = res.json();
-      },
-      err => {
-      }
-    );
-  }
-  //Obtiene el listado de meses
-  private listarMeses() {
-    this.mesService.listar().subscribe(
-      res => {
-        this.meses = res.json();
-      },
-      err => {
-      }
-    );
-  }
   //Agrega un registro
   private agregar() {
     this.loaderService.show();
@@ -232,6 +212,7 @@ export class EjercicioComponent implements OnInit {
       res => {
         var respuesta = res.json();
         if (respuesta.codigo == 201) {
+          this.ultimoId = respuesta.id;
           this.reestablecerFormulario(respuesta.id);
           document.getElementById('idNombre').focus();
           this.toastr.success(respuesta.mensaje);
@@ -252,7 +233,7 @@ export class EjercicioComponent implements OnInit {
       res => {
         var respuesta = res.json();
         if (respuesta.codigo == 200) {
-          this.reestablecerFormulario(undefined);
+          this.reestablecerFormulario(null);
           document.getElementById('idAutocompletado').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
@@ -271,7 +252,7 @@ export class EjercicioComponent implements OnInit {
       res => {
         var respuesta = res.json();
         if (respuesta.codigo == 200) {
-          this.reestablecerFormulario(undefined);
+          this.reestablecerFormulario(null);
           document.getElementById('idAutocompletado').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
@@ -285,10 +266,10 @@ export class EjercicioComponent implements OnInit {
   }
   //Reestablece el formulario
   private reestablecerFormulario(id) {
-    this.formulario.reset();
-    this.formulario.get('id').setValue(id);
-    this.autocompletado.reset();
     this.resultados = [];
+    this.formulario.reset();
+    this.autocompletado.reset();
+    id ? this.formulario.get('id').setValue(id) : this.formulario.get('id').setValue(this.ultimoId);
   }
   //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
   private lanzarError(err) {

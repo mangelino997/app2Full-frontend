@@ -65,8 +65,7 @@
               <label for="idBarrio" class="tamanio-label">Barrio</label>
               <input id="idBarrio" class="form-control form-control-sm" type="text" matInput
                 [formControl]="formulario.get('barrio')" [matAutocomplete]="autoBarrio" autocomplete="off"
-                [readonly]="soloLectura" (blur)="verificarSeleccion(formulario.get('barrio'))"
-                placeholder="Buscar por nombre">
+                [readonly]="soloLectura" (blur)="verificarSeleccion(formulario.get('barrio'))">
               <mat-autocomplete #autoBarrio="matAutocomplete" [displayWith]="displayFa.bind(this)">
                 <mat-option *ngFor="let itemBarrio of resultadosBarrios" [value]="itemBarrio">
                   {{itemBarrio.nombre}}
@@ -79,8 +78,7 @@
               <label for="idLocalidad" class="tamanio-label">Localidad *</label>
               <input id="idLocalidad" class="form-control form-control-sm" type="text" matInput
                 [formControl]="formulario.get('localidad')" [matAutocomplete]="autoLocalidad" autocomplete="off"
-                [readonly]="soloLectura" (blur)="verificarSeleccion(formulario.get('localidad'))"
-                placeholder="Buscar por nombre">
+                [readonly]="soloLectura" (blur)="verificarSeleccion(formulario.get('localidad'))">
               <mat-autocomplete #autoLocalidad="matAutocomplete" [displayWith]="displayFb.bind(this)">
                 <mat-option *ngFor="let itemLocalidad of resultadosLocalidades" [value]="itemLocalidad">
                   {{itemLocalidad.nombre}}, {{itemLocalidad.provincia.nombre}},
@@ -202,7 +200,7 @@
         </ng-container>
         <ng-container matColumnDef="EDITAR" stickyEnd>
           <th mat-header-cell *matHeaderCellDef><button class="button-full-width" mat-raised-button color="primary"
-            [disabled]="listaCompleta.data.length==0" (click)="abrirReporte()">Reporte</button></th>
+              [disabled]="listaCompleta.data.length==0" (click)="abrirReporte()">Reporte</button></th>
           <td mat-cell *matCellDef="let elemento">
             <button mat-icon-button class="mat-icon-button-table" (click)="activarConsultar(elemento)"
               matTooltip="Consultar" matTooltipPosition="above">

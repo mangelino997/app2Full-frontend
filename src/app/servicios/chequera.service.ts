@@ -59,8 +59,8 @@ export class ChequeraService {
     return this.http.get(this.url + '/listarPorCuentaBancaria/' + idCuentaBancaria, this.options);
   }
   //Obtiene todos los listados
-  public inicializar(idUsuario, idRol, idSubopcion) {
-    return this.http.get(this.url + '/inicializar/' + idUsuario + '/' + idRol + '/' + idSubopcion, this.options);
+  public inicializar(idEmpresa, idRol, idSubopcion) {
+    return this.http.get(this.url + '/inicializar/' + idEmpresa + '/' + idRol + '/' + idSubopcion, this.options);
   }
   //Agrega un registro
   public agregar(elemento) {
