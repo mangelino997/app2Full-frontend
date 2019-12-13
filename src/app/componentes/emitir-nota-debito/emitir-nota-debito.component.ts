@@ -310,8 +310,8 @@ export class EmitirNotaDebitoComponent implements OnInit {
   public emitir() {
     this.formulario.get('puntoVenta').setValue(this.formulario.get('puntoVenta').value.puntoVenta);
     this.formulario.get('ventaComprobanteItem').setValue(this.listaItem);
-    //Guarda el id de afipConcepto del primer item de la tabla
-    this.formulario.get('afipConcepto').setValue({ id: this.listaItem[0].itemTipo.afipConcepto.id });
+    //Guarda el id de afipConceptoVenta del primer item de la tabla
+    this.formulario.get('afipConceptoVenta').setValue({ id: this.listaItem[0].itemTipo.afipConceptoVenta.id });
     this.ventaComprobanteService.agregar(this.formulario.value).subscribe(
       res => {
         let respuesta = res.json();

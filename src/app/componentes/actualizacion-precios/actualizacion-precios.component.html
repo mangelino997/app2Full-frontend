@@ -43,9 +43,9 @@
           <div class="col-md-12">
             <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
               <ng-container matColumnDef="ID">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header class="col-id-width">#</th>
-                <td mat-cell *matCellDef="let elemento; let i = index" class="number-right">
-                  {{i + 1}}</td>
+                <th mat-header-cell *matHeaderCellDef mat-sort-header class="col-id-width ">#</th>
+                <td mat-cell *matCellDef="let elemento" class="number-right">
+                  {{elemento.id}}</td>
               </ng-container>
               <ng-container matColumnDef="NOMBRE">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</th>
@@ -66,7 +66,7 @@
                 </td>
               </ng-container>
               <ng-container matColumnDef="P_COM_CR">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header>% Com. C.R.</th>
+                <th mat-header-cell *matHeaderCellDef mat-sort-header >% Com. C.R.</th>
                 <td mat-cell *matCellDef="let elemento">
                   {{(elemento.comisionCR ? elemento.comisionCR : '00.00') | number: '1.2-2'}} %
                 </td>

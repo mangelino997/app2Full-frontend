@@ -91,7 +91,7 @@ const routes: Routes = [
     { path: 'configuraciontiposdedocumentos', loadChildren: () => import('./modulos/tipo-documento/tipo-documento.module').then(m => m.TipoDocumentoModule), canActivate: [GuardiaService] },
     { path: 'configuraciontiposdeproveedor', loadChildren: () => import('./modulos/tipo-proveedor/tipo-proveedor.module').then(m => m.TipoProveedorModule), canActivate: [GuardiaService] },
     { path: 'configuraciontiposdetarifa', loadChildren: () => import('./modulos/tipo-tarifa/tipo-tarifa.module').then(m => m.TipoTarifaModule), canActivate: [GuardiaService] },
-    { path: 'configuracionafipconcepto', loadChildren: () => import('./modulos/concepto-afip/concepto-afip.module').then(m => m.ConceptoAfipModule), canActivate: [GuardiaService] },
+    { path: 'configuracionafipconceptoventa', loadChildren: () => import('./modulos/concepto-afip/concepto-afip.module').then(m => m.ConceptoAfipModule), canActivate: [GuardiaService] },
     { path: 'configuracionventasconceptos', loadChildren: () => import('./modulos/venta-concepto/venta-concepto.module').then(m => m.VentaConceptoModule), canActivate: [GuardiaService] },
     { path: 'configuracionventatipoitem', loadChildren: () => import('./modulos/venta-tipo/venta-tipo.module').then(m => m.VentaTipoModule), canActivate: [GuardiaService] },
     { path: 'recoleccionesadministrar', loadChildren: () => import('./modulos/orden-recoleccion/orden-recoleccion.module').then(m => m.OrdenRecoleccionModule), canActivate: [GuardiaService] },

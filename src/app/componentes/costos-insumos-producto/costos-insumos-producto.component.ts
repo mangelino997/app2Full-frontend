@@ -3,7 +3,6 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatSort, MatTableDataSource, MatPaginator } from '@angular/material';
 import { Subscription } from 'rxjs';
 import { InsumoProductoService } from 'src/app/servicios/insumo-producto.service';
-import { InsumoProducto } from 'src/app/modelos/insumoProducto';
 import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { AppService } from 'src/app/servicios/app.service';

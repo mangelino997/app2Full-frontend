@@ -365,7 +365,7 @@ export class EmitirFacturaComponent implements OnInit {
   //Maneja el cambio en el combo Items
   public cambioItem() {
     //Controlo si ya habia un item seleccionado y abro el modal de ser así
-    this.formulario.value.afipConcepto ? this.abrirConfirmarDialogo("¿Está seguro de cambiar el Item?") : this.manejoCambioItem();
+    this.formulario.value.afipConceptoVenta ? this.abrirConfirmarDialogo("¿Está seguro de cambiar el Item?") : this.manejoCambioItem();
   }
   //Operaciones a aplicar con el cambio de item a facturar
   private manejoCambioItem() {
@@ -374,7 +374,7 @@ export class EmitirFacturaComponent implements OnInit {
     this.itemFactura.setValue(this.itemReserva.value);//Si el item a facturar es un Remito (general/dador de carga) se establecen campos a solo lectura
     this.itemFactura.value.id == 1 || this.itemFactura.value.id == 2 ?
       [this.soloLectura = true, this.itemFactura.value.id == 2 ? this.btnGS = true : this.btnGS = false] : this.soloLectura = false;
-    this.formulario.get('afipConcepto').setValue(this.itemFactura.value.afipConcepto);
+    this.formulario.get('afipConceptoVenta').setValue(this.itemFactura.value.afipConceptoVenta);
     this.formularioVtaCpteItemFA.get('ventaTipoItem').setValue(this.itemFactura.value);
     this.itemFactura.value.id != 1 ? this.btnRemito = true : this.btnRemito = false; /*Controla si habilita el boton 'Agregar Otro Remito' deshabilita cuando es diferente de 'remito carga gral*/
     this.itemFactura.value.id == 1 ? this.abrirListaRemitoDialogo() : '';//Abre dialogo G.S cuando item.id == 1 (corresponde a 'Remito General G.S')

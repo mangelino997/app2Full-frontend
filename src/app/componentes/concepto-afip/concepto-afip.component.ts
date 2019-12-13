@@ -3,18 +3,18 @@ import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.ser
 import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
-import { AfipConceptoService } from 'src/app/servicios/afip-concepto.service';
-import { ConceptoAfip } from 'src/app/modelos/concepto-afip';
+import { AfipConceptoVentaService } from 'src/app/servicios/afip-concepto.service';
 import { MatSort, MatTableDataSource } from '@angular/material';
 import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
 import { AppService } from 'src/app/servicios/app.service';
+import { ConceptoAfipVenta } from 'src/app/modelos/concepto-afip';
 
 @Component({
-  selector: 'app-concepto-afip',
-  templateUrl: './concepto-afip.component.html',
-  styleUrls: ['./concepto-afip.component.css']
+  selector: 'app-concepto-afip-venta',
+  templateUrl: './concepto-afip-venta.component.html',
+  styleUrls: ['./concepto-afip-venta.component.css']
 })
 export class ConceptoAfipComponent implements OnInit {
   //Define la pestania activa
@@ -54,7 +54,7 @@ export class ConceptoAfipComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Constructor
-  constructor(private appService: AppService, private servicio: AfipConceptoService, private afipConcepto: ConceptoAfip,
+  constructor(private appService: AppService, private servicio: AfipConceptoVentaService, private afipConcepto: ConceptoAfipVenta,
     private subopcionPestaniaService: SubopcionPestaniaService, private toastr: ToastrService,
     private loaderService: LoaderService) {
     //Obtiene la lista de pestania por rol y subopcion

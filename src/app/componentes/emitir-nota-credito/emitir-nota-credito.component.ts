@@ -580,11 +580,11 @@ export class EmitirNotaCreditoComponent implements OnInit {
           listaCompCheckeados.push(this.listaComprobantes[i]);
       }
       this.formulario.get('ventaComprobanteItemNC').setValue(listaCompCheckeados);
-      this.formulario.get('afipConcepto').setValue({ id: listaCompCheckeados[0]['itemTipo']['afipConcepto']['id'] });//guardamos el id de afipConcepto del primer item de la tabla
+      this.formulario.get('afipConceptoVenta').setValue({ id: listaCompCheckeados[0]['itemTipo']['afipConceptoVenta']['id'] });//guardamos el id de afipConceptoVenta del primer item de la tabla
     }
     if (this.listaCuenta.length > 0) {
       this.formulario.get('ventaComprobanteItemNC').setValue(this.listaCuenta);
-      this.formulario.get('afipConcepto').setValue({ id: this.listaCuenta[0].itemTipo.afipConcepto.id });//guardamos el id de afipConcepto del primer item de la tabla
+      this.formulario.get('afipConceptoVenta').setValue({ id: this.listaCuenta[0].itemTipo.afipConceptoVenta.id });//guardamos el id de afipConceptoVenta del primer item de la tabla
     }
     this.ventaComprobanteService.agregar(this.formulario.value).subscribe(
       res => {

@@ -20,7 +20,7 @@ export class NotaCredito{
             puntoVenta: new FormControl('', Validators.required),
             letra: new FormControl(),
             numero: new FormControl(),
-            afipConcepto: new FormControl('', Validators.required),
+            afipConceptoVenta: new FormControl('', Validators.required),
             codigoAfip: new FormControl('', Validators.required),
             tipoComprobante: new FormControl(),
             provincia: new FormControl('', Validators.required),
