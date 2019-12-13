@@ -3,12 +3,13 @@ import { CommonModule } from '@angular/common';
 
 import { SucursalRoutingModule } from './sucursal-routing.module';
 
-import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
-  MatSelectModule, MatProgressBarModule, MatButtonModule, MatIconModule } from '@angular/material';
+import {
+  MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule,
+  MatSelectModule, MatProgressBarModule, MatButtonModule, MatIconModule
+} from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SucursalComponent } from 'src/app/componentes/sucursal/sucursal.component';
 import { SucursalService } from 'src/app/servicios/sucursal.service';
-import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
 import { BarrioService } from 'src/app/servicios/barrio.service';
 import { LocalidadService } from 'src/app/servicios/localidad.service';
 
@@ -33,7 +34,6 @@ import { LocalidadService } from 'src/app/servicios/localidad.service';
   ],
   providers: [
     SucursalService,
-    SubopcionPestaniaService,
     BarrioService,
     LocalidadService
   ]

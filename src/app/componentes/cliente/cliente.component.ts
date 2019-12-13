@@ -296,6 +296,7 @@ export class ClienteComponent implements OnInit {
         this.rubros = respuesta.rubros;
         this.formulario.get('id').setValue(this.ultimoId);
         //Crea cuenta bancaria
+        console.log(respuesta.empresas);
         this.crearCuentasBancarias(respuesta.empresas);
         //Establece los valores de la primera pestania activa
         this.seleccionarPestania(1, 'Agregar', true);
@@ -322,6 +323,8 @@ export class ClienteComponent implements OnInit {
       cuentasBancarias.push(formulario);
     }
     this.cuentasBancarias = new MatTableDataSource(cuentasBancarias);
+    console.log(this.cuentasBancarias.data);
+
     this.loaderService.hide();
   }
   // public crearCuentasBancarias(): void {
@@ -566,6 +569,7 @@ export class ClienteComponent implements OnInit {
     this.formulario.get('descuentoSubtotal').setValue(elemento.descuentoSubtotal ? this.appService.establecerDecimales(elemento.descuentoSubtotal, 2) : null);
     /* Si no tiene seguro propio que compañia/poliza/vencimiento no sean readOnly */
     this.cambioTipoSeguro();
+    console.log(elemento.clienteCuentasBancarias);
     this.cuentasBancarias = new MatTableDataSource(elemento.clienteCuentasBancarias);
   }
   //Establece los valores por defecto
@@ -590,69 +594,10 @@ export class ClienteComponent implements OnInit {
     this.resultadosLocalidades = [];
     this.resultadosCuentasGrupos = [];
     this.resultadosCompaniasSeguros = [];
-    this.cuentasBancarias = new MatTableDataSource([]);
-  }
-  //Obtiene la lista de sucursales
-  private listarSucursales(): void {
-    this.sucursalServicio.listar().subscribe(res => {
-      this.resultadosSucursalesPago = res.json();
-    });
-  }
-  //Obtiene el listado de condiciones de iva
-  private listarCondicionesIva() {
-    this.afipCondicionIvaServicio.listar().subscribe(
-      res => {
-        this.condicionesIva = res.json();
-      },
-      err => {
-      }
-    );
-  }
-  //Obtiene el listado de tipos de documentos
-  private listarTiposDocumentos() {
-    this.tipoDocumentoServicio.listar().subscribe(
-      res => {
-        this.tiposDocumentos = res.json();
-      },
-      err => {
-      }
-    );
-  }
-  //Obtiene el listado de resumenes de clientes
-  private listarResumenesClientes() {
-    this.resumenClienteServicio.listar().subscribe(
-      res => {
-        this.resumenesClientes = res.json();
-      },
-      err => {
-      }
-    );
-  }
-  //Obtiene el listado de situaciones de clientes
-  private listarSituacionesClientes() {
-    this.situacionClienteServicio.listar().subscribe(
-      res => {
-        this.situacionesClientes = res.json();
-        this.establecerSituacionCliente();
-      },
-      err => {
-      }
-    );
   }
   //Establece la situacion cliente por defecto
   private establecerSituacionCliente(): void {
     this.formulario.get('situacionCliente').setValue(this.situacionesClientes[0]);
-  }
-  //Obtiene el listado de condiciones de ventas
-  private listarCondicionesVentas() {
-    this.condicionVentaServicio.listar().subscribe(
-      res => {
-        this.condicionesVentas = res.json();
-        this.establecerCondicionVenta();
-      },
-      err => {
-      }
-    );
   }
   //Establece la condicion de venta por defecto
   private establecerCondicionVenta(): void {
