@@ -258,6 +258,9 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
     if (this.mostrarAutocompletado) {
       this.servicio.listarPorEmpresa(elemento.id).subscribe(res => {
         this.resultados = res.json();
+        if (this.resultados.length == 0) {
+          this.toastr.warning("Sin registros para mostrar.");
+        }
       })
     }
   }
@@ -272,6 +275,9 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
           this.listaCompleta.sort = this.sort;
           this.listaCompleta.data.length == 0 ? this.toastr.error("Sin registros para mostrar para la Empresa y Compañía Seguro.") : '';
           this.loaderService.hide();
+          if (this.listaCompleta.data.length == 0) {
+            this.toastr.warning("Sin registros para mostrar.");
+          }
         },
         err => {
           this.toastr.error(err.json().mensaje);
@@ -287,6 +293,9 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
         this.servicio.listarPorCompaniaSeguroYEmpresa(companiaSeguro.id, empresa.id).subscribe(res => {
           this.polizas = [];
           this.polizas = res.json();
+          if (this.polizas.length == 0) {
+            this.toastr.warning("Sin registros para mostrar.");
+          }
         })
       }
     }

@@ -7,7 +7,7 @@ import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModul
   MatSelectModule, MatProgressBarModule, MatButtonModule, MatTooltipModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ConceptoAfipComponent } from 'src/app/componentes/concepto-afip/concepto-afip.component';
-import { ConceptoAfip } from 'src/app/modelos/concepto-afip';
+import { ConceptoAfipVenta } from 'src/app/modelos/concepto-afip';
 
 @NgModule({
   declarations: [
@@ -29,7 +29,7 @@ import { ConceptoAfip } from 'src/app/modelos/concepto-afip';
     MatTooltipModule
   ],
   providers: [
-    ConceptoAfip
+    ConceptoAfipVenta
   ]
 })
 export class ConceptoAfipModule { }

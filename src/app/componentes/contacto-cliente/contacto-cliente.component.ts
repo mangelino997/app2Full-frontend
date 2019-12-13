@@ -186,6 +186,9 @@ export class ContactoClienteComponent implements OnInit {
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
         this.listaCompleta.paginator = this.paginator;
+        if (this.listaCompleta.data.length == 0) {
+          this.toastr.warning("Sin registros para mostrar.");
+        }
       } else {
         this.contactos = res.json();
       }

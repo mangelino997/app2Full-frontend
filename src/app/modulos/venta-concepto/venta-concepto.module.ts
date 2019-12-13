@@ -11,7 +11,7 @@ import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.s
 import { VentaItemConceptoService } from 'src/app/servicios/venta-item-concepto.service';
 import { VentaConcepto } from 'src/app/modelos/venta-concepto';
 import { TipoComprobanteService } from 'src/app/servicios/tipo-comprobante.service';
-import { AfipConceptoService } from 'src/app/servicios/afip-concepto.service';
+import { AfipConceptoVentaService } from 'src/app/servicios/afip-concepto.service';
 
 @NgModule({
   declarations: [
@@ -37,7 +37,7 @@ import { AfipConceptoService } from 'src/app/servicios/afip-concepto.service';
     SubopcionPestaniaService,
     VentaItemConceptoService,
     TipoComprobanteService,
-    AfipConceptoService,
+    AfipConceptoVentaService,
     VentaConcepto
   ]
 })

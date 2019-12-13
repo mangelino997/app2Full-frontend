@@ -4,7 +4,6 @@ import { FormGroup, FormControl, Validators, MaxLengthValidator } from '@angular
 import { ToastrService } from 'ngx-toastr';
 import { VentaConcepto } from 'src/app/modelos/venta-concepto';
 import { TipoComprobanteService } from 'src/app/servicios/tipo-comprobante.service';
-import { AfipConceptoService } from 'src/app/servicios/afip-concepto.service';
 import { VentaItemConceptoService } from 'src/app/servicios/venta-item-concepto.service';
 import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
@@ -12,6 +11,7 @@ import { Subscription } from 'rxjs';
 import { AppService } from 'src/app/servicios/app.service';
 import { MatSort, MatTableDataSource, MatPaginator } from '@angular/material';
 import { ReporteService } from 'src/app/servicios/reporte.service';
+import { AfipConceptoVentaService } from 'src/app/servicios/afip-concepto.service';
 
 @Component({
   selector: 'app-venta-concepto',
@@ -62,7 +62,7 @@ export class VentaConceptoComponent implements OnInit {
   //Constructor
   constructor(private servicio: VentaItemConceptoService, private ventaConcepto: VentaConcepto, private appService: AppService,
     private loaderService: LoaderService, private subopcionPestaniaService: SubopcionPestaniaService,
-    private tipoComprobanteServicio: TipoComprobanteService, private conceptosAfipServicio: AfipConceptoService,
+    private tipoComprobanteServicio: TipoComprobanteService, private conceptosAfipServicio: AfipConceptoVentaService,
     private toastr: ToastrService, private reporteServicio: ReporteService) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())

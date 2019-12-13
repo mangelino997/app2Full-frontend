@@ -34,7 +34,7 @@ export class NotaDebito{
             numeroDocumento: new FormControl('', Validators.required),
             domicilio: new FormControl(),
             condicionIVA: new FormControl('', Validators.required),
-            afipConcepto: new FormControl(),
+            afipConceptoVenta: new FormControl(),
             afipAlicuotaIva: new FormControl(),
             alicuotaIva: new FormControl(),
             importeIva: new FormControl(),

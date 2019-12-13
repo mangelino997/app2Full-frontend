@@ -45,7 +45,7 @@ export class VentaComprobante {
             CAEVencimiento: new FormControl(),
             CAEEstado: new FormControl(),
             fechaRegistracion: new FormControl(),
-            afipConcepto: new FormControl('', Validators.required), //elemento de item a facturar → elemento.afipConcepto
+            afipConceptoVenta: new FormControl('', Validators.required), //elemento de item a facturar → elemento.afipConcepto
             moneda: new FormControl(),
             monedaCotizacion: new FormControl(),
             ventaComprobanteItemCR: new FormControl([], ),

@@ -19,7 +19,7 @@ export class EmitirFactura {
             fechaEmision: new FormControl(),
             fechaVtoPago: new FormControl(),
             fechaRegistracion: new FormControl(),
-            afipConcepto: new FormControl(),
+            afipConceptoVenta: new FormControl(),
             moneda: new FormControl(1),
             monedaCotizacion: new FormControl(1),
             puntoVenta: new FormControl(),

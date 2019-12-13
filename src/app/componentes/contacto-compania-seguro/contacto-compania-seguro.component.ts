@@ -201,7 +201,7 @@ export class ContactoCompaniaSeguroComponent implements OnInit {
             this.autocompletado.reset();
             this.listaCompleta = new MatTableDataSource([]);
             this.formulario.get('companiaSeguro').setValue(companiaSeguro);
-            this.toastr.error("La Compañía de Seguro no tiene contactos asignados.");
+            this.toastr.warning("La Compañía de Seguro no tiene contactos asignados.");
           }
           this.loaderService.hide();
         },

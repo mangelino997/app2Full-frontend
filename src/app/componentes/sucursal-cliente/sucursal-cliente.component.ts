@@ -272,7 +272,7 @@ export class SucursalClienteComponent implements OnInit {
             this.autocompletado.reset();
             this.listaCompleta = new MatTableDataSource([]);
             this.formulario.get('cliente').setValue(cliente);
-            this.toastr.error("El Cliente no tiene sucursales asignadas.");
+            this.toastr.warning("El Cliente no tiene sucursales asignadas.");
           }
           this.loaderService.hide();
         },

@@ -3,7 +3,7 @@ import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.ser
 import { FormGroup, FormControl, Validators, MaxLengthValidator } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { TipoComprobanteService } from 'src/app/servicios/tipo-comprobante.service';
-import { AfipConceptoService } from 'src/app/servicios/afip-concepto.service';
+import { AfipConceptoVentaService } from 'src/app/servicios/afip-concepto.service';
 import { VentaTipoItemService } from 'src/app/servicios/venta-tipo-item.service';
 import { VentaTipoItem } from 'src/app/modelos/venta-tipo-item';
 import { LoaderService } from 'src/app/servicios/loader.service';
@@ -38,7 +38,7 @@ export class VentaTipoComponent implements OnInit {
   //Define la lista completa de tipos de comprobantes
   public tiposComprobantes: Array<any> = [];
   //Define la lista completa de Afip Conceptos
-  public afipConceptos: Array<any> = [];
+  public afipConceptoVentas: Array<any> = [];
   //Define el autocompletado
   public autocompletado: FormControl = new FormControl();
   //Define la lista de resultados de busqueda
@@ -48,13 +48,13 @@ export class VentaTipoComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define las columnas de la tabla
-  public columnas: string[] = ['id', 'nombre', 'tipoComprobante', 'esContraReembolso', 'afipConcepto', 'chequeRechazado', 'habilitado', 'ver', 'mod'];
+  public columnas: string[] = ['id', 'nombre', 'tipoComprobante', 'esContraReembolso', 'afipConceptoVenta', 'chequeRechazado', 'habilitado', 'ver', 'mod'];
   //Define la matSort
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   // public compereFn:any;
 
   //Constructor
-  constructor(private afipConceptosServicio: AfipConceptoService, private servicio: VentaTipoItemService, private ventaConcepto: VentaTipoItem,
+  constructor(private afipConceptoVentasServicio: AfipConceptoVentaService, private servicio: VentaTipoItemService, private ventaConcepto: VentaTipoItem,
     private appService: AppService, private loaderService: LoaderService,
     private subopcionPestaniaService: SubopcionPestaniaService, private tipoComprobanteServicio: TipoComprobanteService, private toastr: ToastrService) {
     //Obtiene la lista de pestania por rol y subopcion
@@ -128,9 +128,9 @@ export class VentaTipoComponent implements OnInit {
   }
   //Obtiene los conceptos de Afip
   public listarAfipConcepto() {
-    this.afipConceptosServicio.listar().subscribe(
+    this.afipConceptoVentasServicio.listar().subscribe(
       res => {
-        this.afipConceptos = res.json();
+        this.afipConceptoVentas = res.json();
       },
       err => {
       }
@@ -186,13 +186,13 @@ export class VentaTipoComponent implements OnInit {
       this.formulario.get('tipoComprobante').enable();
       this.formulario.get('estaHabilitado').enable();
       this.formulario.get('esContrareembolso').enable();
-      this.formulario.get('afipConcepto').enable();
+      this.formulario.get('afipConceptoVenta').enable();
       this.formulario.get('esChequeRechazado').enable();
     } else {
       this.formulario.get('tipoComprobante').disable();
       this.formulario.get('estaHabilitado').disable();
       this.formulario.get('esContrareembolso').disable();
-      this.formulario.get('afipConcepto').disable();
+      this.formulario.get('afipConceptoVenta').disable();
       this.formulario.get('esChequeRechazado').disable();
     }
   }
