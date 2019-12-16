@@ -18,7 +18,7 @@
             [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off"
             (blur)="verificarSeleccion(autocompletado)" placeholder="Por Nombre">
           <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)">
-            <mat-option *ngFor="let item of resultados" [value]="item" (onSelectionChange)="formulario.setValue(item)">
+            <mat-option *ngFor="let item of resultados" [value]="item" (onSelectionChange)="formulario.patchValue(item)">
               {{item.nombre}}
             </mat-option>
           </mat-autocomplete>

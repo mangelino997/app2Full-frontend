@@ -303,6 +303,10 @@ export class TalonarioReciboLoteComponent implements OnInit {
       document.getElementById('idDesde').focus();
     }
   }
+  //Obtiene la mascara de enteros
+  public obtenerMascaraEnteros(intLimite) {
+    return this.appService.mascararEnteros(intLimite);
+  }
   //Formatea el valor del autocompletado
   public displayFn(elemento) {
     if (elemento != undefined) {
