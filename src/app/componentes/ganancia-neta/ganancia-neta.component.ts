@@ -342,7 +342,6 @@ export class GananciaNetaComponent implements OnInit {
       this.appService.establecerDecimales(elemento.importe ? elemento.importe : '0.00', 2));
     this.formulario.get('importeFijo').setValue(
       this.appService.establecerDecimales(elemento.importeFijo ? elemento.importeFijo : '0.00', 2));
-    console.log(this.formulario.value);
     // this.establecerDecimales(this.formulario.get('importe'), 2);
     // this.establecerDecimales(this.formulario.get('importeFijo'), 2);
   }

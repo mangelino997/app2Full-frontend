@@ -1,6 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { TipoTarifaService } from '../../servicios/tipo-tarifa.service';
-import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { LoaderService } from 'src/app/servicios/loader.service';
@@ -16,6 +15,8 @@ import { ReporteService } from 'src/app/servicios/reporte.service';
   styleUrls: ['./tipo-tarifa.component.css']
 })
 export class TipoTarifaComponent implements OnInit {
+  //Define el ultimo id
+  public ultimoId: string = null;
   //Define la pestania activa
   public activeLink: any = null;
   //Define el indice seleccionado de pestania
@@ -40,6 +41,8 @@ export class TipoTarifaComponent implements OnInit {
   public resultados: Array<any> = [];
   //Define el mostrar del circulo de progreso
   public show = false;
+  //Defiene el render
+  public render: boolean = false;
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define las columnas de la tabla
@@ -49,18 +52,10 @@ export class TipoTarifaComponent implements OnInit {
   //Define la paginacion
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Constructor
-  constructor(private servicio: TipoTarifaService, private subopcionPestaniaService: SubopcionPestaniaService,
-    private appService: AppService, private toastr: ToastrService, private loaderService: LoaderService, private reporteServicio: ReporteService) {
-    //Obtiene la lista de pestania por rol y subopcion
-    this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
-      .subscribe(
-        res => {
-          this.pestanias = res.json();
-          this.activeLink = this.pestanias[0].nombre;
-        },
-        err => {
-        }
-      );
+  constructor(
+    private servicio: TipoTarifaService, 
+    private appService: AppService, private toastr: ToastrService, 
+    private loaderService: LoaderService, private reporteServicio: ReporteService) {
     //Autocompletado - Buscar por nombre
     this.autocompletado.valueChanges.subscribe(data => {
       if (typeof data == 'string') {
@@ -80,6 +75,11 @@ export class TipoTarifaComponent implements OnInit {
   }
   //Al iniciarse el componente
   ngOnInit() {
+    //Establece la subscripcion a loader
+    this.subscription = this.loaderService.loaderState
+      .subscribe((state: LoaderState) => {
+        this.show = state.show;
+      });
     //Define los campos para validaciones
     this.formulario = new FormGroup({
       id: new FormControl(),
@@ -87,14 +87,30 @@ export class TipoTarifaComponent implements OnInit {
       nombre: new FormControl('', [Validators.required, Validators.maxLength(45)]),
       porEscala: new FormControl('', Validators.required),
       porPorcentaje: new FormControl('', Validators.required)
-    });
+    })
+    /* Obtiene todos los listados */
+    this.inicializar(this.appService.getRol().id, this.appService.getSubopcion());
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar', 0);
-    //Establece la subscripcion a loader
-    this.subscription = this.loaderService.loaderState
-      .subscribe((state: LoaderState) => {
-        this.show = state.show;
-      });
+  }
+  //Obtiene los datos necesarios para el componente
+  private inicializar(idRol, idSubopcion) {
+    this.render = true;
+    this.servicio.inicializar(idRol, idSubopcion).subscribe(
+      res => {
+        let respuesta = res.json();
+        //Establece las pestanias
+        this.pestanias = respuesta.pestanias;
+        //Establece demas datos necesarios
+        this.ultimoId = respuesta.ultimoId;
+        this.formulario.get('id').setValue(this.ultimoId);
+        this.render = false;
+      },
+      err => {
+        this.toastr.error(err.json().mensaje);
+        this.render = false;
+      }
+    )
   }
   //Habilita o deshabilita los campos select dependiendo de la pestania actual
   private establecerEstadoCampos(estado) {
@@ -118,16 +134,11 @@ export class TipoTarifaComponent implements OnInit {
   };
   //Establece valores al seleccionar una pestania
   public seleccionarPestania(id, nombre, opcion) {
-    this.reestablecerFormulario('');
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    if (opcion == 0) {
-      this.autocompletado.setValue(undefined);
-      this.resultados = [];
-    }
+    this.reestablecerFormulario(null);
     switch (id) {
       case 1:
-        this.obtenerSiguienteId();
         this.establecerEstadoCampos(true);
         this.establecerValoresPestania(nombre, false, false, true, 'idNombre');
         break;
@@ -166,16 +177,6 @@ export class TipoTarifaComponent implements OnInit {
         break;
     }
   }
-  //Obtiene el siguiente id
-  private obtenerSiguienteId() {
-    this.servicio.obtenerSiguienteId().subscribe(
-      res => {
-        this.formulario.get('id').setValue(res.json());
-      },
-      err => {
-      }
-    );
-  }
   //Obtiene el listado de registros
   private listar() {
     this.loaderService.show();
@@ -199,8 +200,9 @@ export class TipoTarifaComponent implements OnInit {
     this.formulario.get('id').setValue(null);
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
-        var respuesta = res.json();
+        let respuesta = res.json();
         if (respuesta.codigo == 201) {
+          this.ultimoId = respuesta.id;
           this.reestablecerFormulario(respuesta.id);
           document.getElementById('idNombre').focus();
           this.toastr.success(respuesta.mensaje);
@@ -208,7 +210,7 @@ export class TipoTarifaComponent implements OnInit {
         }
       },
       err => {
-        var respuesta = err.json();
+        let respuesta = err.json();
         if (respuesta.codigo == 11002) {
           document.getElementById("labelNombre").classList.add('label-error');
           document.getElementById("idNombre").classList.add('is-invalid');
@@ -224,16 +226,16 @@ export class TipoTarifaComponent implements OnInit {
     this.loaderService.show();
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
-        var respuesta = res.json();
+        let respuesta = res.json();
         if (respuesta.codigo == 200) {
-          this.reestablecerFormulario('');
+          this.reestablecerFormulario(null);
           document.getElementById('idAutocompletado').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
         }
       },
       err => {
-        var respuesta = err.json();
+        let respuesta = err.json();
         if (respuesta.codigo == 11002) {
           document.getElementById("labelNombre").classList.add('label-error');
           document.getElementById("idNombre").classList.add('is-invalid');
@@ -242,10 +244,37 @@ export class TipoTarifaComponent implements OnInit {
         }
         this.loaderService.hide();
       }
-    );
+    )
   }
   //Elimina un registro
   private eliminar() {
+    this.loaderService.show();
+    this.servicio.eliminar(this.formulario.value.id).subscribe(
+      res => {
+        let respuesta = res.json();
+        if (respuesta.codigo == 200) {
+          this.reestablecerFormulario(null);
+          document.getElementById('idAutocompletado').focus();
+          this.toastr.success(respuesta.mensaje);
+          this.loaderService.hide();
+        }
+      },
+      err => {
+        let respuesta = err.json();
+        if (respuesta.codigo == 11002) {
+          document.getElementById("labelNombre").classList.add('label-error');
+          document.getElementById("idNombre").classList.add('is-invalid');
+          document.getElementById("idNombre").focus();
+          this.toastr.error(respuesta.mensaje);
+        }
+        this.loaderService.hide();
+      }
+    )
+  }
+  //Establece el elemento al formulario
+  public cambioAutocompletado(){
+    let elemento = this.autocompletado.value;
+    this.formulario.patchValue(elemento);
   }
   //Verifica si se selecciono un elemento del autocompletado
   public verificarSeleccion(valor): void {
@@ -255,10 +284,10 @@ export class TipoTarifaComponent implements OnInit {
   }
   //Reestablece el formulario
   private reestablecerFormulario(id) {
-    this.formulario.reset();
-    this.formulario.get('id').setValue(id);
-    this.autocompletado.setValue(undefined);
     this.resultados = [];
+    this.formulario.reset();
+    this.autocompletado.reset();
+    id ? this.formulario.get('id').setValue(id) : this.formulario.get('id').setValue(this.ultimoId);
   }
   //Manejo de colores de campos y labels
   public cambioCampo(id, label) {
@@ -294,7 +323,7 @@ export class TipoTarifaComponent implements OnInit {
   }
   //Maneja los evento al presionar una tacla (para pestanias y opciones)
   public manejarEvento(keycode) {
-    var indice = this.indiceSeleccionado;
+    let indice = this.indiceSeleccionado;
     if (keycode == 113) {
       if (indice < this.pestanias.length) {
         this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre, 0);

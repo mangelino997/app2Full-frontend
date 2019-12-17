@@ -15,7 +15,6 @@ import { PersonalAdelanto } from 'src/app/modelos/personalAdelanto';
 import { PersonalAdelantoService } from 'src/app/servicios/personal-adelanto.service';
 import { PersonalService } from 'src/app/servicios/personal.service';
 import { BasicoCategoriaService } from 'src/app/servicios/basico-categoria.service';
-import { FechaService } from 'src/app/servicios/fecha.service';
 
 @NgModule({
   declarations: [
@@ -49,7 +48,6 @@ import { FechaService } from 'src/app/servicios/fecha.service';
     MatDialog,
     PersonalService,
     BasicoCategoriaService,
-    FechaService,
   ],
   entryComponents: [
     PrestamoDialogo,

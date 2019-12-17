@@ -1,6 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { TipoDocumentoService } from '../../servicios/tipo-documento.service';
-import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { LoaderService } from 'src/app/servicios/loader.service';
@@ -246,7 +245,7 @@ export class TipoDocumentoComponent implements OnInit {
   //Elimina un registro
   private eliminar() {
     this.loaderService.show();
-    this.servicio.actualizar(this.formulario.value.id).subscribe(
+    this.servicio.eliminar(this.formulario.value.id).subscribe(
       res => {
         let respuesta = res.json();
         if (respuesta.codigo == 200) {

@@ -101,7 +101,6 @@ export class DeduccionPersonalTablaComponent implements OnInit {
         let respuesta = res.json();
         //Establece las pestanias
         this.pestanias = respuesta.pestanias;
-        console.log(respuesta);
         //Establece demas datos necesarios
         this.anios = respuesta.anios;
         this.meses = respuesta.meses;

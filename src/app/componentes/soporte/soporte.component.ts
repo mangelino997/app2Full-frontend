@@ -126,7 +126,6 @@ export class SoporteComponent implements OnInit {
     this.servicio.inicializar().subscribe(
       res => {
         let respuesta = res.json();
-        console.log(respuesta);
         //Establece la primer pestaña
         this.activeLink = this.pestanias[0].nombre;
         //Establece demas datos necesarios
@@ -163,7 +162,6 @@ export class SoporteComponent implements OnInit {
     this.servicio.obtenerPorId(id).subscribe(
       res => {
         let elemento = res.json();
-        console.log(elemento);
         this.controlarModulo(elemento);
         this.formulario.setValue(elemento);
         this.establecerBug(elemento);
@@ -368,7 +366,6 @@ export class SoporteComponent implements OnInit {
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
-    console.log(elemento);
     this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
     this.obtenerPorId(elemento.id);
   }
