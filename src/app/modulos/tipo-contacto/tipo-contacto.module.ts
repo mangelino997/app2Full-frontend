@@ -3,12 +3,13 @@ import { CommonModule } from '@angular/common';
 
 import { TipoContactoRoutingModule } from './tipo-contacto-routing.module';
 
-import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
-  MatSelectModule, MatProgressBarModule, MatButtonModule, MatIconModule } from '@angular/material';
+import {
+  MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule,
+  MatSelectModule, MatProgressBarModule, MatButtonModule, MatIconModule
+} from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TipoContactoComponent } from 'src/app/componentes/tipo-contacto/tipo-contacto.component';
 import { TipoContactoService } from 'src/app/servicios/tipo-contacto.service';
-import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
 
 @NgModule({
   declarations: [
@@ -31,7 +32,6 @@ import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.s
   ],
   providers: [
     TipoContactoService,
-    SubopcionPestaniaService
   ]
 })
 export class TipoContactoModule { }

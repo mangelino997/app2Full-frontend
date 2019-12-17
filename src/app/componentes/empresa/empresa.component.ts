@@ -139,7 +139,6 @@ export class EmpresaComponent implements OnInit {
     this.servicio.inicializar(idRol, idSubopcion).subscribe(
       res => {
         let respuesta = res.json();
-        console.log(respuesta);
         //Establece las pestanias
         this.pestanias = respuesta.pestanias;
         this.pestanias.splice(3, 1);

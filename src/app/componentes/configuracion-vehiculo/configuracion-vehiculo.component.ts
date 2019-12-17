@@ -225,7 +225,6 @@ export class ConfiguracionVehiculoComponent implements OnInit {
         let respuesta = res.json();
         if (respuesta.codigo == 201) {
           this.ultimoId = respuesta.id;
-          console.log(respuesta);
           this.reestablecerFormulario(respuesta.id);
           document.getElementById('idTipoVehiculo').focus();
           this.toastr.success(respuesta.mensaje);

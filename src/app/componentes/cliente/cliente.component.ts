@@ -295,8 +295,6 @@ export class ClienteComponent implements OnInit {
         this.zonas = respuesta.zonas;
         this.rubros = respuesta.rubros;
         this.formulario.get('id').setValue(this.ultimoId);
-        //Crea cuenta bancaria
-        console.log(respuesta.empresas);
         this.crearCuentasBancarias(respuesta.empresas);
         //Establece los valores de la primera pestania activa
         this.seleccionarPestania(1, 'Agregar', true);
@@ -323,8 +321,6 @@ export class ClienteComponent implements OnInit {
       cuentasBancarias.push(formulario);
     }
     this.cuentasBancarias = new MatTableDataSource(cuentasBancarias);
-    console.log(this.cuentasBancarias.data);
-
     this.loaderService.hide();
   }
   // public crearCuentasBancarias(): void {
@@ -569,7 +565,6 @@ export class ClienteComponent implements OnInit {
     this.formulario.get('descuentoSubtotal').setValue(elemento.descuentoSubtotal ? this.appService.establecerDecimales(elemento.descuentoSubtotal, 2) : null);
     /* Si no tiene seguro propio que compañia/poliza/vencimiento no sean readOnly */
     this.cambioTipoSeguro();
-    console.log(elemento.clienteCuentasBancarias);
     this.cuentasBancarias = new MatTableDataSource(elemento.clienteCuentasBancarias);
   }
   //Establece los valores por defecto

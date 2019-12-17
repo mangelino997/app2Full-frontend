@@ -47,7 +47,8 @@
           <div class="col-md-6">
             <div class="form-group has-float-label">
               <label for="idPuntoVenta" class="tamanio-label">Punto de Venta *</label>
-              <input id="idPuntoVenta" type="text" formControlName="puntoVenta" autocomplete="off" maxlength="5"
+              <input id="idPuntoVenta" type="text" formControlName="puntoVenta" autocomplete="off" 
+                [textMask]="obtenerMascaraEnteros(5)" maxlength="5"
                 [readonly]="soloLectura" class="form-control form-control-sm number-right"
                 (blur)="establecerCerosIzq(formulario.get('puntoVenta'), '0000', -5)">
             </div>

@@ -138,7 +138,6 @@ export class MonedaCuentaContableComponent implements OnInit {
     this.servicio.inicializar(idUsuario, idRol, idSubopcion).subscribe(
       res => {
         let respuesta = res.json();
-        console.log(respuesta);
         //Establece las pestanias
         this.pestanias = respuesta.pestanias;
         //Establece demas datos necesarios

@@ -3,12 +3,13 @@ import { CommonModule } from '@angular/common';
 
 import { TipoDocumentoRoutingModule } from './tipo-documento-routing.module';
 
-import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
-  MatSelectModule, MatProgressBarModule, MatButtonModule, MatIconModule } from '@angular/material';
+import {
+  MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule,
+  MatSelectModule, MatProgressBarModule, MatButtonModule, MatIconModule
+} from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TipoDocumentoComponent } from 'src/app/componentes/tipo-documento/tipo-documento.component';
 import { TipoDocumentoService } from 'src/app/servicios/tipo-documento.service';
-import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
 
 @NgModule({
   declarations: [
@@ -30,7 +31,6 @@ import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.s
     MatIconModule
   ],
   providers: [
-    SubopcionPestaniaService,
     TipoDocumentoService
   ]
 })

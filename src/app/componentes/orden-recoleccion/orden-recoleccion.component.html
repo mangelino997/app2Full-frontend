@@ -25,9 +25,9 @@
                   <input id="idAutocompletado" class="form-control form-control-sm color-busqueda" type="text" matInput
                     [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off"
                     (blur)="verificarSeleccion(autocompletado)" placeholder="Buscar por alias">
-                  <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayF.bind(this)">
-                    <mat-option *ngFor="let item of resultados" [value]="item"
-                      (onSelectionChange)="formulario.setValue(item)">
+                  <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayF.bind(this)"
+                    (optionSelected)="cambioAutocompletado()">
+                    <mat-option *ngFor="let item of resultados" [value]="item">
                       {{item.alias}}
                     </mat-option>
                   </mat-autocomplete>

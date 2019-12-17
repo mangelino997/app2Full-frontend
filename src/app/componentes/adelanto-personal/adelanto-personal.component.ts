@@ -10,7 +10,6 @@ import { PersonalAdelantoService } from 'src/app/servicios/personal-adelanto.ser
 import { PersonalAdelanto } from 'src/app/modelos/personalAdelanto';
 import { PersonalService } from 'src/app/servicios/personal.service';
 import { BasicoCategoriaService } from 'src/app/servicios/basico-categoria.service';
-import { FechaService } from 'src/app/servicios/fecha.service';
 import { ReporteService } from 'src/app/servicios/reporte.service';
 import { ObservacionesDialogo } from '../observaciones-dialogo/observaciones-dialogo.component';
 
@@ -89,9 +88,10 @@ export class AdelantoPersonalComponent implements OnInit {
   public render: boolean = false;
   //Constructor
   constructor(private appService: AppService, private toastr: ToastrService,
-    private loaderService: LoaderService, private modelo: PersonalAdelanto, private servicio: PersonalAdelantoService,
+    private loaderService: LoaderService, private modelo: PersonalAdelanto, 
+    private servicio: PersonalAdelantoService,
     public dialog: MatDialog, private personalService: PersonalService,
-    private basicoCategoriaService: BasicoCategoriaService, private fechaService: FechaService,
+    private basicoCategoriaService: BasicoCategoriaService,
     private reporteServicio: ReporteService) {
     //Autocompletado
     this.autocompletado.valueChanges.subscribe(data => {
@@ -175,6 +175,8 @@ export class AdelantoPersonalComponent implements OnInit {
         this.ultimoId = respuesta.ultimoId;
         this.sucursales = respuesta.sucursales;
         this.formulario.get('id').setValue(this.ultimoId);
+        this.FECHA_ACTUAL = respuesta.fecha;
+        this.estableceFecha();
         this.render = false;
       },
       err => {
@@ -184,17 +186,10 @@ export class AdelantoPersonalComponent implements OnInit {
     )
   }
   //Obtiene la fecha actual
-  private obtenerFechaActual() {
-    this.fechaService.obtenerFecha().subscribe(
-      res => {
-        this.FECHA_ACTUAL.setValue(res.json());
-        this.formulario.get('fechaEmision').setValue(res.json());
-        this.formularioFiltro.get('fechaEmisionDesde').setValue(res.json());
-        this.formularioFiltro.get('fechaEmisionHasta').setValue(res.json());
-      },
-      err => {
-      }
-    )
+  private estableceFecha() {
+    this.formulario.get('fechaEmision').setValue(this.FECHA_ACTUAL);
+    this.formularioFiltro.get('fechaEmisionDesde').setValue(this.FECHA_ACTUAL);
+    this.formularioFiltro.get('fechaEmisionHasta').setValue(this.FECHA_ACTUAL);
   }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
@@ -442,7 +437,7 @@ export class AdelantoPersonalComponent implements OnInit {
     let usuario = this.appService.getUsuario();
     let empresa = this.appService.getEmpresa();
     let sucursal = usuario.sucursal;
-    this.obtenerFechaActual();
+    this.estableceFecha();
     this.formulario.get('sucursal').setValue(sucursal);
     this.formulario.get('empresa').setValue(empresa);
     id ? this.formulario.get('id').setValue(id) : this.formulario.get('id').setValue(this.ultimoId);

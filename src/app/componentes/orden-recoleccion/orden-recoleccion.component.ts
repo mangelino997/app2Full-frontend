@@ -1,5 +1,4 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FechaService } from 'src/app/servicios/fecha.service';
 import { ToastrService } from 'ngx-toastr';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { AppService } from '../../servicios/app.service';
@@ -88,11 +87,28 @@ export class OrdenRecoleccionComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   constructor(
-    private ordenRecoleccion: OrdenRecoleccion, private fechaServicio: FechaService,
-    private localidadService: LocalidadService, private clienteService: ClienteService, private toastr: ToastrService,
-    private barrioService: BarrioService, private appService: AppService, private servicio: OrdenRecoleccionService,
+    private ordenRecoleccion: OrdenRecoleccion,
+    private localidadService: LocalidadService, private clienteService: ClienteService,
+    private toastr: ToastrService, private barrioService: BarrioService,
+    private appService: AppService, private servicio: OrdenRecoleccionService,
     public dialog: MatDialog, public clienteServicio: ClienteService,
     private loaderService: LoaderService, private reporteServicio: ReporteService) {
+    //Defiene autocompletado de Clientes
+    this.autocompletado.valueChanges.subscribe(data => {
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.loaderService.show();
+          this.servicio.listarPorAlias(data).subscribe(res => {
+            this.resultados = res.json();
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
+        }
+      }
+    })
   }
   ngOnInit() {
     //Establece la subscripcion a loader
@@ -111,7 +127,6 @@ export class OrdenRecoleccionComponent implements OnInit {
     this.inicializar(this.appService.getRol().id, this.appService.getSubopcion());
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar', 0);
-
     //Autocompletado - Buscar por alias
     this.autocompletado.valueChanges.subscribe(data => {
       if (typeof data == 'string') {
@@ -206,6 +221,12 @@ export class OrdenRecoleccionComponent implements OnInit {
         this.resultadosSucursales = respuesta.sucursales;
         this.formulario.get('id').setValue(this.ultimoId);
         this.render = false;
+        //Setea la fecha actual en los campos correspondientes
+        let fecha = respuesta.fecha;
+        let anio = fecha.split('-');
+        this.fechaEmisionFormatoOrig.setValue(fecha);
+        this.fechaEmisionFormatoNuevo.setValue(anio[2] + '-' + anio[1] + '-' + anio[0]);
+        this.formulario.get('fecha').setValue(fecha);
       },
       err => {
         this.toastr.error(err.json().mensaje);
@@ -307,6 +328,9 @@ export class OrdenRecoleccionComponent implements OnInit {
       case 4:
         this.establecerValoresPestania(nombre, true, true, true, true, 'idAutocompletado');
         break;
+        case 5: 
+        this.listaCompleta = new MatTableDataSource([]);
+        this.formularioListar.reset();
       default:
         break;
     }
@@ -327,6 +351,24 @@ export class OrdenRecoleccionComponent implements OnInit {
         break;
     }
   }
+  //Establece el elemento al formulario
+  public cambioAutocompletado() {
+    let elemento = this.autocompletado.value;
+    this.formulario.patchValue(elemento);
+    this.establecerDatoSoloLecturaElemento(elemento);
+    this.formulario.get('valorDeclarado').setValue(
+      this.appService.establecerDecimales(this.formulario.value.valorDeclarado, 2));
+  }
+  //Establece el formato adecuado para las hora desde-hasta (hh:mm:ss)
+  private establecerFormatoHora() {
+    let horaDesde = this.formulario.get('horaDesde').value.split(':');
+    let horaHasta = this.formulario.get('horaHasta').value.split(':');
+    /* si la longitud es de 2, significa que el formato es 'hh:mm'. Se le debe agregar los segundos ':ss' */
+    horaDesde.length == 2 ?
+      this.formulario.get('horaDesde').setValue(this.formulario.value.horaDesde + ':00') : '';
+    horaHasta.length == 2 ?
+      this.formulario.get('horaHasta').setValue(this.formulario.value.horaHasta + ':00') : '';
+  }
   //Agrega un registro
   private agregar() {
     this.loaderService.show();
@@ -334,11 +376,10 @@ export class OrdenRecoleccionComponent implements OnInit {
     this.formulario.get('sucursal').setValue(this.appService.getUsuario().sucursal);
     this.formulario.get('usuario').setValue(this.appService.getUsuario());
     this.formulario.get('tipoComprobante').setValue({ id: 3 });
-    this.formulario.get('horaDesde').setValue(this.formulario.value.horaDesde + ':00');
-    this.formulario.get('horaHasta').setValue(this.formulario.value.horaHasta + ':00');
+    this.establecerFormatoHora();
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
-        var respuesta = res.json();
+        let respuesta = res.json();
         if (respuesta.codigo == 201) {
           this.ultimoId = respuesta.id;
           this.reestablecerFormulario(respuesta.id);
@@ -348,7 +389,7 @@ export class OrdenRecoleccionComponent implements OnInit {
         }
       },
       err => {
-        var respuesta = err.json();
+        let respuesta = err.json();
         document.getElementById("idCliente").focus();
         this.toastr.error(respuesta.mensaje);
         this.loaderService.hide();
@@ -361,11 +402,10 @@ export class OrdenRecoleccionComponent implements OnInit {
     this.formulario.get('empresa').setValue(this.appService.getEmpresa());
     this.formulario.get('sucursal').setValue(this.appService.getUsuario().sucursal);
     this.formulario.get('usuario').setValue(this.appService.getUsuario());
-    this.formulario.get('horaDesde').setValue(this.formulario.value.horaDesde + ':00');
-    this.formulario.get('horaHasta').setValue(this.formulario.value.horaHasta + ':00');
+    this.establecerFormatoHora();
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
-        var respuesta = res.json();
+        let respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario(null);
           document.getElementById('idAutocompletado').focus();
@@ -374,7 +414,7 @@ export class OrdenRecoleccionComponent implements OnInit {
         }
       },
       err => {
-        var respuesta = err.json();
+        let respuesta = err.json();
         if (respuesta.codigo == 11002) {
           document.getElementById("idCliente").focus();
           this.toastr.error(respuesta.mensaje);
@@ -388,7 +428,7 @@ export class OrdenRecoleccionComponent implements OnInit {
     this.loaderService.show();
     this.servicio.actualizar(this.formulario.value.id).subscribe(
       res => {
-        var respuesta = res.json();
+        let respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario(null);
           document.getElementById('idAutocompletado').focus();
@@ -397,7 +437,7 @@ export class OrdenRecoleccionComponent implements OnInit {
         }
       },
       err => {
-        var respuesta = err.json();
+        let respuesta = err.json();
         if (respuesta.codigo == 11002) {
           document.getElementById("idCliente").focus();
           this.toastr.error(respuesta.mensaje);
@@ -417,7 +457,7 @@ export class OrdenRecoleccionComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe(resultado => {
       this.clienteServicio.obtenerPorId(resultado).subscribe(res => {
-        var cliente = res.json();
+        let cliente = res.json();
         this.formulario.get('cliente').setValue(cliente);
         this.cambioRemitente();
       })
@@ -501,18 +541,8 @@ export class OrdenRecoleccionComponent implements OnInit {
     this.domicilioBarrio.reset();
     this.localidadProvincia.reset();
     this.resultadosClientes = [];
+    this.resultados = [];
     this.mostrarCliente = false;
-    //Setea la fecha actual en los campos correspondientes
-    this.fechaServicio.obtenerFecha().subscribe(res => {
-      let respuesta = res.json();
-      let anio = respuesta.split('-');
-      this.fechaEmisionFormatoOrig.setValue(respuesta);
-      this.fechaEmisionFormatoNuevo.setValue(anio[2] + '-' + anio[1] + '-' + anio[0]);
-      this.formulario.get('fecha').setValue(respuesta);
-      //Inicializo los valores para las horas
-      // this.formulario.get('horaDesde').setValue('00:00');
-      // this.formulario.get('horaHasta').setValue('00:00');
-    });
     id ? this.formulario.get('id').setValue(id) : this.formulario.get('id').setValue(this.ultimoId);
     this.formulario.get('estaEnReparto').setValue(false);
   }
@@ -561,10 +591,7 @@ export class OrdenRecoleccionComponent implements OnInit {
     this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
     this.autocompletado.setValue(elemento);
     this.formulario.patchValue(elemento);
-    let domicilioYBarrio = this.formulario.get('cliente').value.domicilio + ' - ' + this.formulario.get('cliente').value.barrio.nombre;
-    let localidadYProvincia = this.formulario.get('cliente').value.localidad.nombre + ' - ' + this.formulario.get('cliente').value.localidad.provincia.nombre;
-    this.domicilioBarrio.setValue(domicilioYBarrio);
-    this.localidadProvincia.setValue(localidadYProvincia);
+    this.establecerDatoSoloLecturaElemento(elemento);
     this.formulario.get('valorDeclarado').setValue(
       this.appService.establecerDecimales(this.formulario.value.valorDeclarado, 2));
   }
@@ -573,18 +600,24 @@ export class OrdenRecoleccionComponent implements OnInit {
     this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
     this.autocompletado.setValue(elemento);
     this.formulario.patchValue(elemento);
-    let domicilioYBarrio = this.formulario.get('cliente').value.domicilio +
-      ' - ' + this.formulario.get('cliente').value.barrio.nombre;
-    let localidadYProvincia = this.formulario.get('cliente').value.localidad.nombre +
-      ' - ' + this.formulario.get('cliente').value.localidad.provincia.nombre;
-    this.domicilioBarrio.setValue(domicilioYBarrio);
-    this.localidadProvincia.setValue(localidadYProvincia);
+    this.establecerDatoSoloLecturaElemento(elemento);
     this.formulario.get('valorDeclarado').setValue(
       this.appService.establecerDecimales(this.formulario.value.valorDeclarado, 2));
   }
+  //Establece el Domicilio-Barrio y Localidad-Provincia del registro seleccionado
+  private establecerDatoSoloLecturaElemento(elemento) {
+    let domicilioYBarrio = this.formulario.get('cliente').value.domicilio +
+      ' - ' + (this.formulario.get('cliente').value.barrio ?
+        this.formulario.get('cliente').value.barrio.nombre : '');
+    let localidadYProvincia = this.formulario.get('cliente').value.localidad.nombre +
+      ' - ' + (this.formulario.get('cliente').value.localidad.provincia ?
+        this.formulario.get('cliente').value.localidad.provincia.nombre : '');
+    this.domicilioBarrio.setValue(domicilioYBarrio);
+    this.localidadProvincia.setValue(localidadYProvincia);
+  }
   //Maneja los evento al presionar una tacla (para pestanias y opciones)
   public manejarEvento(keycode) {
-    var indice = this.indiceSeleccionado;
+    let indice = this.indiceSeleccionado;
     if (keycode == 113) {
       if (indice < this.pestanias.length) {
         this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre, 0);

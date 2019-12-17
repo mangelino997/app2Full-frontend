@@ -8,8 +8,6 @@ import { LoaderService } from 'src/app/servicios/loader.service';
 import { ToastrService } from 'ngx-toastr';
 import { AppComponent } from 'src/app/app.component';
 import { AppService } from 'src/app/servicios/app.service';
-import { EmpresaService } from 'src/app/servicios/empresa.service';
-import { ModuloService } from 'src/app/servicios/modulo.service';
 import { SubopcionService } from 'src/app/servicios/subopcion.service';
 import { SubmoduloService } from 'src/app/servicios/submodulo.service';
 import { LoaderState } from 'src/app/modelos/loader';
@@ -22,6 +20,8 @@ import { BugImagenDialogoComponent } from '../bugImagen-dialogo/bug-imagen-dialo
   styleUrls: ['./soporte.component.css']
 })
 export class SoporteComponent implements OnInit {
+  //Define el ultimo id
+  public ultimoId: string = null;
   //Define los datos de la Empresa
   public empresa: FormControl = new FormControl();
   //Define el modulo como un formControl
@@ -45,7 +45,7 @@ export class SoporteComponent implements OnInit {
     { nombre: 'Agregar', id: 1 },
     { nombre: 'Consultar', id: 2 },
     { nombre: 'Actualizar', id: 3 },
-    { nombre: 'Eliminar', id: 4 },
+    // { nombre: 'Eliminar', id: 4 },
     { nombre: 'Listar', id: 5 },
   ]
   //Define la lista de Empresas
@@ -70,6 +70,8 @@ export class SoporteComponent implements OnInit {
   public listaCobradores: Array<any> = [];
   //Define la lista para Talonarios Recibos Lote
   public listaTalRecLote: Array<any> = [];
+  //Defiene el render
+  public render: boolean = false;
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service
@@ -81,10 +83,11 @@ export class SoporteComponent implements OnInit {
   //Define la matSort
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   //Constructor
-  constructor(private servicio: SoporteService, private modelo: Soporte, private loaderService: LoaderService, private toastr: ToastrService,
+  constructor(private servicio: SoporteService, private modelo: Soporte,
+    private loaderService: LoaderService, private toastr: ToastrService,
     private appComponent: AppComponent, private appService: AppService,
-    private empresaService: EmpresaService, private moduloService: ModuloService, private subopcionService: SubopcionService,
-    private submoduloService: SubmoduloService, private bugServicio: BugImagenService, public dialog: MatDialog) {
+    private subopcionService: SubopcionService, private submoduloService: SubmoduloService,
+    private bugServicio: BugImagenService, public dialog: MatDialog) {
     //Defiene autocompletado
     let usuario = this.appService.getUsuario();
     this.autocompletado.valueChanges.subscribe(data => {
@@ -96,9 +99,9 @@ export class SoporteComponent implements OnInit {
             this.resultados = res;
             this.loaderService.hide();
           },
-          err=>{
-            this.loaderService.hide();
-          })
+            err => {
+              this.loaderService.hide();
+            })
         }
       }
     })
@@ -112,34 +115,29 @@ export class SoporteComponent implements OnInit {
       });
     //Establece el Formulario
     this.formulario = this.modelo.formulario;
-    //Establece la primer pestaña
-    this.activeLink = this.pestanias[0].nombre;
+    /* Obtiene todos los listados */
+    this.inicializar();
     //Establece los valores, activando la primera pestania 
     this.seleccionarPestania(1, 'Agregar', 0);
-    //Reestablece el formulario
-    this.reestablecerFormulario(undefined);
-    //Obtiene la lista de Empresas
-    this.listarEmpresas();
-    //Obtiene la lista de Modulo
-    this.listarModulo();
   }
-  //Obtiene la lista de Empresas
-  private listarEmpresas() {
-    this.empresaService.listar().subscribe(
+  //Obtiene los datos necesarios para el componente
+  private inicializar() {
+    this.render = true;
+    this.servicio.inicializar().subscribe(
       res => {
-        this.listaEmpresas = res.json();
+        let respuesta = res.json();
+        //Establece la primer pestaña
+        this.activeLink = this.pestanias[0].nombre;
+        //Establece demas datos necesarios
+        this.ultimoId = respuesta.ultimoId;
+        this.listaEmpresas = respuesta.empresas;
+        this.listaModulos = respuesta.modulos;
+        this.formulario.get('id').setValue(this.ultimoId);
+        this.render = false;
       },
       err => {
-      }
-    )
-  }
-  //Obtiene la lista de Modulo
-  private listarModulo() {
-    this.moduloService.listar().subscribe(
-      res => {
-        this.listaModulos = res.json();
-      },
-      err => {
+        this.toastr.error(err.json().mensaje);
+        this.render = false;
       }
     )
   }
@@ -164,6 +162,7 @@ export class SoporteComponent implements OnInit {
     this.servicio.obtenerPorId(id).subscribe(
       res => {
         let elemento = res.json();
+        this.controlarModulo(elemento);
         this.formulario.setValue(elemento);
         this.establecerBug(elemento);
       },
@@ -172,13 +171,16 @@ export class SoporteComponent implements OnInit {
     );
   }
   //Establece los datos del elemento al formulario
-  private establecerElemento() {
-    let elemento = this.autocompletado.value;
-    this.obtenerPorId(elemento.id);
+  private controlarModulo(elemento) {
     this.modulo.setValue(elemento.subopcion.submodulo.modulo);
     this.submodulo.setValue(elemento.subopcion.submodulo);
     this.cambioModulo();
     this.cambioSubmodulo();
+  }
+  //Obtiene los datos del elemento 
+  public establecerElemento(){
+    let elemento = this.autocompletado.value;
+    this.obtenerPorId(elemento.id);
   }
   //Establece el habilitado o deshabilitado de los campos
   private establecerCampos(estado) {
@@ -207,17 +209,12 @@ export class SoporteComponent implements OnInit {
   };
   //Establece valores al seleccionar una pestania
   public seleccionarPestania(id, nombre, opcion) {
-    this.reestablecerFormulario(undefined);
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    if (opcion == 0) {
-      this.autocompletado.setValue(undefined);
-      this.resultados = [];
-    }
+    this.reestablecerFormulario(null);
     switch (id) {
       case 1:
-        this.obtenerSiguienteId();
-        this.establecerValoresPestania(nombre, false, false, true, 'idCobrador');
+        this.establecerValoresPestania(nombre, false, false, true, 'idEmpresa');
         this.establecerCampos(true);
         break;
       case 2:
@@ -255,16 +252,6 @@ export class SoporteComponent implements OnInit {
         break;
     }
   }
-  //Obtiene el siguiente id
-  private obtenerSiguienteId() {
-    this.servicio.obtenerSiguienteId().subscribe(
-      res => {
-        this.formulario.get('id').setValue(res.json());
-      },
-      err => {
-      }
-    );
-  }
   //Obtiene el listado de registros
   private listar() {
     this.loaderService.show();
@@ -294,10 +281,9 @@ export class SoporteComponent implements OnInit {
         var respuesta = res.json();
         if (res.status == 201) {
           respuesta.then(data => {
+            this.ultimoId = data.id;
             this.reestablecerFormulario(data.id);
-            setTimeout(function () {
-              document.getElementById('idEmpresa').focus();
-            }, 20);
+            document.getElementById('idEmpresa').focus();
             this.toastr.success('Registro agregado con éxito');
           })
         }
@@ -321,7 +307,7 @@ export class SoporteComponent implements OnInit {
     this.servicio.actualizar(this.formulario.value).then(
       res => {
         if (res.status == 200) {
-          this.reestablecerFormulario(undefined);
+          this.reestablecerFormulario(null);
           document.getElementById('idAutocompletado').focus();
           this.toastr.success('Registro actualizado con éxito');
         }
@@ -343,11 +329,12 @@ export class SoporteComponent implements OnInit {
   private eliminar() {
   }
   //Reestablece el formulario
-  private reestablecerFormulario(estado) {
+  private reestablecerFormulario(id) {
     this.formulario.reset();
     this.autocompletado.reset();
     this.modulo.setValue(null);
     this.submodulo.setValue(null);
+    id ? this.formulario.get('id').setValue(id) : this.formulario.get('id').setValue(this.ultimoId);
   }
   //Formatea el valor del autocompletado
   public displayFn(elemento) {

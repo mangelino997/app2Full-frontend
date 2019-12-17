@@ -1,6 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { TipoComprobanteService } from '../../servicios/tipo-comprobante.service';
-import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
@@ -16,6 +15,8 @@ import { ReporteService } from 'src/app/servicios/reporte.service';
   styleUrls: ['./tipo-comprobante.component.css']
 })
 export class TipoComprobanteComponent implements OnInit {
+  //Define el ultimo id
+  public ultimoId: string = null;
   //Define la pestania activa
   public activeLink: any = null;
   //Define el indice seleccionado de pestania
@@ -40,6 +41,8 @@ export class TipoComprobanteComponent implements OnInit {
   public resultados: Array<any> = [];
   //Define el mostrar del circulo de progreso
   public show = false;
+  //Defiene el render
+  public render: boolean = false;
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define las columnas de la tabla
@@ -49,18 +52,9 @@ export class TipoComprobanteComponent implements OnInit {
   //Define la paginacion
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Constructor
-  constructor(private servicio: TipoComprobanteService, private subopcionPestaniaService: SubopcionPestaniaService,
-    private appService: AppService, private toastr: ToastrService, private loaderService: LoaderService, private reporteServicio: ReporteService) {
-    //Obtiene la lista de pestania por rol y subopcion
-    this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
-      .subscribe(
-        res => {
-          this.pestanias = res.json();
-          this.activeLink = this.pestanias[0].nombre;
-        },
-        err => {
-        }
-      );
+  constructor(private servicio: TipoComprobanteService, private appService: AppService,
+    private toastr: ToastrService, private loaderService: LoaderService,
+    private reporteServicio: ReporteService) {
     //Autocompletado - Buscar por nombre
     this.autocompletado.valueChanges.subscribe(data => {
       if (typeof data == 'string') {
@@ -80,6 +74,11 @@ export class TipoComprobanteComponent implements OnInit {
   }
   //Al iniciarse el componente
   ngOnInit() {
+    //Establece la subscripcion a loader
+    this.subscription = this.loaderService.loaderState
+      .subscribe((state: LoaderState) => {
+        this.show = state.show;
+      });
     //Define los campos para validaciones
     this.formulario = new FormGroup({
       id: new FormControl(),
@@ -87,13 +86,30 @@ export class TipoComprobanteComponent implements OnInit {
       nombre: new FormControl('', [Validators.required, Validators.maxLength(45)]),
       abreviatura: new FormControl('', [Validators.required, Validators.maxLength(8)])
     });
+    /* Obtiene todos los listados */
+    this.inicializar(this.appService.getRol().id, this.appService.getSubopcion());
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar', 0);
-    //Establece la subscripcion a loader
-    this.subscription = this.loaderService.loaderState
-      .subscribe((state: LoaderState) => {
-        this.show = state.show;
-      });
+  }
+  //Obtiene los datos necesarios para el componente
+  private inicializar(idRol, idSubopcion) {
+    this.render = true;
+    this.servicio.inicializar(idRol, idSubopcion).subscribe(
+      res => {
+        let respuesta = res.json();
+        //Establece las pestanias
+        this.pestanias = respuesta.pestanias;
+        this.pestanias.splice(3, 1); /* saca la pestaña 'Eliminar' */
+        //Establece demas datos necesarios
+        this.ultimoId = respuesta.ultimoId;
+        this.formulario.get('id').setValue(this.ultimoId);
+        this.render = false;
+      },
+      err => {
+        this.toastr.error(err.json().mensaje);
+        this.render = false;
+      }
+    )
   }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
@@ -107,16 +123,11 @@ export class TipoComprobanteComponent implements OnInit {
   };
   //Establece valores al seleccionar una pestania
   public seleccionarPestania(id, nombre, opcion) {
-    this.reestablecerFormulario('');
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    if (opcion == 0) {
-      this.autocompletado.setValue(undefined);
-      this.resultados = [];
-    }
+    this.reestablecerFormulario(null);
     switch (id) {
       case 1:
-        this.obtenerSiguienteId();
         this.establecerValoresPestania(nombre, false, false, true, 'idNombre');
         break;
       case 2:
@@ -151,15 +162,10 @@ export class TipoComprobanteComponent implements OnInit {
         break;
     }
   }
-  //Obtiene el siguiente id
-  private obtenerSiguienteId() {
-    this.servicio.obtenerSiguienteId().subscribe(
-      res => {
-        this.formulario.get('id').setValue(res.json());
-      },
-      err => {
-      }
-    );
+  //Establece el elemento al formulario
+  public establecerElemento(){
+    let elemento = this.autocompletado.value;
+    this.formulario.patchValue(elemento);
   }
   //Obtiene el listado de registros
   private listar() {
@@ -186,6 +192,7 @@ export class TipoComprobanteComponent implements OnInit {
       res => {
         var respuesta = res.json();
         if (respuesta.codigo == 201) {
+          this.ultimoId = respuesta.id;
           this.reestablecerFormulario(respuesta.id);
           document.getElementById('idNombre').focus();
           this.toastr.success(respuesta.mensaje);
@@ -211,7 +218,7 @@ export class TipoComprobanteComponent implements OnInit {
       res => {
         var respuesta = res.json();
         if (respuesta.codigo == 200) {
-          this.reestablecerFormulario('');
+          this.reestablecerFormulario(null);
           document.getElementById('idAutocompletado').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
@@ -240,10 +247,10 @@ export class TipoComprobanteComponent implements OnInit {
   }
   //Reestablece el formulario
   private reestablecerFormulario(id) {
-    this.formulario.reset();
-    this.formulario.get('id').setValue(id);
-    this.autocompletado.setValue(undefined);
     this.resultados = [];
+    this.formulario.reset();
+    this.autocompletado.reset();
+    id ? this.formulario.get('id').setValue(id) : this.formulario.get('id').setValue(this.ultimoId);
   }
   //Manejo de colores de campos y labels
   public cambioCampo(id, label) {
@@ -254,13 +261,13 @@ export class TipoComprobanteComponent implements OnInit {
   public activarConsultar(elemento) {
     this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
     this.autocompletado.setValue(elemento);
-    this.formulario.setValue(elemento);
+    this.formulario.patchValue(elemento);
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
     this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
     this.autocompletado.setValue(elemento);
-    this.formulario.setValue(elemento);
+    this.formulario.patchValue(elemento);
   }
   //Define como se muestra los datos en el autcompletado
   public displayFn(elemento) {

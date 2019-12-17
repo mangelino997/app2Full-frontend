@@ -100,12 +100,6 @@ export class ChequeraComponent implements OnInit {
     this.inicializar(this.appService.getEmpresa().id, this.appService.getRol().id, this.appService.getSubopcion());
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar');
-    //Establece la empresa por defecto
-    this.establecerEmpresa();
-    //Obtiene la lista de Cuentas Bancarias
-    this.listarCuentasBancarias();
-    //Obtiene las diferentes cuentas bancarias de la empresa para realizar la Consultas
-    this.listarCuentasBancariasConsultas();
     //Obtiene las diferentes cuentas bancarias de la empresa con chequeras para realizar la Consultas
     this.listarCuentasConChequerasConsultas();
   }
@@ -115,7 +109,6 @@ export class ChequeraComponent implements OnInit {
     this.servicio.inicializar(idEmpresa, idRol, idSubopcion).subscribe(
       res => {
         let respuesta = res.json();
-        console.log(respuesta);
         //Establece las pestanias
         this.pestanias = respuesta.pestanias;
         //Establece demas datos necesarios
@@ -124,7 +117,6 @@ export class ChequeraComponent implements OnInit {
         this.listaCuentasConChequeraEmpresa = respuesta.cuentaBancariaConCheques;
         this.listaCuentasBancariasEmpresa = respuesta.chequeras;
         this.cuentasBancarias = respuesta.cuentaBancariaConsultas;
-
         this.formulario.get('id').setValue(this.ultimoId);
         this.render = false;
       },
@@ -134,35 +126,11 @@ export class ChequeraComponent implements OnInit {
       }
     )
   }
-  //Establece la empresa por defecto
-  private establecerEmpresa() {
-    this.empresa = this.appService.getEmpresa();
-    this.empresaDatos.setValue(this.empresa.razonSocial);
-  }
-  //Obtiene la lista de Cuentas Bancarias
-  private listarCuentasBancarias() {
-    this.cuentaBancariaService.listarPorEmpresa(this.appService.getEmpresa().id).subscribe(
-      res => {
-        console.log("cuentas bancarias: " + res.json());
-        // this.cuentasBancarias = res.json();
-      }
-    )
-  }
-  private listarCuentasBancariasConsultas() {
-    this.empresa = this.appService.getEmpresa();
-    this.servicio.listarPorEmpresa(this.empresa.id).subscribe(
-      res => {
-        console.log("chequeras: " + res.json());
-        // this.listaCuentasBancariasEmpresa = res.json();
-      }
-    )
-  }
   private listarCuentasConChequerasConsultas() {
     this.empresa = this.appService.getEmpresa();
     this.cuentaBancariaService.listarConChequerasPorEmpresa(this.empresa.id).subscribe(
       res => {
-        console.log("cuentas bancarias con chequeras: " + res.json());
-        // this.listaCuentasConChequeraEmpresa = res.json();
+        this.listaCuentasConChequeraEmpresa = res.json();
       }
     )
   }
@@ -201,19 +169,21 @@ export class ChequeraComponent implements OnInit {
   public seleccionarPestania(id, nombre) {
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    // this.establecerEmpresa();
     this.reestablecerFormulario(null);
     switch (id) {
       case 1:
         this.establecerValoresPestania(nombre, false, false, true, 'idCuentaBancaria');
         break;
       case 2:
+        this.listarCuentasConChequerasConsultas();
         this.establecerValoresPestania(nombre, true, true, false, 'idAutocompletado');
         break;
       case 3:
+        this.listarCuentasConChequerasConsultas();
         this.establecerValoresPestania(nombre, true, false, true, 'idAutocompletado');
         break;
       case 4:
+        this.listarCuentasConChequerasConsultas();
         this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
         break;
       case 5:
