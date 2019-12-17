@@ -254,7 +254,7 @@ export class CostosInsumosProductoComponent implements OnInit {
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
       } else {
-        this.toastr.error("Sin registros para mostrar.");
+        this.toastr.warning("Sin registros para mostrar.");
         this.listaCompleta = new MatTableDataSource([]);
       }
       this.listaCompleta.paginator = this.paginator;

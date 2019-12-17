@@ -240,7 +240,6 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
           let companiaSeguro = this.formulario.value.companiaSeguro;
           this.formulario.reset();
           this.formulario.get('companiaSeguro').setValue(companiaSeguro);
-          this.listarPorCompaniaSeguro();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
         }
@@ -273,11 +272,8 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
         res => {
           this.listaCompleta = new MatTableDataSource(res.json());
           this.listaCompleta.sort = this.sort;
-          this.listaCompleta.data.length == 0 ? this.toastr.error("Sin registros para mostrar para la Empresa y Compañía Seguro.") : '';
+          this.listaCompleta.data.length == 0 ? this.toastr.warning("Sin registros para mostrar para la Empresa y Compañía Seguro.") : '';
           this.loaderService.hide();
-          if (this.listaCompleta.data.length == 0) {
-            this.toastr.warning("Sin registros para mostrar.");
-          }
         },
         err => {
           this.toastr.error(err.json().mensaje);

@@ -168,6 +168,7 @@ export class MarcaProductoComponent implements OnInit {
         this.listaCompleta.sort = this.sort;
         this.listaCompleta.paginator = this.paginator;
         this.loaderService.hide();
+        this.listaCompleta.data.length == 0 ? this.toastr.warning("Sin registros para mostrar.") : '';
       },
       err => {
         let error = err.json();

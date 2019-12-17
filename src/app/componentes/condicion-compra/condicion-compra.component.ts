@@ -116,7 +116,7 @@ export class CondicionCompraComponent implements OnInit {
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
         this.listaCompleta.paginator = this.paginator;
-        this.listaCompleta.data.length == 0 ? this.toastr.error("Sin registros para mostrar.") : '';
+        this.listaCompleta.data.length == 0 ? this.toastr.warning("Sin registros para mostrar.") : '';
         this.loaderService.hide();
       },
       err => {

@@ -184,21 +184,6 @@ export class ConfiguracionVehiculoComponent implements OnInit {
         break;
     }
   }
-  //Obtiene el listado de registros
-  private listar() {
-    this.loaderService.show();
-    this.servicio.listar().subscribe(
-      res => {
-        this.listaCompleta = new MatTableDataSource(res.json());
-        this.listaCompleta.sort = this.sort;
-        this.listaCompleta.paginator = this.paginator;
-        this.loaderService.hide();
-      },
-      err => {
-        this.loaderService.hide();
-      }
-    );
-  }
   //Obtiene la lista de configuracion de vehiculos por tipo y marca
   public listarPorTipoVehiculoMarcaVehiculo() {
     let tipoVehiculo = this.formulario.get('tipoVehiculo').value;
@@ -225,6 +210,7 @@ export class ConfiguracionVehiculoComponent implements OnInit {
         this.listaCompleta.sort = this.sort;
         this.listaCompleta.paginator = this.paginator;
         this.loaderService.hide();
+        this.listaCompleta.data.length == 0 ? this.toastr.warning("Sin registros para mostrar") : '';
       },
       err => {
         this.loaderService.hide();

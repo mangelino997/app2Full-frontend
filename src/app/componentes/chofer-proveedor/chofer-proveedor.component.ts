@@ -234,6 +234,7 @@ export class ChoferProveedorComponent implements OnInit {
           this.resultados = new MatTableDataSource(res.json());
           this.resultados.sort = this.sort;
           this.loaderService.hide();
+          this.listaCompleta.data.length == 0 ? this.toastr.warning("El Proveedor no tiene choferes asignados.") : '';
         },
         err => {
           let error = err.json();

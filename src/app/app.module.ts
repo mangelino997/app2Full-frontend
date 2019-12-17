@@ -83,6 +83,10 @@ import { TotalesConceptoDialogoComponent } from './componentes/emitir-factura/to
 import { UsuariosActivosDialogoComponent } from './componentes/empresa/usuarios-activos-dialogo/usuarios-activos.component';
 import { BugImagenDialogoComponent } from './componentes/bugImagen-dialogo/bug-imagen-dialogo.component';
 import { CuentaBancariaDialogoComponent } from './componentes/cuenta-bancaria-dialogo/cuenta-bancaria-dialogo.component';
+import { TipoLiquidacionSueldo } from './modelos/tipoLiquidacionSueldo';
+import { TipoLiquidacionSueldoService } from './servicios/tipo-liquidacion-sueldo.service';
+import { TipoConceptoSueldo } from './modelos/tipoConceptoSueldo';
+import { TipoConceptoSueldoService } from './servicios/tipo-concepto-sueldo.service';
 
 const stompConfig: StompConfig = {
   url: 'ws://localhost:8080/jitws/socket',
@@ -121,7 +125,7 @@ const stompConfig: StompConfig = {
     TotalesConceptoDialogoComponent,
     UsuariosActivosDialogoComponent,
     BugImagenDialogoComponent,
-    CuentaBancariaDialogoComponent
+    CuentaBancariaDialogoComponent,
     // ListaRemitoDialogoComponent
   ],
   imports: [
@@ -202,6 +206,10 @@ const stompConfig: StompConfig = {
     ClienteEventual,
     ClienteCuentaBancariaService,
     ClienteVtoPagoService,
+    TipoLiquidacionSueldoService,
+    TipoLiquidacionSueldo,
+    TipoConceptoSueldo,
+    TipoConceptoSueldoService,
     {
       provide: StompConfig,
       useValue: stompConfig

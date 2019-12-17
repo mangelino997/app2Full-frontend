@@ -120,7 +120,9 @@ const routes: Routes = [
     { path: 'configuraciontipopercepcion', loadChildren: () => import('./modulos/tipo-percepcion/tipo-percepcion.module').then(m => m.TipoPercepcionModule), canActivate: [GuardiaService] },
     { path: 'adelantosadelantosenlote', loadChildren: () => import('./modulos/adelanto-lote/adelanto-lote.module').then(m => m.AdelantoLoteModule), canActivate: [GuardiaService] },
     { path: 'adelantosadministrar', loadChildren: () => import('./modulos/adelanto-personal/adelanto-personal.module').then(m => m.AdelantoPersonalModule), canActivate: [GuardiaService] },
-    { path: 'cierresdeviajesdocumentacion', loadChildren: () => import('./modulos/viaje-cierre-documentacion/viaje-cierre-documentacion.module').then(m => m.ViajeCierreDocumentacionModule), canActivate: [GuardiaService] }
+    { path: 'cierresdeviajesdocumentacion', loadChildren: () => import('./modulos/viaje-cierre-documentacion/viaje-cierre-documentacion.module').then(m => m.ViajeCierreDocumentacionModule), canActivate: [GuardiaService] },
+    { path: 'configuraciontiposdeliquidacionsueldo', loadChildren: () => import('./modulos/tipo-liquidacion-sueldo/tipo-liquidacion-sueldo.module').then(m => m.TipoLiquidacionSueldoModule), canActivate: [GuardiaService] },
+    { path: 'configuraciontiposdeconceptosueldo', loadChildren: () => import('./modulos/tipo-concepto-sueldo/tipo-concepto-sueldo.module').then(m => m.TipoConceptoSueldoModule), canActivate: [GuardiaService] }
 ];
 
 @NgModule({

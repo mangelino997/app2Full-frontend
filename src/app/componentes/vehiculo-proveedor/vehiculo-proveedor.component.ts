@@ -202,7 +202,7 @@ export class VehiculoProveedorComponent implements OnInit {
         this.listaCompleta = new MatTableDataSource(respuesta);
         this.listaCompleta.sort = this.sort;
         this.listaCompleta.paginator = this.paginator;
-        respuesta.length == 0 ? this.toastr.error("Sin registros para mostrar.") : '';
+        this.listaCompleta.data.length == 0 ? this.toastr.warning("El Proveedor no tiene vehículos asignados.") : '';
         this.loaderService.hide();
       },
       err => {

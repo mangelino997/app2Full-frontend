@@ -146,6 +146,7 @@ export class MonedaCotizacionComponent implements OnInit {
     this.servicio.listarPorMoneda(this.formulario.get('moneda').value.id).subscribe(res => {
       this.listaCompleta = new MatTableDataSource(res.json());
       this.listaCompleta.sort = this.sort;
+      this.listaCompleta.data.length == 0 ? this.toastr.warning("Sin registros para mostrar.") : '';
     });
   }
   //Reestablece los campos formularios

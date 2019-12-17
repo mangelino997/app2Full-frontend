@@ -1,24 +1,21 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
-import { FormGroup, FormControl } from '@angular/forms';
-import { ToastrService } from 'ngx-toastr';
-import { CondicionVentaService } from 'src/app/servicios/condicion-venta.service';
-import { CondicionVenta } from 'src/app/modelos/condicion-venta';
-import { MatSort, MatTableDataSource, MatPaginator } from '@angular/material';
-import { LoaderService } from 'src/app/servicios/loader.service';
-import { LoaderState } from 'src/app/modelos/loader';
-import { Subscription } from 'rxjs';
 import { AppService } from 'src/app/servicios/app.service';
+import { TipoLiquidacionSueldoService } from 'src/app/servicios/tipo-liquidacion-sueldo.service';
+import { TipoLiquidacionSueldo } from 'src/app/modelos/tipoLiquidacionSueldo';
+import { FormGroup, FormControl } from '@angular/forms';
+import { MatTableDataSource, MatSort, MatPaginator } from '@angular/material';
+import { LoaderService } from 'src/app/servicios/loader.service';
+import { Subscription } from 'rxjs';
+import { LoaderState } from 'src/app/modelos/loader';
+import { ToastrService } from 'ngx-toastr';
 import { ReporteService } from 'src/app/servicios/reporte.service';
 
 @Component({
-  selector: 'app-condicion-venta',
-  templateUrl: './condicion-venta.component.html',
-  styleUrls: ['./condicion-venta.component.css']
+  selector: 'app-tipo-liquidacion-sueldo',
+  templateUrl: './tipo-liquidacion-sueldo.component.html',
+  styleUrls: ['./tipo-liquidacion-sueldo.component.css']
 })
-export class CondicionVentaComponent implements OnInit {
-  //Define el ultimo id
-  public ultimoId: string = null;
+export class TipoLiquidacionSueldoComponent implements OnInit {
   //Define la pestania activa
   public activeLink: any = null;
   //Define el indice seleccionado de pestania
@@ -29,8 +26,12 @@ export class CondicionVentaComponent implements OnInit {
   public mostrarAutocompletado: boolean = null;
   //Define si el campo es de solo lectura
   public soloLectura: boolean = false;
+  //Define el ultimo id
+  public ultimoId;
   //Define si mostrar el boton
   public mostrarBoton: boolean = null;
+  //Define una lista
+  public lista: Array<any> = [];
   //Define la lista de pestanias
   public pestanias: Array<any> = [];
   //Define un formulario para validaciones de campos
@@ -39,31 +40,26 @@ export class CondicionVentaComponent implements OnInit {
   public listaCompleta = new MatTableDataSource([]);
   //Define el autocompletado
   public autocompletado: FormControl = new FormControl();
-  //Define empresa para las busquedas
-  public empresaBusqueda: FormControl = new FormControl();
   //Define la lista de resultados de busqueda
   public resultados: Array<any> = [];
-  //Define la lista de resultados de busqueda companias seguros
-  public resultadosCompaniasSeguros: Array<any> = [];
-  //Defien la lista de empresas
-  public empresas: Array<any> = [];
+  //Define el mostrar del circulo de progreso
+  public show = false;
+  //Define la subscripcion a loader.service
+  private subscription: Subscription;
   //Define las columnas de la tabla
-  public columnas: string[] = ['ID', 'NOMBRE', 'ES_CONTADO', 'EDITAR'];
+  public columnas: string[] = ['ID', 'NOMBRE', 'VER', 'EDITAR'];
+  public columnasSeleccionadas: string[] = this.columnas.filter((item, i) => true);
   //Define la matSort
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   //Define la paginacion
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
-  //Define el mostrar del circulo de progreso
-  public show = false;
-  //Defiene el render
-  public render: boolean = false;
-  //Define la subscripcion a loader.service
-  private subscription: Subscription;
-  //Constructor
-  constructor(private appService: AppService, private condicionVenta: CondicionVenta,
-    private servicio: CondicionVentaService, private toastr: ToastrService, private loaderService: LoaderService,
-    private reporteServicio: ReporteService) {
-    //Controla el autocompletado
+  constructor(private appService: AppService, private servicio: TipoLiquidacionSueldoService, private modelo: TipoLiquidacionSueldo,
+    private loaderService: LoaderService, private toastr: ToastrService, private reporteService: ReporteService) {
+
+    //Obtiene los datos necesarios para inicalizar el componente
+    this.inicializar(this.appService.getRol().id, this.appService.getSubopcion());
+
+    //Autocompletado - Buscar por nombre
     this.autocompletado.valueChanges.subscribe(data => {
       if (typeof data == 'string') {
         data = data.trim();
@@ -78,8 +74,9 @@ export class CondicionVentaComponent implements OnInit {
             })
         }
       }
-    });
+    })
   }
+
   ngOnInit() {
     //Establece la subscripcion a loader
     this.subscription = this.loaderService.loaderState
@@ -87,46 +84,22 @@ export class CondicionVentaComponent implements OnInit {
         this.show = state.show;
       });
     //Define el formulario y validaciones
-    this.formulario = this.condicionVenta.formulario;
-    /* Obtiene todos los listados */
-    this.inicializar(this.appService.getRol().id, this.appService.getSubopcion());
+    this.formulario = this.modelo.formulario;
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar', 0);
   }
-  //Obtiene los datos necesarios para el componente
-  private inicializar(idRol, idSubopcion) {
-    this.render = true;
+  public inicializar(idRol, idSubopcion) {
     this.servicio.inicializar(idRol, idSubopcion).subscribe(
       res => {
         let respuesta = res.json();
-        //Establece las pestanias
         this.pestanias = respuesta.pestanias;
-        //Establece demas datos necesarios
         this.ultimoId = respuesta.ultimoId;
-        this.formulario.get('id').setValue(this.ultimoId);
-        this.render = false;
-      },
-      err => {
-        this.toastr.error(err.json().mensaje);
-        this.render = false;
-      }
-    )
+      })
   }
-  //Obtiene el listado de registros
-  private listar() {
-    this.loaderService.show();
-    this.servicio.listar().subscribe(
-      res => {
-        this.listaCompleta = new MatTableDataSource(res.json());
-        this.listaCompleta.sort = this.sort;
-        this.listaCompleta.paginator = this.paginator;
-        this.listaCompleta.data.length == 0 ? this.toastr.warning("Sin registros para mostrar.") : '';
-        this.loaderService.hide();
-      },
-      err => {
-        this.loaderService.hide();
-      }
-    );
+  //Establece el formulario al seleccionar elemento del autocompletado
+  public cambioAutocompletado() {
+    let elemento = this.autocompletado.value;
+    this.formulario.patchValue(elemento);
   }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
@@ -140,39 +113,37 @@ export class CondicionVentaComponent implements OnInit {
   };
   //Establece valores al seleccionar una pestania
   public seleccionarPestania(id, nombre, opcion) {
+    this.formulario.reset();
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    this.reestablecerFormulario(null);
+    /*
+    * Se vacia el formulario solo cuando se cambia de pestania, no cuando
+    * cuando se hace click en ver o mod de la pestania lista
+    */
+    if (opcion == 0) {
+      this.autocompletado.setValue(undefined);
+      this.resultados = [];
+    }
     switch (id) {
       case 1:
-        this.establecerEstadoCampos(true);
+        this.formulario.get('id').setValue(this.ultimoId);
         this.establecerValoresPestania(nombre, false, false, true, 'idNombre');
         break;
       case 2:
-        this.establecerEstadoCampos(false);
         this.establecerValoresPestania(nombre, true, true, false, 'idAutocompletado');
         break;
       case 3:
-        this.establecerEstadoCampos(true);
         this.establecerValoresPestania(nombre, true, false, true, 'idAutocompletado');
         break;
       case 4:
-        this.establecerEstadoCampos(false);
         this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
         break;
       case 5:
+        //Obtiene la lista completa de registros
         this.listar();
         break;
       default:
         break;
-    }
-  }
-  //Habilita o deshabilita los campos dependiendo de la pestaña
-  private establecerEstadoCampos(estado) {
-    if (estado) {
-      this.formulario.get('esContado').enable();
-    } else {
-      this.formulario.get('esContado').disable();
     }
   }
   //Funcion para determina que accion se requiere (Agregar, Actualizar, Eliminar)
@@ -191,13 +162,30 @@ export class CondicionVentaComponent implements OnInit {
         break;
     }
   }
+  //Obtiene el listado de registros
+  private listar() {
+    this.loaderService.show();
+    this.servicio.listar().subscribe(
+      res => {
+        this.listaCompleta = new MatTableDataSource(res.json());
+        this.listaCompleta.sort = this.sort;
+        this.listaCompleta.paginator = this.paginator;
+        this.loaderService.hide();
+      },
+      err => {
+        let error = err.json();
+        this.toastr.error(error.mensaje);
+        this.loaderService.hide();
+      }
+    );
+  }
   //Agrega un registro
   private agregar() {
     this.loaderService.show();
     this.formulario.get('id').setValue(null);
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
-        let respuesta = res.json();
+        var respuesta = res.json();
         if (respuesta.codigo == 201) {
           this.ultimoId = respuesta.id;
           this.reestablecerFormulario(respuesta.id);
@@ -207,7 +195,7 @@ export class CondicionVentaComponent implements OnInit {
         }
       },
       err => {
-        let respuesta = err.json();
+        var respuesta = err.json();
         if (respuesta.codigo == 11002) {
           document.getElementById("labelNombre").classList.add('label-error');
           document.getElementById("idNombre").classList.add('is-invalid');
@@ -223,7 +211,7 @@ export class CondicionVentaComponent implements OnInit {
     this.loaderService.show();
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
-        let respuesta = res.json();
+        var respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario(null);
           document.getElementById('idAutocompletado').focus();
@@ -232,7 +220,7 @@ export class CondicionVentaComponent implements OnInit {
         }
       },
       err => {
-        let respuesta = err.json();
+        var respuesta = err.json();
         if (respuesta.codigo == 11002) {
           document.getElementById("labelNombre").classList.add('label-error');
           document.getElementById("idNombre").classList.add('is-invalid');
@@ -246,20 +234,19 @@ export class CondicionVentaComponent implements OnInit {
   //Elimina un registro
   private eliminar() {
     this.loaderService.show();
-    let formulario = this.formulario.value;
-    this.servicio.eliminar(formulario.id).subscribe(
+    this.servicio.eliminar(this.formulario.value.id).subscribe(
       res => {
-        let respuesta = res.json();
+        var respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario(null);
-          document.getElementById('idNombre').focus();
+          document.getElementById('idAutocompletado').focus();
           this.toastr.success(respuesta.mensaje);
+          this.loaderService.hide();
         }
-        this.loaderService.hide();
       },
       err => {
-        let respuesta = err.json();
-        if (respuesta.codigo == 500) {
+        var respuesta = err.json();
+        if (respuesta.codigo == 11002) {
           document.getElementById("labelNombre").classList.add('label-error');
           document.getElementById("idNombre").classList.add('is-invalid');
           document.getElementById("idNombre").focus();
@@ -271,10 +258,10 @@ export class CondicionVentaComponent implements OnInit {
   }
   //Reestablece los campos formularios
   private reestablecerFormulario(id) {
-    this.resultados = [];
     this.formulario.reset();
     this.autocompletado.reset();
-    id ? this.formulario.get('id').setValue(id) : this.formulario.get('id').setValue(this.ultimoId);
+    this.resultados = [];
+    id ? this.formulario.get('id').setValue(id) :  this.formulario.get('id').setValue(this.ultimoId);
   }
   //Manejo de colores de campos y labels
   public cambioCampo(id, label) {
@@ -293,30 +280,23 @@ export class CondicionVentaComponent implements OnInit {
     this.autocompletado.setValue(elemento);
     this.formulario.patchValue(elemento);
   }
+  //Formatea el valor del autocompletado
+  public displayFn(elemento) {
+    if (elemento != undefined) {
+      return elemento.nombre ? elemento.nombre : elemento;
+    } else {
+      return elemento;
+    }
+  }
   //Maneja los evento al presionar una tacla (para pestanias y opciones)
   public manejarEvento(keycode) {
-    let indice = this.indiceSeleccionado;
+    var indice = this.indiceSeleccionado;
     if (keycode == 113) {
       if (indice < this.pestanias.length) {
         this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre, 0);
       } else {
         this.seleccionarPestania(1, this.pestanias[0].nombre, 0);
       }
-    }
-  }
-  //Funcion para comparar y mostrar elemento de campo select
-  public compareFn = this.compararFn.bind(this);
-  private compararFn(a, b) {
-    if (a != null && b != null) {
-      return a.id === b.id;
-    }
-  }
-  //Define como se muestra los datos en el autcompletado
-  public displayF(elemento) {
-    if (elemento != undefined) {
-      return elemento.nombre ? elemento.nombre : elemento;
-    } else {
-      return elemento;
     }
   }
   //Verifica si se selecciono un elemento del autocompletado
@@ -333,7 +313,7 @@ export class CondicionVentaComponent implements OnInit {
       let f = {
         id: elemento.id,
         nombre: elemento.nombre,
-        es_contado: elemento.esContado ? 'Si' : 'No'
+        esdeducibleimpgan: elemento.esDeducibleImpGan ? 'Si' : 'No'
       }
       datos.push(f);
     });
@@ -343,12 +323,12 @@ export class CondicionVentaComponent implements OnInit {
   public abrirReporte(): void {
     let lista = this.prepararDatos(this.listaCompleta.data);
     let datos = {
-      nombre: 'Condiciones Venta',
+      nombre: 'Familiares',
       empresa: this.appService.getEmpresa().razonSocial,
       usuario: this.appService.getUsuario().nombre,
       datos: lista,
-      columnas: this.columnas
+      columnas: this.columnasSeleccionadas
     }
-    this.reporteServicio.abrirDialogo(datos);
+    this.reporteService.abrirDialogo(datos);
   }
 }

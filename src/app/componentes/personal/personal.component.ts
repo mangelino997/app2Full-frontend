@@ -991,12 +991,14 @@ export class PersonalComponent implements OnInit {
     this.seleccionarPestania(2, this.pestanias[1].nombre);
     this.obtenerPorId(elemento.id);
     this.autocompletado.setValue(elemento);
+    this.establecerNacionalidad(elemento.localidad);
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
     this.seleccionarPestania(3, this.pestanias[2].nombre);
     this.obtenerPorId(elemento.id);
     this.autocompletado.setValue(elemento);
+    this.establecerNacionalidad(elemento.localidad);
   }
   //Establece la foto y pdf (actilet consultar/actualizar)
   private establecerFotoYPdfs(elemento): void {
@@ -1025,6 +1027,7 @@ export class PersonalComponent implements OnInit {
   }
   //Establece la nacionalidad
   public establecerNacionalidad(localidad) {
+    console.log(localidad);
     this.nacionalidadNacimiento.setValue(localidad.provincia.pais.nombre);
   }
   //Define el mostrado de datos y comparacion en campo select

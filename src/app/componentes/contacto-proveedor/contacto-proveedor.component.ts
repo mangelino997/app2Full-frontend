@@ -191,7 +191,7 @@ export class ContactoProveedorComponent implements OnInit {
           this.listaCompleta = new MatTableDataSource(res.json());
           this.listaCompleta.paginator = this.paginator;
           this.listaCompleta.sort = this.sort;
-          this.listaCompleta.data.length == 0 ? this.toastr.error("El Proveedor no tiene contactos asignados.") : '';
+          this.listaCompleta.data.length == 0 ? this.toastr.warning("El Proveedor no tiene contactos asignados.") : '';
           this.loaderService.hide();
         },
         err => {

@@ -285,7 +285,7 @@ export class ProvinciaComponent implements OnInit {
           this.listaCompleta.paginator = this.paginator;
         } else {
           this.listaCompleta = new MatTableDataSource([]);
-          this.toastr.error("Sin registros para mostrar.");
+          this.toastr.warning("Sin registros para mostrar.");
         }
         this.loaderService.hide();
       },

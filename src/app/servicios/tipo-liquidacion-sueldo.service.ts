@@ -6,9 +6,9 @@ import { Message } from '@stomp/stompjs';
 import { StompService } from '@stomp/ng2-stompjs';
 
 @Injectable()
-export class TipoTarifaService {
+export class TipoLiquidacionSueldoService {
   //Define la ruta al servicio web
-  private ruta:string = "/tipotarifa";
+  private ruta:string = "/tipoliquidacionsueldo";
   //Define la url base
   private url:string = null;
   //Define la url para subcripcion a socket
@@ -43,24 +43,12 @@ export class TipoTarifaService {
     this.listaCompleta.next(JSON.parse(m.body));
   }
   //Obtiene el siguiente id
-  public obtenerSiguienteId() {
-    return this.http.get(this.url + '/obtenerSiguienteId', this.options);
+  public inicializar(idRol, idSubopcion) {
+    return this.http.get(this.url + '/inicializar/' + idRol + "/" + idSubopcion, this.options);
   }
   //Obtiene la lista de registros
   public listar() {
     return this.http.get(this.url, this.options);
-  }
-  //Obtiene la lista de registros para Escala
-  public listarPorEscala() {
-    return this.http.get(this.url + '/listarPorEscala', this.options);
-  }
-  //Obtiene la lista de registros para Tramo
-  public listarPorTramo() {
-    return this.http.get(this.url + '/listarPorTramo', this.options);
-  }
-  //Obtiene la lista de registros para Tramo
-  public listarPorOrdenVenta(id) {
-    return this.http.get(this.url + '/listarPorOrdenVenta/' + id, this.options);
   }
   //Obtiene un listado por nombre
   public listarPorNombre(nombre) {
