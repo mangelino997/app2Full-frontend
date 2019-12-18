@@ -40,9 +40,10 @@
                                     (blur)="validarCantidadCuotas()">
                             </div>
                         </div>
-                        <div class="col">
-                            <button id="idBotonConfirmar" mat-raised-button color="primary" (click)="confirmar()">Confirmar</button>
-                                <!-- [disabled]="!condicionCompra || cantidadCuotas==0 || soloLectura">Confirmar</button> -->
+                        <div class="col" *ngIf="!soloLectura">
+                            <button id="idBotonConfirmar" mat-raised-button color="primary"
+                                (click)="confirmar()" [disabled]="cantidadCuotas.value==0">Confirmar</button>
+                            <!-- [disabled]="!condicionCompra || cantidadCuotas==0 || soloLectura">Confirmar</button> -->
                         </div>
                         <div class="col"></div>
                     </div>
@@ -61,7 +62,7 @@
                                 <label id="labelFechaVencimiento" for="idFechaVencimiento"
                                     class="descripcion-label">Fecha de Vencimiento *</label>
                                 <input id="idFechaVencimiento" type="date" formControlName="fecha" autocomplete="off"
-                                    class="form-control form-control-sm" [readOnly]="!idMod">
+                                    class="form-control form-control-sm" [readOnly]="!formulario.valid">
                             </div>
                         </div>
                         <div class="col-md-3">
@@ -70,7 +71,7 @@
                                 <input id="idImporte" type="text" formControlName="importe" autocomplete="off"
                                     [textMask]="mascararImporte(10)" placeholder="$0.00"
                                     (blur)="establecerDecimales(formulario.get('importe'), 2)"
-                                    class="form-control form-control-sm number-right" [readOnly]="!idMod">
+                                    class="form-control form-control-sm number-right" [readOnly]="!formulario.valid">
                             </div>
                         </div>
                         <div class="col">
@@ -78,8 +79,8 @@
                                 [disabled]="!formulario.valid">Actualizar</button>
                         </div>
                         <div class="col">
-                            <button id="idBotonCancelar" mat-raised-button color="primary"
-                                (click)="cancelar()" [disabled]="soloLectura">Cancelar</button>
+                            <button id="idBotonCancelar" mat-raised-button color="primary" (click)="cancelar()"
+                                [disabled]="soloLectura">Cancelar</button>
                         </div>
                     </div>
                     <br>

@@ -313,8 +313,7 @@
         <div class="row" style="margin-top: 50px;">
           <div class="col">
             <button id="idBotonPercepciones" mat-raised-button color="primary" (click)="detallePercepcionDialogo()"
-              [disabled]="indiceSeleccionado != 2 ? 
-              [!formulario.valid || indiceSeleccionado == 3] : false">Percepciones </button>
+              [disabled]="!mostrarBotonPercepciones">Percepciones </button>
           </div>
           <div class="col">
             <div class="form-group has-float-label">
@@ -388,13 +387,11 @@
           </div>
           <div class="col-md-2">
             <button id="idBotonVencimientos" mat-raised-button color="primary" (click)="detalleVencimientosDialogo()"
-              [disabled]="indiceSeleccionado != 2 ? 
-              [!formulario.valid || formulario.value.importeTotal == 0 || indiceSeleccionado == 3] : false">Vencimientos
+              [disabled]="!mostrarBotonVencimientos">Vencimientos
             </button>
           </div>
           <div class="col-md-2">
-            <button id="idBotonMediosDePago" mat-raised-button color="primary" [disabled]="indiceSeleccionado != 2 ? 
-              [!formulario.valid || indiceSeleccionado == 3] : false">Medios de Pago </button>
+            <button id="idBotonMediosDePago" mat-raised-button color="primary" [disabled]="!mostrarBoton">Medios de Pago </button>
           </div>
         </div>
         <div class="row justify-content-center">

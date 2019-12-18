@@ -45,8 +45,10 @@ export class FacturaDebitoCreditoComponent implements OnInit {
   public condicion: boolean = false;
   //Define si el campo es de solo lectura
   public soloLectura: boolean = false;
-  //Define si muestra el boton
-  public mostrarBoton: boolean = null;
+  //Define si muestra el boton Percepciones
+  public mostrarBotonPercepciones: boolean = null;
+  //Define si muestra el boton Vencimientos
+  public mostrarBotonVencimientos: boolean = null;
   //Define la lista de pestanias
   public pestanias: Array<any> = [];
   //Define un formulario para validaciones de campos
@@ -259,7 +261,8 @@ export class FacturaDebitoCreditoComponent implements OnInit {
     this.pestaniaActual = nombrePestania;
     this.mostrarAutocompletado = autocompletado;
     this.soloLectura = soloLectura;
-    this.mostrarBoton = boton;
+    this.mostrarBotonPercepciones = boton;
+    this.mostrarBotonVencimientos = boton;
     setTimeout(function () {
       document.getElementById(componente).focus();
     }, 20);
@@ -275,7 +278,7 @@ export class FacturaDebitoCreditoComponent implements OnInit {
     switch (id) {
       case 1:
         this.establecerEstadoCampos();
-        this.establecerValoresPestania(nombre, false, false, true, 'idAutocompletado');
+        this.establecerValoresPestania(nombre, false, false, false, 'idAutocompletado');
         break;
       case 2:
         this.establecerEstadoCampos();
@@ -283,7 +286,7 @@ export class FacturaDebitoCreditoComponent implements OnInit {
         break;
       case 3:
         this.establecerEstadoCampos();
-        this.establecerValoresPestania(nombre, true, false, true, 'idEmpresaListar');
+        this.establecerValoresPestania(nombre, true, false, false, 'idEmpresaListar');
         break;
       case 4:
         this.establecerEstadoCampos();
@@ -343,8 +346,7 @@ export class FacturaDebitoCreditoComponent implements OnInit {
               this.listarComprasComprobantes()] : [
                 this.listaCompleta = new MatTableDataSource(resultado),
                 this.listaCompleta.sort = this.sort,
-                this.listaCompleta.paginator = this.paginator,
-              ]
+                this.listaCompleta.paginator = this.paginator]
           } else {
             this.toastr.warning("Sin datos para mostrar.");
           }
@@ -388,22 +390,24 @@ export class FacturaDebitoCreditoComponent implements OnInit {
     this.formulario.enable();
     let usuarioMod = this.appService.getUsuario();
     this.formulario.get('usuarioMod').setValue(usuarioMod);
-    this.controlaCamposVacios();
-    this.compraComprobanteService.actualizar(this.formulario.value).subscribe(
-      res => {
-        if (res.status == 200) {
-          this.reestablecerFormulario();
-          this.listaCompleta = new MatTableDataSource([]);
-          this.toastr.success(res.json().mensaje);
-          this.establecerEstadoCampos();
+    this.formulario.get('compraComprobanteItems').setValue([]),
+      this.formulario.get('compraComprobanteVencimientos').setValue([]),
+      this.formulario.get('compraComprobantePercepciones').setValue([]),
+      this.compraComprobanteService.actualizar(this.formulario.value).subscribe(
+        res => {
+          if (res.status == 200) {
+            this.reestablecerFormulario();
+            this.listaCompleta = new MatTableDataSource([]);
+            this.toastr.success(res.json().mensaje);
+            this.establecerEstadoCampos();
+          }
+          this.loaderService.hide();
+        },
+        err => {
+          this.lanzarError(err);
+          this.loaderService.hide();
         }
-        this.loaderService.hide();
-      },
-      err => {
-        this.lanzarError(err);
-        this.loaderService.hide();
-      }
-    );
+      );
   }
   //Controla los campos que estan en nulos
   private controlaCamposVacios() {
@@ -629,7 +633,6 @@ export class FacturaDebitoCreditoComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       //Seteo la lista de Item en el formulario
       this.formulario.get('compraComprobanteItems').setValue(result);
-
       //Cargo los items a la tabla
       if (this.listaCompleta.data.length > 0) {
         result.forEach(item => {
@@ -640,6 +643,11 @@ export class FacturaDebitoCreditoComponent implements OnInit {
         this.listaCompleta = new MatTableDataSource(result);
         this.listaCompleta.sort = this.sort;
       }
+
+      //Si la lista de items es mayor a 0 se habilitan los botones de Vencimientos, Percepciones
+      this.listaCompleta.data.length > 0 ?
+        [this.mostrarBotonPercepciones = true, this.mostrarBotonVencimientos = true] :
+        [this.mostrarBotonPercepciones = false, this.mostrarBotonVencimientos = true];
       this.calcularImportes();
     });
   }
@@ -696,7 +704,7 @@ export class FacturaDebitoCreditoComponent implements OnInit {
   }
   //Calcula los importes
   public calcularImportes() {
-    // this.establecerImportesPorDefecto();
+    this.establecerImportesPorDefecto();
     this.listaCompleta.data.forEach(
       item => {
         //Suma los importes anteriores con los nuevos
@@ -782,6 +790,11 @@ export class FacturaDebitoCreditoComponent implements OnInit {
 
     /* Establece el elemento */
     this.formulario.patchValue(elemento);
+    /* Habiilito o deshabilito el boton de Vencimientos, Percepciones */
+    this.indiceSeleccionado == 2 && elemento.compraComprobantePercepciones.length > 0 ?
+      this.mostrarBotonPercepciones = true : this.mostrarBotonPercepciones = false;
+    this.indiceSeleccionado == 2 && elemento.compraComprobanteVencimientos.length > 0 ?
+      this.mostrarBotonVencimientos = true : this.mostrarBotonVencimientos = false;
 
     //Setea la cantidad de items a la tabla principal
     this.listaCompleta = new MatTableDataSource(elemento.compraComprobanteItems);
@@ -810,6 +823,10 @@ export class FacturaDebitoCreditoComponent implements OnInit {
     //Establece los campos con los datos del proveedor
     this.formularioFiltro.get('nombre').setValue(elemento.proveedor);
     this.establecerValoresProveedor(elemento.proveedor);
+
+    //Reestablezco el campo condicionCompra
+    this.formulario.get('condicionCompra').setValue(elemento.condicionCompra);
+
   }
   //Maneja los evento al presionar una tacla (para pestanias y opciones)
   public manejarEvento(keycode) {
@@ -857,15 +874,14 @@ export class FacturaDebitoCreditoComponent implements OnInit {
   }
   //Establece la cantidad de ceros correspondientes a la izquierda del numero
   public establecerCerosIzq(elemento, string, cantidad) {
-    if (elemento.value) {
-      elemento.setValue((string + elemento.value).slice(cantidad));
-    }
+    elemento.value ? elemento.setValue((string + elemento.value).slice(cantidad)) : '';
+    // if (elemento.value) {
+    //   elemento.setValue((string + elemento.value).slice(cantidad));
+    // }
   }
   //Imprime la cantidad de ceros correspondientes a la izquierda del numero 
   public establecerCerosIzqEnVista(elemento, string, cantidad) {
-    if (elemento) {
-      return elemento = ((string + elemento).slice(cantidad));
-    }
+    if (elemento) { return elemento = ((string + elemento).slice(cantidad)); }
   }
   //Verifica si se selecciono un elemento del autocompletado
   public verificarSeleccion(valor): void {
@@ -1028,10 +1044,22 @@ export class AgregarItemDialogo {
     let cantidad = this.formulario.get('cantidad').value;
     if (precioUnitario && cantidad) {
       let importe = precioUnitario * cantidad;
-      this.formulario.get('importeNetoGravado').setValue(this.appService.establecerDecimales(importe, 2));
+      /* El largo del importe debe menor/igual a 10 carácteres (parte entera)  */
+      String(importe).length <= 10 ?
+        this.formulario.get('importeNetoGravado').setValue(this.appService.establecerDecimales(importe, 2)) :
+        this.reiniciarCalculoImporte();
     }
     this.calcularImporteIVA();
     this.calcularImporteITC();
+  }
+  /* Limpia los campos cantidad e importe cuando el largo del importe es
+   mayor a 10 carácteres (parte entera)
+  */
+  private reiniciarCalculoImporte() {
+    this.formulario.get('cantidad').reset();
+    document.getElementById('idCantidad').focus();
+    this.formulario.get('precioUnitario').reset();
+    this.toastr.error(" El importe excedió límite de carácteres. Verificar 'Cantidad' y 'Precio Unitario'.");
   }
   //Calcula el Importe ITC 
   public calcularImporteITC() {
@@ -1619,8 +1647,9 @@ export class DetalleVencimientosDialogo {
   }
   //Actualiza un registro de la tabla
   public actualizar() {
-    this.formulario.value.importeTotal = this.listaCompleta.data[this.idMod].importeTotal;
-    this.listaCompleta.data[this.idMod] = this.formulario.value;
+    let indice = this.idMod;
+    this.formulario.value.importeTotal = this.listaCompleta.data[indice].importeTotal;
+    this.listaCompleta.data[indice] = this.formulario.value;
     this.listaCompleta.sort = this.sort;
     this.calcularDiferenciaImporte();
     this.formulario.reset();
@@ -1641,7 +1670,8 @@ export class DetalleVencimientosDialogo {
 
     /* Cuando el indice es 0, se le suma 1, porque el html considera null al 0 
     (por ello el primer registro no se podria modificar) */
-    indice == 0 ? this.idMod = indice + 1 : this.idMod = indice;
+    // indice == 0 ? this.idMod = indice + 1 : 
+    this.idMod = indice;
   }
   //Activar Eliminar
   public activarEliminar(indice) {
@@ -1666,7 +1696,7 @@ export class DetalleVencimientosDialogo {
           }
         }
       )
-    }else{
+    } else {
       this.diferencia.setValue(this.appService.establecerDecimales(this.totalComprobante.value, 2));
       this.toastr.error("Lista de vencimientos vacía.");
     }

@@ -651,13 +651,15 @@ export class OrdenVentaComponent implements OnInit {
   }
   //Abre el modal de ver Orden Venta Tarifa
   public verTarifaOrdenVenta(tarifa) {
-    console.log(this.tipoTarifa);
-    console.log(this.ordenVenta);
+    console.log(tarifa);
+    console.log(this.ordenventa.value);
+    console.log(this.listaTarifasDeOrdVta.data);
     const dialogRef = this.dialog.open(VerTarifaDialogo, {
       width: '95%',
       data: {
-        tarifa: this.formularioTarifa.get('tipoTarifa').value,
-        ordenVenta: this.ordenVenta,
+        // tarifa: this.formularioTarifa.get('tipoTarifa').value,
+        tarifa: tarifa,
+        ordenVenta: this.ordenventa.value,
         indiceSeleccionado: this.indiceSeleccionado,
         fechaActual: this.preciosDesde.value,
         ordenVentaActiva: this.formulario.get('estaActiva').value
@@ -969,9 +971,9 @@ export class VerTarifaDialogo {
   //Define el indice seleccionado 
   public indiceSeleccionado: number = null;
   //Define tipo tarifa
-  public tipoTarifa= new FormControl();
+  public tipoTarifa = new FormControl();
   //Define tipo tarifa
-  public stringTipoTarifa : string = null;
+  public stringTipoTarifa: string = null;
   //Define la Orden Venta como un FormControl
   public ordenVenta = new FormControl();
   //Define la Fecha Actual como un FormControl
@@ -1017,7 +1019,7 @@ export class VerTarifaDialogo {
   ngOnInit() {
     //Inicializa valores
     console.log(this.data);
-    this.tipoTarifa = this.data.tipoTarifa;
+    this.tipoTarifa.setValue(this.data.tarifa);
     this.ordenVentaActiva = this.data.ordenVentaActiva;
     this.ordenVenta.setValue(this.data.ordenVenta);
     this.preciosDesde.setValue(this.data.fechaActual);
@@ -1071,7 +1073,7 @@ export class VerTarifaDialogo {
     if (this.tipoTarifa.get('porEscala')) {
       this.stringTipoTarifa = "porEscala";
       this.formularioEscala.reset();
-      this.formularioEscala.get('ordenVentaTarifa.tipoTarifa').setValue(this.tipoTarifa);
+      this.formularioEscala.get('tipoTarifa').setValue(this.tipoTarifa.value);
       this.formularioEscala.get('preciosDesde').setValue(this.data.fechaActual);
       this.controlarCampos();
     } else {
@@ -1079,7 +1081,7 @@ export class VerTarifaDialogo {
       this.importeSecoPor.reset();
       this.importeRefPor.reset();
       this.formularioTramo.reset();
-      this.formularioTramo.get('ordenVentaTarifa.tipoTarifa').setValue(this.tipoTarifa);
+      this.formularioTramo.get('tipoTarifa').setValue(this.tipoTarifa.value);
       this.formularioTramo.get('preciosDesde').setValue(this.data.fechaActual);
     }
     this.idMod = null;
@@ -1227,7 +1229,7 @@ export class VerTarifaDialogo {
   public listar() {
     this.loaderService.show();
     if (this.stringTipoTarifa == 'porEscala') {
-      this.ordenVentaEscalaService.listarPorOrdenVentaTarifa(this.ordenVenta.get('id'), this.tipoTarifa.get('id')).subscribe(
+      this.ordenVentaEscalaService.listarPorOrdenVentaTarifa(this.ordenVenta.value.id, this.tipoTarifa.value.id).subscribe(
         res => {
           this.listaCompleta = new MatTableDataSource(res.json());
           this.listaCompleta.sort = this.sort;
@@ -1257,10 +1259,11 @@ export class VerTarifaDialogo {
     this.formularioEscala.reset();
     this.formularioTramo.reset();
     this.idMod = null;
-    console.log(this.tipoTarifa);
-    if (this.tipoTarifa.get('porEscala')) {
+    console.log(this.data.tipoTarifa, this.tipoTarifa.value);
+    //if (this.tipoTarifa.value.porEscala) { ANTERIOR
+    if (this.tipoTarifa.value.porEscala) {
       this.stringTipoTarifa = "porEscala";
-      this.formularioEscala.get('ordenVentaTarifa.tipoTarifa').setValue({ id: this.tipoTarifa.get('id') });
+      this.formularioEscala.get('tipoTarifa').setValue({ id: this.tipoTarifa.value.id });
       this.formularioEscala.get('importeFijo').setValue(null);
       this.formularioEscala.get('precioUnitario').setValue(null);
       this.formularioEscala.get('porcentaje').setValue(null);
@@ -1269,7 +1272,7 @@ export class VerTarifaDialogo {
       this.controlarCampos();
     } else {
       this.stringTipoTarifa = "porTramo";
-      this.formularioTramo.get('ordenVentaTarifa.tipoTarifa').setValue({ id: this.tipoTarifa.get('id') });
+      this.formularioTramo.get('tipoTarifa').setValue({ id: this.tipoTarifa.value.id });
       this.formularioTramo.get('importeFijoSeco').setValue(null);
       this.formularioTramo.get('importeFijoRef').setValue(null);
       this.formularioTramo.get('precioUnitarioSeco').setValue(null);
