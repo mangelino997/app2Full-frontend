@@ -87,6 +87,11 @@ import { TipoLiquidacionSueldo } from './modelos/tipoLiquidacionSueldo';
 import { TipoLiquidacionSueldoService } from './servicios/tipo-liquidacion-sueldo.service';
 import { TipoConceptoSueldo } from './modelos/tipoConceptoSueldo';
 import { TipoConceptoSueldoService } from './servicios/tipo-concepto-sueldo.service';
+import { AfipConceptoSueldoService } from './servicios/afip-concepto-sueldo.service';
+import { AfipConceptoSueldo } from './modelos/afipConceptoSueldo';
+import { AfipConceptoSueldoGrupoComponent } from './componentes/afip-concepto-sueldo-grupo/afip-concepto-sueldo-grupo.component';
+import { AfipConceptoSueldoGrupoService } from './servicios/afip-concepto-sueldo-grupo.service';
+import { AfipConceptoSueldoGrupo } from './modelos/afipConceptoSueldoGrupo';
 
 const stompConfig: StompConfig = {
   url: 'ws://localhost:8080/jitws/socket',
@@ -210,6 +215,10 @@ const stompConfig: StompConfig = {
     TipoLiquidacionSueldo,
     TipoConceptoSueldo,
     TipoConceptoSueldoService,
+    AfipConceptoSueldoService,
+    AfipConceptoSueldo,
+    AfipConceptoSueldoGrupoService,
+    AfipConceptoSueldoGrupo,
     {
       provide: StompConfig,
       useValue: stompConfig

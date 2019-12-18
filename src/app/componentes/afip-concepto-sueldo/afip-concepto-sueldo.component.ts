@@ -1,20 +1,21 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { BancoService } from '../../servicios/banco.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { ToastrService } from 'ngx-toastr';
-import { MatSort, MatTableDataSource, MatPaginator } from '@angular/material';
-import { LoaderService } from 'src/app/servicios/loader.service';
-import { LoaderState } from 'src/app/modelos/loader';
+import { MatTableDataSource, MatSort, MatPaginator } from '@angular/material';
 import { Subscription } from 'rxjs';
 import { AppService } from 'src/app/servicios/app.service';
+import { ToastrService } from 'ngx-toastr';
+import { LoaderService } from 'src/app/servicios/loader.service';
 import { ReporteService } from 'src/app/servicios/reporte.service';
+import { LoaderState } from 'src/app/modelos/loader';
+import { AfipConceptoSueldoService } from 'src/app/servicios/afip-concepto-sueldo.service';
+import { AfipConceptoSueldo } from 'src/app/modelos/afipConceptoSueldo';
 
 @Component({
-  selector: 'app-banco',
-  templateUrl: './banco.component.html',
-  styleUrls: ['./banco.component.css']
+  selector: 'app-afip-concepto-sueldo',
+  templateUrl: './afip-concepto-sueldo.component.html',
+  styleUrls: ['./afip-concepto-sueldo.component.css']
 })
-export class BancoComponent implements OnInit {
+export class AfipConceptoSueldoComponent implements OnInit {
   //Define el ultimo id
   public ultimoId: string = null;
   //Define la pestania activa
@@ -29,10 +30,14 @@ export class BancoComponent implements OnInit {
   public soloLectura: boolean = false;
   //Define si mostrar el boton
   public mostrarBoton: boolean = null;
+  //Define una lista
+  public lista: Array<any> = [];
   //Define la lista de pestanias
   public pestanias: Array<any> = [];
-  //Define la lista de tipos de docs
-  public resultadosDocumentos: Array<any> = [];
+  //Define la lista de afipConceptoSueldoGrupo
+  public resultadosAfipCptoSueldoGrupos: Array<any> = [];
+  //Define la lista de afipConceptoSueldoGrupo
+  public resultadoTipoCptoSueldo: FormControl = new FormControl();
   //Define un formulario para validaciones de campos
   public formulario: FormGroup;
   //Define la lista completa de registros
@@ -48,14 +53,14 @@ export class BancoComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define las columnas de la tabla
-  public columnas: string[] = ['ID', 'NOMBRE', 'TIPO_DOCUMENTO', 'NUMERO_DOCUMENTO', 'SITIO_WEB', 'EDITAR'];
+  public columnas: string[] = ['ID', 'CONCEPTO_GRUPO', 'TIPO_CONCEPTO', 'NOMBRE', 'EDITAR'];
   //Define la matSort
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   //Define la paginacion
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Constructor
-  constructor(private servicio: BancoService,
-    private appService: AppService, private toastr: ToastrService, private loaderService: LoaderService, private reporteServicio: ReporteService) {
+  constructor(private servicio: AfipConceptoSueldoService, private appService: AppService, private modelo: AfipConceptoSueldo,
+    private toastr: ToastrService, private loaderService: LoaderService, private reporteServicio: ReporteService) {
     //Autocompletado - Buscar por nombre
     this.autocompletado.valueChanges.subscribe(data => {
       if (typeof data == 'string') {
@@ -81,14 +86,7 @@ export class BancoComponent implements OnInit {
         this.show = state.show;
       });
     //Define el formulario y validaciones
-    this.formulario = new FormGroup({
-      id: new FormControl(),
-      version: new FormControl(),
-      nombre: new FormControl('', [Validators.required, Validators.maxLength(45)]),
-      sitioWeb: new FormControl('', Validators.maxLength(60)),
-      tipoDocumento: new FormControl('', Validators.required),
-      numeroDocumento: new FormControl('', [Validators.required, Validators.maxLength(15)])
-    });
+    this.formulario = this.modelo.formulario;
     /* Obtiene todos los listados */
     this.inicializar(this.appService.getRol().id, this.appService.getSubopcion());
     //Establece los valores de la primera pestania activa
@@ -100,12 +98,13 @@ export class BancoComponent implements OnInit {
     this.servicio.inicializar(idRol, idSubopcion).subscribe(
       res => {
         let respuesta = res.json();
+      console.log(respuesta);
         //Establece las pestanias
         this.pestanias = respuesta.pestanias;
-        this.resultadosDocumentos = respuesta.tipoDocumentos;
         //Establece demas datos necesarios
         this.ultimoId = respuesta.ultimoId;
         this.formulario.get('id').setValue(this.ultimoId);
+        this.resultadosAfipCptoSueldoGrupos = respuesta.afipConceptoSueldoGrupos;
         this.render = false;
       },
       err => {
@@ -133,43 +132,6 @@ export class BancoComponent implements OnInit {
       return a.id === b.id;
     }
   }
-  //Validad el numero de documento
-  public validarDocumento(): void {
-    let documento = this.formulario.get('numeroDocumento').value;
-    let tipoDocumento = this.formulario.get('tipoDocumento').value;
-    if (documento) {
-      switch (tipoDocumento.id) {
-        case 1:
-          let respuesta = this.appService.validarCUIT(documento.toString());
-          if (!respuesta) {
-            this.formulario.get('numeroDocumento').reset();
-            let err = { codigo: 11010, mensaje: 'CUIT Incorrecto!' };
-            this.lanzarError(err);
-          }
-          break;
-        case 2:
-          let respuesta2 = this.appService.validarCUIT(documento.toString());
-          if (!respuesta2) {
-            this.formulario.get('numeroDocumento').reset();
-            let err = { codigo: 11010, mensaje: 'CUIL Incorrecto!' };
-            this.lanzarError(err);
-          }
-          break;
-        case 8:
-          let respuesta8 = this.appService.validarDNI(documento.toString());
-          if (!respuesta8) {
-            this.formulario.get('numeroDocumento').reset();
-            let err = { codigo: 11010, mensaje: 'DNI Incorrecto!' };
-            this.lanzarError(err);
-          }
-          break;
-      }
-    }
-  }
-  //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
-  private lanzarError(err) {
-    this.formulario.get('numeroDocumento').setErrors({ 'incorrect': true });
-  }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
     this.pestaniaActual = nombrePestania;
@@ -177,7 +139,7 @@ export class BancoComponent implements OnInit {
     this.soloLectura = soloLectura;
     this.mostrarBoton = boton;
     nombrePestania == 'Agregar' ? this.formulario.get('id').setValue(this.ultimoId) : this.formulario.reset();
-    this.soloLectura ? this.formulario.get('tipoDocumento').disable(): this.formulario.get('tipoDocumento').enable();
+    this.soloLectura ? this.formulario.get('afipConceptoSueldoGrupo').disable(): this.formulario.get('afipConceptoSueldoGrupo').enable();
     setTimeout(function () {
       document.getElementById(componente).focus();
     }, 20);
@@ -186,11 +148,7 @@ export class BancoComponent implements OnInit {
   public seleccionarPestania(id, nombre) {
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    this.reestablecerFormulario(undefined);
-    /*
-    * Se vacia el formulario solo cuando se cambia de pestania, no cuando
-    * cuando se hace click en ver o mod de la pestania lista
-    */
+    this.reestablecerFormulario(null);
     switch (id) {
       case 1:
         this.establecerValoresPestania(nombre, false, false, true, 'idNombre');
@@ -236,9 +194,11 @@ export class BancoComponent implements OnInit {
         this.listaCompleta.sort = this.sort;
         this.listaCompleta.paginator = this.paginator;
         this.loaderService.hide();
-        this.listaCompleta.data.length == 0 ? this.toastr.warning("Sin registros para mostrar") : '';
+        this.listaCompleta.data.length == 0 ? this.toastr.warning('No se encontraron registros.') : '';
       },
       err => {
+        let error = err.json();
+        this.toastr.error(error.mensaje);
         this.loaderService.hide();
       }
     );
@@ -249,7 +209,7 @@ export class BancoComponent implements OnInit {
     this.formulario.get('id').setValue(null);
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
-        var respuesta = res.json();
+        let respuesta = res.json();
         if (respuesta.codigo == 201) {
           this.ultimoId = respuesta.id;
           this.reestablecerFormulario(respuesta.id);
@@ -259,15 +219,11 @@ export class BancoComponent implements OnInit {
         }
       },
       err => {
-        var respuesta = err.json();
+        let respuesta = err.json();
         if (respuesta.codigo == 11002) {
           document.getElementById("labelNombre").classList.add('label-error');
           document.getElementById("idNombre").classList.add('is-invalid');
           document.getElementById("idNombre").focus();
-        } else if (respuesta.codigo == 11008) {
-          document.getElementById("labelSitioWeb").classList.add('label-error');
-          document.getElementById("idSitioWeb").classList.add('is-invalid');
-          document.getElementById("idSitioWeb").focus();
         }
         this.toastr.error(respuesta.mensaje);
         this.loaderService.hide();
@@ -279,7 +235,7 @@ export class BancoComponent implements OnInit {
     this.loaderService.show();
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
-        var respuesta = res.json();
+        let respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario(null);
           document.getElementById('idAutocompletado').focus();
@@ -288,15 +244,11 @@ export class BancoComponent implements OnInit {
         }
       },
       err => {
-        var respuesta = err.json();
+        let respuesta = err.json();
         if (respuesta.codigo == 11002) {
           document.getElementById("labelNombre").classList.add('label-error');
           document.getElementById("idNombre").classList.add('is-invalid');
           document.getElementById("idNombre").focus();
-        } else if (respuesta.codigo == 11008) {
-          document.getElementById("labelSitioWeb").classList.add('label-error');
-          document.getElementById("idSitioWeb").classList.add('is-invalid');
-          document.getElementById("idSitioWeb").focus();
         }
         this.toastr.error(respuesta.mensaje);
         this.loaderService.hide();
@@ -306,25 +258,24 @@ export class BancoComponent implements OnInit {
   //Elimina un registro
   private eliminar() {
     this.loaderService.show();
-    let formulario = this.formulario.value;
-    this.servicio.eliminar(formulario.id).subscribe(
+    this.servicio.eliminar(this.formulario.value.id).subscribe(
       res => {
-        var respuesta = res.json();
+        let respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario(null);
-          document.getElementById('idNombre').focus();
+          document.getElementById('idAutocompletado').focus();
           this.toastr.success(respuesta.mensaje);
+          this.loaderService.hide();
         }
-        this.loaderService.hide();
       },
       err => {
-        var respuesta = err.json();
-        if (respuesta.codigo == 500) {
+        let respuesta = err.json();
+        if (respuesta.codigo == 11002) {
           document.getElementById("labelNombre").classList.add('label-error');
           document.getElementById("idNombre").classList.add('is-invalid');
           document.getElementById("idNombre").focus();
-          this.toastr.error(respuesta.mensaje);
         }
+        this.toastr.error(respuesta.mensaje);
         this.loaderService.hide();
       }
     );
@@ -340,21 +291,7 @@ export class BancoComponent implements OnInit {
   public cambioCampo(id, label) {
     document.getElementById(id).classList.remove('is-invalid');
     document.getElementById(label).classList.remove('label-error');
-  }
-  //Manejo de colores de campos y labels con patron erroneo
-  public validarPatron(patron, campo) {
-    let valor = this.formulario.get(campo).value;
-    if (valor != undefined && valor != null && valor != '') {
-      var patronVerificador = new RegExp(patron);
-      if (!patronVerificador.test(valor)) {
-        if (campo == 'sitioWeb') {
-          this.toastr.error('Sitio Web Incorrecto');
-          document.getElementById("idSitioWeb").classList.add('is-invalid');
-          document.getElementById("labelSitioweb").classList.add('label-error');
-        }
-      }
-    }
-  }
+  };
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
     this.seleccionarPestania(2, this.pestanias[1].nombre);
@@ -369,7 +306,7 @@ export class BancoComponent implements OnInit {
   }
   //Maneja los evento al presionar una tacla (para pestanias y opciones)
   public manejarEvento(keycode) {
-    var indice = this.indiceSeleccionado;
+    let indice = this.indiceSeleccionado;
     if (keycode == 113) {
       if (indice < this.pestanias.length) {
         this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre);
@@ -391,8 +328,7 @@ export class BancoComponent implements OnInit {
     lista.forEach(elemento => {
       let f = {
         id: elemento.id,
-        nombre: elemento.nombre,
-        sitio_web: elemento.sitioWeb,
+        nombre: elemento.nombre
       }
       datos.push(f);
     });
@@ -402,12 +338,16 @@ export class BancoComponent implements OnInit {
   public abrirReporte(): void {
     let lista = this.prepararDatos(this.listaCompleta.data);
     let datos = {
-      nombre: 'Bancos',
+      nombre: 'Areas',
       empresa: this.appService.getEmpresa().razonSocial,
       usuario: this.appService.getUsuario().nombre,
       datos: lista,
       columnas: this.columnas
     }
     this.reporteServicio.abrirDialogo(datos);
+  }
+  public establecerTipoConcepto() {
+    console.log(this.formulario.value);
+    this.resultadoTipoCptoSueldo.setValue(this.formulario.get('afipConceptoSueldoGrupo').value.tipoConceptoSueldo.nombre);
   }
 }

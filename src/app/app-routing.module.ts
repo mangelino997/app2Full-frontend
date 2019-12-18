@@ -121,8 +121,10 @@ const routes: Routes = [
     { path: 'adelantosadelantosenlote', loadChildren: () => import('./modulos/adelanto-lote/adelanto-lote.module').then(m => m.AdelantoLoteModule), canActivate: [GuardiaService] },
     { path: 'adelantosadministrar', loadChildren: () => import('./modulos/adelanto-personal/adelanto-personal.module').then(m => m.AdelantoPersonalModule), canActivate: [GuardiaService] },
     { path: 'cierresdeviajesdocumentacion', loadChildren: () => import('./modulos/viaje-cierre-documentacion/viaje-cierre-documentacion.module').then(m => m.ViajeCierreDocumentacionModule), canActivate: [GuardiaService] },
-    { path: 'configuraciontiposdeliquidacionsueldo', loadChildren: () => import('./modulos/tipo-liquidacion-sueldo/tipo-liquidacion-sueldo.module').then(m => m.TipoLiquidacionSueldoModule), canActivate: [GuardiaService] },
-    { path: 'configuraciontiposdeconceptosueldo', loadChildren: () => import('./modulos/tipo-concepto-sueldo/tipo-concepto-sueldo.module').then(m => m.TipoConceptoSueldoModule), canActivate: [GuardiaService] }
+    { path: 'configuraciontiposdeliquidacionsueldos', loadChildren: () => import('./modulos/tipo-liquidacion-sueldo/tipo-liquidacion-sueldo.module').then(m => m.TipoLiquidacionSueldoModule), canActivate: [GuardiaService] },
+    { path: 'configuraciontiposdeconceptosueldos', loadChildren: () => import('./modulos/tipo-concepto-sueldo/tipo-concepto-sueldo.module').then(m => m.TipoConceptoSueldoModule), canActivate: [GuardiaService] },
+    { path: 'conceptosafipconceptos', loadChildren: () => import('./modulos/afip-concepto-sueldo/afip-concepto-sueldo.module').then(m => m.AfipConceptoSueldoModule), canActivate: [GuardiaService] },
+    { path: 'conceptosafipgruposconceptos', loadChildren: () => import('./modulos/afip-concepto-sueldo-grupo/afip-concepto-sueldo-grupo.module').then(m => m.AfipConceptoSueldoGrupoModule), canActivate: [GuardiaService] }
 ];
 
 @NgModule({
