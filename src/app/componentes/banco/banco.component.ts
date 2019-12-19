@@ -48,7 +48,7 @@ export class BancoComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define las columnas de la tabla
-  public columnas: string[] = ['ID', 'NOMBRE', 'TIPO_DOCUMENTO', 'NUMERO_DOCUMENTO', 'SITIO_WEB', 'EDITAR'];
+  public columnas: string[] = ['ID', 'NOMBRE', 'NUMERO_DOCUMENTO', 'SITIO_WEB', 'EDITAR'];
   //Define la matSort
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   //Define la paginacion

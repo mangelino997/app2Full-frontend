@@ -338,7 +338,7 @@ export class AfipConceptoSueldoComponent implements OnInit {
   public abrirReporte(): void {
     let lista = this.prepararDatos(this.listaCompleta.data);
     let datos = {
-      nombre: 'Areas',
+      nombre: 'Conceptos de Sueldo de AFIP',
       empresa: this.appService.getEmpresa().razonSocial,
       usuario: this.appService.getUsuario().nombre,
       datos: lista,

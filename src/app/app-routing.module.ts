@@ -92,7 +92,7 @@ const routes: Routes = [
     { path: 'configuraciontiposdeproveedor', loadChildren: () => import('./modulos/tipo-proveedor/tipo-proveedor.module').then(m => m.TipoProveedorModule), canActivate: [GuardiaService] },
     { path: 'configuraciontiposdetarifa', loadChildren: () => import('./modulos/tipo-tarifa/tipo-tarifa.module').then(m => m.TipoTarifaModule), canActivate: [GuardiaService] },
     { path: 'configuracionafipconceptoventa', loadChildren: () => import('./modulos/concepto-afip/concepto-afip.module').then(m => m.ConceptoAfipModule), canActivate: [GuardiaService] },
-    { path: 'configuracionventasconceptos', loadChildren: () => import('./modulos/venta-concepto/venta-concepto.module').then(m => m.VentaConceptoModule), canActivate: [GuardiaService] },
+    { path: 'configuraciontiposconceptoventa', loadChildren: () => import('./modulos/tipo-concepto-venta/tipo-concepto-venta.module').then(m => m.VentaConceptoModule), canActivate: [GuardiaService] },
     { path: 'configuracionventatipoitem', loadChildren: () => import('./modulos/venta-tipo/venta-tipo.module').then(m => m.VentaTipoModule), canActivate: [GuardiaService] },
     { path: 'recoleccionesadministrar', loadChildren: () => import('./modulos/orden-recoleccion/orden-recoleccion.module').then(m => m.OrdenRecoleccionModule), canActivate: [GuardiaService] },
     { path: 'logisticaunidadesdenegocio', loadChildren: () => import('./modulos/viaje-unidad-negocio/viaje-unidad-negocio.module').then(m => m.ViajeUnidadNegocioModule), canActivate: [GuardiaService] },
@@ -121,8 +121,8 @@ const routes: Routes = [
     { path: 'adelantosadelantosenlote', loadChildren: () => import('./modulos/adelanto-lote/adelanto-lote.module').then(m => m.AdelantoLoteModule), canActivate: [GuardiaService] },
     { path: 'adelantosadministrar', loadChildren: () => import('./modulos/adelanto-personal/adelanto-personal.module').then(m => m.AdelantoPersonalModule), canActivate: [GuardiaService] },
     { path: 'cierresdeviajesdocumentacion', loadChildren: () => import('./modulos/viaje-cierre-documentacion/viaje-cierre-documentacion.module').then(m => m.ViajeCierreDocumentacionModule), canActivate: [GuardiaService] },
-    { path: 'configuraciontiposdeliquidacionsueldos', loadChildren: () => import('./modulos/tipo-liquidacion-sueldo/tipo-liquidacion-sueldo.module').then(m => m.TipoLiquidacionSueldoModule), canActivate: [GuardiaService] },
-    { path: 'configuraciontiposdeconceptosueldos', loadChildren: () => import('./modulos/tipo-concepto-sueldo/tipo-concepto-sueldo.module').then(m => m.TipoConceptoSueldoModule), canActivate: [GuardiaService] },
+    { path: 'configuraciontiposdeliquidacionsueldo', loadChildren: () => import('./modulos/tipo-liquidacion-sueldo/tipo-liquidacion-sueldo.module').then(m => m.TipoLiquidacionSueldoModule), canActivate: [GuardiaService] },
+    { path: 'configuraciontiposdeconceptosueldo', loadChildren: () => import('./modulos/tipo-concepto-sueldo/tipo-concepto-sueldo.module').then(m => m.TipoConceptoSueldoModule), canActivate: [GuardiaService] },
     { path: 'conceptosafipconceptos', loadChildren: () => import('./modulos/afip-concepto-sueldo/afip-concepto-sueldo.module').then(m => m.AfipConceptoSueldoModule), canActivate: [GuardiaService] },
     { path: 'conceptosafipgruposconceptos', loadChildren: () => import('./modulos/afip-concepto-sueldo-grupo/afip-concepto-sueldo-grupo.module').then(m => m.AfipConceptoSueldoGrupoModule), canActivate: [GuardiaService] }
 ];

@@ -18,7 +18,7 @@ import { TipoComprobanteService } from 'src/app/servicios/tipo-comprobante.servi
 import { AfipComprobanteService } from 'src/app/servicios/afip-comprobante.service';
 import { VentaTipoItemService } from 'src/app/servicios/venta-tipo-item.service';
 import { OrdenVentaEscalaService } from 'src/app/servicios/orden-venta-escala.service';
-import { VentaItemConceptoService } from 'src/app/servicios/venta-item-concepto.service';
+import { TipoConceptoVentaService } from 'src/app/servicios/tipo-concepto-venta.service';
 import { AfipAlicuotaIvaService } from 'src/app/servicios/afip-alicuota-iva.service';
 import { VentaComprobante } from 'src/app/modelos/ventaComprobante';
 import { VentaComprobanteItemFA } from 'src/app/modelos/ventaComprobanteItemFA';
@@ -67,7 +67,7 @@ import { ViajeTramoClienteRemitoService } from 'src/app/servicios/viaje-tramo-cl
     AfipComprobanteService,
     VentaTipoItemService,
     OrdenVentaEscalaService,
-    VentaItemConceptoService,
+    TipoConceptoVentaService,
     AfipAlicuotaIvaService,
     VentaComprobante,
     VentaComprobanteItemFA,

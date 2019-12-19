@@ -1,25 +1,25 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { VentaConceptoRoutingModule } from './venta-concepto-routing.module';
+import { TipoConceptoVentaRoutingModule } from './tipo-concepto-venta-routing.module';
 
 import {
   MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule,
   MatSelectModule, MatProgressBarModule, MatButtonModule, MatIconModule, MatTooltipModule
 } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { VentaConceptoComponent } from 'src/app/componentes/venta-concepto/venta-concepto.component';
-import { VentaItemConceptoService } from 'src/app/servicios/venta-item-concepto.service';
+import { TipoConceptoVentaComponent } from 'src/app/componentes/tipo-concepto-venta/tipo-concepto-venta.component';
 import { VentaConcepto } from 'src/app/modelos/venta-concepto';
 import { AfipConceptoVentaService } from 'src/app/servicios/afip-concepto.service';
+import { TipoConceptoVentaService } from 'src/app/servicios/tipo-concepto-venta.service';
 
 @NgModule({
   declarations: [
-    VentaConceptoComponent,
+    TipoConceptoVentaComponent,
   ],
   imports: [
     CommonModule,
-    VentaConceptoRoutingModule,
+    TipoConceptoVentaRoutingModule,
     MatTabsModule,
     FormsModule,
     ReactiveFormsModule,
@@ -34,7 +34,7 @@ import { AfipConceptoVentaService } from 'src/app/servicios/afip-concepto.servic
     MatTooltipModule
   ],
   providers: [
-    VentaItemConceptoService,
+    TipoConceptoVentaService,
     AfipConceptoVentaService,
     VentaConcepto
   ]

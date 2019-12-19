@@ -47,7 +47,7 @@ export class TipoLiquidacionSueldoComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define las columnas de la tabla
-  public columnas: string[] = ['ID', 'NOMBRE', 'VER', 'EDITAR'];
+  public columnas: string[] = ['ID', 'NOMBRE','CODIGO_AFIP', 'VER', 'EDITAR'];
   public columnasSeleccionadas: string[] = this.columnas.filter((item, i) => true);
   //Define la matSort
   @ViewChild(MatSort, { static: false }) sort: MatSort;
@@ -323,7 +323,7 @@ export class TipoLiquidacionSueldoComponent implements OnInit {
   public abrirReporte(): void {
     let lista = this.prepararDatos(this.listaCompleta.data);
     let datos = {
-      nombre: 'Familiares',
+      nombre: 'Tipo de Liquidaciones de Sueldo',
       empresa: this.appService.getEmpresa().razonSocial,
       usuario: this.appService.getUsuario().nombre,
       datos: lista,

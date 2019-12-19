@@ -86,7 +86,7 @@ export class EmitirFactura {
             importeRetiro: new FormControl(),
             importeEntrega: new FormControl(),
             conceptosVarios: new FormControl(),
-            importeVentaItemConcepto: new FormControl(),
+            importeTipoConceptoVenta: new FormControl(),
             importeNetoGravado: new FormControl(),
             importeNoGravado: new FormControl(),
             importeIva: new FormControl(0),

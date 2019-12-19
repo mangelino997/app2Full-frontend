@@ -14,7 +14,7 @@ import { VentaTipoItemService } from 'src/app/servicios/venta-tipo-item.service'
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialog, MatSort, MatTableDataSource } from '@angular/material';
 import { ViajeTerceroTramoService } from 'src/app/servicios/viaje-tercero-tramo.service';
 import { OrdenVentaEscalaService } from 'src/app/servicios/orden-venta-escala.service';
-import { VentaItemConceptoService } from 'src/app/servicios/venta-item-concepto.service';
+import { TipoConceptoVentaService } from 'src/app/servicios/tipo-concepto-venta.service';
 import { AforoComponent } from '../aforo/aforo.component';
 import { AfipAlicuotaIvaService } from 'src/app/servicios/afip-alicuota-iva.service';
 import { VentaComprobanteService } from 'src/app/servicios/venta-comprobante.service';
@@ -712,8 +712,8 @@ export class EmitirFacturaComponent implements OnInit {
     dialogRef.afterClosed().subscribe(resultado => {
       resultado ?
         [
-          this.formularioVtaCpteItemFA.get('ventaItemConcepto').setValue(resultado.concepto),
-          this.formularioVtaCpteItemFA.get('importeVentaItemConcepto').setValue(this.appService.establecerDecimales(resultado.importe, 2)),
+          this.formularioVtaCpteItemFA.get('tipoConceptoVenta').setValue(resultado.concepto),
+          this.formularioVtaCpteItemFA.get('importeTipoConceptoVenta').setValue(this.appService.establecerDecimales(resultado.importe, 2)),
           this.calcularSubtotal()
         ] : '';
     })
@@ -795,8 +795,8 @@ export class EmitirFacturaComponent implements OnInit {
       ];
 
     /* valor del item concepto */
-    let concepto = this.formularioVtaCpteItemFA.value.importeVentaItemConcepto ?
-      Number(this.formularioVtaCpteItemFA.value.importeVentaItemConcepto) : 0;
+    let concepto = this.formularioVtaCpteItemFA.value.importeTipoConceptoVenta ?
+      Number(this.formularioVtaCpteItemFA.value.importeTipoConceptoVenta) : 0;
 
     /* calcula el subtotal del item */
     this.calcularSubtotalItem(importeSeguro, fleteNeto, retiro, entrega, concepto);
@@ -1170,7 +1170,7 @@ export class ConceptosVariosDialogo {
   //Define la lista de conceptos
   public conceptos: Array<any> = [];
   constructor(public dialogRef: MatDialogRef<ConceptosVariosDialogo>, @Inject(MAT_DIALOG_DATA) public data, private appService: AppService,
-    private ventaItemConceptoService: VentaItemConceptoService, private toastr: ToastrService) {
+    private tipoConceptoVentaService: TipoConceptoVentaService, private toastr: ToastrService) {
 
   }
   ngOnInit() {
@@ -1184,7 +1184,7 @@ export class ConceptosVariosDialogo {
   }
   //Carga la lista de conceptos
   private listarConceptos() {
-    this.ventaItemConceptoService.listar().subscribe(
+    this.tipoConceptoVentaService.listar().subscribe(
       res => {
         this.conceptos = res.json();
       }, err => { this.toastr.error(err.json().mensaje); }

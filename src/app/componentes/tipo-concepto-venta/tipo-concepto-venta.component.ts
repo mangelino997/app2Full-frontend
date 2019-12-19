@@ -3,8 +3,7 @@ import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.ser
 import { FormGroup, FormControl, Validators, MaxLengthValidator } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { VentaConcepto } from 'src/app/modelos/venta-concepto';
-import { TipoComprobanteService } from 'src/app/servicios/tipo-comprobante.service';
-import { VentaItemConceptoService } from 'src/app/servicios/venta-item-concepto.service';
+import { TipoConceptoVentaService } from 'src/app/servicios/tipo-concepto-venta.service';
 import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
@@ -15,10 +14,10 @@ import { AfipConceptoVentaService } from 'src/app/servicios/afip-concepto.servic
 
 @Component({
   selector: 'app-venta-concepto',
-  templateUrl: './venta-concepto.component.html',
-  styleUrls: ['./venta-concepto.component.css']
+  templateUrl: './tipo-concepto-venta.component.html',
+  styleUrls: ['./tipo-concepto-venta.component.css']
 })
-export class VentaConceptoComponent implements OnInit {
+export class TipoConceptoVentaComponent implements OnInit {
   //Define el ultimo id
   public ultimoId: string = null;
   //Define la pestania activa
@@ -64,7 +63,7 @@ export class VentaConceptoComponent implements OnInit {
   //Define la paginacion
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Constructor
-  constructor(private servicio: VentaItemConceptoService,
+  constructor(private servicio: TipoConceptoVentaService,
     private ventaConcepto: VentaConcepto, private appService: AppService,
     private loaderService: LoaderService,
     private toastr: ToastrService, private reporteServicio: ReporteService) {
