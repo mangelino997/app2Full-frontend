@@ -136,9 +136,8 @@ export class AfipConceptoSueldoGrupoComponent implements OnInit {
     this.mostrarAutocompletado = autocompletado;
     this.soloLectura = soloLectura;
     this.mostrarBoton = boton;
-    console.log(nombrePestania);
-    nombrePestania == 'Agregar' ? this.formulario.get('id').setValue(this.ultimoId) : this.formulario.reset();
-    this.soloLectura ? this.formulario.get('tipoConceptoSueldo').disable(): this.formulario.get('tipoConceptoSueldo').enable();
+    this.indiceSeleccionado != 1 ? this.formulario.reset() : '';
+    this.soloLectura ? this.formulario.get('tipoConceptoSueldo').disable() : this.formulario.get('tipoConceptoSueldo').enable();
     setTimeout(function () {
       document.getElementById(componente).focus();
     }, 20);
@@ -150,7 +149,7 @@ export class AfipConceptoSueldoGrupoComponent implements OnInit {
     this.reestablecerFormulario(null);
     switch (id) {
       case 1:
-        this.establecerValoresPestania(nombre, false, false, true, 'idNombre');
+        this.establecerValoresPestania(nombre, false, false, true, 'idConceptoSueldo');
         break;
       case 2:
         this.establecerValoresPestania(nombre, true, true, false, 'idAutocompletado');
@@ -206,12 +205,14 @@ export class AfipConceptoSueldoGrupoComponent implements OnInit {
   private agregar() {
     this.loaderService.show();
     this.formulario.get('id').setValue(null);
+    let tipoConceptoSueldo = this.formulario.get('tipoConceptoSueldo').value;
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         let respuesta = res.json();
         if (respuesta.codigo == 201) {
           this.ultimoId = respuesta.id;
           this.reestablecerFormulario(respuesta.id);
+          this.formulario.get('tipoConceptoSueldo').setValue(tipoConceptoSueldo);
           document.getElementById('idNombre').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();

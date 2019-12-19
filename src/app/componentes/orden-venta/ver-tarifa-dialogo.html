@@ -12,7 +12,7 @@
         </div>
       </div>
     </div>
-    <div class="row" *ngIf="tipoTarifa == 'porEscala'">
+    <div class="row" *ngIf="stringTipoTarifa == 'porEscala'">
       <div class="col-md-12">
         <form [formGroup]="formularioEscala">
           <div class="row">
@@ -94,7 +94,7 @@
       </div>
     </div>
     <!--Formulario para Orden Venta Tarifa por Tramo-->
-    <div class="row" *ngIf="tipoTarifa == 'porTramo'">
+    <div class="row" *ngIf="stringTipoTarifa == 'porTramo'">
       <div class="col-md-12">
         <form [formGroup]="formularioTramo">
           <div class="row">
@@ -203,7 +203,7 @@
         </form>
       </div>
     </div>
-    <div class="row" *ngIf="tipoTarifa == 'porEscala'">
+    <div class="row" *ngIf="stringTipoTarifa == 'porEscala'">
       <div class="col">
         <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
           <ng-container matColumnDef="mod">
@@ -258,7 +258,7 @@
         </table>
       </div>
     </div>
-    <div class="tabla" *ngIf="tipoTarifa == 'porTramo'">
+    <div class="tabla" *ngIf="stringTipoTarifa == 'porTramo'">
       <div class="tabla-ancho">
         <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
           <ng-container matColumnDef="eliminar">

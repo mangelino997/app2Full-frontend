@@ -37,9 +37,11 @@ export class AfipConceptoSueldoComponent implements OnInit {
   //Define la lista de afipConceptoSueldoGrupo
   public resultadosAfipCptoSueldoGrupos: Array<any> = [];
   //Define la lista de afipConceptoSueldoGrupo
-  public resultadoTipoCptoSueldo: FormControl = new FormControl();
+  public tipoCptoSueldo: FormControl = new FormControl();
   //Define un formulario para validaciones de campos
   public formulario: FormGroup;
+  //Define un formulario para validaciones de campos
+  public formularioFiltro: FormGroup;
   //Define la lista completa de registros
   public listaCompleta = new MatTableDataSource([]);
   //Define el autocompletado
@@ -53,7 +55,7 @@ export class AfipConceptoSueldoComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define las columnas de la tabla
-  public columnas: string[] = ['ID', 'CONCEPTO_GRUPO', 'TIPO_CONCEPTO', 'NOMBRE', 'EDITAR'];
+  public columnas: string[] = ['ID', 'CONCEPTO_GRUPO', 'NOMBRE', 'CODIGO_AFIP', 'EDITAR'];
   //Define la matSort
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   //Define la paginacion
@@ -87,6 +89,10 @@ export class AfipConceptoSueldoComponent implements OnInit {
       });
     //Define el formulario y validaciones
     this.formulario = this.modelo.formulario;
+    //Define el formulario de la pestaña Listar y sus validaciones
+    this.formularioFiltro = new FormGroup({
+      afipConceptoSueldoGrupo: new FormControl('', Validators.required)
+    });
     /* Obtiene todos los listados */
     this.inicializar(this.appService.getRol().id, this.appService.getSubopcion());
     //Establece los valores de la primera pestania activa
@@ -98,7 +104,7 @@ export class AfipConceptoSueldoComponent implements OnInit {
     this.servicio.inicializar(idRol, idSubopcion).subscribe(
       res => {
         let respuesta = res.json();
-      console.log(respuesta);
+        console.log(respuesta);
         //Establece las pestanias
         this.pestanias = respuesta.pestanias;
         //Establece demas datos necesarios
@@ -138,8 +144,8 @@ export class AfipConceptoSueldoComponent implements OnInit {
     this.mostrarAutocompletado = autocompletado;
     this.soloLectura = soloLectura;
     this.mostrarBoton = boton;
-    nombrePestania == 'Agregar' ? this.formulario.get('id').setValue(this.ultimoId) : this.formulario.reset();
-    this.soloLectura ? this.formulario.get('afipConceptoSueldoGrupo').disable(): this.formulario.get('afipConceptoSueldoGrupo').enable();
+    this.indiceSeleccionado != 1 ? this.formulario.reset() : '';
+    this.soloLectura ? this.formulario.get('afipConceptoSueldoGrupo').disable() : this.formulario.get('afipConceptoSueldoGrupo').enable();
     setTimeout(function () {
       document.getElementById(componente).focus();
     }, 20);
@@ -151,7 +157,7 @@ export class AfipConceptoSueldoComponent implements OnInit {
     this.reestablecerFormulario(null);
     switch (id) {
       case 1:
-        this.establecerValoresPestania(nombre, false, false, true, 'idNombre');
+        this.establecerValoresPestania(nombre, false, false, true, 'idConceptoGrupo');
         break;
       case 2:
         this.establecerValoresPestania(nombre, true, true, false, 'idAutocompletado');
@@ -163,7 +169,7 @@ export class AfipConceptoSueldoComponent implements OnInit {
         this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
         break;
       case 5:
-        this.listar();
+        this.listarPorFiltro();
         break;
       default:
         break;
@@ -186,33 +192,40 @@ export class AfipConceptoSueldoComponent implements OnInit {
     }
   }
   //Obtiene el listado de registros
-  private listar() {
+  public listarPorFiltro() {
     this.loaderService.show();
-    this.servicio.listar().subscribe(
-      res => {
-        this.listaCompleta = new MatTableDataSource(res.json());
-        this.listaCompleta.sort = this.sort;
-        this.listaCompleta.paginator = this.paginator;
-        this.loaderService.hide();
-        this.listaCompleta.data.length == 0 ? this.toastr.warning('No se encontraron registros.') : '';
-      },
-      err => {
-        let error = err.json();
-        this.toastr.error(error.mensaje);
-        this.loaderService.hide();
-      }
-    );
+    let afipConceptoGrupo = this.formularioFiltro.value.afipConceptoSueldoGrupo;
+    if (afipConceptoGrupo) {
+      this.servicio.listarPorAfipConceptoSueldoGrupo(afipConceptoGrupo.id).subscribe(
+        res => {
+          this.listaCompleta = new MatTableDataSource(res.json());
+          this.listaCompleta.sort = this.sort;
+          this.listaCompleta.paginator = this.paginator;
+          this.loaderService.hide();
+          this.listaCompleta.data.length == 0 ? this.toastr.warning('Sin registros para mostrar.') : '';
+        },
+        err => {
+          let error = err.json();
+          this.toastr.error(error.mensaje);
+          this.loaderService.hide();
+        }
+      )
+    } else {
+      this.loaderService.hide();
+    }
   }
   //Agrega un registro
   private agregar() {
     this.loaderService.show();
     this.formulario.get('id').setValue(null);
+    let conceptoGrupoAfip = this.formulario.get('afipConceptoSueldoGrupo').value;
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         let respuesta = res.json();
         if (respuesta.codigo == 201) {
           this.ultimoId = respuesta.id;
           this.reestablecerFormulario(respuesta.id);
+          this.formulario.get('afipConceptoSueldoGrupo').setValue(conceptoGrupoAfip);
           document.getElementById('idNombre').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
@@ -287,6 +300,17 @@ export class AfipConceptoSueldoComponent implements OnInit {
     this.autocompletado.reset();
     id ? this.formulario.get('id').setValue(id) : this.formulario.get('id').setValue(this.ultimoId);
   }
+  //Valida que el campo 'Codigo AFIP' tenga como minimo y máx 6 carácteres
+  public validarCodigoAFIP() {
+    let codigoAFIP = this.formulario.get('codigoAfip').value;
+    this.formulario.value.codigoAfip && String(codigoAFIP).length < 6 ? [
+      this.formulario.get('codigoAfip').reset(),
+      this.toastr.error("Código Afip debe tener 6 carácteres."),
+      setTimeout(function () {
+        document.getElementById('idCodigoAfip').focus();
+      }, 20)
+    ] : '';
+  }
   //Manejo de colores de campos y labels
   public cambioCampo(id, label) {
     document.getElementById(id).classList.remove('is-invalid');
@@ -348,6 +372,8 @@ export class AfipConceptoSueldoComponent implements OnInit {
   }
   public establecerTipoConcepto() {
     console.log(this.formulario.value);
-    this.resultadoTipoCptoSueldo.setValue(this.formulario.get('afipConceptoSueldoGrupo').value.tipoConceptoSueldo.nombre);
+    this.indiceSeleccionado == 5 ?
+      this.tipoCptoSueldo.setValue(this.formularioFiltro.get('afipConceptoSueldoGrupo').value.tipoConceptoSueldo.nombre) :
+      this.tipoCptoSueldo.setValue(this.formulario.get('afipConceptoSueldoGrupo').value.tipoConceptoSueldo.nombre);
   }
 }

@@ -1,112 +1,143 @@
 <div id="afipconceptosueldo" class="container-fluid" (window:keydown)="manejarEvento($event.keyCode)">
-    <div class="row">
-      <div class="centrar">
-        <nav mat-tab-nav-bar>
-          <a mat-tab-link disabled>AFIP CONCEPTO SUELDO</a>
-          <a mat-tab-link *ngFor="let pestania of pestanias" [active]="activeLink == pestania.nombre"
-            (click)="seleccionarPestania(pestania.id, pestania.nombre)">{{pestania.nombre}}</a>
-        </nav>
-      </div>
+  <div class="row">
+    <div class="centrar">
+      <nav mat-tab-nav-bar>
+        <a mat-tab-link disabled>AFIP CONCEPTOS</a>
+        <a mat-tab-link *ngFor="let pestania of pestanias" [active]="activeLink == pestania.nombre"
+          (click)="seleccionarPestania(pestania.id, pestania.nombre)">{{pestania.nombre}}</a>
+      </nav>
     </div>
-    <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado < 5">
-      <div class="col-md-5 text-center">
-        <h5>{{pestaniaActual}} Afip Concepto de Sueldo</h5>
-        <form [formGroup]="formulario" class="contenedor">
-          <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
-            <label for="idAutocompletado" class="tamanio-label">Buscar</label>
-            <input id="idAutocompletado" class="form-control form-control-sm color-busqueda" type="text" matInput
-              [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off"
-              (blur)="verificarSeleccion(autocompletado)" placeholder="Por Nombre">
-            <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)">
-              <mat-option *ngFor="let item of resultados" [value]="item" (onSelectionChange)="cambioAutocompletado(item)">
-                {{item.nombre}}
-              </mat-option>
-            </mat-autocomplete>
-          </div>
-          <div class="form-group has-float-label">
-            <label for="idCodigo" class="tamanio-label">Código</label>
-            <input id="idCodigo" type="number" formControlName="id" class="form-control form-control-sm" readonly>
-          </div>
-            <div class="form-group has-float-label">
-              <label for="idConceptoGrupo" class="tamanio-label">Concepto Grupo Afip * </label>
-              <mat-select id="idConceptoGrupo" class="form-control form-control-sm" formControlName="afipConceptoSueldoGrupo"
-                [compareWith]="compareFn" (selectionChange)="establecerTipoConcepto()">
-                <mat-option *ngFor="let item of resultadosAfipCptoSueldoGrupos" [value]="item">
-                  {{item.nombre}}
-                </mat-option>
-              </mat-select>
-            </div>
-            <div class="form-group has-float-label">
-              <label id="labelTipoConcepto" for="idTipoConcepto" class="tamanio-label">Tipo de Concepto *</label>
-              <input id="idTipoConcepto" type="text" [formControl]="resultadoTipoCptoSueldo" autocomplete="off"
-                class="form-control form-control-sm upper-case" readonly>
-            </div>
-          <div class="form-group has-float-label">
-            <label id="labelNombre" for="idNombre" class="tamanio-label">Descripción *</label>
-            <input id="idNombre" type="text" formControlName="nombre" autocomplete="off"
-              class="form-control form-control-sm upper-case" [readonly]="soloLectura"
-              (ngModelChange)="cambioCampo('idNombre', 'labelNombre')" maxlength="140">
-          </div>
-          <div class="form-group has-float-label">
-            <label id="labelCodigoAfip" for="idCodigoAfip" class="tamanio-label">Código Afip *</label>
-            <input id="idCodigoAfip" type="text" formControlName="codigoAfip" autocomplete="off"
-              class="form-control form-control-sm upper-case" [readonly]="soloLectura" maxlength="6">
-          </div>
-          <button id="idBoton" *ngIf="mostrarBoton && !show" mat-raised-button color="primary" formnovalidate
-            (click)="accion(indiceSeleccionado)" [disabled]="!formulario.valid">
-            {{pestaniaActual}}
-          </button>
-          <div class="row" *ngIf="show">
-            <div class="col text-center">
-              <mat-progress-bar mode="indeterminate"></mat-progress-bar>
-            </div>
-          </div>
-        </form>
-      </div>
-    </div>
-    <div class="row justify-content-center contenedor" [hidden]="indiceSeleccionado != 5">
-      <div class="col-md-8">
+  </div>
+  <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado < 5">
+    <div class="col-md-5 text-center">
+      <h5>{{pestaniaActual}} AFIP Conceptos</h5>
+      <form [formGroup]="formulario" class="contenedor">
+        <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
+          <label for="idAutocompletado" class="tamanio-label">Buscar</label>
+          <input id="idAutocompletado" class="form-control form-control-sm color-busqueda" type="text" matInput
+            [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off"
+            (blur)="verificarSeleccion(autocompletado)" placeholder="Por Nombre">
+          <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)">
+            <mat-option *ngFor="let item of resultados" [value]="item" (onSelectionChange)="cambioAutocompletado(item)">
+              {{item.nombre}}
+            </mat-option>
+          </mat-autocomplete>
+        </div>
+        <div class="form-group has-float-label">
+          <label for="idCodigo" class="tamanio-label">Código</label>
+          <input id="idCodigo" type="number" formControlName="id" class="form-control form-control-sm" readonly>
+        </div>
+        <div class="form-group has-float-label">
+          <label for="idConceptoGrupo" class="tamanio-label">Concepto Grupo AFIP * </label>
+          <mat-select id="idConceptoGrupo" class="form-control form-control-sm"
+            formControlName="afipConceptoSueldoGrupo" [compareWith]="compareFn"
+            (selectionChange)="establecerTipoConcepto()">
+            <mat-option *ngFor="let item of resultadosAfipCptoSueldoGrupos" [value]="item">
+              {{item.nombre}}
+            </mat-option>
+          </mat-select>
+        </div>
+        <div class="form-group has-float-label">
+          <label id="labelTipoConcepto" for="idTipoConcepto" class="tamanio-label">Tipo de Concepto *</label>
+          <input id="idTipoConcepto" type="text" [formControl]="tipoCptoSueldo" autocomplete="off"
+            class="form-control form-control-sm upper-case" readonly>
+        </div>
+        <div class="form-group has-float-label">
+          <label id="labelNombre" for="idNombre" class="tamanio-label">Descripción *</label>
+          <input id="idNombre" type="text" formControlName="nombre" autocomplete="off"
+            class="form-control form-control-sm" [readonly]="soloLectura"
+            (ngModelChange)="cambioCampo('idNombre', 'labelNombre')" maxlength="80">
+        </div>
+        <div class="form-group has-float-label">
+          <label id="labelCodigoAfip" for="idCodigoAfip" class="tamanio-label">Código AFIP *</label>
+          <input id="idCodigoAfip" type="text" formControlName="codigoAfip" autocomplete="off"
+            class="form-control form-control-sm upper-case" [readonly]="soloLectura" maxlength="6"
+            (blur)="validarCodigoAFIP()">
+        </div>
+        <button id="idBoton" *ngIf="mostrarBoton && !show" mat-raised-button color="primary" formnovalidate
+          (click)="accion(indiceSeleccionado)" [disabled]="!formulario.valid">
+          {{pestaniaActual}}
+        </button>
         <div class="row" *ngIf="show">
           <div class="col text-center">
             <mat-progress-bar mode="indeterminate"></mat-progress-bar>
           </div>
         </div>
-        <br>
-        <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
-          <ng-container matColumnDef="ID">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header class="col-id-width">#</th>
-            <td mat-cell *matCellDef="let elemento" class="number-right">{{elemento.id}}</td>
-          </ng-container>
-          <ng-container matColumnDef="CONCEPTO_GRUPO">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Afip Concepto Grupo</th>
-            <td mat-cell *matCellDef="let elemento">{{elemento.afipConceptoSueldoGrupo.nombre}}</td>
-          </ng-container>
-          <ng-container matColumnDef="TIPO_CONCEPTO">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Tipo de Concepto</th>
-            <td mat-cell *matCellDef="let elemento">{{elemento.afipConceptoSueldoGrupo.tipoConceptoSueldo.nombre}}</td>
-          </ng-container>
-          <ng-container matColumnDef="NOMBRE">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Descripción</th>
-            <td mat-cell *matCellDef="let elemento">{{elemento.nombre}}</td>
-          </ng-container>
-          <ng-container matColumnDef="EDITAR" stickyEnd>
-            <th mat-header-cell *matHeaderCellDef><button class="button-full-width" mat-raised-button color="primary"
-              [disabled]="listaCompleta.data.length==0" (click)="abrirReporte()">Reporte</button></th>
-            <td mat-cell *matCellDef="let elemento">
-              <button mat-icon-button class="mat-icon-button-table" (click)="activarConsultar(elemento)"
-                matTooltip="Consultar" matTooltipPosition="above">
-                <mat-icon>search</mat-icon>
-              </button>
-              <button mat-icon-button class="mat-icon-button-table margin-left-3" (click)="activarActualizar(elemento)"
-                matTooltip="Editar" matTooltipPosition="above">
-                <mat-icon>edit</mat-icon>
-              </button>
-            </td>
-          </ng-container>
-          <tr mat-header-row *matHeaderRowDef="columnas"></tr>
-          <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
-        </table>
-        <mat-paginator [pageSizeOptions]="[10]" showFirstLastButtons></mat-paginator>
-      </div>
+      </form>
     </div>
   </div>
+  <div class="row justify-content-center contenedor" [hidden]="indiceSeleccionado != 5">
+    <div class="col-md-10">
+      <form [formGroup]="formularioFiltro">
+        <br>
+        <div class="row">
+          <div class="col-md-3">
+            <div class="form-group has-float-label">
+              <label for="idConceptoGrupo" class="tamanio-label">Concepto Grupo AFIP * </label>
+              <mat-select id="idConceptoGrupo" class="form-control form-control-sm"
+                formControlName="afipConceptoSueldoGrupo" [compareWith]="compareFn"
+                (selectionChange)="establecerTipoConcepto()">
+                <mat-option *ngFor="let item of resultadosAfipCptoSueldoGrupos" [value]="item">
+                  {{item.nombre}}
+                </mat-option>
+              </mat-select>
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div class="form-group has-float-label">
+              <label id="labelTipoConcepto" for="idTipoConcepto" class="tamanio-label">Tipo de Concepto *</label>
+              <input id="idTipoConcepto" type="text" [formControl]="tipoCptoSueldo" autocomplete="off"
+                class="form-control form-control-sm upper-case" readonly>
+            </div>
+          </div>
+          <div class="col-md-1">
+            <button id="idBotonFiltrar" *ngIf="mostrarBoton && !show" mat-raised-button color="primary" formnovalidate
+              (click)="listarPorFiltro()" [disabled]="!formularioFiltro.valid">Buscar
+            </button>
+          </div>
+        </div>
+      </form>
+      <div class="row" *ngIf="show">
+        <div class="col text-center">
+          <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        </div>
+      </div>
+      <br>
+      <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
+        <ng-container matColumnDef="ID">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="col-id-width">#</th>
+          <td mat-cell *matCellDef="let elemento" class="number-right">{{elemento.id}}</td>
+        </ng-container>
+        <ng-container matColumnDef="CONCEPTO_GRUPO">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header style="max-width: 140px !important">AFIP Grupo Concepto</th>
+          <td mat-cell *matCellDef="let elemento">{{elemento.afipConceptoSueldoGrupo.nombre}}</td>
+        </ng-container>
+        <ng-container matColumnDef="NOMBRE">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Descripción</th>
+          <td mat-cell *matCellDef="let elemento">{{elemento.nombre}}</td>
+        </ng-container>
+        <ng-container matColumnDef="CODIGO_AFIP">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header style="max-width: 100px !important">Código AFIP</th>
+          <td mat-cell *matCellDef="let elemento">{{elemento.codigoAfip}}</td>
+        </ng-container>
+        <ng-container matColumnDef="EDITAR" stickyEnd>
+          <th mat-header-cell *matHeaderCellDef><button class="button-full-width" mat-raised-button color="primary"
+              [disabled]="listaCompleta.data.length==0" (click)="abrirReporte()">Reporte</button></th>
+          <td mat-cell *matCellDef="let elemento">
+            <button mat-icon-button class="mat-icon-button-table" (click)="activarConsultar(elemento)"
+              matTooltip="Consultar" matTooltipPosition="above">
+              <mat-icon>search</mat-icon>
+            </button>
+            <button mat-icon-button class="mat-icon-button-table margin-left-3" (click)="activarActualizar(elemento)"
+              matTooltip="Editar" matTooltipPosition="above">
+              <mat-icon>edit</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+        <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
+      </table>
+      <mat-paginator [pageSizeOptions]="[10]" showFirstLastButtons></mat-paginator>
+    </div>
+  </div>
+</div>

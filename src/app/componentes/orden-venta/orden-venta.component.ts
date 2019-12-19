@@ -651,13 +651,9 @@ export class OrdenVentaComponent implements OnInit {
   }
   //Abre el modal de ver Orden Venta Tarifa
   public verTarifaOrdenVenta(tarifa) {
-    console.log(tarifa);
-    console.log(this.ordenventa.value);
-    console.log(this.listaTarifasDeOrdVta.data);
     const dialogRef = this.dialog.open(VerTarifaDialogo, {
       width: '95%',
       data: {
-        // tarifa: this.formularioTarifa.get('tipoTarifa').value,
         tarifa: tarifa,
         ordenVenta: this.ordenventa.value,
         indiceSeleccionado: this.indiceSeleccionado,
@@ -671,7 +667,6 @@ export class OrdenVentaComponent implements OnInit {
   }
   //Abre el modal de ver Orden Venta Tarifa
   public modificarOrdenVentaTarifa(elemento) {
-    // this.btnActualizarTarifa = true;
     this.formularioTarifa.patchValue(elemento);
     if (elemento.tipoTarifa.porEscala) {
       this.tipoTarifa.setValue('porEscala');
@@ -739,6 +734,7 @@ export class OrdenVentaComponent implements OnInit {
         res => {
           this.listaOrdenVenta = new MatTableDataSource(res.json());
           this.listaOrdenVenta.sort = this.sort;
+          this.listaCompleta.data.length == 0? this.toastr.error("Sin registros para mostrar.") : '';
           this.listaCompleta.paginator = this.paginator;
         },
         err => {
@@ -1009,16 +1005,17 @@ export class VerTarifaDialogo {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Constructor
-  constructor(public dialogRef: MatDialogRef<VerTarifaDialogo>, @Inject(MAT_DIALOG_DATA) public data, private ordenVentaEscala: OrdenVentaEscala,
-    private ordenVentaTramo: OrdenVentaTramo, private ordenVentaEscalaService: OrdenVentaEscalaService, private toastr: ToastrService,
-    private ordenVentaTramoService: OrdenVentaTramoService, private loaderService: LoaderService, private escalaTarifaService: EscalaTarifaService,
+  constructor(public dialogRef: MatDialogRef<VerTarifaDialogo>, @Inject(MAT_DIALOG_DATA) public data,
+    private ordenVentaEscala: OrdenVentaEscala, private ordenVentaTramo: OrdenVentaTramo,
+    private ordenVentaEscalaService: OrdenVentaEscalaService, private toastr: ToastrService,
+    private ordenVentaTramoService: OrdenVentaTramoService, private loaderService: LoaderService,
+    private escalaTarifaService: EscalaTarifaService,
     private appService: AppService, private tramoService: TramoService) {
     dialogRef.disableClose = true;
   }
   //Al inicializarse el componente
   ngOnInit() {
     //Inicializa valores
-    console.log(this.data);
     this.tipoTarifa.setValue(this.data.tarifa);
     this.ordenVentaActiva = this.data.ordenVentaActiva;
     this.ordenVenta.setValue(this.data.ordenVenta);
@@ -1069,11 +1066,13 @@ export class VerTarifaDialogo {
   }
   //Cancela - Resetea el formulario correspondiente
   public cancelar() {
-    let tipoTarifa = { id: this.tipoTarifa.get('id') };
-    if (this.tipoTarifa.get('porEscala')) {
+    if (this.stringTipoTarifa = 'porEscala') {
       this.stringTipoTarifa = "porEscala";
       this.formularioEscala.reset();
-      this.formularioEscala.get('tipoTarifa').setValue(this.tipoTarifa.value);
+      this.formularioEscala.get('ordenVentaTarifa').setValue({
+        ordenVenta: this.ordenVenta.value,
+        tipoTarifa: this.tipoTarifa.value
+      });
       this.formularioEscala.get('preciosDesde').setValue(this.data.fechaActual);
       this.controlarCampos();
     } else {
@@ -1081,7 +1080,10 @@ export class VerTarifaDialogo {
       this.importeSecoPor.reset();
       this.importeRefPor.reset();
       this.formularioTramo.reset();
-      this.formularioTramo.get('tipoTarifa').setValue(this.tipoTarifa.value);
+      this.formularioTramo.get('ordenVentaTarifa').setValue({
+        ordenVenta: this.ordenVenta.value,
+        tipoTarifa: this.tipoTarifa.value
+      });
       this.formularioTramo.get('preciosDesde').setValue(this.data.fechaActual);
     }
     this.idMod = null;
@@ -1092,15 +1094,22 @@ export class VerTarifaDialogo {
     this.loaderService.show();
     let realizarAgregar = true;
     if (this.stringTipoTarifa == 'porEscala') {
-      if (this.importePor.value == false && (this.formularioEscala.value.importeFijo == 0 || this.formularioEscala.value.importeFijo == '0.00')) {
-        realizarAgregar = false;
-        this.toastr.error("El Precio Fijo no puede ser '0.00'");
-      }
-      if (this.importePor.value == true && (this.formularioEscala.value.precioUnitario == 0 || this.formularioEscala.value.precioUnitario == '0.00')) {
-        realizarAgregar = false;
-        this.toastr.error("El Precio Unitario no puede ser '0.00'");
-      }
+      /* controlo el campo Precio Fijo */
+      this.importePor.value == false &&
+        (this.formularioEscala.value.importeFijo == 0 || this.formularioEscala.value.importeFijo == '0.00') ?
+        [realizarAgregar = false,
+        this.toastr.error("El Precio Fijo no puede ser '0.00'")] : '';
+      /* controlo el campo Precio Unitario */
+      this.importePor.value == true &&
+        (this.formularioEscala.value.precioUnitario == 0 || this.formularioEscala.value.precioUnitario == '0.00') ?
+        [realizarAgregar = false,
+        this.toastr.error("El Precio Unitario no puede ser '0.00'")] : '';
+
       if (realizarAgregar == true) {
+        this.formularioEscala.get('ordenVentaTarifa').setValue({
+          ordenVenta: this.ordenVenta.value,
+          tipoTarifa: this.tipoTarifa.value
+        });
         this.ordenVentaEscalaService.agregar(this.formularioEscala.value).subscribe(
           res => {
             if (res.status == 201) {
@@ -1119,6 +1128,10 @@ export class VerTarifaDialogo {
         )
       }
     } else {
+      this.formularioEscala.get('ordenVentaTarifa').setValue({
+        ordenVenta: this.ordenVenta.value,
+        tipoTarifa: this.tipoTarifa.value
+      });
       this.ordenVentaTramoService.agregar(this.formularioTramo.value).subscribe(
         res => {
           if (res.status == 201) {
@@ -1233,6 +1246,7 @@ export class VerTarifaDialogo {
         res => {
           this.listaCompleta = new MatTableDataSource(res.json());
           this.listaCompleta.sort = this.sort;
+          this.listaCompleta.data.length == 0 ? this.toastr.error("Sin registros para mostrar.") : '';
           this.loaderService.hide();
         },
         err => {
@@ -1241,17 +1255,18 @@ export class VerTarifaDialogo {
         }
       )
     } else {
-      // this.ordenVentaTramoService.listarPorOrdenVentaTarifa(this.ordenVentaTarifa.id).subscribe(
-      //   res => {
-      //     this.listaCompleta = new MatTableDataSource(res.json());
-      //     this.listaCompleta.sort = this.sort;
-      //     this.loaderService.hide();
-      //   },
-      //   err => {
-      //     this.toastr.error("No se pudo obtener los registros");
-      //     this.loaderService.hide();
-      //   }
-      // )
+      this.ordenVentaTramoService.listarPorOrdenVentaTarifa(this.tipoTarifa.value.id).subscribe(
+        res => {
+          this.listaCompleta = new MatTableDataSource(res.json());
+          this.listaCompleta.sort = this.sort;
+          this.listaCompleta.data.length == 0 ? this.toastr.error("Sin registros para mostrar.") : '';
+          this.loaderService.hide();
+        },
+        err => {
+          this.toastr.error("No se pudo obtener los registros");
+          this.loaderService.hide();
+        }
+      )
     }
   }
   //Reestablece valores y formularios
@@ -1259,11 +1274,8 @@ export class VerTarifaDialogo {
     this.formularioEscala.reset();
     this.formularioTramo.reset();
     this.idMod = null;
-    console.log(this.data.tipoTarifa, this.tipoTarifa.value);
-    //if (this.tipoTarifa.value.porEscala) { ANTERIOR
     if (this.tipoTarifa.value.porEscala) {
       this.stringTipoTarifa = "porEscala";
-      this.formularioEscala.get('tipoTarifa').setValue({ id: this.tipoTarifa.value.id });
       this.formularioEscala.get('importeFijo').setValue(null);
       this.formularioEscala.get('precioUnitario').setValue(null);
       this.formularioEscala.get('porcentaje').setValue(null);
@@ -1272,7 +1284,6 @@ export class VerTarifaDialogo {
       this.controlarCampos();
     } else {
       this.stringTipoTarifa = "porTramo";
-      this.formularioTramo.get('tipoTarifa').setValue({ id: this.tipoTarifa.value.id });
       this.formularioTramo.get('importeFijoSeco').setValue(null);
       this.formularioTramo.get('importeFijoRef').setValue(null);
       this.formularioTramo.get('precioUnitarioSeco').setValue(null);
@@ -1283,12 +1294,13 @@ export class VerTarifaDialogo {
   }
   //Controla campos habilitados y deshabilitados
   private controlarCampos() {
-    if (this.tipoTarifa.get('porPorcentaje')) {
+    if (this.tipoTarifa.value.porPorcentaje) {
       this.importePor.disable();
       this.formularioEscala.get('importeFijo').disable();
       this.formularioEscala.get('precioUnitario').disable();
       this.formularioEscala.get('minimo').disable();
       this.formularioEscala.get('porcentaje').enable();
+      this.cambioImportesPor();
     } else {
       this.formularioEscala.get('importeFijo').enable();
       this.formularioEscala.get('precioUnitario').enable();
@@ -1322,7 +1334,7 @@ export class VerTarifaDialogo {
   //Controla el modificar en Escala
   public controlModEscala(elemento) {
     this.formularioEscala.patchValue(elemento);
-    elemento.ordenVentaTarifa.tipoTarifa = this.tipoTarifa;
+    elemento.ordenVentaTarifa.tipoTarifa = this.tipoTarifa.value;
     this.idMod = elemento.id;
     if (elemento.importeFijo) {
       this.formularioEscala.get('importeFijo').setValue(parseFloat(elemento.importeFijo).toFixed(2));
@@ -1336,12 +1348,9 @@ export class VerTarifaDialogo {
       this.importePor.setValue(true);
       this.cambioImportesPor();
     }
-    let tipoTarifa = this.formularioEscala.get('ordenVentaTarifa.tipoTarifa').value;
-    if (tipoTarifa.tipoTarifa.porPorcentaje) {
-      this.formularioEscala.get('porcentaje').enable();
-    } else {
+    // let tipoTarifa = this.formularioEscala.value.get('ordenVentaTarifa').value;
+    this.tipoTarifa.value.porPorcentaje ? this.formularioEscala.get('porcentaje').enable() :
       this.formularioEscala.get('porcentaje').disable();
-    }
     this.formularioEscala.get('porcentaje').setValue(parseFloat(elemento.porcentaje).toFixed(2));
     this.formularioEscala.get('minimo').setValue(parseFloat(elemento.minimo).toFixed(2));
     document.getElementById('idEscala').focus();
@@ -1350,7 +1359,7 @@ export class VerTarifaDialogo {
   public controlModTramo(elemento) {
     this.formularioTramo.patchValue(elemento);
     this.idMod = elemento.id;
-    elemento.ordenVentaTarifa.tipoTarifa = this.tipoTarifa;
+    elemento.ordenVentaTarifa.tipoTarifa = this.tipoTarifa.value;
     if (elemento.importeFijoSeco) {
       this.formularioTramo.get('importeFijoSeco').setValue(parseFloat(elemento.importeFijoSeco).toFixed(2));
       this.importeSecoPor.setValue(false);
