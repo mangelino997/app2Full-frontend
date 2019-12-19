@@ -86,7 +86,7 @@ export class BancoComponent implements OnInit {
       version: new FormControl(),
       nombre: new FormControl('', [Validators.required, Validators.maxLength(45)]),
       sitioWeb: new FormControl('', Validators.maxLength(60)),
-      tipoDocumento: new FormControl('', Validators.required),
+      tipoDocumento: new FormControl(),
       numeroDocumento: new FormControl('', [Validators.required, Validators.maxLength(15)])
     });
     /* Obtiene todos los listados */
@@ -136,39 +136,21 @@ export class BancoComponent implements OnInit {
   //Validad el numero de documento
   public validarDocumento(): void {
     let documento = this.formulario.get('numeroDocumento').value;
-    let tipoDocumento = this.formulario.get('tipoDocumento').value;
     if (documento) {
-      switch (tipoDocumento.id) {
-        case 1:
-          let respuesta = this.appService.validarCUIT(documento.toString());
-          if (!respuesta) {
-            this.formulario.get('numeroDocumento').reset();
-            let err = { codigo: 11010, mensaje: 'CUIT Incorrecto!' };
-            this.lanzarError(err);
-          }
-          break;
-        case 2:
-          let respuesta2 = this.appService.validarCUIT(documento.toString());
-          if (!respuesta2) {
-            this.formulario.get('numeroDocumento').reset();
-            let err = { codigo: 11010, mensaje: 'CUIL Incorrecto!' };
-            this.lanzarError(err);
-          }
-          break;
-        case 8:
-          let respuesta8 = this.appService.validarDNI(documento.toString());
-          if (!respuesta8) {
-            this.formulario.get('numeroDocumento').reset();
-            let err = { codigo: 11010, mensaje: 'DNI Incorrecto!' };
-            this.lanzarError(err);
-          }
-          break;
+      let respuesta = this.appService.validarCUIT(documento.toString());
+      if (!respuesta) {
+        this.formulario.get('numeroDocumento').reset();
+        let err = { codigo: 11010, mensaje: 'CUIT Incorrecto!' };
+        this.lanzarError(err);
       }
     }
   }
   //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
   private lanzarError(err) {
-    this.formulario.get('numeroDocumento').setErrors({ 'incorrect': true });
+    document.getElementById("labelNumeroDocumento").classList.add('label-error');
+    document.getElementById("idNumeroDocumento").classList.add('is-invalid');
+    document.getElementById("idNumeroDocumento").focus();
+  this.toastr.error(err.mensaje);
   }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
@@ -177,7 +159,7 @@ export class BancoComponent implements OnInit {
     this.soloLectura = soloLectura;
     this.mostrarBoton = boton;
     nombrePestania == 'Agregar' ? this.formulario.get('id').setValue(this.ultimoId) : this.formulario.reset();
-    this.soloLectura ? this.formulario.get('tipoDocumento').disable(): this.formulario.get('tipoDocumento').enable();
+    this.soloLectura ? this.formulario.get('tipoDocumento').disable() : this.formulario.get('tipoDocumento').enable();
     setTimeout(function () {
       document.getElementById(componente).focus();
     }, 20);
@@ -186,7 +168,7 @@ export class BancoComponent implements OnInit {
   public seleccionarPestania(id, nombre) {
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    this.reestablecerFormulario(undefined);
+    this.reestablecerFormulario(null);
     /*
     * Se vacia el formulario solo cuando se cambia de pestania, no cuando
     * cuando se hace click en ver o mod de la pestania lista
@@ -247,6 +229,7 @@ export class BancoComponent implements OnInit {
   private agregar() {
     this.loaderService.show();
     this.formulario.get('id').setValue(null);
+    this.formulario.get('tipoDocumento').setValue(null);
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
