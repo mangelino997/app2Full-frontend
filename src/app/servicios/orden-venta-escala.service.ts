@@ -100,6 +100,6 @@ export class OrdenVentaEscalaService {
   }
   //Elimina un registro
   public eliminar(id) {
-    return this.http.put(this.url + '/' + id, this.options);
+    return this.http.delete(this.url + '/' + id, this.options);
   }
 }
