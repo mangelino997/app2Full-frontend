@@ -12,7 +12,8 @@ export class TipoLiquidacionSueldo {
             id: new FormControl(),
             version: new FormControl(),
             nombre: new FormControl('', [Validators.required, Validators.maxLength(45)]),
-            codigoAfip: new FormControl('', [Validators.required, Validators.maxLength(3)])
+            codigoAfip: new FormControl('', [Validators.required, Validators.maxLength(3)]),
+            estaHabilitado: new FormControl('', Validators.required)
         })
     }
 }

@@ -47,7 +47,7 @@ export class TipoLiquidacionSueldoComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define las columnas de la tabla
-  public columnas: string[] = ['ID', 'NOMBRE','CODIGO_AFIP', 'VER', 'EDITAR'];
+  public columnas: string[] = ['ID', 'NOMBRE','CODIGO_AFIP','ESTA_HABILITADO', 'VER', 'EDITAR'];
   public columnasSeleccionadas: string[] = this.columnas.filter((item, i) => true);
   //Define la matSort
   @ViewChild(MatSort, { static: false }) sort: MatSort;
@@ -106,6 +106,7 @@ export class TipoLiquidacionSueldoComponent implements OnInit {
     this.pestaniaActual = nombrePestania;
     this.mostrarAutocompletado = autocompletado;
     this.soloLectura = soloLectura;
+    !this.soloLectura ? this.formulario.get('estaHabilitado').enable(): this.formulario.get('estaHabilitado').disable(); 
     this.mostrarBoton = boton;
     setTimeout(function () {
       document.getElementById(componente).focus();
