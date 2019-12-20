@@ -6,11 +6,7 @@ import { InsumoProductoService } from 'src/app/servicios/insumo-producto.service
 import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { AppService } from 'src/app/servicios/app.service';
-import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
 import { ToastrService } from 'ngx-toastr';
-import { MarcaProductoService } from 'src/app/servicios/marca-producto.service';
-import { UnidadMedidaService } from 'src/app/servicios/unidad-medida.service';
-import { RubroProductoService } from 'src/app/servicios/rubro-producto.service';
 import { ReporteService } from 'src/app/servicios/reporte.service';
 import { CostoInsumoProducto } from 'src/app/modelos/costoInsumoProducto';
 
@@ -20,6 +16,8 @@ import { CostoInsumoProducto } from 'src/app/modelos/costoInsumoProducto';
   styleUrls: ['./costos-insumos-producto.component.css']
 })
 export class CostosInsumosProductoComponent implements OnInit {
+  //Define el ultimo id
+  public ultimoId: string = null;
   //Define la pestania activa
   public activeLink: any = null;
   //Define el indice seleccionado de pestania
@@ -70,32 +68,14 @@ export class CostosInsumosProductoComponent implements OnInit {
   public personales: Array<any> = [];
   //Define el mostrar del circulo de progreso
   public show = false;
+  //Defiene el render
+  public render: boolean = false;
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Constructor
-  constructor(private servicio: InsumoProductoService, private modelo: CostoInsumoProducto, private loaderService: LoaderService,
-    private appService: AppService, private subopcionPestaniaService: SubopcionPestaniaService, private toastr: ToastrService,
-    private rubroProductoServicio: RubroProductoService, private marcaProductoServicio: MarcaProductoService,
-    private unidadMedidaServicio: UnidadMedidaService, private reporteServicio: ReporteService) {
-    //Establece la subscripcion a loader
-    this.subscription = this.loaderService.loaderState
-      .subscribe((state: LoaderState) => {
-        this.show = state.show;
-      });
-    this.loaderService.show();
-    //Obtiene la lista de pestania por rol y subopcion
-    this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
-      .subscribe(
-        res => {
-          this.pestanias = res.json();
-          this.pestanias.splice(0, 1); //Saca la opcion agregar
-          this.pestanias.splice(2, 1); //Saca la opcion eliminar
-          this.activeLink = this.pestanias[0].nombre;
-          this.loaderService.hide();
-        },
-        err => {
-        }
-      );
+  constructor(private servicio: InsumoProductoService, private modelo: CostoInsumoProducto,
+    private loaderService: LoaderService, private appService: AppService,
+    private toastr: ToastrService, private reporteServicio: ReporteService) {
     //Autocompletado - Buscar por alias
     this.autocompletado.valueChanges.subscribe(data => {
       if (typeof data == 'string') {
@@ -106,63 +86,54 @@ export class CostosInsumosProductoComponent implements OnInit {
             this.resultados = response;
             this.loaderService.hide();
           },
-          err=>{
-            this.loaderService.hide();
-          })
+            err => {
+              this.loaderService.hide();
+            })
         }
       }
     })
   }
   //Al inicializarse el componente
   ngOnInit() {
+    //Establece la subscripcion a loader
+    this.subscription = this.loaderService.loaderState
+      .subscribe((state: LoaderState) => {
+        this.show = state.show;
+      });
     //Define los campos para validaciones
     this.formulario = this.modelo.formulario;
     //Define los campos para validaciones en el formulario que filtra y obtiene registros
     this.formularioFiltro = new FormGroup({
       rubro: new FormControl('', Validators.required),
       marca: new FormControl('', Validators.required)
-    });
+    })
+    /* Obtiene todos los listados */
+    this.inicializar(this.appService.getRol().id, this.appService.getSubopcion());
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(2, 'Consultar');
-    //Obtiene la lista de rubros de productos
-    this.listarRubroProducto();
-    //Obtiene la lista de marcas de productos
-    this.listarMarcaProducto();
-    //Obtiene la lista de unidades de medida
-    this.listarUnidadMedida();
   }
-  //Obtiene la lista de rubros de productos
-  private listarRubroProducto(): void {
-    this.rubroProductoServicio.listar().subscribe(res => {
-      this.rubros = res.json();
-    });
-  }
-  //Obtiene la lista de marcas de productos
-  private listarMarcaProducto(): void {
-    this.marcaProductoServicio.listar().subscribe(res => {
-      this.marcas = res.json();
-    });
-  }
-  //Obtiene la lista de unidades de medida
-  private listarUnidadMedida(): void {
-    this.unidadMedidaServicio.listar().subscribe(res => {
-      this.unidadesMedidas = res.json();
-    });
-  }
-  //Obtiene el listado de registros
-  private listar() {
-    this.loaderService.show();
-    this.servicio.listar().subscribe(
+  //Obtiene los datos necesarios para el componente
+  private inicializar(idRol, idSubopcion) {
+    this.render = true;
+    this.servicio.inicializar(idRol, idSubopcion).subscribe(
       res => {
-        this.listaCompleta = new MatTableDataSource(res.json());
-        this.listaCompleta.sort = this.sort;
-        this.listaCompleta.paginator = this.paginator;
-        this.loaderService.hide();
+        let respuesta = res.json();
+        //Establece las pestanias
+        this.pestanias = respuesta.pestanias;
+        this.pestanias.splice(0, 1); //Saca la opcion agregar
+        this.pestanias.splice(2, 1); //Saca la opcion eliminar
+        //Establece demas datos necesarios
+        this.ultimoId = respuesta.ultimoId;
+        this.marcas = respuesta.marcaProductos;
+        this.rubros = respuesta.rubroProductos;
+        this.unidadesMedidas = respuesta.unidadMedidas;
+        this.render = false;
       },
       err => {
-        this.loaderService.hide();
+        this.toastr.error(err.json().mensaje);
+        this.render = false;
       }
-    );
+    )
   }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
@@ -224,10 +195,10 @@ export class CostosInsumosProductoComponent implements OnInit {
   }
   //Reestablece los campos agregar
   private reestablecerFormulario() {
+    this.resultados = [];
     this.formulario.reset();
     this.formularioFiltro.reset();
-    this.autocompletado.setValue(undefined);
-    this.resultados = [];
+    this.autocompletado.reset();
     this.listaCompleta = new MatTableDataSource([]);
   }
   //Cambio en elemento autocompletado
@@ -300,10 +271,14 @@ export class CostosInsumosProductoComponent implements OnInit {
   }
   ////Controla que no haya valores en null/Nan
   private controlaValores(elemento) {
-    elemento.itcNeto == null || elemento.itcNeto == NaN ? this.formulario.get('itcNeto').setValue(0) : '';
-    elemento.itcPorLitro == null || elemento.itcPorLitro == NaN ? this.formulario.get('itcPorLitro').setValue(0) : '';
-    elemento.precioUnitarioVenta == null || elemento.precioUnitarioVenta == NaN ? this.formulario.get('precioUnitarioVenta').setValue(0) : '';
-    elemento.precioUnitarioViaje == null || elemento.precioUnitarioViaje == NaN ? this.formulario.get('precioUnitarioViaje').setValue(0) : '';
+    elemento.itcNeto == null || elemento.itcNeto == NaN ?
+      this.formulario.get('itcNeto').setValue(0) : '';
+    elemento.itcPorLitro == null || elemento.itcPorLitro == NaN ?
+      this.formulario.get('itcPorLitro').setValue(0) : '';
+    elemento.precioUnitarioVenta == null || elemento.precioUnitarioVenta == NaN ?
+      this.formulario.get('precioUnitarioVenta').setValue(0) : '';
+    elemento.precioUnitarioViaje == null || elemento.precioUnitarioViaje == NaN ?
+      this.formulario.get('precioUnitarioViaje').setValue(0) : '';
   }
   //Define el mostrado de datos y comparacion en campo select
   public compareFn = this.compararFn.bind(this);

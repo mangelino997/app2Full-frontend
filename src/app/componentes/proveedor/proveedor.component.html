@@ -283,65 +283,108 @@
                   </div>
                 </div>
                 <div class="contenedor-top" *ngIf="opcionSeleccionada == 10">
-                  <div class="row">
-                    <div class="col-md-3">
-                      <div class="form-group has-float-label">
-                        <label for="idBanco" class="tamanio-label">Banco</label>
-                        <input id="idBanco" class="form-control form-control-sm" type="text" matInput
-                          [formControl]="formulario.get('banco')" [matAutocomplete]="autoBanco" autocomplete="off"
-                          [readonly]="soloLectura" (blur)="verificarSeleccion(formulario.get('banco'))">
-                        <mat-autocomplete #autoBanco="matAutocomplete" [displayWith]="displayFa.bind(this)">
-                          <mat-option *ngFor="let itemBanco of resultadosBancos" [value]="itemBanco">
-                            {{itemBanco.nombre}}
-                          </mat-option>
-                        </mat-autocomplete>
+                  <form [formGroup]="formularioCuentaBancaria">
+                    <div class="row">
+                      <div class="col-md-3">
+                        <div class="form-group has-float-label">
+                          <label for="idAutocompletado" class="tamanio-label">Banco *</label>
+                          <input id="idAutocompletado" class="form-control form-control-sm" type="text" matInput
+                            [formControl]="formularioCuentaBancaria.get('banco')" [matAutocomplete]="auto"
+                            autocomplete="off">
+                          <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)"
+                            (optionSelected)="cambioAutocompletado()">
+                            <mat-option *ngFor="let item of bancos" [value]="item">
+                              {{item.nombre}}
+                            </mat-option>
+                          </mat-autocomplete>
+                        </div>
+                      </div>
+                      <div class="col-md-3">
+                        <div class="form-group has-float-label">
+                          <label for="idSucursal" class="tamanio-label">Sucursal *</label>
+                          <mat-select id="idSucursal" class="form-control form-control-sm"
+                            formControlName="sucursalBanco" [compareWith]="compareFn">
+                            <mat-option *ngFor="let sucursal of sucursales" [value]="sucursal">
+                              {{sucursal.nombre}}
+                            </mat-option>
+                          </mat-select>
+                        </div>
                       </div>
                     </div>
-                    <div class="col-md-3">
-                      <div class="form-group has-float-label">
-                        <label for="idTipoCuentaBancaria" class="tamanio-label">Tipo de Cuenta</label>
-                        <mat-select id="idTipoCuentaBancaria" class="form-control form-control-sm"
-                          formControlName="tipoCuentaBancaria" [compareWith]="compareFn">
-                          <mat-option *ngFor="let itemTipoCuentaBancaria of tiposCuentasBancarias"
-                            [value]="itemTipoCuentaBancaria">
-                            {{itemTipoCuentaBancaria.nombre}}
-                          </mat-option>
-                        </mat-select>
+                    <div class="row">
+                      <div class="col-md-3">
+                        <div class="form-group has-float-label">
+                          <label for="idTipoCuentaBancaria" class="tamanio-label">Tipo de Cuenta</label>
+                          <mat-select id="idTipoCuentaBancaria" class="form-control form-control-sm"
+                            formControlName="tipoCuentaBancaria" [compareWith]="compareFn">
+                            <mat-option *ngFor="let itemTipoCuentaBancaria of tiposCuentasBancarias"
+                              [value]="itemTipoCuentaBancaria">
+                              {{itemTipoCuentaBancaria.nombre}}
+                            </mat-option>
+                          </mat-select>
+                        </div>
+                      </div>
+                      <div class="col-md-3">
+                        <div class="form-group has-float-label">
+                          <label for="idNumeroCuenta" class="tamanio-label">N° de Cuenta</label>
+                          <input id="idNumeroCuenta" type="text" formControlName="numeroCuenta" autocomplete="off"
+                            class="form-control form-control-sm number-right" maxlength="20" [readonly]="soloLectura">
+                        </div>
+                      </div>
+                      <div class="col-md-3">
+                        <div class="form-group has-float-label">
+                          <label for="idMoneda" class="tamanio-label">Moneda *</label>
+                          <mat-select id="idMoneda" class="form-control form-control-sm" formControlName="moneda"
+                            [compareWith]="compareFn">
+                            <mat-option *ngFor="let moneda of monedas" [value]="moneda">
+                              {{moneda.nombre}}
+                            </mat-option>
+                          </mat-select>
+                        </div>
+                      </div>
+                      <div class="col-md-2">
+                        <div class="form-group has-float-label">
+                          <label for="idEstaActiva" class="tamanio-label">Por Defecto *</label>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-md-3">
-                      <div class="form-group has-float-label">
-                        <label for="idNumeroCuenta" class="tamanio-label">N° de Cuenta</label>
-                        <input id="idNumeroCuenta" type="text" formControlName="numeroCuenta" autocomplete="off"
-                          class="form-control form-control-sm number-right" maxlength="20" [readonly]="soloLectura">
+                    <div class="row">
+                      <div class="col-md-2">
+                        <div class="form-group has-float-label">
+                          <label for="idTitular" class="tamanio-label">Titular</label>
+                          <input id="idTitular" type="text" formControlName="titular" autocomplete="off"
+                            class="form-control form-control-sm" [readonly]="soloLectura" maxlength="45">
+                        </div>
                       </div>
-                    </div>
-                    <div class="col-md-3">
-                      <div class="form-group has-float-label">
-                        <label for="idTitular" class="tamanio-label">Titular</label>
-                        <input id="idTitular" type="text" formControlName="titular" autocomplete="off"
-                          class="form-control form-control-sm" [readonly]="soloLectura" maxlength="45">
+                      <div class="col-md-3">
+                        <div class="form-group has-float-label">
+                          <label for="idNumeroCBU" id="labelNumeroCBU" class="tamanio-label">N° de CBU/CVU</label>
+                          <input id="idNumeroCBU" type="text" formControlName="numeroCBU" autocomplete="off"
+                            class="form-control form-control-sm number-right" [textMask]="mascararEnteros(22)"
+                            [readonly]="soloLectura" maxlength="22" (blur)="verificarCBU()">
+                        </div>
                       </div>
-                    </div>
-                    <div class="col-md-3">
-                      <div class="form-group has-float-label">
-                        <label for="idNumeroCBU" id="labelNumeroCBU"  class="tamanio-label">N° de CBU/CVU</label>
-                        <input id="idNumeroCBU" type="text" formControlName="numeroCBU" autocomplete="off"
-                          class="form-control form-control-sm number-right" [textMask]="mascararEnteros(22)"
-                          [readonly]="soloLectura" maxlength="22"
-                          (blur)="verificarCBU()">
+                      <div class="col-md-3">
+                        <div class="form-group has-float-label">
+                          <label for="idAliasCBU" class="tamanio-label">Alias CBU</label>
+                          <input id="idAliasCBU" type="text" formControlName="aliasCBU" autocomplete="off"
+                            class="form-control form-control-sm" maxlength="45" [readonly]="soloLectura">
+                        </div>
                       </div>
-                    </div>
-                    <div class="col-md-3">
-                      <div class="form-group has-float-label">
-                        <label for="idAliasCBU" class="tamanio-label">Alias CBU</label>
-                        <input id="idAliasCBU" type="text" formControlName="aliasCBU" autocomplete="off"
-                          class="form-control form-control-sm" maxlength="45" [readonly]="soloLectura">
+                      <div class="col-md-2">
+                        <div class="form-group has-float-label">
+                          <label for="idEstaActiva" class="tamanio-label">Está Activa *</label>
+                          <select id="idEstaActiva" class="form-control form-control-sm" formControlName="estaActiva">
+                            <option [value]="false">No</option>
+                            <option [value]="true">Si</option>
+                          </select>
+                        </div>
                       </div>
+                      <button id="idBotonCuentaBancaria" mat-raised-button color="primary" formnovalidate
+                        [disabled]="!formularioCuentaBancaria.valid">Añadir
+                      </button>
                     </div>
-                  </div>
+                  </form>
                 </div>
                 <div class="contenedor-top" *ngIf="opcionSeleccionada == 11">
                   <div class="row">

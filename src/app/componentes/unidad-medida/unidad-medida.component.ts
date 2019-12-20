@@ -53,7 +53,7 @@ export class UnidadMedidaComponent implements OnInit {
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Constructor
   constructor(private servicio: UnidadMedidaService,
-    private appService: AppService, private toastr: ToastrService, 
+    private appService: AppService, private toastr: ToastrService,
     private loaderService: LoaderService, private reporteServicio: ReporteService) {
     //Autocompletado - Buscar por nombre
     this.autocompletado.valueChanges.subscribe(data => {
@@ -111,6 +111,9 @@ export class UnidadMedidaComponent implements OnInit {
   }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
+    /* Limpia el formulario para no mostrar valores en campos cuando 
+      la pestaña es != 1 */
+    this.indiceSeleccionado != 1 ? this.formulario.reset() : '';
     this.pestaniaActual = nombrePestania;
     this.mostrarAutocompletado = autocompletado;
     this.soloLectura = soloLectura;

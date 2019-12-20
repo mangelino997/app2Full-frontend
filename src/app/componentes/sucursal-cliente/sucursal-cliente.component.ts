@@ -69,16 +69,6 @@ export class SucursalClienteComponent implements OnInit {
     private appService: AppService, private toastr: ToastrService, private modelo: SucursalCliente,
     private clienteServicio: ClienteService, private barrioServicio: BarrioService,
     private localidadServicio: LocalidadService, private loaderService: LoaderService, private reporteServicio: ReporteService) {
-    //Obtiene la lista de pestania por rol y subopcion
-    // this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
-    //   .subscribe(
-    //     res => {
-    //       this.pestanias = res.json();
-    //       this.activeLink = this.pestanias[0].nombre;
-    //     },
-    //     err => {
-    //     }
-    //   );
   }
   //Al iniciarse el componente
   ngOnInit() {
@@ -191,6 +181,9 @@ export class SucursalClienteComponent implements OnInit {
   }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
+    /* Limpia el formulario para no mostrar valores en campos cuando 
+      la pestaña es != 1 */
+    this.indiceSeleccionado != 1 ? this.formulario.reset() : '';
     this.pestaniaActual = nombrePestania;
     this.mostrarAutocompletado = autocompletado;
     this.soloLectura = soloLectura;

@@ -15,6 +15,7 @@ import { LocalidadService } from 'src/app/servicios/localidad.service';
 import { BancoService } from 'src/app/servicios/banco.service';
 import { UsuarioEmpresaService } from 'src/app/servicios/usuario-empresa.service';
 import { ProveedorCuentaContableService } from 'src/app/servicios/proveedor-cuenta-contable.service';
+import { SucursalBancoService } from 'src/app/servicios/sucursal-banco.service';
 
 @NgModule({
   declarations: [
@@ -47,7 +48,8 @@ import { ProveedorCuentaContableService } from 'src/app/servicios/proveedor-cuen
     LocalidadService,
     BancoService,
     ProveedorService,
-    ProveedorCuentaContableService
+    ProveedorCuentaContableService,
+    SucursalBancoService
   ],
   entryComponents: []
 })

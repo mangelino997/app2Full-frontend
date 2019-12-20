@@ -131,6 +131,7 @@ export class ContactoClienteComponent implements OnInit {
     this.mostrarAutocompletado = autocompletado;
     this.soloLectura = soloLectura;
     this.mostrarBoton = boton;
+    this.indiceSeleccionado != 1 ? this.formulario.reset() : '';
     soloLectura ? this.formulario.get('tipoContacto').disable() : this.formulario.get('tipoContacto').enable();
     setTimeout(function () {
       document.getElementById(componente).focus();

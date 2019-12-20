@@ -139,7 +139,6 @@ export class BancoComponent implements OnInit {
     if (documento) {
       let respuesta = this.appService.validarCUIT(documento.toString());
       if (!respuesta) {
-        this.formulario.get('numeroDocumento').reset();
         let err = { codigo: 11010, mensaje: 'CUIT Incorrecto!' };
         this.lanzarError(err);
       }
@@ -150,16 +149,19 @@ export class BancoComponent implements OnInit {
     document.getElementById("labelNumeroDocumento").classList.add('label-error');
     document.getElementById("idNumeroDocumento").classList.add('is-invalid');
     document.getElementById("idNumeroDocumento").focus();
-  this.toastr.error(err.mensaje);
+    this.toastr.error(err.mensaje);
   }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
+    /* Limpia el formulario para no mostrar valores en campos cuando 
+      la pestaña es != 1 */
+    this.indiceSeleccionado != 1 ? this.formulario.reset() : '';
     this.pestaniaActual = nombrePestania;
     this.mostrarAutocompletado = autocompletado;
     this.soloLectura = soloLectura;
     this.mostrarBoton = boton;
-    nombrePestania == 'Agregar' ? this.formulario.get('id').setValue(this.ultimoId) : this.formulario.reset();
-    this.soloLectura ? this.formulario.get('tipoDocumento').disable() : this.formulario.get('tipoDocumento').enable();
+    this.soloLectura ?
+      this.formulario.get('tipoDocumento').disable() : this.formulario.get('tipoDocumento').enable();
     setTimeout(function () {
       document.getElementById(componente).focus();
     }, 20);

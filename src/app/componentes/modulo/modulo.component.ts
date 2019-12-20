@@ -94,7 +94,7 @@ export class ModuloComponent implements OnInit {
         let respuesta = res.json();
         //Establece las pestanias
         this.pestanias = respuesta.pestanias;
-        this.pestanias.splice(3,1); /* saco la pestaña 'Eliminar' */
+        this.pestanias.splice(3, 1); /* saco la pestaña 'Eliminar' */
         //Establece demas datos necesarios
         this.ultimoId = respuesta.ultimoId;
         this.formulario.get('id').setValue(this.ultimoId);
@@ -108,6 +108,9 @@ export class ModuloComponent implements OnInit {
   }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
+    /* Limpia el formulario para no mostrar valores en campos cuando 
+      la pestaña es != 1 */
+    this.indiceSeleccionado != 1 ? this.formulario.reset() : '';
     this.pestaniaActual = nombrePestania;
     this.mostrarAutocompletado = autocompletado;
     this.soloLectura = soloLectura;

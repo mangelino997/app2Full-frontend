@@ -73,9 +73,11 @@ export class AdelantoLoteComponent implements OnInit {
   //Defiene el render
   public render: boolean = false;
   //Constructor
-  constructor(private subopcionPestaniaService: SubopcionPestaniaService, private appService: AppService, private toastr: ToastrService,
-    private loaderService: LoaderService, private modelo: PersonalAdelanto, private sucursalService: SucursalService,
-    private categoriaService: CategoriaService, private fechaService: FechaService, private basicoCategoriaService: BasicoCategoriaService,
+  constructor(private subopcionPestaniaService: SubopcionPestaniaService, private appService: AppService, 
+    private toastr: ToastrService, private loaderService: LoaderService, 
+    private modelo: PersonalAdelanto, private sucursalService: SucursalService,
+    private categoriaService: CategoriaService, private fechaService: FechaService, 
+    private basicoCategoriaService: BasicoCategoriaService,
     private servicio: PersonalAdelantoService, public dialog: MatDialog) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
@@ -140,7 +142,7 @@ export class AdelantoLoteComponent implements OnInit {
   public seleccionarPestania(id, nombre) {
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    this.reestablecerFormulario(undefined);
+    this.reestablecerFormulario(null);
     switch (id) {
       case 1:
         this.establecerValoresPestania(nombre, false, false, true, 'idSucursal');
@@ -255,10 +257,10 @@ export class AdelantoLoteComponent implements OnInit {
     this.loaderService.show();
     this.servicio.listarLotes(this.fechaDesde.value, this.fechaHasta.value, this.appService.getEmpresa().id).subscribe(
       res => {
-        if(res.json().length > 0){
+        if (res.json().length > 0) {
           this.listaCompleta = new MatTableDataSource(res.json());
           this.listaCompleta.sort = this.sort;
-        }else{
+        } else {
           this.listaCompleta = new MatTableDataSource([]);
           this.toastr.error("Sin registros para mostrar.");
         }
@@ -279,7 +281,7 @@ export class AdelantoLoteComponent implements OnInit {
     this.fechaHasta.reset();
     this.observacion.reset();
     this.indiceElemento = null,
-    this.basicoCategoria.reset();
+      this.basicoCategoria.reset();
     this.numeroLote.setValue(null);
     this.listaCompleta = new MatTableDataSource([]);
     this.fechaService.obtenerFecha().subscribe(

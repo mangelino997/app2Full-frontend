@@ -121,6 +121,7 @@ export class BarrioComponent implements OnInit {
     this.mostrarAutocompletado = autocompletado;
     this.soloLectura = soloLectura;
     this.mostrarBoton = boton;
+    this.indiceSeleccionado != 1 ? this.formulario.reset() : '';
     setTimeout(function () {
       document.getElementById(componente).focus();
     }, 20);

@@ -60,7 +60,7 @@ export class SucursalComponent implements OnInit {
   //Constructor
   constructor(private servicio: SucursalService,
     private barrioServicio: BarrioService, private localidadServicio: LocalidadService,
-    private appService: AppService, private toastr: ToastrService, 
+    private appService: AppService, private toastr: ToastrService,
     private loaderService: LoaderService, private reporteServicio: ReporteService) {
 
     //Autocompletado - Buscar por nombre
@@ -160,6 +160,9 @@ export class SucursalComponent implements OnInit {
   }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
+    /* Limpia el formulario para no mostrar valores en campos cuando 
+      la pestaña es != 1 */
+    this.indiceSeleccionado != 1 ? this.formulario.reset() : '';
     this.pestaniaActual = nombrePestania;
     this.mostrarAutocompletado = autocompletado;
     this.soloLectura = soloLectura;

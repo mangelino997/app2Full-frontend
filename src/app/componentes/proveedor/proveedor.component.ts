@@ -42,6 +42,8 @@ export class ProveedorComponent implements OnInit {
   public opciones: Array<any> = [];
   //Define un formulario para validaciones de campos
   public formulario: FormGroup;
+  //Define un formulario para proveedor-cuentaBancaria
+  public formularioCuentaBancaria: FormGroup;
   //Define un formulario para realizar el filtro en pestaña Listar
   public formularioFiltro: FormGroup;
   //Define la lista completa de registros
@@ -123,6 +125,8 @@ export class ProveedorComponent implements OnInit {
       });
     //Define los campos para validaciones
     this.formulario = this.proveedorModelo.formulario;
+    //Define los campos para proveedor-cuentaBancaria
+    this.formularioCuentaBancaria = this.proveedorModelo.formularioCuentaBancaria;
     //Define los campos para filtrar la tabla 
     this.formularioFiltro = new FormGroup({
       localidad: new FormControl(),
@@ -327,7 +331,8 @@ export class ProveedorComponent implements OnInit {
   //Establece valores por defecto
   private establecerValoresPorDefecto(): void {
     this.formulario.get('estaActiva').setValue(true);
-    this.formulario.get('condicionCompra').setValue(this.condicionesCompras[0]);
+    this.condicionesCompras.length > 0 ?
+      this.formulario.get('condicionCompra').setValue(this.condicionesCompras[0]) : '';
   }
   //Vacia la lista de resultados de autocompletados
   private vaciarListas() {
@@ -357,6 +362,9 @@ export class ProveedorComponent implements OnInit {
   }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
+    /* Limpia el formulario para no mostrar valores en campos cuando 
+      la pestaña es != 1 */
+    this.indiceSeleccionado != 1 ? this.formulario.reset() : '';
     this.pestaniaActual = nombrePestania;
     this.mostrarAutocompletado = autocompletado;
     this.soloLectura = soloLectura;

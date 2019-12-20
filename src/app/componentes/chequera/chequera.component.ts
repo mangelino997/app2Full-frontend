@@ -4,8 +4,6 @@ import { ChequeraService } from 'src/app/servicios/chequera.service';
 import { FormGroup, FormControl } from '@angular/forms';
 import { MatTableDataSource, MatSort, MatPaginator } from '@angular/material';
 import { Subscription } from 'rxjs';
-import { TipoChequeraService } from 'src/app/servicios/tipo-chequera.service';
-import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
 import { AppService } from 'src/app/servicios/app.service';
 import { ToastrService } from 'ngx-toastr';
 import { LoaderService } from 'src/app/servicios/loader.service';
@@ -70,20 +68,10 @@ export class ChequeraComponent implements OnInit {
   //Define la paginacion
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Constructor
-  constructor(private chequera: Chequera, private servicio: ChequeraService, private tipoChequeraService: TipoChequeraService,
-    private subopcionPestaniaService: SubopcionPestaniaService, private appService: AppService, private toastr: ToastrService,
-    private loaderService: LoaderService, private cuentaBancariaService: CuentaBancariaService, private reporteServicio: ReporteService) {
-    //Obtiene la lista de pestania por rol y subopcion
-    this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
-      .subscribe(
-        res => {
-          this.pestanias = res.json();
-          this.activeLink = this.pestanias[0].nombre;
-          this.pestanias.splice(2, 1);
-        },
-        err => {
-        }
-      );
+  constructor(private chequera: Chequera, private servicio: ChequeraService, 
+    private appService: AppService, private toastr: ToastrService,
+    private loaderService: LoaderService, private cuentaBancariaService: CuentaBancariaService, 
+    private reporteServicio: ReporteService) {
   }
 
   ngOnInit() {
@@ -111,6 +99,7 @@ export class ChequeraComponent implements OnInit {
         let respuesta = res.json();
         //Establece las pestanias
         this.pestanias = respuesta.pestanias;
+        this.pestanias.splice(2, 1);
         //Establece demas datos necesarios
         this.ultimoId = respuesta.ultimoId;
         this.tiposChequeras = respuesta.tipoChequeras;
@@ -152,6 +141,9 @@ export class ChequeraComponent implements OnInit {
   }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
+    /* Limpia el formulario para no mostrar valores en campos cuando 
+      la pestaña es != 1 */
+    this.indiceSeleccionado != 1 ? this.formulario.reset() : '';
     this.pestaniaActual = nombrePestania;
     this.mostrarAutocompletado = autocompletado;
     this.soloLectura = soloLectura;
