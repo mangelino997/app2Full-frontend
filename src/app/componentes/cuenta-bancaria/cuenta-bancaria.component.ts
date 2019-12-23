@@ -64,30 +64,28 @@ export class CuentaBancariaComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Constructor
-  constructor(private subopcionPestaniaService: SubopcionPestaniaService, private appService: AppService, private loaderService: LoaderService,
+  constructor(private subopcionPestaniaService: SubopcionPestaniaService, 
+    private appService: AppService, private loaderService: LoaderService,
     private cuentaBancaria: CuentaBancaria, private servicio: CuentaBancariaService,
     private bancoService: BancoService, private sucursalService: SucursalBancoService,
-    private tipoCuentaBancariaService: TipoCuentaBancariaService, private monedaService: MonedaService, private toastr: ToastrService,
+    private tipoCuentaBancariaService: TipoCuentaBancariaService, 
+    private monedaService: MonedaService, private toastr: ToastrService,
     private reporteServicio: ReporteService) {
-    //Establece la subscripcion a loader
-    this.subscription = this.loaderService.loaderState
-      .subscribe((state: LoaderState) => {
-        this.show = state.show;
-      });
-    this.loaderService.show();
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
       .subscribe(
         res => {
           this.pestanias = res.json();
           this.loaderService.hide();
-        },
-        err => {
-        }
+        },err => {}
       );
   }
-
   ngOnInit() {
+    //Establece la subscripcion a loader
+    this.subscription = this.loaderService.loaderState
+      .subscribe((state: LoaderState) => {
+        this.show = state.show;
+      });
     //Define los campos para validaciones
     this.formulario = this.cuentaBancaria.formulario;
     //Establece los valores de la primera pestania activa

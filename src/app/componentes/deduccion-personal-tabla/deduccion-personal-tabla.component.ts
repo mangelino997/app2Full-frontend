@@ -274,9 +274,10 @@ export class DeduccionPersonalTablaComponent implements OnInit {
     this.formulario.reset();
     this.tipoBeneficio.reset();
     this.formulario.get('anio').enable();
-    this.formulario.get('afipTipoBeneficio').enable();
     this.listaCompleta = new MatTableDataSource([]);
-    this.indiceSeleccionado == 3 ? this.formulario.get('afipDeduccionPersonal').disable() : this.formulario.get('afipDeduccionPersonal').enable();
+    this.formulario.get('afipTipoBeneficio').enable();
+    this.indiceSeleccionado == 3 ? 
+    this.formulario.get('afipDeduccionPersonal').disable() : this.formulario.get('afipDeduccionPersonal').enable();
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {

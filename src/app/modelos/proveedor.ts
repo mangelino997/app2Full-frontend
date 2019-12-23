@@ -43,13 +43,14 @@ export class Proveedor {
             alias: new FormControl('', Validators.maxLength(100)),
             fechaAlta: new FormControl(),
             fechaBaja: new FormControl(),
-            proveedorCuentasContables: new FormControl()
+            proveedorCuentasContables: new FormControl(),
+            proveedorCuentasBancarias: new FormControl()
+
         });
         // crear el formulario para proveedor-cuentaBancaria
         this.formularioCuentaBancaria = new FormGroup({
             id: new FormControl(),
             version: new FormControl(),
-            banco: new FormControl('', Validators.required),
             sucursalBanco: new FormControl(),
             tipoCuentaBancaria: new FormControl('', Validators.required),
             numeroCuenta: new FormControl('', Validators.required),
@@ -57,7 +58,8 @@ export class Proveedor {
             titular: new FormControl('', Validators.required),
             numeroCBU: new FormControl('', Validators.required),
             aliasCBU: new FormControl(),
-            estaActiva: new FormControl(),
+            porDefecto: new FormControl(),
+            estaActiva: new FormControl('', Validators.required),
         });
     }
 }
