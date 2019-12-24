@@ -44,6 +44,8 @@ export class PersonalComponent implements OnInit {
   public formulario: FormGroup;
   //Define un formulario para filtrar (Listar)
   public formularioFiltro: FormGroup;
+  //Define un formulario para personal-cuentaBancaria
+  public formularioCuentaBancaria: FormGroup;
   //Define un formulario para validaciones de campos
   public personalActualizar: FormGroup;
   //Define la lista completa de registros
@@ -146,6 +148,8 @@ export class PersonalComponent implements OnInit {
       });
     //Define los campos para validaciones
     this.formulario = this.personal.formulario;
+    //Define los campos para validaciones cuenta bancaria
+    this.formularioCuentaBancaria = this.personal.formularioCuentaBancaria;
     //Define los campos para filtrar la tabla 
     this.formularioFiltro = new FormGroup({
       idSucursal: new FormControl('', Validators.required),
