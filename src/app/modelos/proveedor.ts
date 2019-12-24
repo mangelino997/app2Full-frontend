@@ -37,16 +37,12 @@ export class Proveedor {
             fechaBaja: new FormControl(),
             proveedorCuentasContables: new FormControl(),
             proveedorCuentasBancarias: new FormControl()
-
             // banco: new FormControl(),
             // tipoCuentaBancaria: new FormControl(),
             // numeroCuenta: new FormControl('', [Validators.min(1), Validators.maxLength(20)]),
             // titular: new FormControl('', Validators.maxLength(45)),
             // numeroCBU: new FormControl('', [Validators.min(1), Validators.minLength(22), Validators.maxLength(22)]),
             // aliasCBU: new FormControl('', Validators.maxLength(45)),
-
-
-
         });
         // crear el formulario para proveedor-cuentaBancaria
         this.formularioCuentaBancaria = new FormGroup({

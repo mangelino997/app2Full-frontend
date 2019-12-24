@@ -15,6 +15,8 @@ import { PdfService } from 'src/app/servicios/pdf.service';
 import { PdfDialogoComponent } from '../pdf-dialogo/pdf-dialogo.component';
 import { BugImagenDialogoComponent } from '../bugImagen-dialogo/bug-imagen-dialogo.component';
 import { ReporteService } from 'src/app/servicios/reporte.service';
+import { BancoService } from 'src/app/servicios/banco.service';
+import { SucursalBancoService } from 'src/app/servicios/sucursal-banco.service';
 
 @Component({
   selector: 'app-personal',
@@ -24,6 +26,8 @@ import { ReporteService } from 'src/app/servicios/reporte.service';
 export class PersonalComponent implements OnInit {
   //Define el ultimo id
   public ultimoId: string = null;
+  //Define el id del registro a modificar
+  public idMod: string = null;
   //Define la pestania activa
   public activeLink: any = null;
   //Define el indice seleccionado de pestania
@@ -50,6 +54,8 @@ export class PersonalComponent implements OnInit {
   public personalActualizar: FormGroup;
   //Define la lista completa de registros
   public listaCompleta = new MatTableDataSource([]);
+  //Define la lista para las Cuentas Bancarias del proveedor
+  public listaCuentaBancaria = new MatTableDataSource([]);
   //Define la opcion seleccionada
   public opcionSeleccionada: number = null;
   //Define la lista de sexos
@@ -70,8 +76,12 @@ export class PersonalComponent implements OnInit {
   public botonOpcionActivo: boolean = null;
   //Define la nacionalidad de nacimiento
   public nacionalidadNacimiento: FormControl = new FormControl();
+  //Define el banco de la opcion Banco, como un formControl
+  public banco: FormControl = new FormControl();
   //Define el form control para las busquedas
   public autocompletado: FormControl = new FormControl();
+  //Define las listas de Bancos
+  public bancos: Array<any> = [];
   //Define la lista de resultados de busqueda
   public resultados: Array<any> = [];
   //Define la lista de resultados de busqueda de barrios
@@ -98,6 +108,9 @@ export class PersonalComponent implements OnInit {
   public resultadosAfipSituaciones: Array<any> = [];
   //Define las columnas de la tabla
   public columnas: string[] = ['ID', 'NOMBRE', 'TIPO DOCUMENTO', 'DOCUMENTO', 'TELEFONO MOVIL', 'DOMICILIO', 'LOCALIDAD', 'EDITAR'];
+  //Define las columnas de la tabla para la opcion Bancos - lista de Cuentas Bancarias
+  public columnasCuentaBancaria: string[] = ['ID', 'BANCO', 'SUCURSAL',
+    'TIPO_CUENTA', 'NUMERO_CUENTA', 'MONEDA', 'TITULAR', 'CBU', 'ACTIVA', 'CUENTA_PPAL', 'EDITAR'];
   //Define la lista de tipos de imagenes
   private tiposImagenes = ['image/png', 'image/jpg', 'image/jpeg'];
   //Define la matSort
@@ -116,10 +129,13 @@ export class PersonalComponent implements OnInit {
   public render: boolean = false;
   //Constructor
   constructor(private servicio: PersonalService,
-    private appServicio: AppService, private toastr: ToastrService, private personal: Personal, private appService: AppService,
+    private appServicio: AppService, private toastr: ToastrService,
+    private personal: Personal, private appService: AppService,
     private barrioServicio: BarrioService, private localidadServicio: LocalidadService,
-    private loaderService: LoaderService, private fotoService: FotoService, private pdfServicio: PdfService,
-    public dialog: MatDialog, private reporteServicio: ReporteService) {
+    private loaderService: LoaderService, private fotoService: FotoService,
+    private pdfServicio: PdfService, private bancoService: BancoService,
+    public dialog: MatDialog, private reporteServicio: ReporteService,
+    private sucursalService: SucursalBancoService) {
     //Autocompletado - Buscar por alias
     this.autocompletado.valueChanges.subscribe(data => {
       let empresa = this.appServicio.getEmpresa();
@@ -211,6 +227,22 @@ export class PersonalComponent implements OnInit {
           this.loaderService.show();
           this.localidadServicio.listarPorNombre(data).subscribe(response => {
             this.resultadosLocalidades = response;
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
+        }
+      }
+    })
+    //Autocompletado - Buscar Bancos por nombre
+    this.banco.valueChanges.subscribe(data => {
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.loaderService.show();
+          this.bancoService.listarPorNombre(data).subscribe(response => {
+            this.bancos = response;
             this.loaderService.hide();
           },
             err => {
@@ -635,6 +667,7 @@ export class PersonalComponent implements OnInit {
     this.formulario.get('empresa').setValue(this.appServicio.getEmpresa());
     this.formulario.get('esJubilado').setValue(false);
     this.formulario.get('esMensualizado').setValue(true);
+    this.formulario.get('proveedorCuentasBancarias').setValue(this.listaCuentaBancaria.data);
     this.servicio.agregar(this.formulario.value).then(
       res => {
         let respuesta = res.json();
@@ -671,6 +704,7 @@ export class PersonalComponent implements OnInit {
     this.formulario.get('empresa').setValue(this.appServicio.getEmpresa());
     this.formulario.get('esJubilado').setValue(false);
     this.formulario.get('esMensualizado').setValue(true);
+    this.formulario.get('proveedorCuentasBancarias').setValue(this.listaCuentaBancaria.data);
     this.servicio.actualizar(this.formulario.value).then(
       res => {
         let respuesta = res.json();
@@ -721,7 +755,14 @@ export class PersonalComponent implements OnInit {
     this.formulario.reset();
     this.autocompletado.reset();
     this.nacionalidadNacimiento.reset();
+    this.listaCuentaBancaria = new MatTableDataSource([]);
     id ? this.formulario.get('id').setValue(id) : this.formulario.get('id').setValue(this.ultimoId);
+  }
+  //Reestablece el formulario de Cuenta Bancaria
+  private reestablecerFormularioCB() {
+    this.banco.reset();
+    this.sucursales = [];
+    this.formularioCuentaBancaria.reset();
   }
   //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
   private lanzarError(err) {
@@ -816,6 +857,74 @@ export class PersonalComponent implements OnInit {
           break;
       }
     }
+  }
+  //Obtiene las sucursales del banco seleccionado y setea la correcta
+  private establecerSucursal(idBanco, sucursal) {
+    this.sucursalService.listarPorBanco(idBanco).subscribe(
+      res => {
+        this.sucursales = res.json();
+      }
+    )
+    this.formulario.value.sucursalBanco = sucursal; //Setea el banco
+  }
+  //Recorre la lista de Cuentas Bancarias y determina si ya fue asignado anteriormente 
+  private verificarListaCB(elemento) {
+    /* establezco un boolean como control */
+    let bandera = false;
+    for (let i = 0; i < this.listaCuentaBancaria.data.length; i++) {
+      let cbuLista = this.listaCuentaBancaria.data[i].cbu;
+      let numeroCuentaLista = this.listaCuentaBancaria.data[i].numeroCuenta;
+
+      /* por proveedor no controlo porque es siempre el mismo a quien se agregan las distinas
+        cuentas bancarias */
+      if (elemento.cbu == cbuLista && elemento.numeroCuenta == numeroCuentaLista) {
+        bandera = true;
+        break;
+      }
+    }
+    return bandera;
+  }
+  //Agrega una cuenta banaria a la tabla - lista
+  public agregarCuentaBancaria() {
+    let elemento = this.formularioCuentaBancaria.value;
+    if (!this.verificarListaCB(elemento)) {
+      this.listaCuentaBancaria.data.push(this.formularioCuentaBancaria.value);
+      this.listaCuentaBancaria.sort = this.sort;
+      this.reestablecerFormularioCB();
+      console.log(this.listaCuentaBancaria.data);
+      document.getElementById("idBanco").focus();
+    } else {
+      this.toastr.error("Cuenta Bancaria ya agregada a la lista.");
+      document.getElementById("idBanco").focus();
+    }
+  }
+  //Elimina un registro de la lista y tabla de Cuentas Bancarias
+  public eliminarCuentaBancaria(indice) {
+    this.listaCuentaBancaria.data.splice(indice, 1);
+    this.listaCuentaBancaria.sort = this.sort;
+  }
+  //Prepara los datos del registro seleccionado para poder actualizar
+  public activarModCuentaBancaria(elemento, indice) {
+    this.idMod = indice;
+    this.banco.setValue(elemento.sucursalBanco.banco);
+    this.formularioCuentaBancaria.patchValue(elemento);
+    this.establecerSucursal(elemento.sucursalBanco.banco.id, elemento.sucursalBanco);
+    document.getElementById("idBanco").focus();
+    console.log(this.idMod);
+  }
+  //Actualiza el registro, seleccionado, en la lista - tabla
+  public actualizarCuentaBancaria() {
+    let registroActualizado = this.formularioCuentaBancaria.value;
+    if (!this.verificarListaCB(registroActualizado)) {
+      this.listaCuentaBancaria.data[this.idMod] = registroActualizado;
+      this.listaCuentaBancaria.sort = this.sort;
+      this.idMod = null;
+      this.reestablecerFormularioCB();
+    } else {
+      this.toastr.error("Cuenta Bancaria ya agregada a la lista.");
+      document.getElementById("idBanco").focus();
+    }
+
   }
   //Valida el CUIL
   public validarCUIL(): void {
@@ -999,6 +1108,8 @@ export class PersonalComponent implements OnInit {
     this.obtenerPorId(elemento.id);
     this.autocompletado.setValue(elemento);
     this.establecerNacionalidad(elemento.localidad);
+    this.listaCuentaBancaria.data = elemento.proveedorCuentasBancarias;
+    this.listaCuentaBancaria.sort = this.sort;
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
@@ -1006,6 +1117,8 @@ export class PersonalComponent implements OnInit {
     this.obtenerPorId(elemento.id);
     this.autocompletado.setValue(elemento);
     this.establecerNacionalidad(elemento.localidad);
+    this.listaCuentaBancaria.data = elemento.proveedorCuentasBancarias;
+    this.listaCuentaBancaria.sort = this.sort;
   }
   //Establece la foto y pdf (actilet consultar/actualizar)
   private establecerFotoYPdfs(elemento): void {

@@ -17,6 +17,8 @@ import { PdfViewerModule } from 'ng2-pdf-viewer';
 import { Personal } from 'src/app/modelos/personal';
 import { Foto } from 'src/app/modelos/foto';
 import { Pdf } from 'src/app/modelos/pdf';
+import { BancoService } from 'src/app/servicios/banco.service';
+import { SucursalBancoService } from 'src/app/servicios/sucursal-banco.service';
 
 @NgModule({
   declarations: [
@@ -44,10 +46,12 @@ import { Pdf } from 'src/app/modelos/pdf';
     PdfViewerModule
   ],
   providers: [
+    SucursalBancoService,
     PersonalService,
     PersonalService,
     BarrioService,
     LocalidadService,
+    BancoService,
     FotoService,
     PdfService,
     Personal,

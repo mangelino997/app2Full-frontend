@@ -678,16 +678,10 @@ export class ProveedorComponent implements OnInit {
   //Actualiza el registro, seleccionado, en la lista - tabla
   public actualizarCuentaBancaria() {
     let registroActualizado = this.formularioCuentaBancaria.value;
-    if (!this.verificarListaCB(registroActualizado)) {
-      this.listaCuentaBancaria.data[this.idMod] = registroActualizado;
-      this.listaCuentaBancaria.sort = this.sort;
-      this.idMod = null;
-      this.reestablecerFormularioCB();
-    } else {
-      this.toastr.error("Cuenta Bancaria ya agregada a la lista.");
-      document.getElementById("idBanco").focus();
-    }
-
+    this.listaCuentaBancaria.data[this.idMod] = registroActualizado;
+    this.listaCuentaBancaria.sort = this.sort;
+    this.idMod = null;
+    this.reestablecerFormularioCB();
   }
   //Lanza error (error interno, duplicidad de datos, etc.)
   private lanzarError(err) {

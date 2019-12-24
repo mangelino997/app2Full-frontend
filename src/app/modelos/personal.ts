@@ -110,7 +110,9 @@ export class Personal {
             pdfLibSanidad: this.pdf.crearFormulario(),
             pdfLinti: this.pdf.crearFormulario(),
             pdfDni: this.pdf.crearFormulario(),
-            pdfAltaTemprana: this.pdf.crearFormulario()
+            pdfAltaTemprana: this.pdf.crearFormulario(),
+            proveedorCuentasBancarias: new FormControl()
+
         }),
         // crear el formulario para proveedor-cuentaBancaria
         this.formularioCuentaBancaria = new FormGroup({
