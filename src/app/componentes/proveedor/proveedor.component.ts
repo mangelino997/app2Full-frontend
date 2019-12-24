@@ -206,21 +206,21 @@ export class ProveedorComponent implements OnInit {
       }
     })
     //Autocompletado Banco - Buscar por nombre
-    this.formulario.get('banco').valueChanges.subscribe(data => {
-      if (typeof data == 'string') {
-        data = data.trim();
-        if (data == '*' || data.length > 0) {
-          this.loaderService.show();
-          this.bancoService.listarPorNombre(data).subscribe(response => {
-            this.bancos = response;
-            this.loaderService.hide();
-          },
-            err => {
-              this.loaderService.hide();
-            })
-        }
-      }
-    })
+    // this.formulario.get('banco').valueChanges.subscribe(data => {
+    //   if (typeof data == 'string') {
+    //     data = data.trim();
+    //     if (data == '*' || data.length > 0) {
+    //       this.loaderService.show();
+    //       this.bancoService.listarPorNombre(data).subscribe(response => {
+    //         this.bancos = response;
+    //         this.loaderService.hide();
+    //       },
+    //         err => {
+    //           this.loaderService.hide();
+    //         })
+    //     }
+    //   }
+    // })
     //Autocompletado - Buscar Bancos por nombre
     this.banco.valueChanges.subscribe(data => {
       if (typeof data == 'string') {
@@ -394,14 +394,14 @@ export class ProveedorComponent implements OnInit {
       this.formulario.get('tipoDocumento').enable();
       this.formulario.get('condicionCompra').enable();
       this.formulario.get('estaActiva').enable();
-      this.formulario.get('tipoCuentaBancaria').enable();
+      // this.formulario.get('tipoCuentaBancaria').enable();
     } else {
       this.formulario.get('tipoProveedor').disable();
       this.formulario.get('afipCondicionIva').disable();
       this.formulario.get('tipoDocumento').disable();
       this.formulario.get('condicionCompra').disable();
       this.formulario.get('estaActiva').disable();
-      this.formulario.get('tipoCuentaBancaria').disable();
+      // this.formulario.get('tipoCuentaBancaria').disable();
     }
   }
   //Funcion para establecer los valores de las pestañas
@@ -547,6 +547,10 @@ export class ProveedorComponent implements OnInit {
         if (respuesta.codigo == 201) {
           this.ultimoId = respuesta.id;
           this.reestablecerFormulario(respuesta.id);
+          this.proveedorCuentaContableService.agregar(this.formulario.value.proveedorCuentasBancarias)
+            .subscribe(res => {
+              console.log(res);
+            })
           document.getElementById('idRazonSocial').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
@@ -635,7 +639,12 @@ export class ProveedorComponent implements OnInit {
     /* establezco un boolean como control */
     let bandera = false;
     for (let i = 0; i < this.listaCuentaBancaria.data.length; i++) {
-      if (elemento.numeroCBU == this.listaCuentaBancaria.data[i].numeroCBU) {
+      let cbuLista = this.listaCuentaBancaria.data[i].cbu;
+      let numeroCuentaLista = this.listaCuentaBancaria.data[i].numeroCuenta;
+
+      /* por proveedor no controlo porque es siempre el mismo a quien se agregan las distinas
+        cuentas bancarias */
+      if (elemento.cbu == cbuLista && elemento.numeroCuenta == numeroCuentaLista) {
         bandera = true;
         break;
       }
@@ -678,11 +687,11 @@ export class ProveedorComponent implements OnInit {
       this.listaCuentaBancaria.sort = this.sort;
       this.idMod = null;
       this.reestablecerFormularioCB();
-    }else {
+    } else {
       this.toastr.error("Cuenta Bancaria ya agregada a la lista.");
       document.getElementById("idBanco").focus();
     }
-    
+
   }
   //Lanza error (error interno, duplicidad de datos, etc.)
   private lanzarError(err) {
@@ -790,13 +799,18 @@ export class ProveedorComponent implements OnInit {
     this.seleccionarPestania(2, this.pestanias[1].nombre);
     this.autocompletado.setValue(elemento);
     this.formulario.patchValue(elemento);
+    this.listaCuentaBancaria.data = elemento.proveedorCuentasBancarias;
+    this.listaCuentaBancaria.sort = this.sort;
     this.planesCuentas = new MatTableDataSource(elemento.proveedorCuentasContables);
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
+    console.log(elemento);
     this.seleccionarPestania(3, this.pestanias[2].nombre);
     this.autocompletado.setValue(elemento);
     this.formulario.patchValue(elemento);
+    this.listaCuentaBancaria.data = elemento.proveedorCuentasBancarias;
+    this.listaCuentaBancaria.sort = this.sort;
     this.verificarCBU();
     this.planesCuentas = new MatTableDataSource(elemento.proveedorCuentasContables);
   }

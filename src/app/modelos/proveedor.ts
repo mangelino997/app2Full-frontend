@@ -30,14 +30,6 @@ export class Proveedor {
             observaciones: new FormControl('', Validators.maxLength(400)),
             notaIngresarComprobante: new FormControl('', Validators.maxLength(200)),
             notaImpresionOrdenPago: new FormControl('', Validators.maxLength(200)),
-
-            banco: new FormControl(),
-            tipoCuentaBancaria: new FormControl(),
-            numeroCuenta: new FormControl('', [Validators.min(1), Validators.maxLength(20)]),
-            titular: new FormControl('', Validators.maxLength(45)),
-            numeroCBU: new FormControl('', [Validators.min(1), Validators.minLength(22), Validators.maxLength(22)]),
-            aliasCBU: new FormControl('', Validators.maxLength(45)),
-
             tipoProveedor: new FormControl('', Validators.required),
             estaActiva: new FormControl('', Validators.required),
             alias: new FormControl('', Validators.maxLength(100)),
@@ -45,6 +37,15 @@ export class Proveedor {
             fechaBaja: new FormControl(),
             proveedorCuentasContables: new FormControl(),
             proveedorCuentasBancarias: new FormControl()
+
+            // banco: new FormControl(),
+            // tipoCuentaBancaria: new FormControl(),
+            // numeroCuenta: new FormControl('', [Validators.min(1), Validators.maxLength(20)]),
+            // titular: new FormControl('', Validators.maxLength(45)),
+            // numeroCBU: new FormControl('', [Validators.min(1), Validators.minLength(22), Validators.maxLength(22)]),
+            // aliasCBU: new FormControl('', Validators.maxLength(45)),
+
+
 
         });
         // crear el formulario para proveedor-cuentaBancaria
@@ -56,7 +57,7 @@ export class Proveedor {
             numeroCuenta: new FormControl('', Validators.required),
             moneda: new FormControl('', Validators.required),
             titular: new FormControl('', Validators.required),
-            numeroCBU: new FormControl('', Validators.required),
+            cbu: new FormControl('', Validators.required),
             aliasCBU: new FormControl(),
             porDefecto: new FormControl(),
             estaActiva: new FormControl('', Validators.required),
