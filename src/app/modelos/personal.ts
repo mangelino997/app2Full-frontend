@@ -7,6 +7,8 @@ import { Injectable } from '@angular/core';
 export class Personal {
     //define un formulario FormGroup
     public formulario: FormGroup;
+    //define el formulario para cuenta bancaria
+    public formularioCuentaBancaria: FormGroup;
     //constructor
     constructor(private foto: Foto, private pdf: Pdf) {
         // crear el formulario para la seccion de modulos
@@ -109,6 +111,20 @@ export class Personal {
             pdfLinti: this.pdf.crearFormulario(),
             pdfDni: this.pdf.crearFormulario(),
             pdfAltaTemprana: this.pdf.crearFormulario()
-        })
+        }),
+        // crear el formulario para proveedor-cuentaBancaria
+        this.formularioCuentaBancaria = new FormGroup({
+            id: new FormControl(),
+            version: new FormControl(),
+            sucursalBanco: new FormControl(),
+            tipoCuentaBancaria: new FormControl('', Validators.required),
+            numeroCuenta: new FormControl('', Validators.required),
+            moneda: new FormControl('', Validators.required),
+            titular: new FormControl('', Validators.required),
+            cbu: new FormControl('', Validators.required),
+            aliasCBU: new FormControl(),
+            porDefecto: new FormControl(),
+            estaActiva: new FormControl('', Validators.required),
+        });
     }
 }
