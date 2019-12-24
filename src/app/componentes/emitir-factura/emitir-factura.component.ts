@@ -208,9 +208,10 @@ export class EmitirFacturaComponent implements OnInit {
   //Obtiene la lista de Items
   private listarItems() {
     this.ventaTipoItemService.listarItems(1).subscribe(
-      res => {
+      res => { 
+        console.log(res);
         this.itemsAFacturar = res.json();
-      }, err => { this.toastr.error(err.json().message); }
+      }, err => { this.toastr.error(err.json().mensaje); }
     );
   }
   //Obtiene la lista de Ordenes de Venta de empresaOrdenVentaService

@@ -547,10 +547,6 @@ export class ProveedorComponent implements OnInit {
         if (respuesta.codigo == 201) {
           this.ultimoId = respuesta.id;
           this.reestablecerFormulario(respuesta.id);
-          this.proveedorCuentaContableService.agregar(this.formulario.value.proveedorCuentasBancarias)
-            .subscribe(res => {
-              console.log(res);
-            })
           document.getElementById('idRazonSocial').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
