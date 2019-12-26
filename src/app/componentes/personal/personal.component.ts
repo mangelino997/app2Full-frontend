@@ -58,20 +58,24 @@ export class PersonalComponent implements OnInit {
   public listaCuentaBancaria = new MatTableDataSource([]);
   //Define la opcion seleccionada
   public opcionSeleccionada: number = null;
+  //Define la fecha de hoy
+  public fechaActual: string = null;
+  //Define la lista de areas
+  public areas: Array<any> = [];
   //Define la lista de sexos
   public sexos: Array<any> = [];
+  //Define las listas de Monedas
+  public monedas: Array<any> = [];
+  //Define la lista de sucursales
+  public sucursales: Array<any> = [];
+  //Define la lista de sucursales donde el personal trabaja
+  public sucursalesTrabajo: Array<any> = [];
+  //Define la lista de sindicatos
+  public sindicatos: Array<any> = [];
   //Define la lista de estados civiles
   public estadosCiviles: Array<any> = [];
   //Define la lista de tipos de documentos
   public tiposDocumentos: Array<any> = [];
-  //Define la fecha de hoy
-  public fechaActual: string = null;
-  //Define la lista de sucursales
-  public sucursales: Array<any> = [];
-  //Define la lista de areas
-  public areas: Array<any> = [];
-  //Define la lista de sindicatos
-  public sindicatos: Array<any> = [];
   //Define la opcion activa
   public botonOpcionActivo: boolean = null;
   //Define la nacionalidad de nacimiento
@@ -86,6 +90,8 @@ export class PersonalComponent implements OnInit {
   public resultados: Array<any> = [];
   //Define la lista de resultados de busqueda de barrios
   public resultadosBarrios: Array<any> = [];
+  //Define la lista de tipos de cuentas bancarias
+  public tiposCuentasBancarias: Array<any> = [];
   //Define la lista de resultados de busqueda de localidades
   public resultadosLocalidades: Array<any> = [];
   //Define la lista de resultados de busqueda de categorias
@@ -252,6 +258,28 @@ export class PersonalComponent implements OnInit {
       }
     })
   }
+  //Obtiene la lista de Sucursales por Banco 
+  public cambioAutocompletadoBanco() {
+    console.log(this.banco.value);
+    //Busca lista de sucursales solo si seleccionó un Banco
+    if (this.banco.value) {
+      this.sucursalService.listarPorBanco(this.banco.value.id).subscribe(
+        res => {
+          this.sucursales = res.json();
+          this.sucursales.length == 0 ? this.toastr.warning("El Banco no tiene sucursales asignadas.") : '';
+        }
+      )
+    }
+  }
+  //Verifica si se selecciono un elemento del autocompletado
+  public verificarSeleccionBanco(valor): void {
+    console.log(this.banco.value, typeof valor.value);
+    if (typeof valor.value != 'object') {
+      valor.setValue(null);
+      this.formularioCuentaBancaria.get('sucursalBanco').reset();
+      this.sucursales = [];
+    }
+  }
   //Obtiene los datos necesarios para el componente
   private inicializar(idUsuario, idRol, idSubopcion) {
     this.render = true;
@@ -264,23 +292,27 @@ export class PersonalComponent implements OnInit {
         //Establece las opciones verticales
         this.opciones = respuesta.opciones;
         //Establece demas datos necesarios
+        console.log(respuesta);
         this.ultimoId = respuesta.ultimoId;
         this.sexos = respuesta.sexos;
         this.areas = respuesta.areas;
         this.fechaActual = respuesta.fecha;
-        this.sucursales = respuesta.sucursales;
+        this.monedas = respuesta.monedas;
         this.sindicatos = respuesta.sindicatos;
+        this.sucursalesTrabajo = respuesta.sucursales;
         this.estadosCiviles = respuesta.estadoCiviles;
         this.tiposDocumentos = respuesta.tipoDocumentos;
         this.resultadosCategorias = respuesta.categorias;
         this.resultadosObrasSociales = respuesta.obraSociales;
         this.resultadosAfipSituaciones = respuesta.afipSituacion;
         this.resultadosAfipActividades = respuesta.afipActividades;
+        this.tiposCuentasBancarias = respuesta.tipoCuentaBancarias;
         this.resultadosAfipCondiciones = respuesta.afipCondiciones;
         this.resultadosAfipLocalidades = respuesta.afipLocalidades;
         this.resultadosAfipSiniestrados = respuesta.afipSiniestrados;
         this.resultadosSeguridadesSociales = respuesta.seguridadSociales;
         this.resultadosAfipModContrataciones = respuesta.afipModContrataciones;
+
         this.formulario.get('fechaInicio').setValue(respuesta.fecha);
         this.formulario.get('tipoDocumento').setValue(this.tiposDocumentos[7]);
         this.formulario.get('id').setValue(respuesta.ultimoId);
@@ -396,6 +428,15 @@ export class PersonalComponent implements OnInit {
       this.btnPdflinti = false;
     }
   }
+  //Verifica que el CBU sea de 22 carácteres obligatorios
+  public verificarCBU() {
+    let elemento = this.formulario.value.numeroCBU;
+    elemento && elemento.length < 22 ?
+      [
+        this.toastr.error("El N° de CBU debe ser de 22 carácteres. Se reseteó el campo."),
+        this.formulario.get('numeroCBU').reset(),
+      ] : '';
+  }
   //Controla el rango valido para la fecha de emision cuando el punto de venta es feCAEA
   public verificarFecha(opcion) {
     switch (opcion) {
@@ -493,6 +534,30 @@ export class PersonalComponent implements OnInit {
       this.formulario.get('obraSocial').enable();
       this.formulario.get('estaActiva').enable();
       if (opcionPestania == 3) {
+        //Deshabilita los campos del formulario de Cuenta Bancaria en pestaña Actualizar
+        this.banco.disable();
+        this.formularioCuentaBancaria.get('moneda').disable();
+        this.formularioCuentaBancaria.get('sucursalBanco').disable();
+        this.formularioCuentaBancaria.get('tipoCuentaBancaria').disable();
+        this.formularioCuentaBancaria.get('cbu').disable();
+        this.formularioCuentaBancaria.get('titular').disable();
+        this.formularioCuentaBancaria.get('aliasCBU').disable();
+        this.formularioCuentaBancaria.get('numeroCuenta').disable();
+        this.formularioCuentaBancaria.get('porDefecto').enable();
+        this.formularioCuentaBancaria.get('estaActiva').enable();
+      } else {
+        this.banco.enable();
+        this.formularioCuentaBancaria.get('moneda').enable();
+        this.formularioCuentaBancaria.get('sucursalBanco').enable();
+        this.formularioCuentaBancaria.get('tipoCuentaBancaria').enable();
+        this.formularioCuentaBancaria.get('cbu').enable();
+        this.formularioCuentaBancaria.get('titular').enable();
+        this.formularioCuentaBancaria.get('aliasCBU').enable();
+        this.formularioCuentaBancaria.get('numeroCuenta').enable();
+        this.formularioCuentaBancaria.get('porDefecto').enable();
+        this.formularioCuentaBancaria.get('estaActiva').enable();
+      }
+      if (opcionPestania == 3) {
         this.formulario.get('fechaFin').enable();
       } else {
         this.formulario.get('fechaFin').disable();
@@ -523,13 +588,29 @@ export class PersonalComponent implements OnInit {
       this.formulario.get('afipLocalidad').disable();
       this.formulario.get('obraSocial').disable();
       this.formulario.get('estaActiva').disable();
+      //Deshabilita los campos del formulario de Cuenta Bancaria
+      this.banco.disable();
+      this.formularioCuentaBancaria.get('moneda').disable();
+      this.formularioCuentaBancaria.get('sucursalBanco').disable();
+      this.formularioCuentaBancaria.get('tipoCuentaBancaria').disable();
+      this.formularioCuentaBancaria.get('cbu').disable();
+      this.formularioCuentaBancaria.get('titular').disable();
+      this.formularioCuentaBancaria.get('aliasCBU').disable();
+      this.formularioCuentaBancaria.get('numeroCuenta').disable();
+      this.formularioCuentaBancaria.get('porDefecto').disable();
+      this.formularioCuentaBancaria.get('estaActiva').disable();
     }
   }
   //Cambio en elemento autocompletado - formatea los valores en campos
   public cambioAutocompletado() {
     let elemento = this.autocompletado.value;
+    console.log(elemento);
     this.nacionalidadNacimiento.setValue(elemento.localidadNacimiento.provincia.pais.nombre);
     this.obtenerPorId(elemento.id);
+    //Establece los campos para Cuenta Bancaria (opcion 'Liquidacion')
+    this.indiceSeleccionado == 3 ? this.verificarCBU() : '';
+    this.listaCuentaBancaria.data = elemento.personalCuentaBancarias;
+    this.listaCuentaBancaria.sort = this.sort;
   }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
@@ -667,7 +748,7 @@ export class PersonalComponent implements OnInit {
     this.formulario.get('empresa').setValue(this.appServicio.getEmpresa());
     this.formulario.get('esJubilado').setValue(false);
     this.formulario.get('esMensualizado').setValue(true);
-    this.formulario.get('proveedorCuentasBancarias').setValue(this.listaCuentaBancaria.data);
+    this.formulario.get('personalCuentaBancarias').setValue(this.listaCuentaBancaria.data);
     this.servicio.agregar(this.formulario.value).then(
       res => {
         let respuesta = res.json();
@@ -704,7 +785,7 @@ export class PersonalComponent implements OnInit {
     this.formulario.get('empresa').setValue(this.appServicio.getEmpresa());
     this.formulario.get('esJubilado').setValue(false);
     this.formulario.get('esMensualizado').setValue(true);
-    this.formulario.get('proveedorCuentasBancarias').setValue(this.listaCuentaBancaria.data);
+    this.formulario.get('personalCuentaBancarias').setValue(this.listaCuentaBancaria.data);
     this.servicio.actualizar(this.formulario.value).then(
       res => {
         let respuesta = res.json();
@@ -914,17 +995,21 @@ export class PersonalComponent implements OnInit {
   }
   //Actualiza el registro, seleccionado, en la lista - tabla
   public actualizarCuentaBancaria() {
+    /* limpia el registro que se actualizo en la posicion idMod para luego agregarlo
+    y poder controlar la unicidad del numeroCuenta y cbu */
+    this.listaCuentaBancaria.data[this.idMod] = {};
+    this.formularioCuentaBancaria.enable(); //En pestaña 'Actualizar' se vuelve a habilitar el formulario porque hay campos en disable
     let registroActualizado = this.formularioCuentaBancaria.value;
     if (!this.verificarListaCB(registroActualizado)) {
       this.listaCuentaBancaria.data[this.idMod] = registroActualizado;
       this.listaCuentaBancaria.sort = this.sort;
       this.idMod = null;
       this.reestablecerFormularioCB();
+      document.getElementById("idBanco").focus();
     } else {
       this.toastr.error("Cuenta Bancaria ya agregada a la lista.");
       document.getElementById("idBanco").focus();
     }
-
   }
   //Valida el CUIL
   public validarCUIL(): void {
@@ -1108,17 +1193,19 @@ export class PersonalComponent implements OnInit {
     this.obtenerPorId(elemento.id);
     this.autocompletado.setValue(elemento);
     this.establecerNacionalidad(elemento.localidad);
-    this.listaCuentaBancaria.data = elemento.proveedorCuentasBancarias;
+    this.listaCuentaBancaria.data = elemento.personalCuentaBancarias;
     this.listaCuentaBancaria.sort = this.sort;
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
+    console.log(elemento);
     this.seleccionarPestania(3, this.pestanias[2].nombre);
     this.obtenerPorId(elemento.id);
     this.autocompletado.setValue(elemento);
     this.establecerNacionalidad(elemento.localidad);
-    this.listaCuentaBancaria.data = elemento.proveedorCuentasBancarias;
+    this.listaCuentaBancaria.data = elemento.personalCuentaBancarias;
     this.listaCuentaBancaria.sort = this.sort;
+    this.verificarCBU();
   }
   //Establece la foto y pdf (actilet consultar/actualizar)
   private establecerFotoYPdfs(elemento): void {

@@ -289,7 +289,8 @@
                         <div class="form-group has-float-label">
                           <label for="idBanco" class="tamanio-label">Banco *</label>
                           <input id="idBanco" class="form-control form-control-sm" type="text" matInput
-                            [formControl]="banco" [matAutocomplete]="auto" autocomplete="off">
+                            [formControl]="banco" [matAutocomplete]="auto" autocomplete="off"
+                            (blur)="verificarSeleccionBanco(banco)">
                           <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFa.bind(this)"
                             (optionSelected)="cambioAutocompletadoBanco()">
                             <mat-option *ngFor="let item of bancos" [value]="item">
@@ -458,12 +459,13 @@
                               <th mat-header-cell *matHeaderCellDef></th>
                               <td mat-cell *matCellDef="let elemento; let i = index">
                                 <button mat-icon-button class="mat-icon-button-table"
-                                  (click)="eliminarCuentaBancaria(i)" matTooltip="Consultar" matTooltipPosition="above">
+                                  (click)="eliminarCuentaBancaria(i)" matTooltip="Consultar" matTooltipPosition="above"
+                                  *ngIf="indiceSeleccionado==1 || indiceSeleccionado==3">
                                   <mat-icon>close</mat-icon>
                                 </button>
                                 <button mat-icon-button class="mat-icon-button-table margin-left-3"
                                   (click)="activarModCuentaBancaria(elemento, i)" matTooltip="Editar"
-                                  matTooltipPosition="above">
+                                  matTooltipPosition="above" *ngIf="indiceSeleccionado==1 || indiceSeleccionado==3">
                                   <mat-icon>edit</mat-icon>
                                 </button>
                               </td>

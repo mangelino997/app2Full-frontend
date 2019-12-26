@@ -205,22 +205,6 @@ export class ProveedorComponent implements OnInit {
         }
       }
     })
-    //Autocompletado Banco - Buscar por nombre
-    // this.formulario.get('banco').valueChanges.subscribe(data => {
-    //   if (typeof data == 'string') {
-    //     data = data.trim();
-    //     if (data == '*' || data.length > 0) {
-    //       this.loaderService.show();
-    //       this.bancoService.listarPorNombre(data).subscribe(response => {
-    //         this.bancos = response;
-    //         this.loaderService.hide();
-    //       },
-    //         err => {
-    //           this.loaderService.hide();
-    //         })
-    //     }
-    //   }
-    // })
     //Autocompletado - Buscar Bancos por nombre
     this.banco.valueChanges.subscribe(data => {
       if (typeof data == 'string') {
@@ -238,12 +222,26 @@ export class ProveedorComponent implements OnInit {
       }
     })
   }
+  //Obtiene la lista de Sucursales por Banco 
   public cambioAutocompletadoBanco() {
-    this.sucursalService.listarPorBanco(this.banco.value.id).subscribe(
-      res => {
-        this.sucursales = res.json();
-      }
-    )
+    //Busca lista de sucursales solo si seleccionó un Banco
+    if (this.banco.value) {
+      this.sucursalService.listarPorBanco(this.banco.value.id).subscribe(
+        res => {
+          this.sucursales = res.json();
+          this.sucursales.length == 0 ? this.toastr.warning("El Banco no tiene sucursales asignadas.") : '';
+        }
+      )
+    }
+  }
+  //Verifica si se selecciono un elemento del autocompletado
+  public verificarSeleccionBanco(valor): void {
+    console.log(this.banco.value, typeof valor.value);
+    if (typeof valor.value != 'object') {
+      valor.setValue(null);
+      this.formularioCuentaBancaria.get('sucursalBanco').reset();
+      this.sucursales = [];
+    }
   }
   //Obtiene los datos necesarios para el componente
   private inicializar(idUsuario, idRol, idSubopcion) {
@@ -251,6 +249,7 @@ export class ProveedorComponent implements OnInit {
     this.servicio.inicializar(idUsuario, idRol, idSubopcion).subscribe(
       res => {
         let respuesta = res.json();
+        console.log(respuesta);
         //Establece las pestanias
         this.pestanias = respuesta.pestanias;
         //Establece las opciones verticales
@@ -279,10 +278,12 @@ export class ProveedorComponent implements OnInit {
   //Establece el formulario
   public establecerFormulario() {
     let elemento = this.autocompletado.value;
-    this.formulario.setValue(elemento);
+    this.formulario.patchValue(elemento);
     this.indiceSeleccionado == 3 ? this.verificarCBU() : '';
     this.planesCuentas = new MatTableDataSource(elemento.proveedorCuentasContables);
     this.planesCuentas.sort = this.sort;
+    this.listaCuentaBancaria.data = elemento.proveedorCuentasBancarias;
+    this.listaCuentaBancaria.sort = this.sort;
   }
   //Crea la lista de planes de cuenta
   public crearCuentasContables(empresas): void {
@@ -394,14 +395,47 @@ export class ProveedorComponent implements OnInit {
       this.formulario.get('tipoDocumento').enable();
       this.formulario.get('condicionCompra').enable();
       this.formulario.get('estaActiva').enable();
-      // this.formulario.get('tipoCuentaBancaria').enable();
+      if (this.indiceSeleccionado == 3) {
+        //Deshabilita los campos del formulario de Cuenta Bancaria en pestaña Actualizar
+        this.banco.disable();
+        this.formularioCuentaBancaria.get('moneda').disable();
+        this.formularioCuentaBancaria.get('sucursalBanco').disable();
+        this.formularioCuentaBancaria.get('tipoCuentaBancaria').disable();
+        this.formularioCuentaBancaria.get('cbu').disable();
+        this.formularioCuentaBancaria.get('titular').disable();
+        this.formularioCuentaBancaria.get('aliasCBU').disable();
+        this.formularioCuentaBancaria.get('numeroCuenta').disable();
+        this.formularioCuentaBancaria.get('porDefecto').enable();
+        this.formularioCuentaBancaria.get('estaActiva').enable();
+      } else {
+        this.banco.enable();
+        this.formularioCuentaBancaria.get('moneda').enable();
+        this.formularioCuentaBancaria.get('sucursalBanco').enable();
+        this.formularioCuentaBancaria.get('tipoCuentaBancaria').enable();
+        this.formularioCuentaBancaria.get('cbu').enable();
+        this.formularioCuentaBancaria.get('titular').enable();
+        this.formularioCuentaBancaria.get('aliasCBU').enable();
+        this.formularioCuentaBancaria.get('numeroCuenta').enable();
+        this.formularioCuentaBancaria.get('porDefecto').enable();
+        this.formularioCuentaBancaria.get('estaActiva').enable();
+      }
     } else {
       this.formulario.get('tipoProveedor').disable();
       this.formulario.get('afipCondicionIva').disable();
       this.formulario.get('tipoDocumento').disable();
       this.formulario.get('condicionCompra').disable();
       this.formulario.get('estaActiva').disable();
-      // this.formulario.get('tipoCuentaBancaria').disable();
+      //Habilita los campos del formulario de Cuenta Bancaria
+      this.banco.disable();
+      this.formularioCuentaBancaria.get('moneda').disable();
+      this.formularioCuentaBancaria.get('sucursalBanco').disable();
+      this.formularioCuentaBancaria.get('tipoCuentaBancaria').disable();
+      this.formularioCuentaBancaria.get('cbu').disable();
+      this.formularioCuentaBancaria.get('titular').disable();
+      this.formularioCuentaBancaria.get('aliasCBU').disable();
+      this.formularioCuentaBancaria.get('numeroCuenta').disable();
+      this.formularioCuentaBancaria.get('porDefecto').disable();
+      this.formularioCuentaBancaria.get('estaActiva').disable();
     }
   }
   //Funcion para establecer los valores de las pestañas
@@ -680,6 +714,7 @@ export class ProveedorComponent implements OnInit {
     /* limpia el registro que se actualizo en la posicion idMod para luego agregarlo
     y poder controlar la unicidad del numeroCuenta y cbu */
     this.listaCuentaBancaria.data[this.idMod] = {};
+    this.formularioCuentaBancaria.enable(); //En pestaña 'Actualizar' se vuelve a habilitar el formulario porque hay campos en disable
     let registroActualizado = this.formularioCuentaBancaria.value;
     if (!this.verificarListaCB(registroActualizado)) {
       this.listaCuentaBancaria.data[this.idMod] = registroActualizado;

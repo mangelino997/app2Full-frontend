@@ -111,7 +111,7 @@ export class Personal {
             pdfLinti: this.pdf.crearFormulario(),
             pdfDni: this.pdf.crearFormulario(),
             pdfAltaTemprana: this.pdf.crearFormulario(),
-            proveedorCuentasBancarias: new FormControl()
+            personalCuentaBancarias: new FormControl()
 
         }),
         // crear el formulario para proveedor-cuentaBancaria
