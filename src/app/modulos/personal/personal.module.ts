@@ -19,6 +19,8 @@ import { Foto } from 'src/app/modelos/foto';
 import { Pdf } from 'src/app/modelos/pdf';
 import { BancoService } from 'src/app/servicios/banco.service';
 import { SucursalBancoService } from 'src/app/servicios/sucursal-banco.service';
+import { CuentaBancariaService } from 'src/app/servicios/cuenta-bancaria.service';
+import { PersonalCuentaBancariaService } from 'src/app/servicios/personal-cuenta-bancaria.service';
 
 @NgModule({
   declarations: [
@@ -47,6 +49,7 @@ import { SucursalBancoService } from 'src/app/servicios/sucursal-banco.service';
   ],
   providers: [
     SucursalBancoService,
+    PersonalCuentaBancariaService,
     PersonalService,
     PersonalService,
     BarrioService,

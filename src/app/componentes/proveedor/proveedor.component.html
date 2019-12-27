@@ -387,7 +387,8 @@
                       </div>
                       <div class="col">
                         <button id="idAñadirCuentaBancaria" mat-raised-button color="primary" formnovalidate
-                          [disabled]="!formularioCuentaBancaria.valid" *ngIf="idMod == null"
+                          [disabled]="!formularioCuentaBancaria.valid"
+                          *ngIf="idMod == null && (indiceSeleccionado == 1 || indiceSeleccionado == 3)"
                           (click)="agregarCuentaBancaria()">Añadir
                         </button>
                         <button id="idModCuentaBancaria" mat-raised-button color="primary" formnovalidate
@@ -459,9 +460,9 @@
                               <th mat-header-cell *matHeaderCellDef></th>
                               <td mat-cell *matCellDef="let elemento; let i = index">
                                 <button mat-icon-button class="mat-icon-button-table"
-                                  (click)="eliminarCuentaBancaria(i)" matTooltip="Consultar" matTooltipPosition="above"
+                                  (click)="eliminarCuentaBancaria(i, elemento.id)" matTooltip="Eliminar" matTooltipPosition="above"
                                   *ngIf="indiceSeleccionado==1 || indiceSeleccionado==3">
-                                  <mat-icon>close</mat-icon>
+                                  <mat-icon>delete</mat-icon>
                                 </button>
                                 <button mat-icon-button class="mat-icon-button-table margin-left-3"
                                   (click)="activarModCuentaBancaria(elemento, i)" matTooltip="Editar"

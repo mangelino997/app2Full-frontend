@@ -3,8 +3,10 @@ import { CommonModule } from '@angular/common';
 
 import { ProveedorRoutingModule } from './proveedor-routing.module';
 
-import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
-  MatSelectModule, MatProgressBarModule, MatSidenavModule, MatIconModule, MatDividerModule, MatButtonModule, MatDialogModule, MatTreeModule } from '@angular/material';
+import {
+  MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule,
+  MatSelectModule, MatProgressBarModule, MatSidenavModule, MatIconModule, MatDividerModule, MatButtonModule, MatDialogModule, MatTreeModule
+} from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ProveedorComponent } from 'src/app/componentes/proveedor/proveedor.component';
 import { TextMaskModule } from 'angular2-text-mask';
@@ -13,9 +15,9 @@ import { Proveedor } from 'src/app/modelos/proveedor';
 import { BarrioService } from 'src/app/servicios/barrio.service';
 import { LocalidadService } from 'src/app/servicios/localidad.service';
 import { BancoService } from 'src/app/servicios/banco.service';
-import { UsuarioEmpresaService } from 'src/app/servicios/usuario-empresa.service';
 import { ProveedorCuentaContableService } from 'src/app/servicios/proveedor-cuenta-contable.service';
 import { SucursalBancoService } from 'src/app/servicios/sucursal-banco.service';
+import { ProveedorCuentaBancariaService } from 'src/app/servicios/proveedor-cuenta-bancaria.service';
 
 @NgModule({
   declarations: [
@@ -43,13 +45,14 @@ import { SucursalBancoService } from 'src/app/servicios/sucursal-banco.service';
   ],
   providers: [
     ProveedorService,
-    Proveedor,
-    BarrioService,
+    ProveedorCuentaBancariaService,
+    ProveedorCuentaContableService,
+    SucursalBancoService,
+    ProveedorService,
     LocalidadService,
     BancoService,
-    ProveedorService,
-    ProveedorCuentaContableService,
-    SucursalBancoService
+    BarrioService,
+    Proveedor
   ],
   entryComponents: []
 })
