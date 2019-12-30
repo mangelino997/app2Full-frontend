@@ -18,6 +18,8 @@ import { VentaComprobante } from 'src/app/modelos/ventaComprobante';
 import { Subscription } from 'rxjs';
 import { VentaComprobanteItemNC } from 'src/app/modelos/ventaComprobanteItemNC';
 import { LoaderService } from 'src/app/servicios/loader.service';
+import { AfipCaeService } from 'src/app/servicios/afip-cae.service';
+import { ClienteEventualComponent } from '../cliente-eventual/cliente-eventual.component';
 
 @Component({
   selector: 'app-emitir-nota-credito',
@@ -53,8 +55,7 @@ export class EmitirNotaCreditoComponent implements OnInit {
   public show = false;
   //Define la subscripcion a loader.service
   private subscription: Subscription;
-  public puntosDeVenta:any;
-
+  public puntosDeVenta: any;
   public checkboxComp: boolean = null;
   public checkboxCuenta: boolean = null;
   public tablaVisible: boolean = null;
@@ -66,10 +67,12 @@ export class EmitirNotaCreditoComponent implements OnInit {
   public listaCuenta = [];
   //Define como un FormControl
   public tipoComprobante: FormControl = new FormControl();
+  //Define como un FormControl
+  public provincia: FormControl = new FormControl();
   //Define al campo puntoVenta (de solo lectura) como un FormControl
   public puntoVenta: FormControl = new FormControl();
   //Define la opcion elegida como un formControl
-  public opcionCheck: FormControl = new FormControl();
+  public opcionAplica: FormControl = new FormControl();
   //Define el Comprobante seleccionado de la tabla Aplica a Comprobante
   public comprobanteSeleccionado = null;
   //Define la Cuenta seleccionada de la tabla Aplica a Cuenta
@@ -91,11 +94,18 @@ export class EmitirNotaCreditoComponent implements OnInit {
   public codigoAfip: string;
   public numero: string;
   //Constructor
-  constructor(private ventaComprobante: VentaComprobante, private ventaCpteItemNC: VentaComprobanteItemNC, private fechaService: FechaService, private tipoComprobanteService: TipoComprobanteService, private appComponent: AppComponent,
-    private afipComprobanteService: AfipComprobanteService, private puntoVentaService: PuntoVentaService, private clienteService: ClienteService,
-    private appService: AppService, private provinciaService: ProvinciaService, private toastr: ToastrService, private ventaComprobanteService: VentaComprobanteService,
-    private ventaTipoItemervice: VentaTipoItemService, private alicuotasIvaService: AfipAlicuotaIvaService, private route: Router, public dialog: MatDialog,
-    private loaderService: LoaderService) { }
+  constructor(
+    private afipCaeService: AfipCaeService,
+    private ventaComprobante: VentaComprobante, private ventaCpteItemNC: VentaComprobanteItemNC,
+    private fechaService: FechaService, private tipoComprobanteService: TipoComprobanteService, private appComponent: AppComponent,
+    private afipComprobanteService: AfipComprobanteService, private puntoVentaService: PuntoVentaService,
+    private clienteService: ClienteService,
+    private appService: AppService, private provinciaService: ProvinciaService, private toastr: ToastrService,
+    private ventaComprobanteService: VentaComprobanteService,
+    private ventaTipoItemervice: VentaTipoItemService, private alicuotasIvaService: AfipAlicuotaIvaService,
+    private route: Router, public dialog: MatDialog,
+    private loaderService: LoaderService,
+  ) { }
   //Al inicializarse el componente
   ngOnInit() {
     //Define el formulario y validaciones
@@ -143,33 +153,6 @@ export class EmitirNotaCreditoComponent implements OnInit {
       }
     });
   }
-  //Obtiene la lista de Puntos de Venta
-  private listarPuntosVenta() {
-    this.puntoVentaService.listarHabilitadosPorSucursalEmpresaYFe(this.formulario.value.empresa.id, this.formulario.value.sucursal.id).subscribe(
-      res => {
-        this.resultadosPuntoVenta = res.json();
-      }, err => { this.toastr.error(err.json().mensaje); }
-    )
-  }
-  //Obtiene la lista de tipos de comprobante
-  private listarTiposComprobante() {
-    this.tipoComprobanteService.listarParaNotaCredito().subscribe(
-      res => {
-        this.tiposComprobante = res.json();
-      }, err => { this.toastr.error(err.json().mensaje); }
-    )
-  }
-  //Obtiene una lista de las Provincias 
-  public listarProvincias() {
-    this.provinciaService.listar().subscribe(
-      res => {
-        this.resultadosProvincias = res.json();
-      },
-      err => {
-        this.toastr.error("Error al obtener las Provincias");
-      }
-    );
-  }
   //Obtiene una lista de Conceptos Varios
   public listarItemsTipo() {
     this.ventaTipoItemervice.listarItems(3).subscribe(
@@ -205,10 +188,7 @@ export class EmitirNotaCreditoComponent implements OnInit {
     this.formulario.value.puntoVenta ? this.validarFechaEmision() : '';
     this.formulario.value.fechaVtoPago ? this.validarFechaVtoPago() : '';
   }
-  //Controla el campo fecha de emision dependiento el punto de venta seleccionado
-  private validarFechaEmision() {
-    this.formulario.value.puntoVenta.feCAEA ? this.verificarFechaFeCAEA() : this.verificarFechaNoFeCAEA();
-  }
+
   //Controla que fechaVtoPago no sea menor a fechaEmision
   private validarFechaVtoPago() {
     if (this.formulario.value.fechaVtoPago < this.formulario.value.fechaEmision) {
@@ -216,26 +196,8 @@ export class EmitirNotaCreditoComponent implements OnInit {
       this.toastr.warning("Fecha Vto. Pago no puede ser menor a Fecha Emisión. Se reseteó el Fecha Vto. Pago.");
     }
   }
-  //Controla el rango valido para la fecha de emision cuando el punto de venta es feCAEA
-  private verificarFechaFeCAEA() {
-    if (this.formulario.value.fechaEmision >= this.generarFecha(-15) && this.formulario.value.fechaEmision <= this.generarFecha(+1)) {
-      document.getElementById('idItem').focus();
-    } else {
-      this.toastr.error("Fecha para FeCAEA no es válido. Se establece fecha actual.");
-      this.formulario.get('fechaEmision').setValue(this.fechaActual);
-      document.getElementById('idFechaEmision').focus();
-    }
-  }
-  //Controla el rango valido para la fecha de emision cuando el punto de venta no es feCAEA
-  private verificarFechaNoFeCAEA() {
-    if (this.formulario.value.fechaEmision >= this.generarFecha(-5) && this.formulario.value.fechaEmision <= this.generarFecha(+1)) {
-      document.getElementById('idItem').focus();
-    } else {
-      this.toastr.error("Fecha para no es válido. Se establece fecha actual.");
-      this.formulario.get('fechaEmision').setValue(this.fechaActual);
-      document.getElementById('idFechaEmision').focus();
-    }
-  }  //Genera y retorna una fecha segun los parametros que recibe (dias - puede ser + ó -)
+
+  //Genera y retorna una fecha segun los parametros que recibe (dias - puede ser + ó -)
   private generarFecha(dias) {
     let fechaActual = new Date();
     let date = fechaActual.getDate() + dias;
@@ -279,6 +241,9 @@ export class EmitirNotaCreditoComponent implements OnInit {
   }
   //Establece valores por defecto
   private establecerValoresPorDefecto(fechaEmision, puntoVenta, tipoComprobante) {
+    //Define la tabla mediante el valor del checkbox (radio)
+    this.opcionAplica.setValue('comprobantes');
+    //Define el valor de los campos en el formulario
     this.formulario.get('pagoEnOrigen').setValue(true);
     this.formulario.get('importeNoGravado').setValue(0);
     this.formulario.get('importeOtrosTributos').setValue(0);
@@ -305,91 +270,6 @@ export class EmitirNotaCreditoComponent implements OnInit {
       this.fechaActual = res.json();
     });
   }
-  //Comprueba si ya existe un codigo de afip entonces vuelve a llamar a la funcion que obtiene el valor del campo Numero
-  public cambioPuntoVenta() {
-    //Establece el formControl puntoVenta
-    this.puntoVenta.setValue(this.establecerCerosIzq(this.formulario.get('puntoVenta').value.puntoVenta, "0000", -5));
-    this.validarFechaEmision();
-    //Establece el campo 'Numero'
-    this.formulario.get('codigoAfip').value != null || this.formulario.get('codigoAfip').value > 0 ?
-      this.cargarNumero(this.formulario.get('codigoAfip').value) : '';
-  }
-  //Setea el numero por el punto de venta y el codigo de Afip
-  public cargarNumero(codigoAfip) {
-    this.puntoVentaService.obtenerNumero(this.formulario.get('puntoVenta').value.puntoVenta, codigoAfip,
-      this.formulario.value.sucursal.id, this.formulario.value.empresa.id).subscribe(
-        res => {
-          this.formulario.get('numero').setValue(res.text());
-        },
-        err => {
-          this.formulario.get('numero').reset();
-          this.toastr.error("Error al obtener el número.");
-        }
-      );
-  }
-  //Valida el tipo y numero documento, luego setea datos para mostrar y obtiene el listado de sucursales por Remitente
-  public cambioCliente() {
-    let cliente = this.formulario.value.cliente;
-    let res = this.validarDocumento(cliente.tipoDocumento, cliente.numeroDocumento, 'Remitente');
-    if (res) {
-      this.formularioCliente.get('domicilio').setValue(cliente.domicilio);
-      this.formularioCliente.get('localidad').setValue(cliente.localidad.nombre);
-      this.formularioCliente.get('condicionVenta').setValue(cliente.condicionVenta.nombre);
-      this.formularioCliente.get('afipCondicionIva').setValue(cliente.afipCondicionIva.nombre);
-      this.formularioCliente.get('tipoDocumento').setValue(cliente.tipoDocumento.nombre);
-      this.formularioCliente.get('numeroDocumento').setValue(cliente.numeroDocumento);
-    }
-  }
-  //Validad el numero de documento
-  public validarDocumento(tipoDocumento, documento, tipoCliente) {
-    let respuesta;
-    if (documento) {
-      switch (tipoDocumento.id) {
-        case 1:
-          respuesta = this.appService.validarCUIT(documento.toString());
-          if (!respuesta) {
-            this.formulario.get('clienteRemitente').reset();
-            let err = { codigo: 11010, mensaje: 'CUIT Incorrecto!' };
-            this.lanzarError(err, 'id' + tipoCliente, 'label' + tipoCliente);
-          }
-          break;
-        case 2:
-          respuesta = this.appService.validarCUIT(documento.toString());
-          if (!respuesta) {
-            this.formulario.get('clienteRemitente').reset();
-            let err = { codigo: 11010, mensaje: 'CUIL Incorrecto!' };
-            this.lanzarError(err, 'id' + tipoCliente, 'label' + tipoCliente);
-          }
-          break;
-        case 8:
-          respuesta = this.appService.validarDNI(documento.toString());
-          if (!respuesta) {
-            this.formulario.get('clienteRemitente').reset();
-            let err = { codigo: 11010, mensaje: 'DNI Incorrecto!' };
-            this.lanzarError(err, 'id' + tipoCliente, 'label' + tipoCliente);
-          }
-          break;
-      }
-    }
-    return respuesta;
-  }
-  //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
-  private lanzarError(err, idCampo, labelCampo) {
-    this.formulario.get('numeroDocumento').setErrors({ 'incorrect': true });
-    var respuesta = err;
-    if (respuesta.codigo == 11010) {
-      document.getElementById(labelCampo).classList.add('label-error');
-      document.getElementById(idCampo).classList.add('is-invalid');
-      document.getElementById(idCampo).focus();
-    }
-    this.toastr.error(respuesta.mensaje);
-  }
-  //Verifica si se selecciono un elemento del autocompletado
-  public verificarSeleccion(valor): void {
-    if (typeof valor.value != 'object') {
-      valor.setValue(null);
-    }
-  }
 
 
 
@@ -399,19 +279,13 @@ export class EmitirNotaCreditoComponent implements OnInit {
 
 
 
-  public cambioTabla(opcion) {
-    switch (opcion) {
-      case 1:
-        this.tablaVisible = true;
-        this.limpiarClienteYTabla();
-        break;
 
-      case 2:
-        this.tablaVisible = false;
-        this.limpiarClienteYTabla();
-        break;
-    }
-  }
+
+
+
+
+
+  
   //Limpia los campos correspondientes al Cliente
   private limpiarClienteYTabla() {
     this.formulario.get('cli').reset();
@@ -698,6 +572,258 @@ export class EmitirNotaCreditoComponent implements OnInit {
     this.listarItemsTipo();
     this.listarAlicuotaIva();
   }
+
+
+
+
+
+
+
+  //CODIGO A USAR ---------------------------
+
+  //Obtiene la lista de Puntos de Venta
+  private listarPuntosVenta() {
+    this.puntoVentaService.listarHabilitadosPorSucursalEmpresaYFe(this.formulario.value.empresa.id, this.formulario.value.sucursal.id).subscribe(
+      res => {
+        this.resultadosPuntoVenta = res.json();
+      }, err => { this.toastr.error(err.json().mensaje); }
+    )
+  }
+  //Obtiene la lista de tipos de comprobante
+  private listarTiposComprobante() {
+    this.tipoComprobanteService.listarParaNotaCredito().subscribe(
+      res => {
+        this.tiposComprobante = res.json();
+      }, err => { this.toastr.error(err.json().mensaje); }
+    )
+  }
+  //Obtiene una lista de las Provincias 
+  public listarProvincias() {
+    this.provinciaService.listar().subscribe(
+      res => {
+        this.resultadosProvincias = res.json();
+      },
+      err => {
+        this.toastr.error("Error al obtener las Provincias");
+      }
+    );
+  }
+  //Comprueba si ya existe un codigo de afip entonces vuelve a llamar a la funcion que obtiene el valor del campo Numero
+  public cambioPuntoVenta() {
+    //Establece el formControl puntoVenta
+    this.puntoVenta.setValue(this.establecerCerosIzq(this.formulario.get('puntoVenta').value.puntoVenta, "0000", -5));
+    this.validarFechaEmision();
+    this.formulario.get('codigoAfip').value != null || this.formulario.get('codigoAfip').value > 0 ?
+      this.cargarNumero(this.formulario.get('codigoAfip').value) : '';
+    //Establece el atributo 'CAE' 'esCAEA'
+    this.formulario.get('esCAEA').setValue(this.formulario.get('puntoVenta').value.feCAEA)
+    this.formulario.get('puntoVenta').value.feCAEA ? this.obtenerCAE() : this.formulario.get('CAE').setValue(0);
+  }
+  //Controla el campo fecha de emision dependiento el punto de venta seleccionado
+  private validarFechaEmision() {
+    this.formulario.value.puntoVenta.feCAEA ? this.verificarFechaFeCAEA() : this.verificarFechaNoFeCAEA();
+  }
+  //Controla el rango valido para la fecha de emision cuando el punto de venta es feCAEA
+  private verificarFechaFeCAEA() {
+    if (this.formulario.value.fechaEmision >= this.generarFecha(-15) && this.formulario.value.fechaEmision <= this.generarFecha(+1)) {
+      document.getElementById('idCliente').focus();
+    } else {
+      this.toastr.error("Fecha para FeCAEA no es válido. Se establece fecha actual.");
+      this.formulario.get('fechaEmision').setValue(this.fechaActual);
+      document.getElementById('idFechaEmision').focus();
+    }
+  }
+  //Controla el rango valido para la fecha de emision cuando el punto de venta no es feCAEA
+  private verificarFechaNoFeCAEA() {
+    if (this.formulario.value.fechaEmision >= this.generarFecha(-5) && this.formulario.value.fechaEmision <= this.generarFecha(+1)) {
+      document.getElementById('idCliente').focus();
+    } else {
+      this.toastr.error("Fecha para no es válido. Se establece fecha actual.");
+      this.formulario.get('fechaEmision').setValue(this.fechaActual);
+      document.getElementById('idFechaEmision').focus();
+    }
+  }
+  //Obtiene el elemento CAE
+  private obtenerCAE() {
+    let fechaFactura = new Date(this.formulario.value.fechaEmision);
+    let quincena;
+    (fechaFactura.getDate() + 1) > 15 ? quincena = 2 : quincena = 1;
+    this.afipCaeService.obtenerPorEmpresaYPeriodoOrden(this.appService.getEmpresa().id, fechaFactura.getFullYear(),
+      (fechaFactura.getMonth() + 1), quincena).subscribe(
+        res => {
+          if (res.text() != '') {
+            let respuesta = res.json();
+            this.formulario.get('CAE').setValue(respuesta);
+            this.formulario.get('CAEVencimiento').setValue(respuesta.fechaHasta)
+          } else {
+            this.toastr.warning("El elemento CAE obtenido es nulo.");
+          }
+        },
+        err => {
+          this.toastr.error(err.json().message);
+        }
+      )
+  }
+  //Valida el tipo y numero documento, luego setea datos para mostrar y obtiene el listado de sucursales por Cliente
+  public cambioCliente() {
+    let cliente = this.formulario.value.cliente;
+    let res = this.validarDocumento(cliente.tipoDocumento, cliente.numeroDocumento);
+    if (res) {
+      this.formularioCliente.get('domicilio').setValue(cliente.domicilio);
+      this.formularioCliente.get('localidad').setValue(cliente.localidad.nombre);
+      this.formularioCliente.get('condicionVenta').setValue(cliente.condicionVenta.nombre);
+      this.formularioCliente.get('afipCondicionIva').setValue(cliente.afipCondicionIva.nombre);
+      this.formularioCliente.get('tipoDocumento').setValue(cliente.tipoDocumento.nombre);
+      this.formularioCliente.get('numeroDocumento').setValue(cliente.numeroDocumento);
+      this.controlCamposPorCliente();
+    }
+  }
+  //Validad el numero de documento
+  public validarDocumento(tipoDocumento, documento) {
+    let respuesta;
+    if (documento) {
+      switch (tipoDocumento.id) {
+        case 1:
+          respuesta = this.appService.validarCUIT(documento.toString());
+          if (!respuesta) {
+            this.formulario.get('clienteRemitente').reset();
+            let err = { codigo: 11010, mensaje: 'CUIT Incorrecto!' };
+            this.lanzarError(err, 'idCliente', 'labelCliente');
+          }
+          break;
+        case 2:
+          respuesta = this.appService.validarCUIT(documento.toString());
+          if (!respuesta) {
+            this.formulario.get('clienteRemitente').reset();
+            let err = { codigo: 11010, mensaje: 'CUIL Incorrecto!' };
+            this.lanzarError(err, 'idCliente', 'labelCliente');
+          }
+          break;
+        case 8:
+          respuesta = this.appService.validarDNI(documento.toString());
+          if (!respuesta) {
+            this.formulario.get('clienteRemitente').reset();
+            let err = { codigo: 11010, mensaje: 'DNI Incorrecto!' };
+            this.lanzarError(err, 'idCliente', 'labelCliente');
+          }
+          break;
+      }
+    }
+    return respuesta;
+  }
+  //Controla campos segun datos del Cliente que paga - Sale del metodo 'cambioPagoEnOrigen'
+  private controlCamposPorCliente() {
+    console.log(this.formulario.value);
+    // Controla el campo 'Letra' 
+    this.formulario.value.cliente.condicionVenta.id == 1 ? this.formulario.get('letra').setValue('A') : this.formulario.get('letra').setValue('B');
+    // Obtiene el codigo afip
+    this.cargarCodigoAfip(this.formulario.value.letra);
+    // Obtiene las ventas comprobantes
+    this.listarVentaComprobanteParaCredito();
+  }
+  //Setea el codigo de Afip por el tipo de comprobante y la letra
+  public cargarCodigoAfip(letra) {
+    this.afipComprobanteService.obtenerCodigoAfip(this.formulario.get('tipoComprobante').value.id, letra).subscribe(
+      res => {
+        this.formulario.get('codigoAfip').setValue(res.text());
+        this.cargarNumero(res.text());
+      },
+      err => {
+        this.formulario.get('codigoAfip').reset();
+        this.toastr.error("Error al obtener el código de afip.");
+      }
+    );
+  }
+  //Setea el numero por el punto de venta y el codigo de Afip
+  public cargarNumero(codigoAfip) {
+    this.puntoVentaService.obtenerNumero(this.formulario.get('puntoVenta').value.puntoVenta, codigoAfip,
+      this.formulario.value.sucursal.id, this.formulario.value.empresa.id).subscribe(
+        res => {
+          this.formulario.get('numero').setValue(res.text());
+        },
+        err => {
+          this.formulario.get('numero').reset();
+          this.toastr.error("Error al obtener el número.");
+        }
+      );
+  }
+  //Obtiene la lista de Venta Comprobante NC (para Nota de Credito)
+  private listarVentaComprobanteParaCredito() {
+    let idCliente = this.formulario.value.cliente.id;
+    this.ventaComprobanteService.listarParaCreditosPorClienteYEmpresa(
+      idCliente, this.appService.getEmpresa().id).subscribe(
+        res => {
+          console.log(res.json());
+          this.formulario.get('ventaComprobanteItemNC').setValue(res.json());
+        }
+      )
+  }
+  //Recibe como parametro a donde aplica la nota de crédito
+  public cambioTabla(opcionAplica) {
+    switch (opcionAplica) {
+      case 'comprobantes':
+        this.tablaVisible = true;
+        this.limpiarClienteYTabla();
+        break;
+
+      case 'cuenta':
+        this.tablaVisible = false;
+        this.limpiarClienteYTabla();
+        break;
+    }
+  }
+  //Abre dialogo para agregar un cliente eventual
+  public agregarClienteEventual(): void {
+    const dialogRef = this.dialog.open(ClienteEventualComponent, {
+      width: '1200px',
+      data: {
+        formulario: null,
+        usuario: this.appComponent.getUsuario()
+      }
+    });
+    dialogRef.afterClosed().subscribe(resultado => {
+      if (resultado) {
+        this.formulario.get('clienteRemitente').setValue(resultado);
+        this.cambioCliente();
+      }
+    });
+  }
+  //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
+  private lanzarError(err, idCampo, labelCampo) {
+    this.formulario.get('numeroDocumento').setErrors({ 'incorrect': true });
+    var respuesta = err;
+    if (respuesta.codigo == 11010) {
+      document.getElementById(labelCampo).classList.add('label-error');
+      document.getElementById(idCampo).classList.add('is-invalid');
+      document.getElementById(idCampo).focus();
+    }
+    this.toastr.error(respuesta.mensaje);
+  }
+  //Obtiene la mascara de importe
+  public mascararImporte(intLimite, decimalLimite) {
+    return this.appService.mascararImporte(intLimite, decimalLimite);
+  }
+  //Obtiene la mascara de enteros
+  public mascararEnteros(intLimite) {
+    return this.appService.mascararEnteros(intLimite);
+  }
+  //Obtiene la mascara de enteros SIN decimales
+  public mascararEnteroSinDecimales(intLimite) {
+    return this.appService.mascararEnterosSinDecimales(intLimite);
+  }
+  //Obtiene la mascara de enteros CON decimales
+  public mascararEnteroConDecimales(intLimite) {
+    return this.appService.mascararEnterosConDecimales(intLimite);
+  }
+  //Mascara un porcentaje
+  public mascararPorcentaje() {
+    return this.appService.mascararPorcentaje();
+  }
+  //Establece los decimales de porcentaje
+  public establecerPorcentaje(formulario, cantidad) {
+    let valor = formulario.value;
+    valor ? formulario.setValue(this.appService.desenmascararPorcentaje(valor, cantidad)) : '';
+  }
   //Formatea el numero a x decimales
   public setDecimales(valor, cantidad) {
     valor.target.value = this.appService.setDecimales(valor.target.value, cantidad);
@@ -748,6 +874,12 @@ export class EmitirNotaCreditoComponent implements OnInit {
       return elemento ? elemento.domicilio + ' - ' + elemento.barrio : elemento;
     } else {
       return '';
+    }
+  }
+  //Verifica si se selecciono un elemento del autocompletado
+  public verificarSeleccion(valor): void {
+    if (typeof valor.value != 'object') {
+      valor.setValue(null);
     }
   }
 }

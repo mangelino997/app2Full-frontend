@@ -1,14 +1,5 @@
-.text-left {
-  text-align: left;
-}
-textarea {
-  width: 100%;
-}
-th {
-  /* position: -webkit-sticky; */
-  position: sticky;
-  top: 0; 
-  background-color: #FFF;
+.margin-left-button {
+  margin-left: 5px;
 }
 input {
   margin-left: 5px;
@@ -16,34 +7,99 @@ input {
 .form-group {
   margin-bottom: 10px !important;
 }
-.table-condensed>thead>tr>th, .table-condensed>tbody>tr>th, .table-condensed>tfoot>tr>th, .table-condensed>thead>tr>td, .table-condensed>tbody>tr>td, .table-condensed>tfoot>tr>td{
-  padding: 0px;
+.border {
+  border-radius: 8px;
+  padding: 18px 15px 0px 5px;
 }
-.table {
-  width: 1860px;
+.btn-custom {
+  height: 30px;
+  padding: 0px 4px 0px 4px;
 }
-/* Estilos para seleccion de ila orden venta*/
-/* tr.ordenVta-no-seleccionada:hover {
-  background-color:#50A8FA ;
+hr {
+  border-top: 1px solid rgba(0,0,0,.8);
+}
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  margin-right: 0px;
+  margin-left: 0px;
+}
+.col-md-12 {
+  position: relative;
+  width: 100%;
+  min-height: 1px;
+  padding-right: 6px;
+  padding-left: 6px;
+}
+.col-md-8, .col-md-7, .col-md-5, .col-md-6, .col-md-4, .col-md-2 {
+  position: relative;
+  width: 100%;
+  min-height: 1px;
+  padding-right: 0px;
+  padding-left: 0px;
+}
+.has-float-label {
+  position:relative
+}
+.has-float-label label {
+  position:absolute;
+  cursor:text;
+  font-size:75%;
+  opacity:1;
+  /* -webkit-transition:all .2s; */
+  transition:all .2s;
+  top:-.5em;
+  left:.75rem;
+  z-index:3;
+  line-height:1;
+  padding:0 1px
+}
+/* .btn {
+  font-size: 15px !important;
+} */
+.pagaSeleccionado {
+  box-shadow: 3px 6px 14px rgba(0, 0, 0, 1);
+}
+tr.planilla-no-seleccionada:hover {
+  background-color:#50A8FA !important;
   cursor: pointer;
 }
-.ordenVta-seleccionada {
+.planilla-seleccionada {
   background-color:#50A8FA !important;
-} */
-th {
-  /* position: -webkit-sticky; */
-  position: sticky;
-  top: 0; 
-  background-color: #FFF;
 }
-/* Estilos para el checkbox */
-/* .checkBoxSelected {
-  padding: 1px;
-  background-color: #85ce36;
-  color: black;
+button {
+  /* width: fit-content !important; */
 }
-.checkBoxNotSelected {
-  background-color: #ffffff;
-  color: #ffffff;
-  padding: 1px;
-} */
+/* Define el estilo de la tabla */
+.tabla {
+  width: 100% !important;
+  overflow: auto !important;
+}
+.tabla-ancho {
+  width: 1890px !important;
+}
+/*Define el estilo para los radio buttons del modal Observaciones - Nota Impresion Comprobante */
+.example-radio-group {
+  display: flex;
+  flex-direction: column;
+}
+.mat-radio-button {
+  padding: 5px !important;
+}
+/*Define el estilo para el ancho y margen en los inputs del formulario items FA 
+  la primera clase para campos pequeños
+  la segunda clase para campos mas grandes (select)*/
+.small-input-item {
+  width: 90px;
+  margin-left: 2px;
+  margin-right: 2px;
+}
+.big-input-item {
+  width: 130px;
+  margin-left: 2px;
+  margin-right: 2px;
+}
+/* Define el margen a la derecha para los campos generales (no de la parte de item vta. cpte.) */
+.margin-right {
+  margin-right: 5px;
+}

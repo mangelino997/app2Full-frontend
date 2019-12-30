@@ -3,8 +3,10 @@ import { CommonModule } from '@angular/common';
 
 import { EmitirNotaCreditoRoutingModule } from './emitir-nota-credito-routing.module';
 
-import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
-  MatSelectModule, MatProgressBarModule, MatCheckboxModule } from '@angular/material';
+import {
+  MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule,
+  MatSelectModule, MatProgressBarModule, MatCheckboxModule, MatIconModule, MatButtonModule, MatDialogModule, MatRadioModule
+} from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { EmitirNotaCreditoComponent } from 'src/app/componentes/emitir-nota-credito/emitir-nota-credito.component';
 import { NotaCredito } from 'src/app/modelos/notaCredito';
@@ -18,6 +20,8 @@ import { VentaTipoItemService } from 'src/app/servicios/venta-tipo-item.service'
 import { AfipAlicuotaIvaService } from 'src/app/servicios/afip-alicuota-iva.service';
 import { VentaComprobante } from 'src/app/modelos/ventaComprobante';
 import { VentaComprobanteItemNC } from 'src/app/modelos/ventaComprobanteItemNC';
+import { TextMaskModule } from 'angular2-text-mask';
+import { AfipCaeService } from 'src/app/servicios/afip-cae.service';
 
 @NgModule({
   declarations: [
@@ -35,7 +39,13 @@ import { VentaComprobanteItemNC } from 'src/app/modelos/ventaComprobanteItemNC';
     MatSortModule,
     MatSelectModule,
     MatProgressBarModule,
-    MatCheckboxModule
+    MatCheckboxModule,
+    MatIconModule,
+    TextMaskModule,
+    MatButtonModule,
+    MatDialogModule,
+    MatRadioModule,
+
   ],
   providers: [
     VentaComprobante,
@@ -47,7 +57,12 @@ import { VentaComprobanteItemNC } from 'src/app/modelos/ventaComprobanteItemNC';
     ProvinciaService,
     VentaComprobanteService,
     VentaTipoItemService,
-    AfipAlicuotaIvaService
+    AfipAlicuotaIvaService,
+
+    AfipCaeService
+  ],
+  entryComponents: [
+
   ]
 })
 export class EmitirNotaCreditoModule { }

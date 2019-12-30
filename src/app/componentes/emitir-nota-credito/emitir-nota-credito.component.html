@@ -1,15 +1,11 @@
-<!-- REVISAR ESTAS LINEAS -->
-<!-- <span class="input-group-text">
-  <mat-icon>date_range</mat-icon>
-</span> -->
-<div class="row justify-content-center contenedor">
+<div class="row">
   <div class="col-md-12 text-center">
-    <h5>Emitir Nota de Crédito</h5>
-    <form [formGroup]="formulario">
+    <h5>Emitir Factura</h5>
+    <form [formGroup]="formulario" class="contenedor">
       <div class="row">
         <div class="col-md-6">
           <div class="row">
-            <div class="col-md-5">
+            <div class="col-md-4">
               <div class="form-group has-float-label margin-right">
                 <label for="idTipoComprobante" class="tamanio-label">Tipo de Comprobante *</label>
                 <mat-select id="idTipoComprobante" class="form-control form-control-sm"
@@ -20,18 +16,18 @@
                 </mat-select>
               </div>
             </div>
-            <div class="col-md-2">
+            <div class="col-md-3">
               <div class="form-group has-float-label margin-right">
                 <label for="idPuntoVenta" class="tamanio-label">Punto de Venta *</label>
                 <mat-select id="idPuntoVenta" class="form-control form-control-sm" formControlName="puntoVenta"
                   [compareWith]="compareFn" (selectionChange)="cambioPuntoVenta()">
-                  <mat-option *ngFor="let item of puntosDeVenta" [value]="item">
+                  <mat-option *ngFor="let item of resultadosPuntoVenta" [value]="item">
                     {{establecerCerosIzq(item.puntoVenta, "0000", -5)}}
                   </mat-option>
                 </mat-select>
               </div>
             </div>
-            <div class="col-md-2">
+            <div class="col-md-3">
               <div class="form-group has-float-label-icon " style="width: 100%;">
                 <label for="idFechaEmision" class="tamanio-label">Fecha *</label>
                 <div class="input-group input-group-sm mb-3 ">
@@ -45,10 +41,10 @@
                 </div>
               </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-2">
               <div class="form-group has-float-label">
                 <label for="idJurisdiccion" class="tamanio-label">Jurisdicción</label>
-                <mat-select id="idJurisdiccion" class="form-control form-control-sm" formControlName="provincia"
+                <mat-select id="idJurisdiccion" class="form-control form-control-sm" [formControl]="provincia"
                   [compareWith]="compareFn">
                   <mat-option *ngFor="let itemProvincia of resultadosProvincias" [value]="itemProvincia">
                     {{itemProvincia.nombre}}
@@ -56,35 +52,468 @@
                 </mat-select>
               </div>
             </div>
-            <div class="col"></div>
-            <div class="col-md-1">
-              <div class="form-group has-float-label margin-right">
-                <label for="idLetra" class="tamanio-label">P. Venta</label>
-                <input id="idLetra" type="text" [formControl]="puntoVenta"
+          </div>
+        </div>
+        <div class="col"></div>
+        <div class="col-md-1">
+          <div class="form-group has-float-label margin-right">
+            <label for="idLetra" class="tamanio-label">P. Venta</label>
+            <input id="idLetra" type="text" [formControl]="puntoVenta" class="form-control form-control-sm number-right"
+              readonly>
+          </div>
+        </div>
+        <div class="col-md-1">
+          <div class="form-group has-float-label margin-right">
+            <label for="idLetra" class="tamanio-label">Letra</label>
+            <input id="idLetra" type="text" formControlName="letra" class="form-control form-control-sm" readonly>
+          </div>
+        </div>
+        <div class="col-md-1">
+          <div class="form-group has-float-label margin-right">
+            <label for="idNumero" class="tamanio-label">Número</label>
+            <input id="idNumero" type="number" formControlName="numero"
+              class="form-control form-control-sm number-right" readonly>
+          </div>
+        </div>
+        <div class="col-md-1">
+          <div class="form-group has-float-label margin-right">
+            <label for="idCodigoAfip" class="tamanio-label">Código Afip</label>
+            <input id="idCodigoAfip" type="text" formControlName="codigoAfip"
+              class="form-control form-control-sm number-right" readonly>
+          </div>
+        </div>
+      </div>
+      <hr style="margin-top: 10px; margin-bottom: 20px;">
+      <div class="row">
+        <div class="col-md-6">
+          <div class="border has-float-label margin-right" id="Remitente">
+            <label style="font-size: 16px;">Cliente</label>
+            <div class="row">
+              <div class="col-md-10">
+                <div class="form-group has-float-label">
+                  <label for="idCliente" id="labelCliente" class="tamanio-label">Buscar</label>
+                  <input id="idCliente" type="text" class="form-control form-control-sm" matInput
+                    [formControl]="formulario.get('cliente')" [matAutocomplete]="autoRemitente"
+                    autocomplete="off" (blur)="verificarSeleccion(formulario.get('cliente'))">
+                  <mat-autocomplete #autoRemitente="matAutocomplete" [displayWith]="displayF.bind(this)"
+                    (optionSelected)="cambioCliente()">
+                    <mat-option *ngFor="let itemCliente of resultadosClientes" [value]="itemCliente">
+                      {{itemCliente.alias}}
+                    </mat-option>
+                  </mat-autocomplete>
+                </div>
+              </div>
+              <div class="col-md-2">
+                <div class="form-group ">
+                  <button id="idBtnCli1" mat-raised-button color="primary" (click)="agregarClienteEventual('Remitente')"
+                    style="width: 100%; margin-left: 5px;">Agregar</button>
+                </div>
+              </div>
+            </div>
+            <form [formGroup]="formularioCliente">
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group has-float-label">
+                    <label for="idDomicilioRem" class="tamanio-label">Domicilio</label>
+                    <input id="idDomicilioRem" type="text" formControlName="domicilio"
+                      class="form-control form-control-sm" readonly>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group has-float-label">
+                    <label for="idLocalidadRem" class="tamanio-label">Localidad</label>
+                    <input id="idLocalidadRem" type="text" formControlName="localidad"
+                      class="form-control form-control-sm" readonly>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group has-float-label">
+                    <label for="idCondicionIvaRem" class="tamanio-label">Condición de IVA</label>
+                    <input id="idCondicionIvaRem" type="text" readonly formControlName="afipCondicionIva"
+                      class="form-control form-control-sm">
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group has-float-label">
+                    <label for="idCondicionVtaRem" class="tamanio-label">Condición de Venta</label>
+                    <input id="idCondicionVtaRem" type="text" readonly formControlName="condicionVenta"
+                      class="form-control form-control-sm">
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group has-float-label">
+                    <label for="idDocumentoRem" class="tamanio-label">Tipo de Documento</label>
+                    <input id="idDocumentoCliente" type="text" formControlName="tipoDocumento" readonly
+                      class="form-control form-control-sm">
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group has-float-label">
+                    <label for="idDocumentoRem" class="tamanio-label">N° de Documento</label>
+                    <input id="idDocumentoCliente" type="text" formControlName="numeroDocumento" readonly
+                      class="form-control form-control-sm">
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+      <hr style="margin-top: 0px; margin-bottom: 10px;">
+      <div class="row">
+        <div class="col-md-4 text-left">
+          <input type="radio" [formControl]="opcionAplica" (change)="cambioTabla('comprobantes')" value="1">Aplica a Comprobante
+        </div>
+        <div class="col-md-4 text-left">
+          <input type="radio" [formControl]="opcionAplica" (change)="cambioTabla('cuenta')" value="2">Aplica a la Cuenta
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-md-12" *ngIf="tablaVisible">
+          <div class="row">
+            <div class="col-md-2">
+              <div class="form-group has-float-label">
+                <label for="idMotivo" class="tamanio-label">Motivo</label>
+                <mat-select id="idMotivo" class="form-control form-control-sm" formControlName="itemTipo"
+                  [compareWith]="compareFn">
+                  <mat-option *ngFor="let item of resultadosItems" [value]="item">
+                    {{item.nombre}}
+                  </mat-option>
+                </mat-select>
+              </div>
+            </div>
+            <div class="col-md-2">
+              <div class="form-group has-float-label">
+                <label for="idSubtotalNC" class="tamanio-label">Subtotal N.C.</label>
+                <input id="idSubtotalNC" type="number" formControlName="subtotalNC"
                   class="form-control form-control-sm number-right" readonly>
               </div>
             </div>
-            <div class="col-md-1">
-              <div class="form-group has-float-label margin-right">
-                <label for="idLetra" class="tamanio-label">Letra</label>
-                <input id="idLetra" type="text" formControlName="letra" class="form-control form-control-sm" readonly>
+            <div class="col-md-2">
+              <div class="form-group has-float-label">
+                <label for="idAlicuotaIVA" class="tamanio-label">Alicuota IVA</label>
+                <mat-select id="idAlicuota" type="number" formControlName="alicuotaIva"
+                  class="form-control form-control-sm number-right" (selectionChange)="calcularSubtotalNC()">
+                  <mat-option *ngFor="let itemAlicuota of resultadosAlicuotasIva" [value]="itemAlicuota.alicuota">
+                    {{appService.setDecimales(itemAlicuota.alicuota, 2)}}
+                  </mat-option>
+                </mat-select>
+              </div>
+            </div>
+            <div class="col-md-2">
+              <div class="form-group has-float-label">
+                <label for="idSubtotalCIVA" class="tamanio-label">Subtotal c/IVA</label>
+                <input id="idSubtotalCIVA" type="number" formControlName="importeTotal"
+                  class="form-control form-control-sm number-right" (blur)="setDecimales($event, 2)"
+                  (change)="calcularSubtotalNC()">
               </div>
             </div>
             <div class="col-md-1">
-              <div class="form-group has-float-label margin-right">
-                <label for="idNumero" class="tamanio-label">Número</label>
-                <input id="idNumero" type="number" formControlName="numero"
+              <button class="btn btn-primary btn-sm" type="button" (click)="modificarComprobante()"
+                [disabled]="!formulario.valid" style="width: 100%">Aceptar</button>
+            </div>
+          </div>
+          <div style="height: 200px; overflow-y: scroll;">
+            <table class="table table-bordered table-striped table-sm table-condensed" id="tablaComprobante">
+              <thead>
+                <tr>
+                  <th class="text-center" style="width:5%;" scope="col">Seleccionar</th>
+                  <th class="text-center" style="width:5%;" scope="col">-</th>
+                  <th class="text-center" style="width:10%;" scope="col">Tipo (Abrev).</th>
+                  <th class="text-center" style="width:10%" scope="col">N° de Comprobante</th>
+                  <th class="text-center" style="width:5%" scope="col">Fecha</th>
+                  <th class="text-center" style="width:5%" scope="col">Importe</th>
+                  <th class="text-center" style="width:5%" scope="col">Saldo</th>
+                  <th class="text-center" style="width:10%" scope="col">Item Tipo</th>
+                  <th class="text-center" style="width:10%" scope="col">Subtotal N.C.</th>
+                  <th class="text-center" style="width:10%" scope="col">Alicuota IVA</th>
+                  <th class="text-center" style="width:10%" scope="col">Importe IVA</th>
+                  <th class="text-center" style="width:10%" scope="col">Subtotal c/IVA</th>
+                </tr>
+              </thead>
+              <tbody>
+                <ng-container *ngFor="let comprobante of listaComprobantes; let i= index">
+                  <tr>
+                    <td align="center">
+                      <mat-checkbox id="mat-checkbox-{{i}}" [checked]="comprobante.checked==true"
+                        (change)="controlCheckbox($event, comprobante, i)"></mat-checkbox>
+                    </td>
+                    <td align="center">
+                      <span class="cursor-color" (click)="seleccionarComprobante(i, comprobante)">Editar</span>
+                    </td>
+                    <!-- <td align="center">{{comprobante.tipoComprobante.abreviatura}}</td> -->
+                    <td align="center">{{comprobante.tipoComprobante.abreviatura}}</td>
+                    <td align="center">{{comprobante.puntoVenta}} - {{comprobante.numero}} - {{comprobante.letra}}
+                    </td>
+                    <td align="center">{{comprobante.fechaEmision}}</td>
+                    <td class="number-right">{{returnDecimales(comprobante.importeSaldo, 2)}}</td>
+                    <td class="number-right">{{returnDecimales(comprobante.importeSaldo, 2)}}</td>
+                    <td align="center">{{comprobante.itemTipo!=null? comprobante.itemTipo.nombre : ''}}</td>
+                    <td class="number-right">{{returnDecimales(comprobante.subtotalNC, 2)}}</td>
+                    <td class="number-right">{{returnDecimales(comprobante.alicuotaIva, 2)}}</td>
+                    <td class="number-right">{{returnDecimales(comprobante.importeIva, 2)}}</td>
+                    <td class="number-right">{{appService.setDecimales(comprobante.importeTotal, 2)}}</td>
+                  </tr>
+                </ng-container>
+              </tbody>
+            </table>
+          </div>
+        </div><br>
+        <div class="col-md-12" *ngIf="!tablaVisible">
+          <div class="row">
+            <div class="col-md-2">
+              <div class="form-group has-float-label">
+                <label for="idMotivo" class="tamanio-label">Motivo</label>
+                <mat-select id="idMotivo" class="form-control form-control-sm" formControlName="itemTipo"
+                  [compareWith]="compareFn">
+                  <mat-option *ngFor="let item of resultadosItems" [value]="item">
+                    {{item.nombre}}
+                  </mat-option>
+                </mat-select>
+              </div>
+            </div>
+            <div class="col-md-2">
+              <div class="form-group has-float-label">
+                <label for="idSubtotalNC" class="tamanio-label">Subtotal N.C.</label>
+                <input id="idSubtotalNC" type="number" formControlName="subtotalNC"
                   class="form-control form-control-sm number-right" readonly>
               </div>
             </div>
-            <div class="col-md-1">
-              <div class="form-group has-float-label margin-right">
-                <label for="idCodigoAfip" class="tamanio-label">Código Afip</label>
-                <input id="idCodigoAfip" type="text" formControlName="codigoAfip"
-                  class="form-control form-control-sm number-right" readonly>
+            <div class="col-md-2">
+              <div class="form-group has-float-label">
+                <label for="idAlicuotaIVA" class="tamanio-label">Alicuota IVA</label>
+                <mat-select id="idAlicuota" type="number" formControlName="alicuotaIva"
+                  class="form-control form-control-sm number-right" (selectionChange)="calcularSubtotalNCC()">
+                  <mat-option *ngFor="let itemAlicuota of resultadosAlicuotasIva" [value]="itemAlicuota.alicuota">
+                    {{returnDecimales(itemAlicuota.alicuota, 2)}}
+                  </mat-option>
+                </mat-select>
               </div>
             </div>
-            <!-- <div class="col-md-4">
+            <div class="col-md-2">
+              <div class="form-group has-float-label">
+                <label for="idSubtotalCIVA" class="tamanio-label">Subtotal c/IVA</label>
+                <input id="idSubtotalCIVA" type="number" formControlName="importeTotal"
+                  class="form-control form-control-sm number-right" (change)="calcularSubtotalNCC()">
+              </div>
+            </div>
+            <div class="col-md-2">
+              <button class="btn btn-primary btn-sm" type="button" (click)="modificarCuenta()"
+                [disabled]="!formulario.valid">Aceptar</button>
+            </div>
+          </div>
+          <div style=" height: 200px; overflow-y: scroll;">
+            <table class="table table-bordered table-striped table-sm table-condensed" id="tablaCuenta">
+              <thead>
+                <tr>
+                  <th class="text-center" style="width:3%;" scope="col">-</th>
+                  <th class="text-center" style="width:3%;" scope="col">-</th>
+                  <th class="text-center" style="width:20%" scope="col">Concepto</th>
+                  <th class="text-center" style="width:10%" scope="col">Subtotal N.C.</th>
+                  <th class="text-center" style="width:10%" scope="col">Alicuota IVA</th>
+                  <th class="text-center" style="width:10%" scope="col">Importe IVA</th>
+                  <th class="text-center" style="width:10%" scope="col">Subtotal c/IVA</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let cuenta of listaCuenta; let i= index">
+                  <td align="center">
+                    <span class="cursor-color" (click)="seleccionarCuenta(i, cuenta)">Editar</span>
+                  </td>
+                  <td align="center">
+                    <span class="cursor-color" (click)="eliminarCuenta(i, cuenta)">Eliminar</span>
+                  </td>
+                  <td align="center">{{cuenta.itemTipo!=null? cuenta.itemTipo.nombre : ''}}</td>
+                  <td class="number-right">{{returnDecimales(cuenta.subtotalNC, 2)}}</td>
+                  <td class="number-right">{{returnDecimales(cuenta.alicuotaIva, 2)}}</td>
+                  <td class="number-right">{{returnDecimales(cuenta.importeIva, 2)}}</td>
+                  <td class="number-right">{{appService.setDecimales(cuenta.importeTotal, 2)}}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col">
+          <div class="form-group has-float-label">
+            <label for="idObservaciones" class="tamanio-label">Observaciones</label>
+            <textarea id="idObservaciones" class="form-control form-control-sm" formControlName="observaciones" rows="3"
+              autocomplete="off"></textarea>
+          </div>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col"></div>
+        <div class="col-md-2">
+          <div class="form-group has-float-label">
+            <label for="idCodigo" class="tamanio-label"><b>Imp.No Grav/Exento($)</b></label>
+            <input id="idCodigo" type="text" formControlName="importeNoGravado"
+              class="form-control input-bold form-control-sm number-right" placeholder="$ 0.00" readonly>
+          </div>
+        </div>
+        <div class="col-md-2">
+          <div class="form-group has-float-label">
+            <label for="idCodigo" class="tamanio-label"><b>Imp.Neto Gravado($)</b></label>
+            <input id="idCodigo" type="text" formControlName="importeNetoGravado" placeholder="$ 0.00"
+              [textMask]="mascararImporte(8, 2)" (blur)="setDecimales(formulario.get('importeNetoGravado'), 2)"
+              class="form-control input-bold form-control-sm number-right" readonly>
+          </div>
+        </div>
+        <div class="col-md-2">
+          <div class="form-group has-float-label">
+            <label for="idCodigo" class="tamanio-label"><b>Imp.IVA($)</b></label>
+            <input id="idCodigo" type="text" formControlName="importeIva" placeholder="$ 0.00"
+              [textMask]="mascararImporte(8, 2)" (blur)="setDecimales(formulario.get('importeIva'), 2)"
+              class="form-control input-bold form-control-sm number-right" readonly>
+          </div>
+        </div>
+        <div class="col-md-2">
+          <div class="form-group has-float-label">
+            <label for="idCodigo" class="tamanio-label"><b>Imp. Total($)</b></label>
+            <input id="idCodigo" type="text" formControlName="importeTotal" placeholder="$ 0.00"
+              [textMask]="mascararImporte(8, 2)" (blur)="setDecimales(formulario.get('importeTotal'), 2)"
+              class="form-control input-bold form-control-sm number-right" readonly>
+          </div>
+        </div>
+      </div>
+      <div class="row justify-content-end" *ngIf="!show">
+        <button class="btn btn-primary" type="button" style="min-width: fit-content;"
+          (click)="agregarVentaComprobante()" [disabled]="!formulario.valid">Grabar</button>
+      </div>
+      <div class="row" *ngIf="show">
+        <div class="col text-center">
+          <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- REVISAR ESTAS LINEAS -->
+<!-- <span class="input-group-text">
+  <mat-icon>date_range</mat-icon>
+</span> -->
+<!-- <div class="row justify-content-center contenedor">
+  <div class="col-md-12 text-center">
+    <h5>Emitir Nota de Crédito</h5>
+    <form [formGroup]="formulario">
+      <div class="row">
+        <div class="col-md-6">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group has-float-label margin-right">
+                <label for="idTipoComprobante" class="tamanio-label">Tipo de Comprobante *</label>
+                <mat-select id="idTipoComprobante" class="form-control form-control-sm"
+                  formControlName="tipoComprobante" [compareWith]="compareFn">
+                  <mat-option *ngFor="let item of tiposComprobante" [value]="item">
+                    {{item.nombre}}
+                  </mat-option>
+                </mat-select>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="form-group has-float-label margin-right">
+                <label for="idPuntoVenta" class="tamanio-label">Punto de Venta *</label>
+                <mat-select id="idPuntoVenta" class="form-control form-control-sm" formControlName="puntoVenta"
+                  [compareWith]="compareFn" (selectionChange)="cambioPuntoVenta()">
+                  <mat-option *ngFor="let item of puntosDeVenta" [value]="item">
+                    {{establecerCerosIzq(item.puntoVenta, "0000", -5)}}
+                  </mat-option>
+                </mat-select>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="form-group has-float-label-icon " style="width: 100%;">
+                <label for="idFechaEmision" class="tamanio-label">Fecha *</label>
+                <div class="input-group input-group-sm mb-3 ">
+                  <div class="input-group-prepend margin-right">
+                    <span class="input-group-text">
+                       <mat-icon>date_range</mat-icon> -->
+<!-- </span>
+</div>
+<input id="idFechaEmision" type="date" formControlName="fechaEmision" autocomplete="off"
+  class="form-control form-control-sm" (blur)="cambioFecha()">
+</div>
+</div>
+</div>
+</div>
+<div class="row">
+  <div class="col-md-6">
+    <div class="form-group has-float-label margin-right">
+      <label for="idItem" class="tamanio-label">Item a Facturar *</label>
+      <mat-select id="idItem" class="form-control form-control-sm" [formControl]="itemFactura" [compareWith]="compareFn"
+        (selectionChange)="cambioItem()">
+        <mat-option *ngFor="let item of itemsAFacturar" [value]="item">
+          {{item.nombre}}
+        </mat-option>
+      </mat-select>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <button id="idBtnFCE" mat-raised-button color="primary" (click)="abrirFCEMiPyMEs()" style="width: 100%;"
+      [disabled]="btnFCE ">FCE MiPyMEs</button>
+  </div>
+</div>
+</div>
+<div class="col"></div>
+<div class="col-md-1">
+  <div class="form-group has-float-label margin-right">
+    <label for="idLetra" class="tamanio-label">P. Venta</label>
+    <input id="idLetra" type="text" [formControl]="puntoVenta" class="form-control form-control-sm number-right"
+      readonly>
+  </div>
+</div>
+<div class="col-md-1">
+  <div class="form-group has-float-label margin-right">
+    <label for="idLetra" class="tamanio-label">Letra</label>
+    <input id="idLetra" type="text" formControlName="letra" class="form-control form-control-sm" readonly>
+  </div>
+</div>
+<div class="col-md-1">
+  <div class="form-group has-float-label margin-right">
+    <label for="idNumero" class="tamanio-label">Número</label>
+    <input id="idNumero" type="number" formControlName="numero" class="form-control form-control-sm number-right"
+      readonly>
+  </div>
+</div>
+<div class="col-md-1">
+  <div class="form-group has-float-label margin-right">
+    <label for="idCodigoAfip" class="tamanio-label">Código Afip</label>
+    <input id="idCodigoAfip" type="text" formControlName="codigoAfip" class="form-control form-control-sm number-right"
+      readonly>
+  </div>
+</div>
+</div> -->
+<!-- <div class="col-md-4">
               <div class="row">
                 <div class="col-md-4">
                   <div class="form-group has-float-label">
@@ -116,8 +545,8 @@
                 </div>
               </div>
             </div> -->
-            <!-- <div class="col-md-2"></div> -->
-            <!-- <div class="col-md-6">
+<!-- <div class="col-md-2"></div> -->
+<!-- <div class="col-md-6">
               <div class="row">
                 <div class="col-md-3">
                   <div class="form-group has-float-label">
@@ -156,88 +585,87 @@
                 </div>
               </div>
             </div> -->
+<!-- <hr style="margin-top: 10px; margin-bottom: 20px;">
+<div class="row">
+  <div class="col-md-6">
+    <div class="border has-float-label margin-right" id="Cliente">
+      <label style="font-size: 16px;">Cliente</label>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="form-group has-float-label">
+            <label for="idCliente" id="labelCliente" class="tamanio-label">Buscar Cliente</label>
+            <input id="idCliente" type="text" class="form-control form-control-sm" matInput
+              [formControl]="formulario.get('clienteCliente')" [matAutocomplete]="autoCliente" autocomplete="off"
+              (blur)="verificarSeleccion(formulario.get('cliente'))">
+            <mat-autocomplete #autoCliente="matAutocomplete" [displayWith]="displayF.bind(this)">
+              <mat-option *ngFor="let cliente of resultadosClientes" [value]="cliente">
+                {{cliente.alias}}
+              </mat-option>
+            </mat-autocomplete>
           </div>
-          <hr style="margin-top: 10px; margin-bottom: 20px;">
-          <div class="row">
-            <div class="col-md-6">
-              <div class="border has-float-label margin-right" id="Cliente">
-                <label style="font-size: 16px;">Cliente</label>
-                <div class="row">
-                  <div class="col-md-12">
-                    <div class="form-group has-float-label">
-                      <label for="idCliente" id="labelCliente" class="tamanio-label">Buscar Cliente</label>
-                      <input id="idCliente" type="text" class="form-control form-control-sm" matInput
-                        [formControl]="formulario.get('clienteCliente')" [matAutocomplete]="autoCliente"
-                        autocomplete="off" (blur)="verificarSeleccion(formulario.get('cliente'))">
-                      <mat-autocomplete #autoCliente="matAutocomplete" [displayWith]="displayF.bind(this)">
-                        <mat-option *ngFor="let cliente of resultadosClientes" [value]="cliente">
-                          {{cliente.alias}}
-                        </mat-option>
-                      </mat-autocomplete>
-                    </div>
-                  </div>
-                  <!-- <div class="col-md-2">
+        </div> -->
+<!-- <div class="col-md-2">
                     <div class="form-group ">
                       <button id="idBtnCli1" mat-raised-button color="primary"
                         (click)="agregarClienteEventual('Cliente')"
                         style="width: 100%; margin-left: 5px;">Agregar</button>
                     </div>
                   </div> -->
-                </div>
-                <form [formGroup]="formularioCliente">
-                  <div class="row">
-                    <div class="col-md-6">
-                      <div class="form-group has-float-label">
-                        <label for="idDomicilioRem" class="tamanio-label">Domicilio</label>
-                        <input id="idDomicilioRem" type="text" formControlName="domicilio"
-                          class="form-control form-control-sm" readonly>
-                      </div>
-                    </div>
-                    <div class="col-md-6">
-                      <div class="form-group has-float-label">
-                        <label for="idLocalidadRem" class="tamanio-label">Localidad</label>
-                        <input id="idLocalidadRem" type="text" formControlName="localidad"
-                          class="form-control form-control-sm" readonly>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-md-6">
-                      <div class="form-group has-float-label">
-                        <label for="idCondicionIvaRem" class="tamanio-label">Condición de IVA</label>
-                        <input id="idCondicionIvaRem" type="text" readonly formControlName="afipCondicionIva"
-                          class="form-control form-control-sm">
-                      </div>
-                    </div>
-                    <div class="col-md-6">
-                      <div class="form-group has-float-label">
-                        <label for="idCondicionVtaRem" class="tamanio-label">Condición de Venta</label>
-                        <input id="idCondicionVtaRem" type="text" readonly formControlName="condicionVenta"
-                          class="form-control form-control-sm">
-                      </div>
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-md-6">
-                      <div class="form-group has-float-label">
-                        <label for="idDocumentoRem" class="tamanio-label">Tipo de Documento</label>
-                        <input id="idDocumentoCliente" type="text" formControlName="tipoDocumento" readonly
-                          class="form-control form-control-sm">
-                      </div>
-                    </div>
-                    <div class="col-md-6">
-                      <div class="form-group has-float-label">
-                        <label for="idDocumentoRem" class="tamanio-label">N° de Documento</label>
-                        <input id="idDocumentoCliente" type="text" formControlName="numeroDocumento" readonly
-                          class="form-control form-control-sm">
-                      </div>
-                    </div>
-                  </div>
-                </form>
-              </div>
+<!-- </div>
+      <form [formGroup]="formularioCliente">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group has-float-label">
+              <label for="idDomicilioRem" class="tamanio-label">Domicilio</label>
+              <input id="idDomicilioRem" type="text" formControlName="domicilio" class="form-control form-control-sm"
+                readonly>
             </div>
           </div>
-          <!-- <hr style="margin-top: 0px; margin-bottom: 10px;">
+          <div class="col-md-6">
+            <div class="form-group has-float-label">
+              <label for="idLocalidadRem" class="tamanio-label">Localidad</label>
+              <input id="idLocalidadRem" type="text" formControlName="localidad" class="form-control form-control-sm"
+                readonly>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group has-float-label">
+              <label for="idCondicionIvaRem" class="tamanio-label">Condición de IVA</label>
+              <input id="idCondicionIvaRem" type="text" readonly formControlName="afipCondicionIva"
+                class="form-control form-control-sm">
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group has-float-label">
+              <label for="idCondicionVtaRem" class="tamanio-label">Condición de Venta</label>
+              <input id="idCondicionVtaRem" type="text" readonly formControlName="condicionVenta"
+                class="form-control form-control-sm">
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group has-float-label">
+              <label for="idDocumentoRem" class="tamanio-label">Tipo de Documento</label>
+              <input id="idDocumentoCliente" type="text" formControlName="tipoDocumento" readonly
+                class="form-control form-control-sm">
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group has-float-label">
+              <label for="idDocumentoRem" class="tamanio-label">N° de Documento</label>
+              <input id="idDocumentoCliente" type="text" formControlName="numeroDocumento" readonly
+                class="form-control form-control-sm">
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div> -->
+<!-- <hr style="margin-top: 0px; margin-bottom: 10px;">
           <div class="tamanio-pantalla" formGroupName="cli">
             <div class="row">
               <div class="form-group has-float-label col-md-5">
@@ -287,215 +715,216 @@
               </div>
             </div>
           </div> -->
-          <hr style="margin-top: 0px; margin-bottom: 10px;">
+<!-- <hr style="margin-top: 0px; margin-bottom: 10px;">
+      <div class="row">
+        <div class="col-md-4 text-left">
+          <input type="radio" [formControl]="opcionCheck" (change)="cambioTabla(1)" value="1">Aplica a Comprobante
+        </div>
+        <div class="col-md-4 text-left">
+          <input type="radio" [formControl]="opcionCheck" (change)="cambioTabla(2)" value="2">Aplica a la Cuenta
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-md-12" *ngIf="tablaVisible">
           <div class="row">
-            <div class="col-md-4 text-left">
-              <input type="radio" [formControl]="opcionCheck" (change)="cambioTabla(1)" value="1">Aplica a Comprobante
+            <div class="col-md-2">
+              <div class="form-group has-float-label">
+                <label for="idMotivo" class="tamanio-label">Motivo</label>
+                <mat-select id="idMotivo" class="form-control form-control-sm" formControlName="itemTipo"
+                  [compareWith]="compareFn">
+                  <mat-option *ngFor="let item of resultadosItems" [value]="item">
+                    {{item.nombre}}
+                  </mat-option>
+                </mat-select>
+              </div>
             </div>
-            <div class="col-md-4 text-left">
-              <input type="radio" [formControl]="opcionCheck" (change)="cambioTabla(2)" value="2">Aplica a la Cuenta
+            <div class="col-md-2">
+              <div class="form-group has-float-label">
+                <label for="idSubtotalNC" class="tamanio-label">Subtotal N.C.</label>
+                <input id="idSubtotalNC" type="number" formControlName="subtotalNC"
+                  class="form-control form-control-sm number-right" readonly>
+              </div>
             </div>
-          </div><br>
-          <div class="row">
-            <div class="col-md-12" *ngIf="tablaVisible">
-              <div class="row">
-                <div class="col-md-2">
-                  <div class="form-group has-float-label">
-                    <label for="idMotivo" class="tamanio-label">Motivo</label>
-                    <mat-select id="idMotivo" class="form-control form-control-sm" formControlName="itemTipo"
-                      [compareWith]="compareFn">
-                      <mat-option *ngFor="let item of resultadosItems" [value]="item">
-                        {{item.nombre}}
-                      </mat-option>
-                    </mat-select>
-                  </div>
-                </div>
-                <div class="col-md-2">
-                  <div class="form-group has-float-label">
-                    <label for="idSubtotalNC" class="tamanio-label">Subtotal N.C.</label>
-                    <input id="idSubtotalNC" type="number" formControlName="subtotalNC"
-                      class="form-control form-control-sm number-right" readonly>
-                  </div>
-                </div>
-                <div class="col-md-2">
-                  <div class="form-group has-float-label">
-                    <label for="idAlicuotaIVA" class="tamanio-label">Alicuota IVA</label>
-                    <mat-select id="idAlicuota" type="number" formControlName="alicuotaIva"
-                      class="form-control form-control-sm number-right" (selectionChange)="calcularSubtotalNC()">
-                      <mat-option *ngFor="let itemAlicuota of resultadosAlicuotasIva" [value]="itemAlicuota.alicuota">
-                        {{appService.setDecimales(itemAlicuota.alicuota, 2)}}
-                      </mat-option>
-                    </mat-select>
-                  </div>
-                </div>
-                <div class="col-md-2">
-                  <div class="form-group has-float-label">
-                    <label for="idSubtotalCIVA" class="tamanio-label">Subtotal c/IVA</label>
-                    <input id="idSubtotalCIVA" type="number" formControlName="importeTotal"
-                      class="form-control form-control-sm number-right" (blur)="setDecimales($event, 2)"
-                      (change)="calcularSubtotalNC()">
-                  </div>
-                </div>
-                <div class="col-md-2">
-                  <button class="btn btn-primary btn-sm" type="button" (click)="modificarComprobante()"
-                    [disabled]="!formulario.valid">Aceptar</button>
-                </div>
+            <div class="col-md-2">
+              <div class="form-group has-float-label">
+                <label for="idAlicuotaIVA" class="tamanio-label">Alicuota IVA</label>
+                <mat-select id="idAlicuota" type="number" formControlName="alicuotaIva"
+                  class="form-control form-control-sm number-right" (selectionChange)="calcularSubtotalNC()">
+                  <mat-option *ngFor="let itemAlicuota of resultadosAlicuotasIva" [value]="itemAlicuota.alicuota">
+                    {{appService.setDecimales(itemAlicuota.alicuota, 2)}}
+                  </mat-option>
+                </mat-select>
               </div>
-              <div style="height: 200px; overflow-y: scroll;">
-                <table class="table table-bordered table-striped table-sm table-condensed" id="tablaComprobante">
-                  <thead>
-                    <tr>
-                      <th class="text-center" style="width:5%;" scope="col">Seleccionar</th>
-                      <th class="text-center" style="width:5%;" scope="col">-</th>
-                      <th class="text-center" style="width:10%;" scope="col">Tipo (Abrev).</th>
-                      <th class="text-center" style="width:10%" scope="col">N° de Comprobante</th>
-                      <th class="text-center" style="width:5%" scope="col">Fecha</th>
-                      <th class="text-center" style="width:5%" scope="col">Importe</th>
-                      <th class="text-center" style="width:5%" scope="col">Saldo</th>
-                      <th class="text-center" style="width:10%" scope="col">Item Tipo</th>
-                      <th class="text-center" style="width:10%" scope="col">Subtotal N.C.</th>
-                      <th class="text-center" style="width:10%" scope="col">Alicuota IVA</th>
-                      <th class="text-center" style="width:10%" scope="col">Importe IVA</th>
-                      <th class="text-center" style="width:10%" scope="col">Subtotal c/IVA</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <ng-container *ngFor="let comprobante of listaComprobantes; let i= index">
-                      <tr>
-                        <td align="center">
-                          <mat-checkbox id="mat-checkbox-{{i}}" [checked]="comprobante.checked==true"
-                            (change)="controlCheckbox($event, comprobante, i)"></mat-checkbox>
-                        </td>
-                        <td align="center">
-                          <span class="cursor-color" (click)="seleccionarComprobante(i, comprobante)">Editar</span>
-                        </td>
-                        <!-- <td align="center">{{comprobante.tipoComprobante.abreviatura}}</td> -->
-                        <td align="center">{{comprobante.tipoComprobante.abreviatura}}</td>
-                        <td align="center">{{comprobante.puntoVenta}} - {{comprobante.numero}} - {{comprobante.letra}}
-                        </td>
-                        <td align="center">{{comprobante.fechaEmision}}</td>
-                        <td class="number-right">{{returnDecimales(comprobante.importeSaldo, 2)}}</td>
-                        <td class="number-right">{{returnDecimales(comprobante.importeSaldo, 2)}}</td>
-                        <td align="center">{{comprobante.itemTipo!=null? comprobante.itemTipo.nombre : ''}}</td>
-                        <td class="number-right">{{returnDecimales(comprobante.subtotalNC, 2)}}</td>
-                        <td class="number-right">{{returnDecimales(comprobante.alicuotaIva, 2)}}</td>
-                        <td class="number-right">{{returnDecimales(comprobante.importeIva, 2)}}</td>
-                        <td class="number-right">{{appService.setDecimales(comprobante.importeTotal, 2)}}</td>
-                      </tr>
-                    </ng-container>
-                  </tbody>
-                </table>
+            </div>
+            <div class="col-md-2">
+              <div class="form-group has-float-label">
+                <label for="idSubtotalCIVA" class="tamanio-label">Subtotal c/IVA</label>
+                <input id="idSubtotalCIVA" type="number" formControlName="importeTotal"
+                  class="form-control form-control-sm number-right" (blur)="setDecimales($event, 2)"
+                  (change)="calcularSubtotalNC()">
               </div>
-            </div><br>
-            <div class="col-md-12" *ngIf="!tablaVisible">
-              <div class="row">
-                <div class="col-md-2">
-                  <div class="form-group has-float-label">
-                    <label for="idMotivo" class="tamanio-label">Motivo</label>
-                    <mat-select id="idMotivo" class="form-control form-control-sm" formControlName="itemTipo"
-                      [compareWith]="compareFn">
-                      <mat-option *ngFor="let item of resultadosItems" [value]="item">
-                        {{item.nombre}}
-                      </mat-option>
-                    </mat-select>
-                  </div>
-                </div>
-                <div class="col-md-2">
-                  <div class="form-group has-float-label">
-                    <label for="idSubtotalNC" class="tamanio-label">Subtotal N.C.</label>
-                    <input id="idSubtotalNC" type="number" formControlName="subtotalNC"
-                      class="form-control form-control-sm number-right" readonly>
-                  </div>
-                </div>
-                <div class="col-md-2">
-                  <div class="form-group has-float-label">
-                    <label for="idAlicuotaIVA" class="tamanio-label">Alicuota IVA</label>
-                    <mat-select id="idAlicuota" type="number" formControlName="alicuotaIva"
-                      class="form-control form-control-sm number-right" (selectionChange)="calcularSubtotalNCC()">
-                      <mat-option *ngFor="let itemAlicuota of resultadosAlicuotasIva" [value]="itemAlicuota.alicuota">
-                        {{returnDecimales(itemAlicuota.alicuota, 2)}}
-                      </mat-option>
-                    </mat-select>
-                  </div>
-                </div>
-                <div class="col-md-2">
-                  <div class="form-group has-float-label">
-                    <label for="idSubtotalCIVA" class="tamanio-label">Subtotal c/IVA</label>
-                    <input id="idSubtotalCIVA" type="number" formControlName="importeTotal"
-                      class="form-control form-control-sm number-right" (change)="calcularSubtotalNCC()">
-                  </div>
-                </div>
-                <div class="col-md-2">
-                  <button class="btn btn-primary btn-sm" type="button" (click)="modificarCuenta()"
-                    [disabled]="!formulario.valid">Aceptar</button>
-                </div>
-              </div>
-              <div style=" height: 200px; overflow-y: scroll;">
-                <table class="table table-bordered table-striped table-sm table-condensed" id="tablaCuenta">
-                  <thead>
-                    <tr>
-                      <th class="text-center" style="width:3%;" scope="col">-</th>
-                      <th class="text-center" style="width:3%;" scope="col">-</th>
-                      <th class="text-center" style="width:20%" scope="col">Concepto</th>
-                      <th class="text-center" style="width:10%" scope="col">Subtotal N.C.</th>
-                      <th class="text-center" style="width:10%" scope="col">Alicuota IVA</th>
-                      <th class="text-center" style="width:10%" scope="col">Importe IVA</th>
-                      <th class="text-center" style="width:10%" scope="col">Subtotal c/IVA</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr *ngFor="let cuenta of listaCuenta; let i= index">
-                      <td align="center">
-                        <span class="cursor-color" (click)="seleccionarCuenta(i, cuenta)">Editar</span>
-                      </td>
-                      <td align="center">
-                        <span class="cursor-color" (click)="eliminarCuenta(i, cuenta)">Eliminar</span>
-                      </td>
-                      <td align="center">{{cuenta.itemTipo!=null? cuenta.itemTipo.nombre : ''}}</td>
-                      <td class="number-right">{{returnDecimales(cuenta.subtotalNC, 2)}}</td>
-                      <td class="number-right">{{returnDecimales(cuenta.alicuotaIva, 2)}}</td>
-                      <td class="number-right">{{returnDecimales(cuenta.importeIva, 2)}}</td>
-                      <td class="number-right">{{appService.setDecimales(cuenta.importeTotal, 2)}}</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
+            </div>
+            <div class="col-md-2">
+              <button class="btn btn-primary btn-sm" type="button" (click)="modificarComprobante()"
+                [disabled]="!formulario.valid">Aceptar</button>
             </div>
           </div>
-          <br>
-          <div class="inline">
-            <div class="form-group has-float-label">
-              <label for="idObservaciones" class="tamanio-label">Observaciones</label>
-              <textarea id="idObservaciones" class="form-control form-control-sm" formControlName="observaciones"
-                rows="3" autocomplete="off" style="width: 560px;"></textarea>
-            </div>
-            <span class="spacer"></span>
-            <div class="form-group has-float-label">
-              <label for="idImporteNoGravado" class="tamanio-label">Importe No Grav/Exento ($)</label>
-              <input id="idImporteNoGravado" type="text" formControlName="importeNoGravado"
-                class="form-control form-control-sm number-right" style="width: 197px;">
-            </div>
-            <div class="form-group has-float-label">
-              <label for="idImporteGravado" class="tamanio-label">Importe Neto Gravado ($)</label>
-              <input id="idImporteGravado" type="text" formControlName="importeNetoGravado"
-                class="form-control form-control-sm number-right" style="width: 182px;">
-            </div>
-            <div class="form-group has-float-label">
-              <label for="idImporteIva" class="tamanio-label">Importe IVA ($)</label>
-              <input id="idImporteIva" type="text" formControlName="importeIva"
-                class="form-control form-control-sm number-right" style="width: 116px;">
-            </div>
-            <div>
+          <div style="height: 200px; overflow-y: scroll;">
+            <table class="table table-bordered table-striped table-sm table-condensed" id="tablaComprobante">
+              <thead>
+                <tr>
+                  <th class="text-center" style="width:5%;" scope="col">Seleccionar</th>
+                  <th class="text-center" style="width:5%;" scope="col">-</th>
+                  <th class="text-center" style="width:10%;" scope="col">Tipo (Abrev).</th>
+                  <th class="text-center" style="width:10%" scope="col">N° de Comprobante</th>
+                  <th class="text-center" style="width:5%" scope="col">Fecha</th>
+                  <th class="text-center" style="width:5%" scope="col">Importe</th>
+                  <th class="text-center" style="width:5%" scope="col">Saldo</th>
+                  <th class="text-center" style="width:10%" scope="col">Item Tipo</th>
+                  <th class="text-center" style="width:10%" scope="col">Subtotal N.C.</th>
+                  <th class="text-center" style="width:10%" scope="col">Alicuota IVA</th>
+                  <th class="text-center" style="width:10%" scope="col">Importe IVA</th>
+                  <th class="text-center" style="width:10%" scope="col">Subtotal c/IVA</th>
+                </tr>
+              </thead>
+              <tbody>
+                <ng-container *ngFor="let comprobante of listaComprobantes; let i= index">
+                  <tr>
+                    <td align="center">
+                      <mat-checkbox id="mat-checkbox-{{i}}" [checked]="comprobante.checked==true"
+                        (change)="controlCheckbox($event, comprobante, i)"></mat-checkbox>
+                    </td>
+                    <td align="center">
+                      <span class="cursor-color" (click)="seleccionarComprobante(i, comprobante)">Editar</span>
+                    </td>
+                    <!-- <td align="center">{{comprobante.tipoComprobante.abreviatura}}</td> 
+                    <td align="center">{{comprobante.tipoComprobante.abreviatura}}</td>
+                    <td align="center">{{comprobante.puntoVenta}} - {{comprobante.numero}} - {{comprobante.letra}}
+                    </td>
+                    <td align="center">{{comprobante.fechaEmision}}</td>
+                    <td class="number-right">{{returnDecimales(comprobante.importeSaldo, 2)}}</td>
+                    <td class="number-right">{{returnDecimales(comprobante.importeSaldo, 2)}}</td>
+                    <td align="center">{{comprobante.itemTipo!=null? comprobante.itemTipo.nombre : ''}}</td>
+                    <td class="number-right">{{returnDecimales(comprobante.subtotalNC, 2)}}</td>
+                    <td class="number-right">{{returnDecimales(comprobante.alicuotaIva, 2)}}</td>
+                    <td class="number-right">{{returnDecimales(comprobante.importeIva, 2)}}</td>
+                    <td class="number-right">{{appService.setDecimales(comprobante.importeTotal, 2)}}</td>
+                  </tr>
+                </ng-container>
+              </tbody>
+            </table>
+          </div>
+        </div><br>
+        <div class="col-md-12" *ngIf="!tablaVisible">
+          <div class="row">
+            <div class="col-md-2">
               <div class="form-group has-float-label">
-                <label for="idImporteTotal" class="tamanio-label">Importe Total ($)</label>
-                <input id="idImporteTotal" type="text" formControlName="importeTotal"
-                  class="form-control form-control-sm number-right" style="width: 125px;">
+                <label for="idMotivo" class="tamanio-label">Motivo</label>
+                <mat-select id="idMotivo" class="form-control form-control-sm" formControlName="itemTipo"
+                  [compareWith]="compareFn">
+                  <mat-option *ngFor="let item of resultadosItems" [value]="item">
+                    {{item.nombre}}
+                  </mat-option>
+                </mat-select>
               </div>
-              <button class="btn btn-primary" type="button" style="width: 125px;" (click)="emitir()">Emitir</button>
             </div>
+            <div class="col-md-2">
+              <div class="form-group has-float-label">
+                <label for="idSubtotalNC" class="tamanio-label">Subtotal N.C.</label>
+                <input id="idSubtotalNC" type="number" formControlName="subtotalNC"
+                  class="form-control form-control-sm number-right" readonly>
+              </div>
+            </div>
+            <div class="col-md-2">
+              <div class="form-group has-float-label">
+                <label for="idAlicuotaIVA" class="tamanio-label">Alicuota IVA</label>
+                <mat-select id="idAlicuota" type="number" formControlName="alicuotaIva"
+                  class="form-control form-control-sm number-right" (selectionChange)="calcularSubtotalNCC()">
+                  <mat-option *ngFor="let itemAlicuota of resultadosAlicuotasIva" [value]="itemAlicuota.alicuota">
+                    {{returnDecimales(itemAlicuota.alicuota, 2)}}
+                  </mat-option>
+                </mat-select>
+              </div>
+            </div>
+            <div class="col-md-2">
+              <div class="form-group has-float-label">
+                <label for="idSubtotalCIVA" class="tamanio-label">Subtotal c/IVA</label>
+                <input id="idSubtotalCIVA" type="number" formControlName="importeTotal"
+                  class="form-control form-control-sm number-right" (change)="calcularSubtotalNCC()">
+              </div>
+            </div>
+            <div class="col-md-2">
+              <button class="btn btn-primary btn-sm" type="button" (click)="modificarCuenta()"
+                [disabled]="!formulario.valid">Aceptar</button>
+            </div>
+          </div>
+          <div style=" height: 200px; overflow-y: scroll;">
+            <table class="table table-bordered table-striped table-sm table-condensed" id="tablaCuenta">
+              <thead>
+                <tr>
+                  <th class="text-center" style="width:3%;" scope="col">-</th>
+                  <th class="text-center" style="width:3%;" scope="col">-</th>
+                  <th class="text-center" style="width:20%" scope="col">Concepto</th>
+                  <th class="text-center" style="width:10%" scope="col">Subtotal N.C.</th>
+                  <th class="text-center" style="width:10%" scope="col">Alicuota IVA</th>
+                  <th class="text-center" style="width:10%" scope="col">Importe IVA</th>
+                  <th class="text-center" style="width:10%" scope="col">Subtotal c/IVA</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let cuenta of listaCuenta; let i= index">
+                  <td align="center">
+                    <span class="cursor-color" (click)="seleccionarCuenta(i, cuenta)">Editar</span>
+                  </td>
+                  <td align="center">
+                    <span class="cursor-color" (click)="eliminarCuenta(i, cuenta)">Eliminar</span>
+                  </td>
+                  <td align="center">{{cuenta.itemTipo!=null? cuenta.itemTipo.nombre : ''}}</td>
+                  <td class="number-right">{{returnDecimales(cuenta.subtotalNC, 2)}}</td>
+                  <td class="number-right">{{returnDecimales(cuenta.alicuotaIva, 2)}}</td>
+                  <td class="number-right">{{returnDecimales(cuenta.importeIva, 2)}}</td>
+                  <td class="number-right">{{appService.setDecimales(cuenta.importeTotal, 2)}}</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
-    </form>
+      <br>
+      <div class="inline">
+        <div class="form-group has-float-label">
+          <label for="idObservaciones" class="tamanio-label">Observaciones</label>
+          <textarea id="idObservaciones" class="form-control form-control-sm" formControlName="observaciones" rows="3"
+            autocomplete="off" style="width: 560px;"></textarea>
+        </div>
+        <span class="spacer"></span>
+        <div class="form-group has-float-label">
+          <label for="idImporteNoGravado" class="tamanio-label">Importe No Grav/Exento ($)</label>
+          <input id="idImporteNoGravado" type="text" formControlName="importeNoGravado"
+            class="form-control form-control-sm number-right" style="width: 197px;">
+        </div>
+        <div class="form-group has-float-label">
+          <label for="idImporteGravado" class="tamanio-label">Importe Neto Gravado ($)</label>
+          <input id="idImporteGravado" type="text" formControlName="importeNetoGravado"
+            class="form-control form-control-sm number-right" style="width: 182px;">
+        </div>
+        <div class="form-group has-float-label">
+          <label for="idImporteIva" class="tamanio-label">Importe IVA ($)</label>
+          <input id="idImporteIva" type="text" formControlName="importeIva"
+            class="form-control form-control-sm number-right" style="width: 116px;">
+        </div>
+        <div>
+          <div class="form-group has-float-label">
+            <label for="idImporteTotal" class="tamanio-label">Importe Total ($)</label>
+            <input id="idImporteTotal" type="text" formControlName="importeTotal"
+              class="form-control form-control-sm number-right" style="width: 125px;">
+          </div>
+          <button class="btn btn-primary" type="button" style="width: 125px;" (click)="emitir()">Emitir</button>
+        </div>
+      </div>
   </div>
 </div>
+</form>
+</div>
+</div> -->

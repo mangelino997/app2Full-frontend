@@ -62,6 +62,10 @@ export class VentaComprobanteService {
   public listarPorClienteYEmpresa(idCliente, idEmpresa) {
     return this.http.get(this.url + '/listarPorClienteYEmpresa/'+ idCliente + '/' + idEmpresa, this.options);
   }
+  //Obtiene la lista de registros para nota de credito
+  public listarParaCreditosPorClienteYEmpresa(idCliente, idEmpresa) {
+    return this.http.get(this.url + '/listarParaCreditosPorClienteYEmpresa/'+ idCliente + '/' + idEmpresa, this.options);
+  }
   //Obtiene un listado por alias
   public listarPorAlias(alias) {
     return this.http.get(this.url + '/listarPorAlias/' + alias, this.options).map(res => {
