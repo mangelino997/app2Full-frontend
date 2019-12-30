@@ -857,6 +857,8 @@ export class PersonalComponent implements OnInit {
   //Reestablece el formulario de Cuenta Bancaria
   private reestablecerFormularioCB() {
     this.banco.reset();
+    this.banco.enable();
+    this.idMod = null;
     this.sucursales = [];
     this.formularioCuentaBancaria.reset();
   }
@@ -1029,10 +1031,12 @@ export class PersonalComponent implements OnInit {
         this.listaCuentaBancaria.data = respuesta;
         this.listaCuentaBancaria.sort = this.sort;
         respuesta.length == 0 ? this.toastr.warning("Sin cuentas bancarias para mostrar.") : '';
+        this.reestablecerFormularioCB();
+        this.loaderService.hide();
       },
       err => {
         let error = err.json();
-        this.toastr.error(err.mensaje);
+        this.toastr.error(error.mensaje);
         this.loaderService.hide();
       }
     )
@@ -1050,13 +1054,13 @@ export class PersonalComponent implements OnInit {
   public actualizarCuentaBancaria() {
     this.loaderService.show();
     //En pestaña 'Actualizar' se habilita el formulario porque hay campos deshabilitados
-    this.formularioCuentaBancaria.enable(); 
+    this.formularioCuentaBancaria.enable();
     //si el registro a modificar tiene asignado un 'id' entonces actualiza en el back
     if (this.formularioCuentaBancaria.value.id) {
       //establezco el Personal a Cuenta Bancaria
-      this.formularioCuentaBancaria.value.personal = { id: this.autocompletado.value}
+      this.formularioCuentaBancaria.value.personal = { id: this.autocompletado.value.id }
       this.personalCuentaBancariaService.actualizar(this.formularioCuentaBancaria.value).subscribe(
-        res=>{
+        res => {
           let respuesta = res.json();
           if (respuesta.codigo == 200) {
             //establece la lista de cuentas bancarias, actualizada, del personal
@@ -1064,7 +1068,7 @@ export class PersonalComponent implements OnInit {
             this.toastr.success("Registro actualizado con éxito.");
           }
         },
-        err=>{
+        err => {
           let error = err.json();
           this.toastr.error(error.mensaje);
           this.loaderService.hide();
@@ -1078,13 +1082,13 @@ export class PersonalComponent implements OnInit {
       if (!this.verificarListaCB(registroActualizado)) {
         this.listaCuentaBancaria.data[this.idMod] = registroActualizado;
         this.listaCuentaBancaria.sort = this.sort;
-        this.idMod = null;
         this.reestablecerFormularioCB();
         document.getElementById("idBanco").focus();
       } else {
         this.toastr.error("Cuenta Bancaria ya agregada a la lista.");
         document.getElementById("idBanco").focus();
       }
+      this.loaderService.hide();
     }
   }
   //Cancela el modificar cuenta bancaria

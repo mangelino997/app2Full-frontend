@@ -635,7 +635,9 @@ export class ProveedorComponent implements OnInit {
   }
   //Reestablece el formulario de Cuenta Bancaria
   private reestablecerFormularioCB() {
+    this.banco.enable();
     this.banco.reset();
+    this.idMod = null;
     this.sucursales = [];
     this.formularioCuentaBancaria.reset();
   }
@@ -739,22 +741,62 @@ export class ProveedorComponent implements OnInit {
   }
   //Actualiza el registro, seleccionado, en la lista - tabla
   public actualizarCuentaBancaria() {
-    /* limpia el registro que se actualizo en la posicion idMod para luego agregarlo
-    y poder controlar la unicidad del numeroCuenta y cbu */
-    this.listaCuentaBancaria.data[this.idMod] = {};
-    this.formularioCuentaBancaria.enable(); //En pestaña 'Actualizar' se vuelve a habilitar el formulario porque hay campos en disable
-    let registroActualizado = this.formularioCuentaBancaria.value;
-    if (!this.verificarListaCB(registroActualizado)) {
-      this.listaCuentaBancaria.data[this.idMod] = registroActualizado;
-      this.listaCuentaBancaria.sort = this.sort;
-      this.idMod = null;
-      this.reestablecerFormularioCB();
-      document.getElementById("idBanco").focus();
+    this.loaderService.show();
+    //En pestaña 'Actualizar' se habilita el formulario porque hay campos deshabilitados
+    this.formularioCuentaBancaria.enable();
+    //si el registro a modificar tiene asignado un 'id' entonces actualiza en el back
+    if (this.formularioCuentaBancaria.value.id) {
+      //establezco el Personal a Cuenta Bancaria
+      this.formularioCuentaBancaria.value.proveedor = { id: this.autocompletado.value.id }
+      this.proveedorCuentaBancariaService.actualizar(this.formularioCuentaBancaria.value).subscribe(
+        res => {
+          let respuesta = res.json();
+          if (respuesta.codigo == 200) {
+            //establece la lista de cuentas bancarias, actualizada, del personal
+            this.listarCuentaBancariaPorProveedor(this.formulario.value.id);
+            this.toastr.success("Registro actualizado con éxito.");
+          }
+        },
+        err => {
+          let error = err.json();
+          this.toastr.error(error.mensaje);
+          this.loaderService.hide();
+        }
+      )
     } else {
-      this.toastr.error("Cuenta Bancaria ya agregada a la lista.");
-      document.getElementById("idBanco").focus();
+      /* limpia el registro que se actualizo en la posicion idMod para luego agregarlo
+      y poder controlar la unicidad del numeroCuenta y cbu */
+      this.listaCuentaBancaria.data[this.idMod] = {};
+      let registroActualizado = this.formularioCuentaBancaria.value;
+      if (!this.verificarListaCB(registroActualizado)) {
+        this.listaCuentaBancaria.data[this.idMod] = registroActualizado;
+        this.listaCuentaBancaria.sort = this.sort;
+        this.reestablecerFormularioCB();
+        document.getElementById("idBanco").focus();
+      } else {
+        this.toastr.error("Cuenta Bancaria ya agregada a la lista.");
+        document.getElementById("idBanco").focus();
+      }
+      this.loaderService.hide();
     }
-
+  }
+  //Obtiene la nueva lista de cuentas bancarias para un personal
+  private listarCuentaBancariaPorProveedor(idProveedor) {
+    this.proveedorCuentaBancariaService.listarPorProveedor(idProveedor).subscribe(
+      res => {
+        let respuesta = res.json();
+        this.listaCuentaBancaria.data = respuesta;
+        this.listaCuentaBancaria.sort = this.sort;
+        respuesta.length == 0 ? this.toastr.warning("Sin cuentas bancarias para mostrar.") : '';
+        this.reestablecerFormularioCB();
+        this.loaderService.hide();
+      },
+      err => {
+        let error = err.json();
+        this.toastr.error(error.mensaje);
+        this.loaderService.hide();
+      }
+    )
   }
   //Lanza error (error interno, duplicidad de datos, etc.)
   private lanzarError(err) {
