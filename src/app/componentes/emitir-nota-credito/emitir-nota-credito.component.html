@@ -9,7 +9,7 @@
               <div class="form-group has-float-label margin-right">
                 <label for="idTipoComprobante" class="tamanio-label">Tipo de Comprobante *</label>
                 <mat-select id="idTipoComprobante" class="form-control form-control-sm"
-                  formControlName="tipoComprobante" [compareWith]="compareFn">
+                  formControlName="tipoComprobante" [compareWith]="compareFn" (selectionChange)="listarItemsTipo()">
                   <mat-option *ngFor="let item of tiposComprobante" [value]="item">
                     {{item.nombre}}
                   </mat-option>
@@ -93,8 +93,8 @@
                 <div class="form-group has-float-label">
                   <label for="idCliente" id="labelCliente" class="tamanio-label">Buscar</label>
                   <input id="idCliente" type="text" class="form-control form-control-sm" matInput
-                    [formControl]="formulario.get('cliente')" [matAutocomplete]="autoRemitente"
-                    autocomplete="off" (blur)="verificarSeleccion(formulario.get('cliente'))">
+                    [formControl]="formulario.get('cliente')" [matAutocomplete]="autoRemitente" autocomplete="off"
+                    (blur)="verificarSeleccion(formulario.get('cliente'))">
                   <mat-autocomplete #autoRemitente="matAutocomplete" [displayWith]="displayF.bind(this)"
                     (optionSelected)="cambioCliente()">
                     <mat-option *ngFor="let itemCliente of resultadosClientes" [value]="itemCliente">
@@ -166,60 +166,163 @@
       <hr style="margin-top: 0px; margin-bottom: 10px;">
       <div class="row">
         <div class="col-md-4 text-left">
-          <input type="radio" [formControl]="opcionAplica" (change)="cambioTabla('comprobantes')" value="1">Aplica a Comprobante
+          <input type="radio" [formControl]="opcionAplica" (change)="cambioTabla('comprobantes')" value="1">Aplica a
+          Comprobante
         </div>
         <div class="col-md-4 text-left">
           <input type="radio" [formControl]="opcionAplica" (change)="cambioTabla('cuenta')" value="2">Aplica a la Cuenta
         </div>
       </div>
       <br>
-      <div class="row">
-        <div class="col-md-12" *ngIf="tablaVisible">
-          <div class="row">
-            <div class="col-md-2">
-              <div class="form-group has-float-label">
-                <label for="idMotivo" class="tamanio-label">Motivo</label>
-                <mat-select id="idMotivo" class="form-control form-control-sm" formControlName="itemTipo"
-                  [compareWith]="compareFn">
-                  <mat-option *ngFor="let item of resultadosItems" [value]="item">
-                    {{item.nombre}}
-                  </mat-option>
-                </mat-select>
-              </div>
-            </div>
-            <div class="col-md-2">
-              <div class="form-group has-float-label">
-                <label for="idSubtotalNC" class="tamanio-label">Subtotal N.C.</label>
-                <input id="idSubtotalNC" type="number" formControlName="subtotalNC"
-                  class="form-control form-control-sm number-right" readonly>
-              </div>
-            </div>
-            <div class="col-md-2">
-              <div class="form-group has-float-label">
-                <label for="idAlicuotaIVA" class="tamanio-label">Alicuota IVA</label>
-                <mat-select id="idAlicuota" type="number" formControlName="alicuotaIva"
-                  class="form-control form-control-sm number-right" (selectionChange)="calcularSubtotalNC()">
-                  <mat-option *ngFor="let itemAlicuota of resultadosAlicuotasIva" [value]="itemAlicuota.alicuota">
-                    {{appService.setDecimales(itemAlicuota.alicuota, 2)}}
-                  </mat-option>
-                </mat-select>
-              </div>
-            </div>
-            <div class="col-md-2">
-              <div class="form-group has-float-label">
-                <label for="idSubtotalCIVA" class="tamanio-label">Subtotal c/IVA</label>
-                <input id="idSubtotalCIVA" type="number" formControlName="importeTotal"
-                  class="form-control form-control-sm number-right" (blur)="setDecimales($event, 2)"
-                  (change)="calcularSubtotalNC()">
-              </div>
-            </div>
-            <div class="col-md-1">
-              <button class="btn btn-primary btn-sm" type="button" (click)="modificarComprobante()"
-                [disabled]="!formulario.valid" style="width: 100%">Aceptar</button>
+      <form [formGroup]="formularioVtaCpteItemNC">
+        <div class="row">
+          <div class="col-md-2">
+            <div class="form-group has-float-label">
+              <label for="idMotivo" class="tamanio-label">Motivo</label>
+              <mat-select id="idMotivo" class="form-control form-control-sm" formControlName="ventaTipoItem"
+                [compareWith]="compareFn" (selectionChange)="cambioMotivo()">
+                <mat-option *ngFor="let item of resultadosMotivos" [value]="item">
+                  {{item.nombre}}
+                </mat-option>
+              </mat-select>
             </div>
           </div>
-          <div style="height: 200px; overflow-y: scroll;">
-            <table class="table table-bordered table-striped table-sm table-condensed" id="tablaComprobante">
+          <div class="col-md-2" *ngIf="this.idMod && formulario.value.tipoComprobante.id == 26">
+            <div class="form-group has-float-label">
+              <label for="idFARechazada" class="tamanio-label">FA (FEC) Rechazada</label>
+              <mat-select id="idFARechazada" class="form-control form-control-sm" [compareWith]="compareFn">
+                <mat-option [value]="true">Sí</mat-option>
+                <mat-option [value]="true">No</mat-option>
+              </mat-select>
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div class="form-group has-float-label">
+              <label for="idSubtotalNC" class="tamanio-label">Subtotal N.C.</label>
+              <input id="idSubtotalNC" type="number" formControlName="importeNetoGravado"
+                class="form-control form-control-sm number-right" [textMask]="mascararImporte(10, 2)"
+                (blur)="calcularSubtotalNC()" readonly>
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div class="form-group has-float-label">
+              <label for="idAlicuotaIVA" class="tamanio-label">Alicuota IVA</label>
+              <mat-select id="idAlicuota" type="number" formControlName="afipAlicuotaIva"
+                class="form-control form-control-sm number-right" (selectionChange)="calcularSubtotalNC()">
+                <mat-option *ngFor="let item of afipAlicuotasIva" [value]="item.alicuota">
+                  {{appService.setDecimales(item.alicuota, 2)}} %
+                </mat-option>
+              </mat-select>
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div class="form-group has-float-label">
+              <label for="idSubtotalCIVA" class="tamanio-label">Subtotal c/IVA</label>
+              <input id="idSubtotalCIVA" type="number" formControlName="subtotalCIVA"
+                class="form-control form-control-sm number-right" (blur)="setDecimales($event, 2)"
+                (change)="calcularSubtotalNC()">
+            </div>
+          </div>
+          <div class="col-md-1">
+            <button class="btn btn-primary btn-sm" type="button" (click)="aceptarComprobante()"
+              [disabled]="!formularioVtaCpteItemNC.valid" style="width: 100%">Aceptar</button>
+          </div>
+        </div>
+      </form>
+      <div class="row">
+        <div class="col-md-12" *ngIf="tablaVisible">
+          <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
+            <ng-container matColumnDef="CHECK">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
+              <td mat-cell *matCellDef="let elemento; let i=index">
+                <mat-checkbox class="cursor-color" [checked]="elemento.ventaComprobanteAplicado"
+                  (change)="cambioCheck(elemento, i, $event)">
+                </mat-checkbox>
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="ID">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>-</th>
+              <td mat-cell *matCellDef="let elemento" class="number-right">
+                {{elemento.id}}</td>
+            </ng-container>
+            <ng-container matColumnDef="FECHA_EMISION">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha Emisión</th>
+              <td mat-cell *matCellDef="let elemento" class="number-right">
+                {{elemento.fechaEmision | date: 'dd/MM/yyyy'}}</td>
+            </ng-container>
+            <ng-container matColumnDef="FECHA_VTO_PAGOS">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha Vto Pago</th>
+              <td mat-cell *matCellDef="let elemento" class="number-right">
+                {{elemento.fechaVtoPago | date: 'dd/MM/yyyy'}}</td>
+            </ng-container>
+            <ng-container matColumnDef="TIPO">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Tipo</th>
+              <td mat-cell *matCellDef="let elemento">
+                {{elemento.tipoComprobante.abreviatura}}</td>
+            </ng-container>
+            <ng-container matColumnDef="PUNTO_VENTA">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>P. Venta</th>
+              <td mat-cell *matCellDef="let elemento" class="number-right">
+                {{establecerCerosIzq(elemento.puntoVenta, "0000", -5)}}</td>
+            </ng-container>
+            <ng-container matColumnDef="LETRA">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Letra</th>
+              <td mat-cell *matCellDef="let elemento">
+                {{elemento.letra}}</td>
+            </ng-container>
+            <ng-container matColumnDef="NUMERO">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Número</th>
+              <td mat-cell *matCellDef="let elemento" class="number-right">$
+                {{elemento.numero}}</td>
+            </ng-container>
+            <ng-container matColumnDef="IMPORTE">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Importe</th>
+              <td mat-cell *matCellDef="let elemento" class="number-right">
+                $ {{elemento.importeTotal | number: '1.2-2'}}</td>
+            </ng-container>
+            <ng-container matColumnDef="SALDO">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Saldo</th>
+              <td mat-cell *matCellDef="let elemento" class="number-right">
+                ${{calcularSaldoElemento(elemento) | number: '1.2-2'}}
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="MOTIVO">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Motivo</th>
+              <td mat-cell *matCellDef="let elemento" class="number-right">
+                {{elemento.ventaTipoItem.nombre}}
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="SUBTOTAL_NC">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Subtotal N.C.</th>
+              <td mat-cell *matCellDef="let elemento" class="number-right">
+                ${{elemento}}
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="ALIC_IVA">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Alícuota IVA</th>
+              <td mat-cell *matCellDef="let elemento" class="number-right">
+                ${{calcularSubtotalConIvaElemento(elemento) | number: '1.2-2'}}
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="SUBTOTAL_IVA">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Subtotal c/IVA</th>
+              <td mat-cell *matCellDef="let elemento" class="number-right">
+                ${{elemento}}
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="EDITAR">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
+              <td mat-cell *matCellDef="let elemento; let i=index">
+                <button mat-icon-button class="mat-icon-button-table margin-left-3"
+                  (click)="activarActualizar(elemento, i)" matTooltip="Editar" matTooltipPosition="above">
+                  <mat-icon>edit</mat-icon>
+                </button>
+              </td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="columnasComprobante"></tr>
+            <tr mat-row *matRowDef="let row; columns: columnasComprobante;"></tr>
+          </table>
+          <!-- <table class="table table-bordered table-striped table-sm table-condensed" id="tablaComprobante">
               <thead>
                 <tr>
                   <th class="text-center" style="width:5%;" scope="col">Seleccionar</th>
@@ -246,7 +349,6 @@
                     <td align="center">
                       <span class="cursor-color" (click)="seleccionarComprobante(i, comprobante)">Editar</span>
                     </td>
-                    <!-- <td align="center">{{comprobante.tipoComprobante.abreviatura}}</td> -->
                     <td align="center">{{comprobante.tipoComprobante.abreviatura}}</td>
                     <td align="center">{{comprobante.puntoVenta}} - {{comprobante.numero}} - {{comprobante.letra}}
                     </td>
@@ -261,53 +363,53 @@
                   </tr>
                 </ng-container>
               </tbody>
-            </table>
-          </div>
+            </table> -->
         </div><br>
         <div class="col-md-12" *ngIf="!tablaVisible">
-          <div class="row">
-            <div class="col-md-2">
-              <div class="form-group has-float-label">
-                <label for="idMotivo" class="tamanio-label">Motivo</label>
-                <mat-select id="idMotivo" class="form-control form-control-sm" formControlName="itemTipo"
-                  [compareWith]="compareFn">
-                  <mat-option *ngFor="let item of resultadosItems" [value]="item">
-                    {{item.nombre}}
-                  </mat-option>
-                </mat-select>
-              </div>
-            </div>
-            <div class="col-md-2">
-              <div class="form-group has-float-label">
-                <label for="idSubtotalNC" class="tamanio-label">Subtotal N.C.</label>
-                <input id="idSubtotalNC" type="number" formControlName="subtotalNC"
-                  class="form-control form-control-sm number-right" readonly>
-              </div>
-            </div>
-            <div class="col-md-2">
-              <div class="form-group has-float-label">
-                <label for="idAlicuotaIVA" class="tamanio-label">Alicuota IVA</label>
-                <mat-select id="idAlicuota" type="number" formControlName="alicuotaIva"
-                  class="form-control form-control-sm number-right" (selectionChange)="calcularSubtotalNCC()">
-                  <mat-option *ngFor="let itemAlicuota of resultadosAlicuotasIva" [value]="itemAlicuota.alicuota">
-                    {{returnDecimales(itemAlicuota.alicuota, 2)}}
-                  </mat-option>
-                </mat-select>
-              </div>
-            </div>
-            <div class="col-md-2">
-              <div class="form-group has-float-label">
-                <label for="idSubtotalCIVA" class="tamanio-label">Subtotal c/IVA</label>
-                <input id="idSubtotalCIVA" type="number" formControlName="importeTotal"
-                  class="form-control form-control-sm number-right" (change)="calcularSubtotalNCC()">
-              </div>
-            </div>
-            <div class="col-md-2">
-              <button class="btn btn-primary btn-sm" type="button" (click)="modificarCuenta()"
-                [disabled]="!formulario.valid">Aceptar</button>
-            </div>
-          </div>
-          <div style=" height: 200px; overflow-y: scroll;">
+          <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
+            <ng-container matColumnDef="CHECK">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
+              <td mat-cell *matCellDef="let elemento; let i=index">
+                <mat-checkbox class="cursor-color" [checked]="elemento.ventaComprobanteAplicado"
+                  (change)="cambioCheck(elemento, i, $event)">
+                </mat-checkbox>
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="ID">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>-</th>
+              <td mat-cell *matCellDef="let elemento" class="number-right">
+                {{elemento.id}}</td>
+            </ng-container>
+            <ng-container matColumnDef="CONCEPTO">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Concepto</th>
+              <td mat-cell *matCellDef="let elemento">
+                {{elemento}}</td>
+            </ng-container>
+            <ng-container matColumnDef="SUBTOTAL_NC">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Subtotal N.C.</th>
+              <td mat-cell *matCellDef="let elemento" class="number-right">
+                {{elemento}}</td>
+            </ng-container>
+            <ng-container matColumnDef="ALIC_IVA">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Alícuota IVA</th>
+              <td mat-cell *matCellDef="let elemento" class="number-right">
+                {{elemento.tipoComprobante.abreviatura}}</td>
+            </ng-container>
+            <ng-container matColumnDef="IMPORTE">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Importe</th>
+              <td mat-cell *matCellDef="let elemento" class="number-right">
+                {{elemento}}</td>
+            </ng-container>
+            <ng-container matColumnDef="SUBTOTAL_IVA">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>subtotal c/IVA</th>
+              <td mat-cell *matCellDef="let elemento" class="number-right">
+                {{elemento}}</td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="columnasCuenta"></tr>
+            <tr mat-row *matRowDef="let row; columns: columnasCuenta;"></tr>
+          </table>
+        </div>
+        <!-- <div style=" height: 200px; overflow-y: scroll;">
             <table class="table table-bordered table-striped table-sm table-condensed" id="tablaCuenta">
               <thead>
                 <tr>
@@ -336,8 +438,7 @@
                 </tr>
               </tbody>
             </table>
-          </div>
-        </div>
+          </div> -->
       </div>
       <br>
       <div class="row">
@@ -345,7 +446,7 @@
           <div class="form-group has-float-label">
             <label for="idObservaciones" class="tamanio-label">Observaciones</label>
             <textarea id="idObservaciones" class="form-control form-control-sm" formControlName="observaciones" rows="3"
-              autocomplete="off"></textarea>
+              autocomplete="off" maxlength="150"></textarea>
           </div>
         </div>
       </div>

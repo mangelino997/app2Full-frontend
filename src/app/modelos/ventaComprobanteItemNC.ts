@@ -12,14 +12,17 @@ export class VentaComprobanteItemNC {
             id: new FormControl(),
             version: new FormControl(),
             ventaComprobante: new FormControl(),
-            ventaTipoItem: new FormControl(),
-            importeNetoGravado: new FormControl(),
-            afipAlicuotaIva: new FormControl(),
+            ventaTipoItem: new FormControl('', Validators.required),
+            importeNetoGravado: new FormControl('', Validators.required),
+            afipAlicuotaIva: new FormControl('', Validators.required),
             importeIva: new FormControl(),
             importeNoGravado: new FormControl(),
             importeExento: new FormControl(),
             provincia: new FormControl(),
-            ventaComprobanteAplicado: new FormControl()
+            ventaComprobanteAplicado: new FormControl(),
+            /* campo necesario para calcular el subtotalNC
+             en el formulario de NC */
+            subtotalCIVA: new FormControl()
         })
     }
 }

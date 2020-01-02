@@ -28,6 +28,8 @@ import { ClienteEventualComponent } from '../cliente-eventual/cliente-eventual.c
 })
 export class EmitirNotaCreditoComponent implements OnInit {
 
+  //Define el id del registro a modificar
+  public idMod: number = null;
   //Define la fecha actual
   public fechaActual: string = null;
   //Define un formulario para validaciones de campos
@@ -46,9 +48,13 @@ export class EmitirNotaCreditoComponent implements OnInit {
   public resultadosPuntoVenta = [];
   //Define la lista completa de registros - tabla de items agregados
   public listaCompleta = new MatTableDataSource([]);
-  //Define las columnas de la tabla
-  public columnas: string[] = ['FECHA_EMISION', 'FECHA_VTO_PAGOS', 'TIPO', 'PUNTO_VENTA', 'LETRA', 'NUMERO', 'IMPORTE', 'SALDO', 'TIPO_ITEM',
-    'CONCEPTO', 'SUBTOTAL', 'ALIC_IVA', 'SUBTOTAL_IVA'];
+  //Define las columnas de la tabla cuando aplica a comprobantes
+  public columnasComprobante: string[] = ['CHECK', 'ID', 'FECHA_EMISION', 'FECHA_VTO_PAGOS',
+    'TIPO', 'PUNTO_VENTA', 'LETRA', 'NUMERO', 'IMPORTE', 'SALDO', 'MOTIVO',
+    'SUBTOTAL_NC', 'ALIC_IVA', 'SUBTOTAL_IVA', 'EDITAR'];
+  //Define las columnas de la tabla cuando aplica a cuenta
+  public columnasCuenta: string[] = ['CHECK', 'ID',
+    'CONCEPTO', 'SUBTOTAL_NC', 'ALIC_IVA', 'IMPORTE', 'SUBTOTAL_IVA', 'EDITAR'];
   //Define la matSort
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   //Define el mostrar del circulo de progreso
@@ -82,7 +88,7 @@ export class EmitirNotaCreditoComponent implements OnInit {
   //Define la lista de resultados para Provincias
   public resultadosProvincias = [];
   //Define la lista de items tipo
-  public resultadosItems = [];
+  public resultadosMotivos = [];
   //Define la lista de Alicuotas Afip Iva que estan activas
   public resultadosAlicuotasIva = [];
   //Define el check
@@ -153,30 +159,7 @@ export class EmitirNotaCreditoComponent implements OnInit {
       }
     });
   }
-  //Obtiene una lista de Conceptos Varios
-  public listarItemsTipo() {
-    this.ventaTipoItemervice.listarItems(3).subscribe(
-      res => {
-        this.resultadosItems = res.json();
-      }
-    );
-  }
-  //Obtiene una lista con las Alicuotas Iva
-  public listarAlicuotaIva() {
-    this.alicuotasIvaService.listarActivas().subscribe(
-      res => {
-        this.afipAlicuotasIva = res.json();
-      }
-    );
-  }
-  //Establece alicuota iva por defecto
-  private establecerAlicuotaIva() {
-    this.afipAlicuotasIva.forEach(elemento => {
-      if (elemento.id == 5) {
-        this.formularioVtaCpteItemNC.get('afipAlicuotaIva').setValue(elemento);
-      }
-    })
-  }
+
   //Limpia las listas
   private vaciarListas() {
     this.resultadosClientes = [];
@@ -204,72 +187,6 @@ export class EmitirNotaCreditoComponent implements OnInit {
     let fechaGenerada = fechaActual.getFullYear() + '-' + (fechaActual.getMonth() + 1) + '-' + (date < '10' ? '0' + date : date); //Al mes se le debe sumar 1
     return fechaGenerada;
   }
-  //Reestablece el formulario cuando cambia el item a facturar
-  private reestablecerFormulario(limpiarTodo) {
-    let puntoVenta;
-    let fechaEmision;
-    let tipoComprobante;
-    //Guardo por si existen datos ya cargados
-    !limpiarTodo ? [
-      puntoVenta = this.formulario.value.puntoVenta,
-      fechaEmision = this.formulario.value.fechaEmision,
-      tipoComprobante = this.formulario.value.tipoComprobante] : '';
-    //Vacio formularios y listas
-    this.vaciarListas();
-    this.formulario.reset();
-    this.puntoVenta.reset();
-    this.formularioCliente.reset();
-    this.formularioVtaCpteItemNC.reset();
-    this.establecerValoresPorDefecto(fechaEmision, puntoVenta, tipoComprobante);
-    this.reestablecerformularioVtaCpteItemFA();
-    //Establezco el foco
-    puntoVenta && fechaEmision && tipoComprobante ? document.getElementById('idRemitente').focus() :
-      setTimeout(function () {
-        document.getElementById('idTipoComprobante').focus();
-      }, 20);
-  }
-  //Reestablece y limpia el formularioVtaCpteItemFA
-  public reestablecerformularioVtaCpteItemFA() {
-    this.formularioVtaCpteItemNC.reset();
-    this.establecerValoresPorDefectoItemNC();
-  }
-  //Establece valores por defecto para el formulario items
-  private establecerValoresPorDefectoItemNC() {
-    this.establecerAlicuotaIva();
-    this.formularioVtaCpteItemNC.get('importeExento').setValue(this.appService.establecerDecimales('0.00', 2));
-    this.formularioVtaCpteItemNC.get('importeNoGravado').setValue(this.appService.establecerDecimales('0.00', 2));
-  }
-  //Establece valores por defecto
-  private establecerValoresPorDefecto(fechaEmision, puntoVenta, tipoComprobante) {
-    //Define la tabla mediante el valor del checkbox (radio)
-    this.opcionAplica.setValue('comprobantes');
-    //Define el valor de los campos en el formulario
-    this.formulario.get('pagoEnOrigen').setValue(true);
-    this.formulario.get('importeNoGravado').setValue(0);
-    this.formulario.get('importeOtrosTributos').setValue(0);
-    this.formulario.get('ventaComprobanteItemCR').setValue([]);
-    this.formulario.get('ventaComprobanteItemND').setValue([]);
-    this.formulario.get('ventaComprobanteItemNC').setValue([]);
-    this.formulario.get('ventaComprobanteItemFAs').setValue([]);
-    this.formulario.get('empresa').setValue(this.appService.getEmpresa());
-    this.formulario.get('tipoComprobante').setValue(this.tiposComprobante[0]);
-    this.formulario.get('usuarioAlta').setValue({ id: this.appService.getUsuario().id });
-    this.formulario.get('sucursal').setValue(this.appService.getUsuario().sucursal);
-    fechaEmision ?
-      [this.formulario.get('fechaEmision').setValue(fechaEmision), this.formulario.get('fechaRegistracion').setValue(fechaEmision)] : this.establecerFecha();
-    puntoVenta ?
-      [this.formulario.get('puntoVenta').setValue(puntoVenta), this.cambioPuntoVenta()] : this.formulario.get('puntoVenta').setValue(this.puntoVenta[0]);;
-    tipoComprobante ?
-      [this.formulario.get('tipoComprobante').setValue(tipoComprobante), this.cambioFecha()] : '';
-  }
-  //Establece la fecha emision y registracion
-  private establecerFecha() {
-    this.fechaService.obtenerFecha().subscribe(res => {
-      this.formulario.get('fechaEmision').setValue(res.json());
-      this.formulario.get('fechaRegistracion').setValue(res.json());
-      this.fechaActual = res.json();
-    });
-  }
 
 
 
@@ -285,23 +202,9 @@ export class EmitirNotaCreditoComponent implements OnInit {
 
 
 
-  
-  //Limpia los campos correspondientes al Cliente
-  private limpiarClienteYTabla() {
-    this.formulario.get('cli').reset();
-    this.formulario.get('cliente').reset();
-    this.formulario.get('letra').reset();
-    this.formulario.get('codigoAfip').reset();
-    this.formulario.get('numero').reset();
-    this.resultadosClientes = [];
-    this.listaComprobantes = [];
-    this.listaCuenta = [];
-    this.reestablecerFormularioComprobante();
-    this.reestablecerFormularioCuenta();
-    setTimeout(function () {
-      document.getElementById('idCliente').focus();
-    }, 20);
-  }
+
+
+
   //Carga datos (filas) en la tabla correspondiente
   private cargarTabla() {
     this.ventaComprobanteService.listarPorClienteYEmpresa(this.formulario.get('cliente').value.id, this.empresa.value.id).subscribe(
@@ -531,21 +434,21 @@ export class EmitirNotaCreditoComponent implements OnInit {
     }
   }
   //Calcula el campo SubtotalNC del comprobante que se modifica
-  public calcularSubtotalNC() {
-    if (this.subtotalCIVA < this.formularioComprobante.get('importeTotal').value) {
-      document.getElementById('idSubtotalCIVA').focus();
-      this.toastr.error("El SUBTOTAL C/IVA ingresado debe ser MENOR");
-    }
-    let iva = String(this.formularioComprobante.get('alicuotaIva').value).split('.');
-    let ivaDisvisor = "1.";
-    for (let i = 0; i < iva.length; i++) {
-      ivaDisvisor = ivaDisvisor + iva[i];
-    }
-    let subtotal = this.returnDecimales(this.formularioComprobante.get('importeTotal').value / Number(ivaDisvisor), 2);
-    this.formularioComprobante.get('subtotalNC').setValue(subtotal);
-    let importeIva = this.returnDecimales(subtotal * (this.formularioComprobante.get('alicuotaIva').value / 100), 2);
-    this.formularioComprobante.get('importeIva').setValue(importeIva);
-  }
+  // public calcularSubtotalNC() {
+  //   if (this.subtotalCIVA < this.formularioComprobante.get('importeTotal').value) {
+  //     document.getElementById('idSubtotalCIVA').focus();
+  //     this.toastr.error("El SUBTOTAL C/IVA ingresado debe ser MENOR");
+  //   }
+  //   let iva = String(this.formularioComprobante.get('alicuotaIva').value).split('.');
+  //   let ivaDisvisor = "1.";
+  //   for (let i = 0; i < iva.length; i++) {
+  //     ivaDisvisor = ivaDisvisor + iva[i];
+  //   }
+  //   let subtotal = this.returnDecimales(this.formularioComprobante.get('importeTotal').value / Number(ivaDisvisor), 2);
+  //   this.formularioComprobante.get('subtotalNC').setValue(subtotal);
+  //   let importeIva = this.returnDecimales(subtotal * (this.formularioComprobante.get('alicuotaIva').value / 100), 2);
+  //   this.formularioComprobante.get('importeIva').setValue(importeIva);
+  // }
   //Calcula el campo SubtotalNC del comprobante que se modifica
   public calcularSubtotalNCC() {
     let iva = String(this.formularioCuenta.get('alicuotaIva').value).split('.');
@@ -558,20 +461,7 @@ export class EmitirNotaCreditoComponent implements OnInit {
     let importeIva = this.returnDecimales(subtotal * (this.formularioCuenta.get('alicuotaIva').value / 100), 2);
     this.formularioCuenta.get('importeIva').setValue(importeIva);
   }
-  //Reestablece el formulario de aplica a Comprobante
-  private reestablecerFormularioComprobante() {
-    this.comprobanteSeleccionado = null;
-    this.formularioComprobante.reset();
-    this.listarItemsTipo();
-    this.listarAlicuotaIva();
-  }
-  //Reestablece el formulario de aplica a la Cuenta
-  private reestablecerFormularioCuenta() {
-    this.cuentaSeleccionada = null;
-    this.formularioCuenta.reset();
-    this.listarItemsTipo();
-    this.listarAlicuotaIva();
-  }
+
 
 
 
@@ -580,7 +470,32 @@ export class EmitirNotaCreditoComponent implements OnInit {
 
 
   //CODIGO A USAR ---------------------------
-
+  //Obtiene una lista para el campo 'Motivo'
+  public listarItemsTipo() {
+    /* se pasa como parámetro el 3 el cual hace referencia a las Notas de Cdto*/
+    this.ventaTipoItemervice.listarItems(3).subscribe(
+      res => {
+        this.resultadosMotivos = res.json();
+        console.log("resultados motivos: " + this.resultadosMotivos);
+      }
+    );
+  }
+  //Obtiene una lista con las Alicuotas Iva
+  public listarAlicuotaIva() {
+    this.alicuotasIvaService.listarActivas().subscribe(
+      res => {
+        this.afipAlicuotasIva = res.json();
+      }
+    );
+  }
+  //Establece alicuota iva por defecto
+  private establecerAlicuotaIva() {
+    this.afipAlicuotasIva.forEach(elemento => {
+      if (elemento.id == 5) {
+        this.formularioVtaCpteItemNC.get('afipAlicuotaIva').setValue(elemento);
+      }
+    })
+  }
   //Obtiene la lista de Puntos de Venta
   private listarPuntosVenta() {
     this.puntoVentaService.listarHabilitadosPorSucursalEmpresaYFe(this.formulario.value.empresa.id, this.formulario.value.sucursal.id).subscribe(
@@ -607,6 +522,74 @@ export class EmitirNotaCreditoComponent implements OnInit {
         this.toastr.error("Error al obtener las Provincias");
       }
     );
+  }
+  //Reestablece el formulario cuando cambia el item a facturar
+  private reestablecerFormulario(limpiarTodo) {
+    let puntoVenta;
+    let fechaEmision;
+    let tipoComprobante;
+    //Guardo por si existen datos ya cargados
+    !limpiarTodo ? [
+      puntoVenta = this.formulario.value.puntoVenta,
+      fechaEmision = this.formulario.value.fechaEmision,
+      tipoComprobante = this.formulario.value.tipoComprobante] : '';
+    //Vacio formularios y listas
+    this.vaciarListas();
+    this.formulario.reset();
+    this.puntoVenta.reset();
+    this.formularioCliente.reset();
+    this.formularioVtaCpteItemNC.reset();
+    this.establecerValoresPorDefecto(fechaEmision, puntoVenta, tipoComprobante);
+    this.reestablecerformularioVtaCpteItemNC();
+    //Establezco el foco
+    puntoVenta && fechaEmision && tipoComprobante ? document.getElementById('idRemitente').focus() :
+      setTimeout(function () {
+        document.getElementById('idTipoComprobante').focus();
+      }, 20);
+  }
+  //Reestablece y limpia el formularioVtaCpteItemFA
+  public reestablecerformularioVtaCpteItemNC() {
+    this.formularioVtaCpteItemNC.reset();
+    this.establecerValoresPorDefectoItemNC();
+  }
+  //Establece valores por defecto para el formulario items
+  private establecerValoresPorDefectoItemNC() {
+    this.establecerAlicuotaIva();
+    this.formularioVtaCpteItemNC.get('importeExento').setValue(this.appService.establecerDecimales('0.00', 2));
+    this.formularioVtaCpteItemNC.get('importeNoGravado').setValue(this.appService.establecerDecimales('0.00', 2));
+  }
+  //Establece valores por defecto
+  private establecerValoresPorDefecto(fechaEmision, puntoVenta, tipoComprobante) {
+    //Define la tabla mediante el valor del checkbox (radio)
+    this.opcionAplica.setValue('comprobantes');
+    //Define el valor de los campos en el formulario
+    this.formulario.get('pagoEnOrigen').setValue(false);
+    this.formulario.get('importeNoGravado').setValue(0);
+    this.formulario.get('importeOtrosTributos').setValue(0);
+    this.formulario.get('ventaComprobanteItemCR').setValue([]);
+    this.formulario.get('ventaComprobanteItemND').setValue([]);
+    this.formulario.get('ventaComprobanteItemNC').setValue([]);
+    this.formulario.get('ventaComprobanteItemFAs').setValue([]);
+    this.formulario.get('empresa').setValue(this.appService.getEmpresa());
+    this.formulario.get('tipoComprobante').setValue(this.tiposComprobante[0]);
+    this.formulario.get('usuarioAlta').setValue({ id: this.appService.getUsuario().id });
+    this.formulario.get('sucursal').setValue(this.appService.getUsuario().sucursal);
+    fechaEmision ?
+      [this.formulario.get('fechaEmision').setValue(fechaEmision),
+      this.formulario.get('fechaRegistracion').setValue(fechaEmision)] : this.establecerFecha();
+    puntoVenta ?
+      [this.formulario.get('puntoVenta').setValue(puntoVenta),
+      this.cambioPuntoVenta()] : this.formulario.get('puntoVenta').setValue(this.puntoVenta[0]);
+    tipoComprobante ?
+      [this.formulario.get('tipoComprobante').setValue(tipoComprobante), this.cambioFecha()] : '';
+  }
+  //Establece la fecha emision y registracion
+  private establecerFecha() {
+    this.fechaService.obtenerFecha().subscribe(res => {
+      this.fechaActual = res.json();
+      this.formulario.get('fechaEmision').setValue(this.fechaActual);
+      this.formulario.get('fechaRegistracion').setValue(this.fechaActual);
+    });
   }
   //Comprueba si ya existe un codigo de afip entonces vuelve a llamar a la funcion que obtiene el valor del campo Numero
   public cambioPuntoVenta() {
@@ -715,11 +698,12 @@ export class EmitirNotaCreditoComponent implements OnInit {
   private controlCamposPorCliente() {
     console.log(this.formulario.value);
     // Controla el campo 'Letra' 
-    this.formulario.value.cliente.condicionVenta.id == 1 ? this.formulario.get('letra').setValue('A') : this.formulario.get('letra').setValue('B');
-    // Obtiene el codigo afip
+    this.formulario.value.cliente.condicionVenta.id == 1 ?
+      this.formulario.get('letra').setValue('A') : this.formulario.get('letra').setValue('B');
+    // Obtiene el codigo afip y el número
     this.cargarCodigoAfip(this.formulario.value.letra);
     // Obtiene las ventas comprobantes
-    this.listarVentaComprobanteParaCredito();
+    this.listarVentaComprobanteParaNotaCredito();
   }
   //Setea el codigo de Afip por el tipo de comprobante y la letra
   public cargarCodigoAfip(letra) {
@@ -748,12 +732,13 @@ export class EmitirNotaCreditoComponent implements OnInit {
       );
   }
   //Obtiene la lista de Venta Comprobante NC (para Nota de Credito)
-  private listarVentaComprobanteParaCredito() {
+  private listarVentaComprobanteParaNotaCredito() {
     let idCliente = this.formulario.value.cliente.id;
     this.ventaComprobanteService.listarParaCreditosPorClienteYEmpresa(
       idCliente, this.appService.getEmpresa().id).subscribe(
         res => {
           console.log(res.json());
+          this.listaCompleta.data = res.json();
           this.formulario.get('ventaComprobanteItemNC').setValue(res.json());
         }
       )
@@ -771,6 +756,112 @@ export class EmitirNotaCreditoComponent implements OnInit {
         this.limpiarClienteYTabla();
         break;
     }
+  }
+  //Limpia los campos correspondientes al Cliente
+  private limpiarClienteYTabla() {
+    // this.formulario.get('cliente').reset();
+    // this.formulario.get('letra').reset();
+    // this.formulario.get('codigoAfip').reset();
+    // this.formulario.get('numero').reset();
+    // this.resultadosClientes = [];
+
+    /* No se usan mas, corresponden a las tablas viejas
+    this.listaComprobantes = [];
+    this.listaCuenta = [];
+    */
+
+    //limpiamos lista de tabla
+    this.listaCompleta.data = [];
+
+
+    this.reestablecerFormularioComprobante();
+    this.reestablecerFormularioCuenta();
+    this.formulario.get('ventaComprobanteItemNC').reset();
+    setTimeout(function () {
+      document.getElementById('idMotivo').focus();
+    }, 20);
+  }
+  //Reestablece el formulario de aplica a Comprobante
+  private reestablecerFormularioComprobante() {
+    this.comprobanteSeleccionado = null;
+    this.formularioVtaCpteItemNC.reset();
+    this.listarItemsTipo();
+    this.listarAlicuotaIva();
+  }
+  //Reestablece el formulario de aplica a la Cuenta
+  private reestablecerFormularioCuenta() {
+    this.cuentaSeleccionada = null;
+    this.formularioVtaCpteItemNC.reset();
+    this.listarItemsTipo();
+    this.listarAlicuotaIva();
+  }
+  //Controla el cambio en el campo de selección 'Motivo'
+  public cambioMotivo() {
+    console.log("Motivo: " + this.formulario.value.afipConcepto.id);
+    if (this.formulario.value.afipConcepto.id == 9) {
+      // let subtotalCIVA = 
+    }
+  }
+  //Establece el elemento en el formularioVtaCpteItemNC para modificar
+  public activarActualizarElemento(elemento, indice) {
+    this.formularioVtaCpteItemNC.enable();
+    this.formularioVtaCpteItemNC.patchValue(elemento);
+    /* establece los decimales para el importe */
+    this.formularioVtaCpteItemNC.get('importeNetoGravado').setValue(
+      this.appService.establecerDecimales(elemento.importeNetoGravado, 2)
+    );
+    this.idMod = indice;
+  }
+  //Cancela el actualizar elemento- limpia el formularioVtaCpteItemNC
+  public cancelarModElemento() {
+    this.formularioVtaCpteItemNC.reset();
+    this.formularioVtaCpteItemNC.disable();
+    this.idMod = null;
+  }
+  //Actualiza el registro seleccionado de la tabla
+  public actualizar() {
+    this.listaCompleta.data[this.idMod] = this.formularioVtaCpteItemNC.value;
+    this.listaCompleta.sort = this.sort;
+    this.cancelarModElemento();
+  }
+  //Calcula el saldo para cada registro de la tabla 
+  public calcularSaldoElemento(elemento) {
+    // let importeTotal CONSULTAR A NESTOR COMO SE CALCULA ESTE IMPORTE
+    let subtotalConIva = elemento.importeNetoGravado + elemento.importeIva;
+    let saldo = subtotalConIva;
+    return saldo;
+  }
+  //Calcula el subtotal con IVA para cada registro de la tabla 
+  public calcularSubtotalConIvaElemento(elemento) {
+    let subtotalConIva = elemento.importeNetoGravado + elemento.importeIva;
+    return subtotalConIva;
+  }
+  //Controla el cambio los check-box
+  public cambioCheck(elemento, indice, event) {
+    console.log(event.checked);
+    event.check ? this.listaCompleta.data[indice].ventaComprobanteAplicado = true :
+      this.listaCompleta.data[indice].ventaComprobanteAplicado = false;
+  }
+  //Calcula 'SubtotalNC' de cada registro de la tabla 
+  public calcularSubtotalNC() {
+    let subtotal = this.formularioVtaCpteItemNC.value.importeNetoGravado.value;
+    let alicuotaIva = this.formularioVtaCpteItemNC.value.afipAlicuotaIva.alicuota;
+    let importeIva = subtotal * (alicuotaIva / 100);
+
+    //le saco la mascara al campo subtotalCIVA para que me elimine el simbolo $
+    this.setDecimales(this.formularioVtaCpteItemNC.get('importeNetoGravado'), 2)
+    // convierto a subtotalNC en numerico para poder calcular el subtotalNC
+    let subtotalCIVA = Number(this.formularioVtaCpteItemNC.value.subtotalCIVA);
+    let subtotalNC = (alicuotaIva / 100) * subtotalCIVA + subtotalCIVA;
+    console.log(subtotalNC);
+
+    this.formularioVtaCpteItemNC.get('importeIva').setValue(this.appService.establecerDecimales(importeIva, 2));
+    this.formularioVtaCpteItemNC.get('importeIva').setValue(this.appService.establecerDecimales(importeIva, 2));
+
+    // let alicuotaIva
+    // let subtotal = importeSeguro + fleteNeto + retiro + entrega + concepto;
+    // this.formularioVtaCpteItemFA.get('importeNetoGravado').setValue(this.appService.establecerDecimales(subtotal, 2));
+    // this.calcularImporteIva();
   }
   //Abre dialogo para agregar un cliente eventual
   public agregarClienteEventual(): void {
