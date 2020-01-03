@@ -131,7 +131,7 @@ const stompConfig: StompConfig = {
     TotalesConceptoDialogoComponent,
     UsuariosActivosDialogoComponent,
     BugImagenDialogoComponent,
-    CuentaBancariaDialogoComponent,
+    CuentaBancariaDialogoComponent
     // ListaRemitoDialogoComponent
   ],
   imports: [

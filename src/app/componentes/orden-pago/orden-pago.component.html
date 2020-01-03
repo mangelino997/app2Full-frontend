@@ -1,0 +1,185 @@
+<div class="container-fluid" (window:keydown)="manejarEvento($event.keyCode)">
+    <div class="row">
+        <div class="centrar">
+            <nav mat-tab-nav-bar>
+                <a mat-tab-link disabled>COBRANZAS</a>
+                <a mat-tab-link *ngFor="let pestania of pestanias" [active]="activeLink == pestania.nombre"
+                    (click)="seleccionarPestania(pestania.id, pestania.nombre)">{{pestania.nombre}}</a>
+            </nav>
+        </div>
+    </div>
+    <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado < 5">
+        <div class="col">
+            <h5 class="text-center">{{pestaniaActual}} Órdenes de Pago a Proveedores</h5>
+            <div class="row">
+                <div class="col-md-9">
+                    <form [formGroup]="formulario">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group has-float-label">
+                                    <label for="idProveedor" class="tamanio-label">Proveedor *</label>
+                                    <input id="idProveedor" class="form-control form-control-sm" autocomplete="off"
+                                        type="text" matInput [formControl]="formulario.get('proveedor')"
+                                        [matAutocomplete]="autoProveedor"
+                                        placeholder="Buscar por id, razón social, nombre de fantasía o número de documento"
+                                        (blur)="verificarSeleccion(formulario.get('proveedor'))">
+                                    <mat-autocomplete #autoProveedor="matAutocomplete"
+                                        [displayWith]="displayF.bind(this)">
+                                        <mat-option *ngFor="let item of resultadosProveedores" [value]="item">
+                                            {{item.alias}}
+                                        </mat-option>
+                                    </mat-autocomplete>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <button mat-raised-button color="primary">Buscar</button>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group has-float-label">
+                                    <label for="idMediosPagos" class="tamanio-label">Integración en</label>
+                                    <mat-select id="idMediosPagos" class="form-control form-control-sm"
+                                        [compareWith]="compareFn" [formControl]="medioPago">
+                                        <mat-option *ngFor="let itemMedioPago of mediosPagos" [value]="itemMedioPago">
+                                            {{itemMedioPago.nombre}}
+                                        </mat-option>
+                                    </mat-select>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="row">
+                        <div class="tabla">
+                            <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
+                                <ng-container matColumnDef="CHECK" sticky>
+                                    <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
+                                    <td mat-cell *matCellDef="let elemento"></td>
+                                </ng-container>
+                                <ng-container matColumnDef="FECHA_EMISION">
+                                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha Emisión</th>
+                                    <td mat-cell *matCellDef="let elemento">{{elemento.fechaEmision}}</td>
+                                </ng-container>
+                                <ng-container matColumnDef="FECHA_VTO_PAGO">
+                                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha Vto. Pago</th>
+                                    <td mat-cell *matCellDef="let elemento">{{elemento.fechaVtoPago}}</td>
+                                </ng-container>
+                                <ng-container matColumnDef="TIPO">
+                                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Tipo</th>
+                                    <td mat-cell *matCellDef="let elemento">{{elemento.tipoComprobante.abreviatura}}
+                                    </td>
+                                </ng-container>
+                                <ng-container matColumnDef="PUNTO_VENTA">
+                                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Punto Venta</th>
+                                    <td mat-cell *matCellDef="let elemento">{{elemento.puntoVenta}}</td>
+                                </ng-container>
+                                <ng-container matColumnDef="LETRA">
+                                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Letra</th>
+                                    <td mat-cell *matCellDef="let elemento">{{elemento.letra}}</td>
+                                </ng-container>
+                                <ng-container matColumnDef="NUMERO">
+                                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Número</th>
+                                    <td mat-cell *matCellDef="let elemento">{{elemento.numero}}</td>
+                                </ng-container>
+                                <ng-container matColumnDef="SALDO">
+                                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Saldo</th>
+                                    <td mat-cell *matCellDef="let elemento">{{elemento.importeSaldo}}</td>
+                                </ng-container>
+                                <ng-container matColumnDef="IMPORTE">
+                                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Importe</th>
+                                    <td mat-cell *matCellDef="let elemento">{{elemento.importeTotal}}</td>
+                                </ng-container>
+                                <ng-container matColumnDef="IMPORTE_COBRO">
+                                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Importe Cobro</th>
+                                    <td mat-cell *matCellDef="let elemento">0.00</td>
+                                </ng-container>
+                                <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+                                <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
+                            </table>
+                        </div>
+                    </div>
+                    <hr>
+                    <h6><b>Totales</b></h6>
+                    <form [formGroup]="formularioTotales">
+                        <div class="row">
+                            <div class="col-md-2">
+                                <div class="form-group has-float-label">
+                                    <label for="idItemsImporte" class="codigo-label">Items</label>
+                                    <input id="idItemsImporte" type="text" formControlName="itemsImporte" readonly
+                                        class="form-control form-control-sm number-right">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group has-float-label">
+                                    <label for="idImporte" class="codigo-label">Total Importe Seleccionado</label>
+                                    <input id="idImporte" type="text" formControlName="importe" readonly
+                                        class="form-control form-control-sm number-right">
+                                </div>
+                            </div>
+                            <div class="col-md-2"></div>
+                            <div class="col-md-2">
+                                <div class="form-group has-float-label">
+                                    <label for="idItemsDeuda" class="codigo-label">Items</label>
+                                    <input id="idItemsDeuda" type="text" formControlName="itemsDeuda" readonly
+                                        class="form-control form-control-sm number-right">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group has-float-label">
+                                    <label for="idDeuda" class="codigo-label">Total Deuda</label>
+                                    <input id="idDeuda" type="text" formControlName="deuda" readonly
+                                        class="form-control form-control-sm number-right">
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-md-3">
+                    <form [formGroup]="formularioIntegrar">
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-group has-float-label">
+                                    <label for="idPendienteIntegrar" class="codigo-label">Pendiente de Integrar</label>
+                                    <input id="idPendienteIntegrar" type="text" formControlName="pendienteIntegrar"
+                                        readonly class="form-control form-control-sm number-right">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-group has-float-label">
+                                    <label for="idRetenciones" class="codigo-label">Retenciones</label>
+                                    <input id="idRetenciones" type="text" formControlName="retenciones" readonly
+                                        class="form-control form-control-sm number-right">
+                                </div>
+                            </div>
+                            <button class="button-input" mat-raised-button color="primary">+</button>
+                        </div>
+                        <div class="row">
+                            <div class="col lista">
+                                <mat-list>
+                                    <h3 mat-subheader>Medios de Pago</h3>
+                                    <mat-list-item *ngFor="let pagos of columnas">
+                                        <mat-icon mat-list-icon>fiber_manual_record</mat-icon>
+                                        <h4 mat-line>{{pagos}}</h4>
+                                        <button mat-mini-fab color="warn">X</button>
+                                    </mat-list-item>
+                                </mat-list>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-group has-float-label">
+                                    <label for="idTotalIntegrado" class="codigo-label">Total Integrado</label>
+                                    <input id="idTotalIntegrado" type="text" formControlName="totalIntegrado" readonly
+                                        class="form-control form-control-sm number-right">
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row justify-content-center contenedor" [hidden]="indiceSeleccionado != 5">
+
+    </div>
+</div>
