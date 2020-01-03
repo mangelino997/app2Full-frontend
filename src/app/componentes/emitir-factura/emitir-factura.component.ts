@@ -310,13 +310,13 @@ export class EmitirFacturaComponent implements OnInit {
   }
   //Controla el rango valido para la fecha de emision cuando el punto de venta es feCAEA
   private verificarFechaFeCAEA() {
-    if (this.formulario.value.fechaEmision >= this.generarFecha(-15) && this.formulario.value.fechaEmision <= this.generarFecha(+1)) {
-      document.getElementById('idItem').focus();
-    } else {
-      this.toastr.error("Fecha para FeCAEA no es válido. Se establece fecha actual.");
-      this.formulario.get('fechaEmision').setValue(this.fechaActual);
-      document.getElementById('idFechaEmision').focus();
-    }
+    // if (this.formulario.value.fechaEmision >= this.generarFecha(-15) && this.formulario.value.fechaEmision <= this.generarFecha(+1)) {
+    //   document.getElementById('idItem').focus();
+    // } else {
+    //   this.toastr.error("Fecha para FeCAEA no es válido. Se establece fecha actual.");
+    //   this.formulario.get('fechaEmision').setValue(this.fechaActual);
+    //   document.getElementById('idFechaEmision').focus();
+    // }
   }
   //Controla el rango valido para la fecha de emision cuando el punto de venta no es feCAEA
   private verificarFechaNoFeCAEA() {
