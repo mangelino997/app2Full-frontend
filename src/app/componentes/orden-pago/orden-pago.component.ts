@@ -1,0 +1,221 @@
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { MatTableDataSource, MatSort, MatPaginator } from '@angular/material';
+import { Subscription } from 'rxjs';
+import { ToastrService } from 'ngx-toastr';
+import { LoaderService } from 'src/app/servicios/loader.service';
+import { LoaderState } from 'src/app/modelos/loader';
+import { OrdenPagoService } from 'src/app/servicios/orden-pago.service';
+import { AppService } from 'src/app/servicios/app.service';
+import { FormGroup, FormControl } from '@angular/forms';
+import { ProveedorService } from 'src/app/servicios/proveedor.service';
+import { OrdenPago } from 'src/app/modelos/orden-pago';
+
+@Component({
+  selector: 'app-orden-pago',
+  templateUrl: './orden-pago.component.html',
+  styleUrls: ['./orden-pago.component.css']
+})
+export class OrdenPagoComponent implements OnInit {
+  //Define la pestania activa
+  public activeLink: any = null;
+  //Define el indice seleccionado de pestania
+  public indiceSeleccionado: number = null;
+  //Define la pestania actual seleccionada
+  public pestaniaActual: string = null;
+  //Define si el campo es de solo lectura
+  public soloLectura: boolean = false;
+  //Define si mostrar el boton
+  public mostrarBoton: boolean = null;
+  //Define la lista de pestanias
+  public pestanias: Array<any> = [];
+  //Define la lista completa de registros
+  public listaCompleta = new MatTableDataSource([]);
+  //Define la lista de resultados de busqueda de barrio
+  public resultadosProveedores: Array<any> = [];
+  //Define el formulario
+  public formulario:FormGroup;
+  //Define el formulario de totales
+  public formularioTotales:FormGroup;
+  //Define el formulario de integrar
+  public formularioIntegrar:FormGroup;
+  //Defiene el render
+  public render: boolean = false;
+  //Define el mostrar del circulo de progreso
+  public show = false;
+  //Define la subscripcion a loader.service
+  private subscription: Subscription;
+  //Define el select de medios de pagos
+  public medioPago:FormControl = new FormControl();
+  //Define los medios de pago
+  public mediosPagos:Array<any> = [];
+  //Define la lista de medios de pagos seleccionados
+  public mediosPagosSeleccionados:Array<any> = [];
+  //Define las columnas de la tabla
+  public columnas: string[] = ['CHECK', 'FECHA_EMISION', 'FECHA_VTO_PAGO', 'TIPO', 'PUNTO_VENTA', 
+    'LETRA', 'NUMERO', 'SALDO', 'IMPORTE', 'IMPORTE_COBRO'];
+  //Define la matSort
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
+  //Define la paginacion
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
+  //Define el constructor de la clase
+  constructor(private servicio: OrdenPagoService, private toastr: ToastrService, 
+    private loaderService: LoaderService, private appService: AppService, 
+    private proveedorServicio: ProveedorService, private modelo: OrdenPago) { }
+  //Al inicializarse el componente
+  ngOnInit() {
+    //Establece la subscripcion a loader
+    this.subscription = this.loaderService.loaderState
+      .subscribe((state: LoaderState) => {
+        this.show = state.show;
+      });
+    //Establece el formulario
+    this.formulario = this.modelo.formulario;
+    //Establece el formulario de totales
+    this.formularioTotales = new FormGroup({
+      itemsImporte: new FormControl(),
+      importe: new FormControl(),
+      itemsDeuda: new FormControl(),
+      deuda: new FormControl()
+    });
+    //Establece el formulario integrar
+    this.formularioIntegrar = new FormGroup({
+      pendienteIntegrar: new FormControl(),
+      retenciones: new FormControl(),
+      totalIntegrado: new FormControl()
+    });
+    //Obtiene los datos de inicializacion desde servicio web
+    this.inicializar(this.appService.getRol().id, this.appService.getSubopcion());
+    //Establece los valores de la primera pestania activa
+    this.seleccionarPestania(1, 'Agregar');
+    //Autocompletado Barrio - Buscar por nombre
+    this.formulario.get('proveedor').valueChanges.subscribe(data => {
+      if (typeof data == 'string') {
+        data = data.trim();
+        if (data == '*' || data.length > 0) {
+          this.loaderService.show();
+          this.proveedorServicio.listarPorAlias(data).subscribe(response => {
+            this.resultadosProveedores = response;
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
+        }
+      }
+    })
+  }
+  //Obtiene los datos necesarios para el componente
+  private inicializar(idRol, idSubopcion) {
+    this.render = true;
+    this.servicio.inicializar(idRol, idSubopcion).subscribe(
+      res => {
+        let respuesta = res.json();
+        //Establece los datos de inicializacion
+        this.pestanias = respuesta.pestanias;
+        this.mediosPagos = respuesta.mediosPagos;
+        this.render = false;
+      },
+      err => {
+        this.toastr.error(err.json().mensaje);
+        this.render = false;
+      }
+    );
+  }
+  //Funcion para determina que accion se requiere (Agregar, Actualizar, Eliminar)
+  public accion(indice) {
+    switch (indice) {
+      case 1:
+        this.agregar();
+        break;
+      case 3:
+        this.actualizar();
+        break;
+      case 4:
+        this.eliminar();
+        break;
+      default:
+        break;
+    }
+  }
+  //Establece valores al seleccionar una pestania
+  public seleccionarPestania(id, nombre) {
+    this.indiceSeleccionado = id;
+    this.activeLink = nombre;
+    switch (id) {
+      case 1:
+        this.establecerValoresPestania(nombre, false, false, true, 'idProveedor');
+        break;
+      case 2:
+        this.establecerValoresPestania(nombre, true, true, false, 'idAutocompletado');
+        break;
+      case 3:
+        this.establecerValoresPestania(nombre, true, false, true, 'idAutocompletado');
+        break;
+      case 4:
+        this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
+        break;
+      case 5:
+        this.listar();
+        break;
+      default:
+        break;
+    }
+  }
+  //Funcion para establecer los valores de las pestañas
+  private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
+    this.pestaniaActual = nombrePestania;
+    this.soloLectura = soloLectura;
+    this.mostrarBoton = boton;
+    setTimeout(function () {
+      document.getElementById(componente).focus();
+    }, 20);
+  };
+  //Obtiene la lista de registros
+  public listar(): void {
+
+  }
+  //Agrega un registro
+  public agregar(): void {
+
+  }
+  //Actualizar un registro
+  public actualizar(): void {
+
+  }
+  //Elimina un registro
+  public eliminar(): void {
+
+  }
+  //Verifica si se selecciono un elemento del autocompletado
+  public verificarSeleccion(valor): void {
+    if (typeof valor.value != 'object') {
+      valor.setValue(null);
+    }
+  }
+  //Funcion para comparar y mostrar elemento de campo select
+  public compareFn = this.compararFn.bind(this);
+  private compararFn(a, b) {
+    if (a != null && b != null) {
+      return a.id === b.id;
+    }
+  }
+  //Define como se muestra los datos en el autcompletado
+  public displayF(elemento) {
+    if (elemento != undefined) {
+      return elemento.alias ? elemento.alias : elemento;
+    } else {
+      return elemento;
+    }
+  }
+  //Maneja los evento al presionar una tacla (para pestanias y opciones)
+  public manejarEvento(keycode) {
+    let indice = this.indiceSeleccionado;
+    if (keycode == 113) {
+      if (indice < this.pestanias.length) {
+        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre);
+      } else {
+        this.seleccionarPestania(1, this.pestanias[0].nombre);
+      }
+    }
+  }
+}
