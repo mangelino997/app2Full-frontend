@@ -38,7 +38,8 @@
                                 <div class="form-group has-float-label">
                                     <label for="idMediosPagos" class="tamanio-label">Integración en</label>
                                     <mat-select id="idMediosPagos" class="form-control form-control-sm"
-                                        [compareWith]="compareFn" [formControl]="medioPago">
+                                        [compareWith]="compareFn" [formControl]="medioPago"
+                                        (selectionChange)="determinarIntegracion()">
                                         <mat-option *ngFor="let itemMedioPago of mediosPagos" [value]="itemMedioPago">
                                             {{itemMedioPago.nombre}}
                                         </mat-option>

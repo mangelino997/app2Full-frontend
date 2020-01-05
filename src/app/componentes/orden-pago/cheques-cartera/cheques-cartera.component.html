@@ -1,0 +1,91 @@
+<div class="container-fluid padd-20">
+    <div class="row justify-content-center">
+        <h4>Integración en Cheques en Cartera</h4>
+    </div>
+    <form [formGroup]="formulario">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="form-group has-float-label">
+                    <label for="idFechaPagoDesde" class="codigo-label">Fecha Pago Desde</label>
+                    <input id="idFechaPagoDesde" type="text" formControlName="fechaPagoDesde" 
+                        class="form-control form-control-sm">
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group has-float-label">
+                    <label for="idFechaPagoHasta" class="codigo-label">Fecha Pago Hasta</label>
+                    <input id="idFechaPagoHasta" type="text" formControlName="fechaPagoHasta" 
+                        class="form-control form-control-sm">
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group has-float-label">
+                    <label for="idImporteDesde" class="codigo-label">Importe Desde</label>
+                    <input id="idImporteDesde" type="text" formControlName="importeDesde" 
+                        class="form-control form-control-sm number-right">
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group has-float-label">
+                    <label for="idImporteHasta" class="codigo-label">Importe Hasta</label>
+                    <input id="idImporteHasta" type="text" formControlName="importeHasta" 
+                        class="form-control form-control-sm number-right">
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group has-float-label">
+                    <label for="idNumeroCheque" class="codigo-label">Número de Cheque</label>
+                    <input id="idNumeroCheque" type="text" formControlName="numeroCheque" 
+                        class="form-control form-control-sm number-right">
+                </div>
+            </div>
+            <div class="col-md-3">
+                <button mat-raised-button color="primary">Buscar</button>
+            </div>
+        </div>
+    </form>
+    <div class="row">
+        <div class="tabla">
+            <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
+                <ng-container matColumnDef="BANCO">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Banco</th>
+                    <td mat-cell *matCellDef="let elemento">{{elemento.banco}}</td>
+                </ng-container>
+                <ng-container matColumnDef="NUMERO_CHEQUE">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Número de Cheque</th>
+                    <td mat-cell *matCellDef="let elemento">{{elemento.numero}}</td>
+                </ng-container>
+                <ng-container matColumnDef="FECHA_PAGO">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha Pago</th>
+                    <td mat-cell *matCellDef="let elemento">{{elemento.fechaPago}}</td>
+                </ng-container>
+                <ng-container matColumnDef="CUIT_EMISOR">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>CUIT Emisor</th>
+                    <td mat-cell *matCellDef="let elemento">{{elemento.cuit}}
+                    </td>
+                </ng-container>
+                <ng-container matColumnDef="IMPORTE">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Importe</th>
+                    <td mat-cell *matCellDef="let elemento">{{elemento.importe}}</td>
+                </ng-container>
+                <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+                <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
+            </table>
+        </div>
+    </div>
+    <div class="row justify-content-end">
+        <div class="col-md-4">
+            <div class="form-group has-float-label">
+                <label for="idTotal" class="codigo-label">Total</label>
+                <input id="idTotal" type="text" [formControl]="total" readonly 
+                    class="form-control form-control-sm number-right">
+            </div>
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <button mat-raised-button color="primary">Confirmar</button>
+        <button class="margin-left-3" mat-raised-button (click)="cerrar()">Cancelar</button>
+    </div>
+</div>

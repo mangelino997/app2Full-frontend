@@ -1,0 +1,79 @@
+<div class="container-fluid padd-20">
+    <div class="row justify-content-center">
+        <h4>Integración de Documentos</h4>
+    </div>
+    <form [formGroup]="formulario">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group has-float-label">
+                    <label for="idDocumento" class="codigo-label">Documento</label>
+                    <input id="idDocumento" type="text" formControlName="documento" 
+                        class="form-control form-control-sm">
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group has-float-label">
+                    <label for="idNumero" class="codigo-label">Número</label>
+                    <input id="idNumero" type="text" formControlName="numero" 
+                        class="form-control form-control-sm number-right">
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group has-float-label">
+                    <label for="idFechaPago" class="codigo-label">Fecha Pago</label>
+                    <input id="idFechaPago" type="date" formControlName="fechaPago" 
+                        class="form-control form-control-sm">
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group has-float-label">
+                    <label for="idImporte" class="codigo-label">Importe</label>
+                    <input id="idImporte" type="text" formControlName="importe" 
+                        class="form-control form-control-sm number-right">
+                </div>
+            </div>
+            <div class="col-md-4">
+                <button mat-raised-button color="primary">Agregar</button>
+            </div>
+        </div>
+    </form>
+    <div class="row">
+        <div class="tabla">
+            <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
+                <ng-container matColumnDef="DOCUMENTO">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Documento</th>
+                    <td mat-cell *matCellDef="let elemento"></td>
+                </ng-container>
+                <ng-container matColumnDef="NUMERO">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Número</th>
+                    <td mat-cell *matCellDef="let elemento">{{elemento.numero}}</td>
+                </ng-container>
+                <ng-container matColumnDef="FECHA_PAGO">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha Pago</th>
+                    <td mat-cell *matCellDef="let elemento">{{elemento.fechaPago}}</td>
+                </ng-container>
+                <ng-container matColumnDef="IMPORTE">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Importe</th>
+                    <td mat-cell *matCellDef="let elemento">{{elemento.importe}}</td>
+                </ng-container>
+                <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+                <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
+            </table>
+        </div>
+    </div>
+    <div class="row justify-content-end">
+        <div class="col-md-4">
+            <div class="form-group has-float-label">
+                <label for="idTotal" class="codigo-label">Total</label>
+                <input id="idTotal" type="text" [formControl]="total" readonly 
+                    class="form-control form-control-sm number-right">
+            </div>
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <button mat-raised-button color="primary">Confirmar</button>
+        <button class="margin-left-3" mat-raised-button (click)="cerrar()">Cancelar</button>
+    </div>
+</div>

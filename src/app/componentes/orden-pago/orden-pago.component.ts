@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { MatTableDataSource, MatSort, MatPaginator } from '@angular/material';
+import { MatTableDataSource, MatSort, MatPaginator, MatDialog } from '@angular/material';
 import { Subscription } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
 import { LoaderService } from 'src/app/servicios/loader.service';
@@ -9,6 +9,15 @@ import { AppService } from 'src/app/servicios/app.service';
 import { FormGroup, FormControl } from '@angular/forms';
 import { ProveedorService } from 'src/app/servicios/proveedor.service';
 import { OrdenPago } from 'src/app/modelos/orden-pago';
+import { AnticiposComponent } from './anticipos/anticipos.component';
+import { EfectivoComponent } from './efectivo/efectivo.component';
+import { ChequesPropiosComponent } from './cheques-propios/cheques-propios.component';
+import { ChequesCarteraComponent } from './cheques-cartera/cheques-cartera.component';
+import { ChequesElectronicosComponent } from './cheques-electronicos/cheques-electronicos.component';
+import { TransferenciaBancariaComponent } from './transferencia-bancaria/transferencia-bancaria.component';
+import { DocumentosComponent } from './documentos/documentos.component';
+import { OtrasCuentasComponent } from './otras-cuentas/otras-cuentas.component';
+import { OtrasMonedasComponent } from './otras-monedas/otras-monedas.component';
 
 @Component({
   selector: 'app-orden-pago',
@@ -60,7 +69,8 @@ export class OrdenPagoComponent implements OnInit {
   //Define el constructor de la clase
   constructor(private servicio: OrdenPagoService, private toastr: ToastrService, 
     private loaderService: LoaderService, private appService: AppService, 
-    private proveedorServicio: ProveedorService, private modelo: OrdenPago) { }
+    private proveedorServicio: ProveedorService, private modelo: OrdenPago,
+    private dialog: MatDialog) { }
   //Al inicializarse el componente
   ngOnInit() {
     //Establece la subscripcion a loader
@@ -120,6 +130,54 @@ export class OrdenPagoComponent implements OnInit {
         this.render = false;
       }
     );
+  }
+  //Abre el dialogo correspondientes al seleccionar una opcion del campo 'Ingregracion en'
+  public determinarIntegracion(): void {
+    let elemento = this.medioPago.value.nombre;
+    elemento = elemento.toLowerCase();
+    elemento = elemento.replace(new RegExp(/\s/g), "");
+    elemento = elemento.replace(new RegExp(/[òó]/g), "o");
+    switch(elemento) {
+      case 'anticipos':
+        this.abrirDialogo(AnticiposComponent);
+        break;
+      case 'efectivo':
+        this.abrirDialogo(EfectivoComponent);
+        break;
+      case 'cheques':
+        this.abrirDialogo(ChequesCarteraComponent);
+        break;
+      case 'chequeselectronicos':
+        this.abrirDialogo(ChequesElectronicosComponent);
+        break;
+      case 'chequespropios':
+        this.abrirDialogo(ChequesPropiosComponent);
+        break;
+      case 'transferenciabancaria':
+        this.abrirDialogo(TransferenciaBancariaComponent);
+        break;
+      case 'documentos':
+        this.abrirDialogo(DocumentosComponent);
+        break;
+      case 'otrascuentas':
+        this.abrirDialogo(OtrasCuentasComponent);
+        break;
+      case 'otrasmonedas':
+        this.abrirDialogo(OtrasMonedasComponent);
+        break;
+    }
+  }
+  //Abre el dialogo para agregar un cliente eventual
+  private abrirDialogo(componente): void {
+    this.medioPago.reset();
+    const dialogRef = this.dialog.open(componente, {
+      width: '50%',
+      maxWidth: '95%',
+      data: { }
+    });
+    dialogRef.afterClosed().subscribe(resultado => {
+      
+    });
   }
   //Funcion para determina que accion se requiere (Agregar, Actualizar, Eliminar)
   public accion(indice) {

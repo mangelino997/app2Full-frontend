@@ -1,0 +1,18 @@
+<div class="container-fluid padd-20">
+    <div class="row justify-content-center">
+        <h4>Integración en Efectivo</h4>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-md-4">
+            <div class="form-group has-float-label">
+                <label for="idImporte" class="codigo-label">Importe *</label>
+                <input id="idImporte" type="text" [formControl]="importe" 
+                    class="form-control form-control-sm number-right">
+            </div>
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <button mat-raised-button color="primary">Confirmar</button>
+        <button class="margin-left-3" mat-raised-button (click)="cerrar()">Cancelar</button>
+    </div>
+</div>

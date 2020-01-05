@@ -89,7 +89,6 @@ import { TipoConceptoSueldo } from './modelos/tipoConceptoSueldo';
 import { TipoConceptoSueldoService } from './servicios/tipo-concepto-sueldo.service';
 import { AfipConceptoSueldoService } from './servicios/afip-concepto-sueldo.service';
 import { AfipConceptoSueldo } from './modelos/afipConceptoSueldo';
-import { AfipConceptoSueldoGrupoComponent } from './componentes/afip-concepto-sueldo-grupo/afip-concepto-sueldo-grupo.component';
 import { AfipConceptoSueldoGrupoService } from './servicios/afip-concepto-sueldo-grupo.service';
 import { AfipConceptoSueldoGrupo } from './modelos/afipConceptoSueldoGrupo';
 import { TipoConceptoVentaService } from './servicios/tipo-concepto-venta.service';
@@ -131,8 +130,7 @@ const stompConfig: StompConfig = {
     TotalesConceptoDialogoComponent,
     UsuariosActivosDialogoComponent,
     BugImagenDialogoComponent,
-    CuentaBancariaDialogoComponent
-    // ListaRemitoDialogoComponent
+    CuentaBancariaDialogoComponent,
   ],
   imports: [
     FormsModule,
