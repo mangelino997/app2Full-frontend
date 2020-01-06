@@ -234,15 +234,13 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
     );
   }
   //Elimina un registro
-  private eliminar(elemento) {
+  public eliminar(elemento) {
     this.loaderService.show();
     this.servicio.eliminar(elemento.id).subscribe(
       res => {
         let respuesta = res.json();
         if (res.status == 200) {
-          let companiaSeguro = this.formulario.value.companiaSeguro;
-          this.formulario.reset();
-          this.formulario.get('companiaSeguro').setValue(companiaSeguro);
+          this.listarPorCompaniaSeguro();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
         }

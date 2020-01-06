@@ -324,6 +324,7 @@ export class MonedaCuentaContableComponent implements OnInit {
     let elemento = this.autocompletado.value;
     this.formulario.patchValue(elemento);
     this.formulario.value.moneda = elemento.moneda;
+    this.empresa.setValue(this.formulario.get('empresa').value.razonSocial);
     this.indiceSeleccionado == 2 || this.indiceSeleccionado == 4 ? this.formulario.get('moneda').disable() : this.formulario.get('moneda').enable();
   }
   //Manejo de colores de campos y labels
@@ -334,16 +335,14 @@ export class MonedaCuentaContableComponent implements OnInit {
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
     this.seleccionarPestania(2, this.pestanias[1].nombre);
-    this.formulario.patchValue(elemento);
     this.autocompletado.setValue(elemento);
-    this.empresa.setValue(this.formulario.get('empresa').value.razonSocial);
+    this.establecerFormulario();
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
     this.seleccionarPestania(3, this.pestanias[2].nombre);
-    this.formulario.patchValue(elemento);
     this.autocompletado.setValue(elemento);
-    this.empresa.setValue(this.formulario.get('empresa').value.razonSocial);
+    this.establecerFormulario();
   }
   //Maneja los evento al presionar una tacla (para pestanias y opciones)
   public manejarEvento(keycode) {

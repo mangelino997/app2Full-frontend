@@ -651,11 +651,13 @@ export class OrdenVentaComponent implements OnInit {
   }
   //Abre el modal de ver Orden Venta Tarifa
   public verTarifaOrdenVenta(tarifa) {
+    console.log(tarifa, this.ORDEN_VTA_CABECERA, this.indiceSeleccionado, this.preciosDesde.value, this.formulario.get('estaActiva').value);
     const dialogRef = this.dialog.open(VerTarifaDialogo, {
       width: '95%',
       data: {
         tarifa: tarifa,
-        ordenVenta: this.ordenventa.value,
+        // ordenVenta: this.ordenventa.value,
+        ordenVenta: {id: this.ORDEN_VTA_CABECERA},
         indiceSeleccionado: this.indiceSeleccionado,
         fechaActual: this.preciosDesde.value,
         ordenVentaActiva: this.formulario.get('estaActiva').value
@@ -722,6 +724,7 @@ export class OrdenVentaComponent implements OnInit {
           this.listaOrdenVenta = new MatTableDataSource(res.json());
           this.listaOrdenVenta.sort = this.sort;
           this.listaOrdenVenta.paginator = this.paginator;
+          this.listaOrdenVenta.data.length == 0 ? this.toastr.warning("Sin registros para mostrar.") : '';
         },
         err => {
           let error = err.json();
@@ -734,7 +737,7 @@ export class OrdenVentaComponent implements OnInit {
         res => {
           this.listaOrdenVenta = new MatTableDataSource(res.json());
           this.listaOrdenVenta.sort = this.sort;
-          this.listaCompleta.data.length == 0? this.toastr.error("Sin registros para mostrar.") : '';
+          this.listaCompleta.data.length == 0 ? this.toastr.error("Sin registros para mostrar.") : '';
           this.listaCompleta.paginator = this.paginator;
         },
         err => {
@@ -1241,32 +1244,34 @@ export class VerTarifaDialogo {
   //Obtiene la lista de registros segun el tipoTarifa
   public listar() {
     this.loaderService.show();
-    if (this.stringTipoTarifa == 'porEscala') {
-      this.ordenVentaEscalaService.listarPorOrdenVentaTarifa(this.ordenVenta.value.id, this.tipoTarifa.value.id).subscribe(
-        res => {
-          this.listaCompleta = new MatTableDataSource(res.json());
-          this.listaCompleta.sort = this.sort;
-          this.listaCompleta.data.length == 0 ? this.toastr.error("Sin registros para mostrar.") : '';
-          this.loaderService.hide();
-        },
-        err => {
-          this.toastr.error("No se pudo obtener los registros");
-          this.loaderService.hide();
-        }
-      )
-    } else {
-      this.ordenVentaTramoService.listarPorOrdenVentaTarifa(this.tipoTarifa.value.id).subscribe(
-        res => {
-          this.listaCompleta = new MatTableDataSource(res.json());
-          this.listaCompleta.sort = this.sort;
-          this.listaCompleta.data.length == 0 ? this.toastr.error("Sin registros para mostrar.") : '';
-          this.loaderService.hide();
-        },
-        err => {
-          this.toastr.error("No se pudo obtener los registros");
-          this.loaderService.hide();
-        }
-      )
+    if (this.ordenVenta.value && this.tipoTarifa.value) {
+      if (this.stringTipoTarifa == 'porEscala') {
+        this.ordenVentaEscalaService.listarPorOrdenVentaTarifa(this.ordenVenta.value.id, this.tipoTarifa.value.id).subscribe(
+          res => {
+            this.listaCompleta = new MatTableDataSource(res.json());
+            this.listaCompleta.sort = this.sort;
+            this.listaCompleta.data.length == 0 ? this.toastr.error("Sin registros para mostrar.") : '';
+            this.loaderService.hide();
+          },
+          err => {
+            this.toastr.error("No se pudo obtener los registros");
+            this.loaderService.hide();
+          }
+        )
+      } else {
+        this.ordenVentaTramoService.listarPorOrdenVentaTarifa(this.tipoTarifa.value.id).subscribe(
+          res => {
+            this.listaCompleta = new MatTableDataSource(res.json());
+            this.listaCompleta.sort = this.sort;
+            this.listaCompleta.data.length == 0 ? this.toastr.error("Sin registros para mostrar.") : '';
+            this.loaderService.hide();
+          },
+          err => {
+            this.toastr.error("No se pudo obtener los registros");
+            this.loaderService.hide();
+          }
+        )
+      }
     }
   }
   //Reestablece valores y formularios
