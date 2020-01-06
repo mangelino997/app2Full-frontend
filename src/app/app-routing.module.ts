@@ -125,7 +125,8 @@ const routes: Routes = [
     { path: 'configuraciontiposdeconceptossueldo', loadChildren: () => import('./modulos/tipo-concepto-sueldo/tipo-concepto-sueldo.module').then(m => m.TipoConceptoSueldoModule), canActivate: [GuardiaService] },
     { path: 'conceptosafipconceptos', loadChildren: () => import('./modulos/afip-concepto-sueldo/afip-concepto-sueldo.module').then(m => m.AfipConceptoSueldoModule), canActivate: [GuardiaService] },
     { path: 'conceptosafipgruposconceptos', loadChildren: () => import('./modulos/afip-concepto-sueldo-grupo/afip-concepto-sueldo-grupo.module').then(m => m.AfipConceptoSueldoGrupoModule), canActivate: [GuardiaService] },
-    { path: 'gestiondepagosordenesdepago', loadChildren: () => import('./modulos/orden-pago/orden-pago.module').then(m => m.OrdenPagoModule), canActivate: [GuardiaService] }
+    { path: 'gestiondepagosordenesdepago', loadChildren: () => import('./modulos/orden-pago/orden-pago.module').then(m => m.OrdenPagoModule), canActivate: [GuardiaService] },
+    { path: 'gestiondecobroscobranzas', loadChildren: () => import('./modulos/cobranzas/cobranzas.module').then(m => m.CobranzasModule), canActivate: [GuardiaService] }
 ];
 
 @NgModule({
