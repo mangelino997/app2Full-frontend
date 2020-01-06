@@ -402,7 +402,7 @@ export class ClienteComponent implements OnInit {
   }
   //Elimina la cuenta bancaria
   public eliminarCuentaBancaria(elemento): void {
-    const id = elemento.id;
+    let id = elemento.id;
     if (this.indiceSeleccionado == 3) {
       this.eliminarCuentaBancariaPorId(id);
     }
@@ -565,7 +565,23 @@ export class ClienteComponent implements OnInit {
     this.formulario.get('descuentoSubtotal').setValue(elemento.descuentoSubtotal ? this.appService.establecerDecimales(elemento.descuentoSubtotal, 2) : null);
     /* Si no tiene seguro propio que compañia/poliza/vencimiento no sean readOnly */
     this.cambioTipoSeguro();
-    this.cuentasBancarias = new MatTableDataSource(elemento.clienteCuentasBancarias);
+    /* Establece las cuentas bancarias del Cliente */
+    if (elemento.clienteCuentasBancarias.length > 0) {
+      elemento.clienteCuentasBancarias.forEach(
+        item => {
+          this.establecerCuentasBancariasCliente(item);
+        }
+      )
+    }
+    // this.cuentasBancarias = new MatTableDataSource(elemento.clienteCuentasBancarias);
+  }
+  // Establece las cuentas bancarias del cliente en la empresa correspondiente
+  private establecerCuentasBancariasCliente(clienteCuentaBancaria) {
+    for (let i = 0; i < this.cuentasBancarias.data.length; i++) {
+      if (this.cuentasBancarias.data[i].empresa.id == clienteCuentaBancaria.empresa.id) {
+        this.cuentasBancarias.data[i] = clienteCuentaBancaria;
+      }
+    }
   }
   //Establece los valores por defecto
   private establecerValoresPorDefecto() {
@@ -725,16 +741,6 @@ export class ClienteComponent implements OnInit {
         break;
     }
   }
-  //Obtiene el siguiente id
-  private obtenerSiguienteId() {
-    this.servicio.obtenerSiguienteId().subscribe(
-      res => {
-        this.formulario.get('id').setValue(res.json());
-      },
-      err => {
-      }
-    );
-  }
   //Agrega un registro
   private agregar() {
     this.loaderService.show();
@@ -861,14 +867,33 @@ export class ClienteComponent implements OnInit {
     this.establecerZona();
     this.establecerRubro();
     this.establecerValoresPorDefecto();
+
+    /* Limpia la tabla de Cuentas Bancarias */
+    this.limpiarCuentasBancarias();
+  }
+  //Limpia la tabla de Cuentas Bancarias
+  private limpiarCuentasBancarias() {
+    this.cuentasBancarias.data.forEach(
+      item => {
+        /* limpia las cuentas bancarias asignadas  */
+        if (item.cuentaBancaria) {
+          item.id = null;
+          item.cuentaBancaria = null;
+        }
+      }
+    )
   }
   //Reestablece e inicializa el formulario filtro
   private establecerFormularioFiltro() {
-    this.formularioFiltro.reset();
-    this.opcionLocalidadFiltro.setValue(0);
-    this.formularioFiltro.get('cobrador').setValue(0);
-    this.formularioFiltro.get('condicionVenta').setValue(0);
-    this.formularioFiltro.get('esSeguroPropio').setValue(2);
+    if (this.listaCompleta.data.length > 0) {
+      this.listarPorFiltros();
+    } else {
+      this.formularioFiltro.reset();
+      this.opcionLocalidadFiltro.setValue(0);
+      this.formularioFiltro.get('cobrador').setValue(0);
+      this.formularioFiltro.get('condicionVenta').setValue(0);
+      this.formularioFiltro.get('esSeguroPropio').setValue(2);
+    }
   }
   //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
   private lanzarError(err) {

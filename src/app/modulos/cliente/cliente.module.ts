@@ -39,7 +39,7 @@ import { ClienteVtoPagoService } from 'src/app/servicios/cliente-vto-pago.servic
     ClienteComponent,
     ListasDePreciosDialog,
     CambiarOVporDefectoDialogo,
-    VtoPagosDialogo
+    VtoPagosDialogo,
   ],
   imports: [
     CommonModule,
@@ -93,7 +93,7 @@ import { ClienteVtoPagoService } from 'src/app/servicios/cliente-vto-pago.servic
   entryComponents: [
     ListasDePreciosDialog,
     CambiarOVporDefectoDialogo,
-    VtoPagosDialogo
+    VtoPagosDialogo,
   ]
 })
 export class ClienteModule { }

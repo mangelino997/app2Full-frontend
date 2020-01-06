@@ -484,8 +484,8 @@
                               </button>
                               <button mat-icon-button class="mat-icon-button-table"
                                 (click)="eliminarCuentaBancaria(elemento)" style="margin-left: 20px;"
-                                *ngIf="indiceSeleccionado == 1 || indiceSeleccionado == 3" matTooltip="Eliminar"
-                                matTooltipPosition="above">
+                                *ngIf="indiceSeleccionado == 1 || indiceSeleccionado == 3"
+                                [disabled]="!elemento.cuentaBancaria" matTooltip="Eliminar" matTooltipPosition="above">
                                 <mat-icon>delete</mat-icon>
                               </button>
                             </td>

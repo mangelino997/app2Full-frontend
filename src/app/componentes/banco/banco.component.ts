@@ -139,8 +139,11 @@ export class BancoComponent implements OnInit {
     if (documento) {
       let respuesta = this.appService.validarCUIT(documento.toString());
       if (!respuesta) {
+        this.formulario.get('numeroDocumento').setErrors({ 'incorrect': true });
         let err = { codigo: 11010, mensaje: 'CUIT Incorrecto!' };
         this.lanzarError(err);
+      } else {
+        this.formulario.get('numeroDocumento').setErrors(null);
       }
     }
   }
