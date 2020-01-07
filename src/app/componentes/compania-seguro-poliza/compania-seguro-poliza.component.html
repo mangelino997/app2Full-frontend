@@ -143,7 +143,7 @@
         </div>
         <div class="col-md-2">
           <button *ngIf="!show" mat-raised-button color="primary" (click)="listarPorCompaniaSeguro()"
-          [disabled]="!formulario.get('companiaSeguro').value || !formulario.get('empresa').value">
+            [disabled]="!formulario.get('companiaSeguro').value || !formulario.get('empresa').value">
             Buscar
           </button>
         </div>
@@ -180,7 +180,7 @@
             </ng-container>
             <ng-container matColumnDef="EDITAR" stickyEnd>
               <th mat-header-cell *matHeaderCellDef><button class="button-full-width" mat-raised-button color="primary"
-                [disabled]="listaCompleta.data.length==0" (click)="abrirReporte()">Reporte</button></th>
+                  [disabled]="listaCompleta.data.length==0" (click)="abrirReporte()">Reporte</button></th>
               <td mat-cell *matCellDef="let elemento">
                 <button mat-icon-button class="mat-icon-button-table" (click)="activarConsultar(elemento)"
                   matTooltip="Consultar" matTooltipPosition="above" *ngIf="indiceSeleccionado == 5">
@@ -194,8 +194,12 @@
             </ng-container>
             <ng-container matColumnDef="ELIMINAR" sticky>
               <th mat-header-cell *matHeaderCellDef [hidden]="indiceSeleccionado != 4">-</th>
-              <td mat-cell *matCellDef="let elemento" (click)="eliminar(elemento)" [hidden]="indiceSeleccionado != 4">
-                <span class="cursor-color-rojo">X</span></td>
+              <td mat-cell *matCellDef="let elemento" [hidden]="indiceSeleccionado != 4">
+                <button mat-icon-button class="mat-icon-button-table" matTooltip="Eliminar" matTooltipPosition="above"
+                  (click)="eliminar(elemento)" >
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </td>
             </ng-container>
             <tr mat-header-row *matHeaderRowDef="columnas"></tr>
             <tr mat-row *matRowDef="let row; columns: columnas;"></tr>

@@ -280,10 +280,28 @@ export class ProveedorComponent implements OnInit {
     let elemento = this.autocompletado.value;
     this.formulario.patchValue(elemento);
     this.indiceSeleccionado == 3 ? this.verificarCBU() : '';
-    this.planesCuentas = new MatTableDataSource(elemento.proveedorCuentasContables);
-    this.planesCuentas.sort = this.sort;
+
+
+    /* Establece las cuentas bancarias del Proveedor */
     this.listaCuentaBancaria.data = elemento.proveedorCuentasBancarias;
     this.listaCuentaBancaria.sort = this.sort;
+
+    /* Establece las cuentas contables del Proveedor */
+    if (elemento.proveedorCuentasContables.length > 0) {
+      elemento.proveedorCuentasContables.forEach(
+        item => {
+          this.establecerCuentasContablesProveedor(item);
+        }
+      )
+    }
+  }
+  // Establece las cuentas contables del proveedor en la empresa correspondiente
+  private establecerCuentasContablesProveedor(proveedorCuentaContable) {
+    for (let i = 0; i < this.planesCuentas.data.length; i++) {
+      if (this.planesCuentas.data[i].empresa.id == proveedorCuentaContable.empresa.id) {
+        this.planesCuentas.data[i] = proveedorCuentaContable;
+      }
+    }
   }
   //Crea la lista de planes de cuenta
   public crearCuentasContables(empresas): void {
@@ -630,8 +648,22 @@ export class ProveedorComponent implements OnInit {
     this.autocompletado.reset();
     this.establecerValoresPorDefecto();
     this.reestablecerFormularioCB();
-    this.crearCuentasContables(this.empresasPlanCuenta);
     id ? this.formulario.get('id').setValue(id) : this.formulario.get('id').setValue(this.ultimoId);
+
+    /* Limpia la tabla de Cuentas Contables */
+    this.limpiarCuentasContables();
+  }
+  //Limpia la tabla de Cuentas Contables
+  private limpiarCuentasContables() {
+    this.planesCuentas.data.forEach(
+      item => {
+        /* limpia las cuentas bancarias asignadas  */
+        if (item.planCuentaCompra) {
+          item.id = null;
+          item.planCuentaCompra = null;
+        }
+      }
+    )
   }
   //Reestablece el formulario de Cuenta Bancaria
   private reestablecerFormularioCB() {
@@ -903,20 +935,13 @@ export class ProveedorComponent implements OnInit {
   public activarConsultar(elemento) {
     this.seleccionarPestania(2, this.pestanias[1].nombre);
     this.autocompletado.setValue(elemento);
-    this.formulario.patchValue(elemento);
-    this.listaCuentaBancaria.data = elemento.proveedorCuentasBancarias;
-    this.listaCuentaBancaria.sort = this.sort;
-    this.planesCuentas = new MatTableDataSource(elemento.proveedorCuentasContables);
+    this.establecerFormulario();
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
     this.seleccionarPestania(3, this.pestanias[2].nombre);
     this.autocompletado.setValue(elemento);
-    this.formulario.patchValue(elemento);
-    this.listaCuentaBancaria.data = elemento.proveedorCuentasBancarias;
-    this.listaCuentaBancaria.sort = this.sort;
-    this.verificarCBU();
-    this.planesCuentas = new MatTableDataSource(elemento.proveedorCuentasContables);
+    this.establecerFormulario();
   }
   //Define el mostrado de datos y comparacion en campo select
   public compareFn = this.compararFn.bind(this);

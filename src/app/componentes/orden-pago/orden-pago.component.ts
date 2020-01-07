@@ -81,18 +81,9 @@ export class OrdenPagoComponent implements OnInit {
     //Establece el formulario
     this.formulario = this.modelo.formulario;
     //Establece el formulario de totales
-    this.formularioTotales = new FormGroup({
-      itemsImporte: new FormControl(),
-      importe: new FormControl(),
-      itemsDeuda: new FormControl(),
-      deuda: new FormControl()
-    });
+    this.formularioTotales = this.modelo.formularioTotales;
     //Establece el formulario integrar
-    this.formularioIntegrar = new FormGroup({
-      pendienteIntegrar: new FormControl(),
-      retenciones: new FormControl(),
-      totalIntegrado: new FormControl()
-    });
+    this.formularioIntegrar = this.modelo.formularioIntegrar;
     //Obtiene los datos de inicializacion desde servicio web
     this.inicializar(this.appService.getRol().id, this.appService.getSubopcion());
     //Establece los valores de la primera pestania activa
