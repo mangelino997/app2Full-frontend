@@ -537,6 +537,7 @@ export class OrdenVentaComponent implements OnInit {
                 this.formulario.disable();
                 this.tipoOrdenVenta.disable();
                 this.formularioTarifa.reset();
+                this.ordenventa.setValue({id: respuesta.id});
                 this.establecerOrdenVentaCabecera(respuesta.id);
                 this.listarTarifasOrdenVenta();
                 document.getElementById('idTipoTarifa').focus();
@@ -591,6 +592,7 @@ export class OrdenVentaComponent implements OnInit {
     if (!this.formulario.get('seguro').value) {
       this.formulario.get('seguro').setValue(this.appService.setDecimales('7', 2));
     }
+    this.formulario.get('tipoTarifas').setValue(null);
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
         let respuesta = res.json();
@@ -653,6 +655,7 @@ export class OrdenVentaComponent implements OnInit {
   public verTarifaOrdenVenta(tarifa) {
     const dialogRef = this.dialog.open(VerTarifaDialogo, {
       width: '95%',
+      maxWidth: '95%',
       data: {
         tarifa: tarifa,
         ordenVenta: this.ordenventa.value,
@@ -1246,7 +1249,7 @@ export class VerTarifaDialogo {
         res => {
           this.listaCompleta = new MatTableDataSource(res.json());
           this.listaCompleta.sort = this.sort;
-          this.listaCompleta.data.length == 0 ? this.toastr.error("Sin registros para mostrar.") : '';
+          // this.listaCompleta.data.length == 0 ? this.toastr.error("Sin registros para mostrar.") : '';
           this.loaderService.hide();
         },
         err => {
@@ -1259,7 +1262,7 @@ export class VerTarifaDialogo {
         res => {
           this.listaCompleta = new MatTableDataSource(res.json());
           this.listaCompleta.sort = this.sort;
-          this.listaCompleta.data.length == 0 ? this.toastr.error("Sin registros para mostrar.") : '';
+          // this.listaCompleta.data.length == 0 ? this.toastr.error("Sin registros para mostrar.") : '';
           this.loaderService.hide();
         },
         err => {
