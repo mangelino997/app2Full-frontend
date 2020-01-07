@@ -310,7 +310,7 @@
                       <div class="form-group has-float-label">
                         <label for="idFechaFin" class="tamanio-label">Fecha de Fin</label>
                         <input id="idFechaFin" type="date" formControlName="fechaFin" autocomplete="off"
-                          class="form-control form-control-sm" [readonly]="soloLectura">
+                          class="form-control form-control-sm" [readonly]="soloLectura" (blur)="verificarFecha(3)">
                       </div>
                     </div>
                   </div>
@@ -727,7 +727,7 @@
                         <div class="form-group has-float-label">
                           <label for="idAliasCBU" class="tamanio-label">Alias CBU</label>
                           <input id="idAliasCBU" type="text" formControlName="aliasCBU" autocomplete="off"
-                            class="form-control form-control-sm" maxlength="45" [readonly]="soloLectura">
+                            class="form-control form-control-sm" maxlength="20" [readonly]="soloLectura">
                         </div>
                       </div>
                       <div class="col-md-2">
@@ -1022,7 +1022,7 @@
                         <label for="idTelefonoMovilFechaDevolucion" class="tamanio-label">Fecha de Devolución</label>
                         <input id="idTelefonoMovilFechaDevolucion" type="date"
                           formControlName="telefonoMovilFechaDevolucion" autocomplete="off"
-                          class="form-control form-control-sm" [readonly]="soloLectura" (blur)="verificarFecha(3)">
+                          class="form-control form-control-sm" [readonly]="soloLectura" (blur)="verificarFecha(4)">
                       </div>
                     </div>
                   </div>

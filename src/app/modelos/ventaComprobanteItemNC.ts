@@ -20,9 +20,6 @@ export class VentaComprobanteItemNC {
             importeExento: new FormControl(),
             provincia: new FormControl(),
             ventaComprobanteAplicado: new FormControl(),
-            /* campo necesario para calcular el subtotalNC
-             en el formulario de NC */
-            subtotalCIVA: new FormControl()
         })
     }
 }
