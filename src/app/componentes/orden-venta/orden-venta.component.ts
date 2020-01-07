@@ -537,6 +537,7 @@ export class OrdenVentaComponent implements OnInit {
                 this.formulario.disable();
                 this.tipoOrdenVenta.disable();
                 this.formularioTarifa.reset();
+                this.ordenventa.setValue({id: respuesta.id});
                 this.establecerOrdenVentaCabecera(respuesta.id);
                 this.listarTarifasOrdenVenta();
                 document.getElementById('idTipoTarifa').focus();
@@ -591,6 +592,7 @@ export class OrdenVentaComponent implements OnInit {
     if (!this.formulario.get('seguro').value) {
       this.formulario.get('seguro').setValue(this.appService.setDecimales('7', 2));
     }
+    this.formulario.get('tipoTarifas').setValue(null);
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
         let respuesta = res.json();
@@ -654,6 +656,7 @@ export class OrdenVentaComponent implements OnInit {
     console.log(tarifa, this.ORDEN_VTA_CABECERA, this.indiceSeleccionado, this.preciosDesde.value, this.formulario.get('estaActiva').value);
     const dialogRef = this.dialog.open(VerTarifaDialogo, {
       width: '95%',
+      maxWidth: '95%',
       data: {
         tarifa: tarifa,
         // ordenVenta: this.ordenventa.value,
@@ -1244,34 +1247,32 @@ export class VerTarifaDialogo {
   //Obtiene la lista de registros segun el tipoTarifa
   public listar() {
     this.loaderService.show();
-    if (this.ordenVenta.value && this.tipoTarifa.value) {
-      if (this.stringTipoTarifa == 'porEscala') {
-        this.ordenVentaEscalaService.listarPorOrdenVentaTarifa(this.ordenVenta.value.id, this.tipoTarifa.value.id).subscribe(
-          res => {
-            this.listaCompleta = new MatTableDataSource(res.json());
-            this.listaCompleta.sort = this.sort;
-            this.listaCompleta.data.length == 0 ? this.toastr.error("Sin registros para mostrar.") : '';
-            this.loaderService.hide();
-          },
-          err => {
-            this.toastr.error("No se pudo obtener los registros");
-            this.loaderService.hide();
-          }
-        )
-      } else {
-        this.ordenVentaTramoService.listarPorOrdenVentaTarifa(this.tipoTarifa.value.id).subscribe(
-          res => {
-            this.listaCompleta = new MatTableDataSource(res.json());
-            this.listaCompleta.sort = this.sort;
-            this.listaCompleta.data.length == 0 ? this.toastr.error("Sin registros para mostrar.") : '';
-            this.loaderService.hide();
-          },
-          err => {
-            this.toastr.error("No se pudo obtener los registros");
-            this.loaderService.hide();
-          }
-        )
-      }
+    if (this.stringTipoTarifa == 'porEscala') {
+      this.ordenVentaEscalaService.listarPorOrdenVentaTarifa(this.ordenVenta.value.id, this.tipoTarifa.value.id).subscribe(
+        res => {
+          this.listaCompleta = new MatTableDataSource(res.json());
+          this.listaCompleta.sort = this.sort;
+          // this.listaCompleta.data.length == 0 ? this.toastr.error("Sin registros para mostrar.") : '';
+          this.loaderService.hide();
+        },
+        err => {
+          this.toastr.error("No se pudo obtener los registros");
+          this.loaderService.hide();
+        }
+      )
+    } else {
+      this.ordenVentaTramoService.listarPorOrdenVentaTarifa(this.tipoTarifa.value.id).subscribe(
+        res => {
+          this.listaCompleta = new MatTableDataSource(res.json());
+          this.listaCompleta.sort = this.sort;
+          // this.listaCompleta.data.length == 0 ? this.toastr.error("Sin registros para mostrar.") : '';
+          this.loaderService.hide();
+        },
+        err => {
+          this.toastr.error("No se pudo obtener los registros");
+          this.loaderService.hide();
+        }
+      )
     }
   }
   //Reestablece valores y formularios

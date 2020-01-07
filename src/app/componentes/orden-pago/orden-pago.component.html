@@ -19,7 +19,7 @@
                                 <div class="form-group has-float-label">
                                     <label for="idProveedor" class="tamanio-label">Proveedor *</label>
                                     <input id="idProveedor" class="form-control form-control-sm" autocomplete="off"
-                                        type="text" matInput [formControl]="formulario.get('proveedor')"
+                                        type="text" [formControl]="formulario.get('proveedor')"
                                         [matAutocomplete]="autoProveedor"
                                         placeholder="Buscar por id, razón social, nombre de fantasía o número de documento"
                                         (blur)="verificarSeleccion(formulario.get('proveedor'))">
@@ -32,7 +32,7 @@
                                 </div>
                             </div>
                             <div class="col-md-2">
-                                <button mat-raised-button color="primary">Buscar</button>
+                                <button mat-raised-button color="primary" (click)="listarComprasPorEmpresaYProveedor()">Buscar</button>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group has-float-label">
@@ -48,9 +48,9 @@
                             </div>
                         </div>
                     </form>
-                    <div class="row">
+                    <div class="row justify-content-center">
                         <div class="tabla">
-                            <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
+                            <table mat-table [dataSource]="comprasComprobantes" matSort class="mat-elevation-z1">
                                 <ng-container matColumnDef="CHECK" sticky>
                                     <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
                                     <td mat-cell *matCellDef="let elemento"></td>
@@ -70,7 +70,7 @@
                                 </ng-container>
                                 <ng-container matColumnDef="PUNTO_VENTA">
                                     <th mat-header-cell *matHeaderCellDef mat-sort-header>Punto Venta</th>
-                                    <td mat-cell *matCellDef="let elemento">{{elemento.puntoVenta}}</td>
+                                    <td class="number-right" mat-cell *matCellDef="let elemento">{{completarCeros(elemento.puntoVenta, '0000', -5)}}</td>
                                 </ng-container>
                                 <ng-container matColumnDef="LETRA">
                                     <th mat-header-cell *matHeaderCellDef mat-sort-header>Letra</th>
@@ -78,19 +78,19 @@
                                 </ng-container>
                                 <ng-container matColumnDef="NUMERO">
                                     <th mat-header-cell *matHeaderCellDef mat-sort-header>Número</th>
-                                    <td mat-cell *matCellDef="let elemento">{{elemento.numero}}</td>
+                                    <td class="number-right" mat-cell *matCellDef="let elemento">{{completarCeros(elemento.numero, '0000000', -8)}}</td>
                                 </ng-container>
                                 <ng-container matColumnDef="SALDO">
                                     <th mat-header-cell *matHeaderCellDef mat-sort-header>Saldo</th>
-                                    <td mat-cell *matCellDef="let elemento">{{elemento.importeSaldo}}</td>
+                                    <td class="number-right" mat-cell *matCellDef="let elemento">$ {{establecerCerosTabla(elemento.importeSaldo)}}</td>
                                 </ng-container>
                                 <ng-container matColumnDef="IMPORTE">
                                     <th mat-header-cell *matHeaderCellDef mat-sort-header>Importe</th>
-                                    <td mat-cell *matCellDef="let elemento">{{elemento.importeTotal}}</td>
+                                    <td class="number-right" mat-cell *matCellDef="let elemento">$ {{establecerCerosTabla(elemento.importeTotal)}}</td>
                                 </ng-container>
                                 <ng-container matColumnDef="IMPORTE_COBRO">
                                     <th mat-header-cell *matHeaderCellDef mat-sort-header>Importe Cobro</th>
-                                    <td mat-cell *matCellDef="let elemento">0.00</td>
+                                    <td class="number-right" mat-cell *matCellDef="let elemento">$ 0.00</td>
                                 </ng-container>
                                 <tr mat-header-row *matHeaderRowDef="columnas"></tr>
                                 <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
@@ -177,6 +177,12 @@
                         </div>
                     </form>
                 </div>
+            </div>
+            <div class="row" *ngIf="show">
+                <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+            </div>
+            <div class="row justify-content-center" *ngIf="!show">
+                <button mat-raised-button color="primary">Confirmar</button>
             </div>
         </div>
     </div>
