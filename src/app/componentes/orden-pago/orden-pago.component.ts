@@ -18,6 +18,7 @@ import { TransferenciaBancariaComponent } from './transferencia-bancaria/transfe
 import { DocumentosComponent } from './documentos/documentos.component';
 import { OtrasCuentasComponent } from './otras-cuentas/otras-cuentas.component';
 import { OtrasMonedasComponent } from './otras-monedas/otras-monedas.component';
+import { CompraComprobanteService } from 'src/app/servicios/compra-comprobante.service';
 
 @Component({
   selector: 'app-orden-pago',
@@ -59,6 +60,8 @@ export class OrdenPagoComponent implements OnInit {
   public mediosPagos:Array<any> = [];
   //Define la lista de medios de pagos seleccionados
   public mediosPagosSeleccionados:Array<any> = [];
+  //Define la lista de compras comprobantes
+  public comprasComprobantes:Array<any> = [];
   //Define las columnas de la tabla
   public columnas: string[] = ['CHECK', 'FECHA_EMISION', 'FECHA_VTO_PAGO', 'TIPO', 'PUNTO_VENTA', 
     'LETRA', 'NUMERO', 'SALDO', 'IMPORTE', 'IMPORTE_COBRO'];
@@ -70,7 +73,7 @@ export class OrdenPagoComponent implements OnInit {
   constructor(private servicio: OrdenPagoService, private toastr: ToastrService, 
     private loaderService: LoaderService, private appService: AppService, 
     private proveedorServicio: ProveedorService, private modelo: OrdenPago,
-    private dialog: MatDialog) { }
+    private dialog: MatDialog, private compraComprobanteService: CompraComprobanteService) { }
   //Al inicializarse el componente
   ngOnInit() {
     //Establece la subscripcion a loader
@@ -98,12 +101,12 @@ export class OrdenPagoComponent implements OnInit {
             this.resultadosProveedores = response;
             this.loaderService.hide();
           },
-            err => {
-              this.loaderService.hide();
-            })
+          err => {
+            this.loaderService.hide();
+          });
         }
       }
-    })
+    });
   }
   //Obtiene los datos necesarios para el componente
   private inicializar(idRol, idSubopcion) {
@@ -119,6 +122,21 @@ export class OrdenPagoComponent implements OnInit {
       err => {
         this.toastr.error(err.json().mensaje);
         this.render = false;
+      }
+    );
+  }
+  //Obtiene una lista de compras comprobantes por empresa y proveedor
+  public listarComprasPorEmpresaYProveedor(): void {
+    this.loaderService.show();
+    let proveedor = this.formulario.get('proveedor').value;
+    let empresa = this.appService.getEmpresa();
+    this.compraComprobanteService.listarPorEmpresaYProveedor(empresa.id, proveedor.id).subscribe(
+      res => {
+        this.comprasComprobantes = res.json();
+        this.loaderService.hide();
+      },
+      err => {
+        this.loaderService.hide();
       }
     );
   }
@@ -234,6 +252,18 @@ export class OrdenPagoComponent implements OnInit {
   //Elimina un registro
   public eliminar(): void {
 
+  }
+  //Establece los ceros en los numeros flotantes en tablas
+  public establecerCerosTabla(elemento) {
+    return this.appService.establecerDecimales(elemento, 2);
+  }
+  //Define como se muestra los datos con ceros a la izquierda
+  public completarCeros(elemento, string, cantidad) {
+    if (elemento != undefined) {
+      return elemento ? (string + elemento).slice(cantidad) : elemento;
+    } else {
+      return elemento;
+    }
   }
   //Verifica si se selecciono un elemento del autocompletado
   public verificarSeleccion(valor): void {
