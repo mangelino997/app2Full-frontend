@@ -550,31 +550,31 @@
             (click)="abrirObervacionDialogo()" [disabled]="!formulario.value.cliente">Observaciones</button>
           <div style="width: 180px;">
             <div class="form-group has-float-label">
-              <label for="idCodigo" class="tamanio-label"><b>Imp.No Grav/Exento($)</b></label>
-              <input id="idCodigo" type="text" formControlName="importeNoGravado"
+              <label for="idImpNoGravado" class="tamanio-label"><b>Imp.No Grav/Exento($)</b></label>
+              <input id="idImpNoGravado" type="text" formControlName="importeNoGravado"
                 class="form-control input-bold form-control-sm number-right" placeholder="$ 0.00" readonly>
             </div>
           </div>
           <div style="width: 170px;">
             <div class="form-group has-float-label">
-              <label for="idCodigo" class="tamanio-label"><b>Imp.Neto Gravado($)</b></label>
-              <input id="idCodigo" type="text" formControlName="importeNetoGravado" placeholder="$ 0.00"
+              <label for="idImpNetoGravado" class="tamanio-label"><b>Imp.Neto Gravado($)</b></label>
+              <input id="idImpNetoGravado" type="text" formControlName="importeNetoGravado" placeholder="$ 0.00"
                 [textMask]="mascararImporte(8, 2)" (blur)="setDecimales(formulario.get('importeNetoGravado'), 2)"
                 class="form-control input-bold form-control-sm number-right" readonly>
             </div>
           </div>
           <div class="col">
             <div class="form-group has-float-label">
-              <label for="idCodigo" class="tamanio-label"><b>Imp.IVA($)</b></label>
-              <input id="idCodigo" type="text" formControlName="importeIva" placeholder="$ 0.00"
+              <label for="idImpIVA" class="tamanio-label"><b>Imp.IVA($)</b></label>
+              <input id="idImpIVA" type="text" formControlName="importeIva" placeholder="$ 0.00"
                 [textMask]="mascararImporte(8, 2)" (blur)="setDecimales(formulario.get('importeIva'), 2)"
                 class="form-control input-bold form-control-sm number-right" readonly>
             </div>
           </div>
           <div class="col">
             <div class="form-group has-float-label">
-              <label for="idCodigo" class="tamanio-label"><b>Imp. Total($)</b></label>
-              <input id="idCodigo" type="text" formControlName="importeTotal" placeholder="$ 0.00"
+              <label for="idImpTotal" class="tamanio-label"><b>Imp. Total($)</b></label>
+              <input id="idImpTotal" type="text" formControlName="importeTotal" placeholder="$ 0.00"
                 [textMask]="mascararImporte(8, 2)" (blur)="setDecimales(formulario.get('importeTotal'), 2)"
                 class="form-control input-bold form-control-sm number-right" readonly>
             </div>

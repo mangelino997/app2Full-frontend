@@ -151,7 +151,7 @@ export class PersonalComponent implements OnInit {
       let empresa = this.appServicio.getEmpresa();
       if (typeof data == 'string') {
         data = data.trim();
-        if (data == '*' || data.length > 2) {
+        if (data == '*' || data.length > 0) {
           this.loaderService.show();
           this.servicio.listarPorActivosAliasYEmpresa(data, empresa.id).subscribe(
             res => {
@@ -462,8 +462,17 @@ export class PersonalComponent implements OnInit {
           document.getElementById('idFechaInicio').focus();
         }
         break;
-      // opcion == 3 -> Valida telefonoMovilFechaDevolucion
+      /* opcion == 3 para validar Fecha Fin */
       case 3:
+        if (this.formulario.value.fechaFin > this.formulario.value.fechaInicio) {
+          document.getElementById('idCategoria').focus();
+        } else {
+          this.toastr.error("Fecha fin debe ser superior a fecha de inicio.");
+          this.formulario.get('fechaFin').reset();
+        }
+        break;
+      // opcion == 4 -> Valida telefonoMovilFechaDevolucion
+      case 4:
         if (this.formulario.value.telefonoMovilFechaEntrega > this.formulario.value.telefonoMovilFechaDevolucion) {
           this.toastr.error("Debe ser mayor a Fecha de Entrega", "Fecha de Devolución no válida");
           document.getElementById('idTelefonoMovilFechaDevolucion').focus();
@@ -666,6 +675,11 @@ export class PersonalComponent implements OnInit {
         this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
         break;
       case 5:
+        /* si la lista completa ya mostraba registros, lo que hago es actualizarla */
+        if (this.listaCompleta.data.length > 0) {
+          this.listaCompleta.data = [];
+          this.listarPorFiltros();
+        }
         break;
       default:
         break;
@@ -1440,6 +1454,6 @@ export class PersonalComponent implements OnInit {
       err => {
         this.loaderService.hide();
       }
-    );
+    )
   }
 }
