@@ -166,9 +166,9 @@ export class EmitirFacturaComponent implements OnInit {
             this.remitentes = res.json();
             this.loaderService.hide();
           },
-          err=>{
-            this.loaderService.hide();
-          })
+            err => {
+              this.loaderService.hide();
+            })
         }
       }
     });
@@ -182,9 +182,9 @@ export class EmitirFacturaComponent implements OnInit {
             this.destinatarios = res.json();
             this.loaderService.hide();
           },
-          err=>{
-            this.loaderService.hide();
-          })
+            err => {
+              this.loaderService.hide();
+            })
         }
       }
     });
@@ -208,8 +208,7 @@ export class EmitirFacturaComponent implements OnInit {
   //Obtiene la lista de Items
   private listarItems() {
     this.ventaTipoItemService.listarItems(1).subscribe(
-      res => { 
-        console.log(res);
+      res => {
         this.itemsAFacturar = res.json();
       }, err => { this.toastr.error(err.json().mensaje); }
     );
@@ -222,17 +221,6 @@ export class EmitirFacturaComponent implements OnInit {
       }, err => { this.toastr.error(err.json().message); }
     )
   }
-  //Obtiene la lista de Tarifas de Orden Venta
-  // private listarTarifasOrdenVta() {
-  //   this.formularioVtaCpteItemFA.get('ordenVentaTarifa').enable();
-  //   this.ordenVentaTarifaService.listarPorOrdenVenta(this.ordenVenta.value.id).subscribe(
-  //     res => {
-  //       this.tiposTarifa = res.json();
-  //       this.formularioVtaCpteItemFA.get('ordenVentaTarifa').setValue(this.tiposTarifa[0]);
-  //       this.cambioTipoTarifa();
-  //     }, err => { this.toastr.error(err.json().mensaje); }
-  //   )
-  // }
   //Obtiene una lista con las Alicuotas Iva
   public listarAlicuotaIva() {
     this.alicuotasIvaService.listarActivas().subscribe(
@@ -310,29 +298,48 @@ export class EmitirFacturaComponent implements OnInit {
   }
   //Controla el rango valido para la fecha de emision cuando el punto de venta es feCAEA
   private verificarFechaFeCAEA() {
-    // if (this.formulario.value.fechaEmision >= this.generarFecha(-15) && this.formulario.value.fechaEmision <= this.generarFecha(+1)) {
-    //   document.getElementById('idItem').focus();
-    // } else {
-    //   this.toastr.error("Fecha para FeCAEA no es válido. Se establece fecha actual.");
-    //   this.formulario.get('fechaEmision').setValue(this.fechaActual);
-    //   document.getElementById('idFechaEmision').focus();
-    // }
-  }
-  //Controla el rango valido para la fecha de emision cuando el punto de venta no es feCAEA
-  private verificarFechaNoFeCAEA() {
-    if (this.formulario.value.fechaEmision >= this.generarFecha(-5) && this.formulario.value.fechaEmision <= this.generarFecha(+1)) {
-      document.getElementById('idItem').focus();
+    let fechaMenos15dias = new Date(this.generarFecha(-15));
+    let fechaMas1dia = new Date(this.generarFecha(+1));
+    let fechaEmision = new Date(this.formulario.value.fechaEmision);
+    if (fechaEmision.getTime() >= fechaMenos15dias.getTime()) {
+      if (fechaEmision.getTime() <= fechaMas1dia.getTime())
+        document.getElementById('idItem').focus();
+      else {
+        this.toastr.error("Fecha Emisión debe ser menor/igual a: " + this.generarFecha(+1) + ".Se establece fecha actual.");
+        this.formulario.get('fechaEmision').setValue(this.fechaActual);
+        document.getElementById('idFechaEmision').focus();
+      }
     } else {
-      this.toastr.error("Fecha para no es válido. Se establece fecha actual.");
+      this.toastr.error("Fecha Emisión debe ser mayor a: " + this.generarFecha(-15) + ".Se establece fecha actual.");
       this.formulario.get('fechaEmision').setValue(this.fechaActual);
       document.getElementById('idFechaEmision').focus();
     }
-  }  
+  }
+  //Controla el rango valido para la fecha de emision cuando el punto de venta no es feCAEA
+  private verificarFechaNoFeCAEA() {
+    let fechaMenos5dias = new Date(this.generarFecha(-5));
+    let fechaMas1dia = new Date(this.generarFecha(+1));
+    let fechaEmision = new Date(this.formulario.value.fechaEmision);
+    if (fechaEmision.getTime() >= fechaMenos5dias.getTime()) {
+      if (fechaEmision.getTime() <= fechaMas1dia.getTime())
+        document.getElementById('idItem').focus();
+      else {
+        this.toastr.error("Fecha Emisión debe ser menor/igual a: " + this.generarFecha(+1) + ".Se establece fecha actual.");
+        this.formulario.get('fechaEmision').setValue(this.fechaActual);
+        document.getElementById('idFechaEmision').focus();
+      }
+    } else {
+      this.toastr.error("Fecha Emisión debe ser mayor a: " + this.generarFecha(-5) + ".Se establece fecha actual.");
+      this.formulario.get('fechaEmision').setValue(this.fechaActual);
+      document.getElementById('idFechaEmision').focus();
+    }
+  }
   //Genera y retorna una fecha segun los parametros que recibe (dias - puede ser + ó -)
   private generarFecha(dias) {
     let fechaActual = new Date(this.fechaActual);
+    fechaActual.setDate(fechaActual.getDate() + dias);
     let date = fechaActual.getDate() + dias;
-    let fechaGenerada = fechaActual.getFullYear() + '-' + (fechaActual.getMonth() + 1) + '-' + (date < '10' ? '0' + date : date); //Al mes se le debe sumar 1
+    let fechaGenerada = fechaActual.getFullYear() + '-' + (fechaActual.getMonth() + 1) + '-' + date; //Al mes se le debe sumar 1
     return fechaGenerada;
   }
 
@@ -777,14 +784,6 @@ export class EmitirFacturaComponent implements OnInit {
       (valorDeclarado * (pSeguro / 100)) : 0;
     this.formularioVtaCpteItemFA.get('importeSeguro').setValue(this.appService.establecerDecimales(importeSeguro, 2));
 
-    //   let importeSeguro;
-    // let flete;
-    // this.formularioVtaCpteItemFA.get('pSeguro').value ?
-    //   importeSeguro = valorDeclarado * (pSeguro / 100) : importeSeguro = 0;
-    // this.formularioVtaCpteItemFA.get('importeSeguro').setValue(this.appService.establecerDecimales(importeSeguro, 2));
-    // this.formularioVtaCpteItemFA.get('flete').value ?
-    //   flete = Number(this.formularioVtaCpteItemFA.get('flete').value) : flete = 0;
-
     /* valor neto del flete (con/sin descuento) */
     let fleteNeto;
     descuento > 0 ? [
@@ -966,6 +965,9 @@ export class EmitirFacturaComponent implements OnInit {
       [this.formulario.get('tipoComprobante').setValue(tipoComprobante), this.cambioFecha()] : '';
     //Obtiene - establece moneda y  monedaCotizacion
     this.obtenerMoneda();
+    //Establece/limpia las clases de ClienteRemitente y ClienteDestinatario
+    document.getElementById('Remitente').className = "border has-float-label";
+    document.getElementById('Destinatario').className = "border has-float-label";
   }
   //Establece la fecha emision y registracion
   private establecerFecha() {
