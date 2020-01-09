@@ -147,12 +147,26 @@ export class CobranzasComponent implements OnInit {
         this.ventasComprobantes = new MatTableDataSource(res.json());
         this.ventasComprobantes.sort = this.sort;
         this.ventasComprobantes.data.length == 0 ? this.toastr.warning("El Cliente no tiene contactos asignados.") : '';
+        this.calcularTotalItemsYTotalDeuda();
         this.loaderService.hide();
       },
       err => {
         this.loaderService.hide();
       }
     );
+  }
+  //Determina la cantidad de elementos de la tabla y el total de deuda
+  private calcularTotalItemsYTotalDeuda(): void {
+    this.formulario.get('items2').setValue(this.ventasComprobantes.data.length);
+    let deuda = 0;
+    this.ventasComprobantes.data.forEach((elemento) => {
+      if(elemento.tipoComprobante.id == 3 || elemento.tipoComprobante.id == 28) {
+        deuda -= elemento.importeSaldo;
+      } else {
+        deuda += elemento.importeSaldo;
+      }
+    });
+    this.formulario.get('totalDeuda').setValue(this.establecerCeros(deuda));
   }
   // Maneja los evento al presionar una tecla (para pestanias y opciones)
   public manejarEvento(keycode) {
@@ -165,15 +179,16 @@ export class CobranzasComponent implements OnInit {
       }
     }
   }
-
   //Abre el dialogo correspondientes al seleccionar una opcion del campo 'Ingregracion en'
   public determinarIntegracion(): void {}
-
+  //Establece los ceros en los numeros flotantes en tablas
+  public establecerCeros(elemento) {
+    return this.appService.establecerDecimales(elemento, 2);
+  }
   //Establece los ceros en los numeros flotantes en tablas
   public establecerCerosTabla(elemento) {
     return this.appService.establecerDecimales(elemento, 2);
   }
-  
  //Verifica si se selecciono un elemento del autocompletado
   public verificarSeleccion(valor): void {
   if (typeof valor.value != 'object') {
@@ -195,7 +210,6 @@ public completarCeros(elemento, string, cantidad) {
        return a.id === b.id;
      }
     }
-
   //Define como se muestra los datos en el autcompletado
   public displayF(elemento) {
     if (elemento != undefined) {

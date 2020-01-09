@@ -38,8 +38,6 @@ export class OrdenPagoComponent implements OnInit {
   public mostrarBoton: boolean = null;
   //Define la lista de pestanias
   public pestanias: Array<any> = [];
-  //Define la lista completa de registros
-  public listaCompleta = new MatTableDataSource([]);
   //Define la lista de resultados de busqueda de barrio
   public resultadosProveedores: Array<any> = [];
   //Define el formulario
@@ -61,7 +59,7 @@ export class OrdenPagoComponent implements OnInit {
   //Define la lista de medios de pagos seleccionados
   public mediosPagosSeleccionados:Array<any> = [];
   //Define la lista de compras comprobantes
-  public comprasComprobantes:Array<any> = [];
+  public comprasComprobantes= new MatTableDataSource ([]);
   //Define las columnas de la tabla
   public columnas: string[] = ['CHECK', 'FECHA_EMISION', 'FECHA_VTO_PAGO', 'TIPO', 'PUNTO_VENTA', 
     'LETRA', 'NUMERO', 'SALDO', 'IMPORTE', 'IMPORTE_COBRO'];
@@ -132,7 +130,9 @@ export class OrdenPagoComponent implements OnInit {
     let empresa = this.appService.getEmpresa();
     this.compraComprobanteService.listarPorEmpresaYProveedor(empresa.id, proveedor.id).subscribe(
       res => {
-        this.comprasComprobantes = res.json();
+        this.comprasComprobantes = new MatTableDataSource(res.json());
+        this.comprasComprobantes.sort = this.sort;
+        this.comprasComprobantes.data.length == 0 ? this.toastr.warning("El proveedor no tiene contactos asignados.") : '';
         this.calcularTotalItemsYTotalDeuda();
         this.loaderService.hide();
       },
@@ -143,9 +143,9 @@ export class OrdenPagoComponent implements OnInit {
   }
   //Determina la cantidad de elementos de la tabla y el total de deuda
   private calcularTotalItemsYTotalDeuda(): void {
-    this.formularioTotales.get('totalItems').setValue(this.comprasComprobantes.length);
+    this.formularioTotales.get('totalItems').setValue(this.comprasComprobantes.data.length);
     let deuda = 0;
-    this.comprasComprobantes.forEach((elemento) => {
+    this.comprasComprobantes.data.forEach((elemento) => {
       if(elemento.tipoComprobante.id == 3 || elemento.tipoComprobante.id == 28) {
         deuda -= elemento.importeSaldo;
       } else {

@@ -522,8 +522,9 @@ export class VehiculoComponent implements OnInit {
       this.formulario.get('vehiculoRemolque').disable();
       this.formulario.get('vehiculoRemolque').setValue(null);
       this.formulario.get('numeroMotor').setValue(null);
-    }
-    else {
+      this.formulario.get('numeroMotor').setValidators([]);
+    } else {
+      this.formulario.get('numeroMotor').setValidators(Validators.required);
       this.formulario.get('personal').enable();
       this.formulario.get('vehiculoRemolque').enable();
     }
@@ -536,6 +537,7 @@ export class VehiculoComponent implements OnInit {
       this.formulario.get('vtoSenasa').setValidators([]);
       this.formulario.get('vtoHabBromatologica').setValidators([]);
     }
+    this.formulario.get('numeroMotor').updateValueAndValidity();
     this.formulario.get('vtoSenasa').updateValueAndValidity();
     this.formulario.get('vtoHabBromatologica').updateValueAndValidity();
     if (tipoVehiculo != null && marcaVehiculo != null) {
