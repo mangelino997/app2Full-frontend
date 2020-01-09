@@ -3,7 +3,7 @@
     <div class="col-md-12 text-center">
         <form [formGroup]="formulario">
             <div class="row justify-content-center">
-                <div class="col-md-2">
+                <div class="col-md-3">
                     <div class="form-group has-float-label">
                         <label for="idImporteContrareembolso" class="tamanio-label">Imp. Contrareembolso</label>
                         <input id="idImporteContrareembolso" type="text" formControlName="importeContraReembolso"
@@ -39,9 +39,9 @@
                             (blur)="setDecimales(formulario.get('importeIva'), 2)" readonly>
                     </div>
                 </div>
-                <div class="col-md-2">
+                <div class="col-md-3">
                     <div class="form-group has-float-label">
-                        <label for="idImporteNetoGravado" class="tamanio-label">Importe Neto Gravado</label>
+                        <label for="idImporteNetoGravado" class="tamanio-label">Imp. Nto. Gravado</label>
                         <input id="idImporteNetoGravado" type="text" formControlName="importeNetoGravado" placeholder="$0.00"
                             [textMask]="mascararImporte(8, 2)" class="form-control form-control-sm number-right"
                             (blur)="setDecimales(formulario.get('importeNetoGravado'), 2)" readonly>

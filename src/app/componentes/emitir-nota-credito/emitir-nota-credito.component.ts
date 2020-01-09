@@ -167,289 +167,7 @@ export class EmitirNotaCreditoComponent implements OnInit {
         }
       }
     })
-    //establece datos de prueba
-    // this.listaNotaCrdto = [
-    //   {}
-    // ];
   }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  //Carga datos (filas) en la tabla correspondiente
-  private cargarTabla() {
-    this.ventaComprobanteService.listarPorClienteYEmpresa(this.formulario.get('cliente').value.id, this.empresa.value.id).subscribe(
-      res => {
-        let respuesta = res.json();
-        this.listaComprobantes = respuesta; //Filtramos por comprobanteItemFAs -> respuesta.comprobanteItemFAs
-      }
-    );
-  }
-  //Reestablece el formulario completo
-  // public reestablecerFormulario() {
-  //   this.formulario.reset();
-  //   this.reestablecerFormularioComprobante();
-  //   this.reestablecerFormularioCuenta();
-  //   let valorDefecto = '0';
-  //   this.formulario.get('importeIva').setValue(this.appService.setDecimales(valorDefecto, 2));
-  //   this.formulario.get('importeNoGravado').setValue(this.appService.setDecimales(valorDefecto, 2));
-  //   this.formulario.get('importeExento').setValue(this.appService.setDecimales(valorDefecto, 2));
-  //   this.formulario.get('importeNetoGravado').setValue(this.appService.setDecimales(valorDefecto, 2));
-  //   this.formulario.get('importeTotal').setValue(this.appService.setDecimales(valorDefecto, 2));
-  //   this.resultadosClientes = [];
-  //   this.empresa.setValue(this.appComponent.getEmpresa());
-  //   this.opcionCheck.setValue('1');
-  //   //Establece la fecha actual
-  //   this.fechaService.obtenerFecha().subscribe(res => {
-  //     this.formulario.get('fechaEmision').setValue(res.json());
-  //   });
-  //   //Establece el Tipo de Comprobante
-  //   this.tipoComprobanteService.obtenerPorId(3).subscribe(
-  //     res => {
-  //       let respuesta = res.json();
-  //       this.formulario.get('tipoComprobante').setValue(res.json());
-  //       this.tipoComprobante.setValue(respuesta.nombre);
-  //     },
-  //     err => {
-  //       this.toastr.error('Error al obtener el Tipo de Comprobante');
-  //     }
-  //   );
-  //   this.formulario.get('empresa').setValue(this.appComponent.getEmpresa());
-  //   this.formulario.get('sucursal').setValue(this.appComponent.getUsuario().sucursal);
-  //   this.formulario.get('provincia').setValue(this.appComponent.getUsuario().sucursal['localidad']['provincia']);
-  //   this.formulario.get('usuarioAlta').setValue(this.appComponent.getUsuario());
-  //   document.getElementById('idFecha').focus();
-  // }
-
-  //Establece los datos del cliente seleccionado
-  public cargarDatosCliente() {
-    if (this.formulario.get('puntoVenta').value != null || this.formulario.get('puntoVenta').value > 0) {
-      this.formulario.get('cli.domicilio').setValue(this.formulario.get('cliente').value.domicilio);
-      this.formulario.get('cli.localidad').setValue(this.formulario.get('cliente').value.localidad.nombre);
-      this.formulario.get('cli.condicionVenta').setValue(this.formulario.get('cliente').value.condicionVenta.nombre);
-      this.formulario.get('cli.afipCondicionIva').setValue(this.formulario.get('cliente').value.afipCondicionIva.nombre);
-      this.formulario.get('cli.tipoDocumento').setValue(this.formulario.get('cliente').value.tipoDocumento.abreviatura);
-      this.formulario.get('cli.numeroDocumento').setValue(this.formulario.get('cliente').value.numeroDocumento);
-      this.establecerCabecera();
-    }
-    else {
-      this.formulario.get('cliente').setValue(null);
-      this.resultadosClientes = [];
-      this.toastr.error('Debe seleccionar un PUNTO DE VENTA');
-      document.getElementById('idPuntoVenta').focus();
-    }
-
-    // if (this.formulario.get('numero').value > 0) {
-    //   this.cambioTabla(1);
-    // }
-  }
-  //Establece Letra
-  public establecerCabecera() {
-    this.afipComprobanteService.obtenerLetra(3, this.formulario.get('cliente').value.condicionVenta.id).subscribe(
-      res => {
-        this.formulario.get('letra').setValue(res.text());
-        this.establecerCodAfip(res.text());
-      }
-    );
-  }
-  //Establece Numero
-  public establecerCodAfip(letra) {
-    this.afipComprobanteService.obtenerCodigoAfip(3, letra).subscribe(
-      res => {
-        this.formulario.get('codigoAfip').setValue(res.text());
-        this.comprobarCodAfip();
-      }
-    );
-  }
-  //Establece Codigo Afip
-  public establecerNumero(codigoAfip) {
-    this.puntoVentaService.obtenerNumero(this.formulario.get('puntoVenta').value.puntoVenta, codigoAfip, this.appComponent.getUsuario().sucursal.id, this.empresa.value.id).subscribe(
-      res => {
-        this.formulario.get('numero').setValue(res.text());
-        this.cargarTabla();
-      }
-    );
-  }
-  //Comprueba si ya existe un codigo de afip entonces vuelve a llamar a la funcion que obtiene el valor del campo Numero
-  public comprobarCodAfip() {
-    let puntoVentaCeros = this.establecerCerosIzq(this.formulario.get('puntoVenta').value.puntoVenta, "0000", -5);
-    this.puntoVenta.setValue(puntoVentaCeros);
-    if (this.formulario.get('codigoAfip').value != null || this.formulario.get('codigoAfip').value > 0)
-      this.establecerNumero(this.formulario.get('codigoAfip').value);
-  }
-  //Controla el cambio de estilos al seleccionar un Comprobante de la tabla
-  public seleccionarComprobante(indice, comprobante) {
-    this.comprobanteSeleccionado = indice;
-    this.formularioComprobante.patchValue(comprobante);
-    this.subtotalCIVA = this.formularioComprobante.get('importeTotal').value;
-    document.getElementById('idMotivo').focus();
-  }
-  //Controla el cambio de estilos al seleccionar un Comprobante de la tabla
-  public seleccionarCuenta(indice, comprobante) {
-    this.cuentaSeleccionada = indice;
-    this.formularioCuenta.patchValue(comprobante);
-    this.subtotalCIVA = this.formularioCuenta.get('importeTotal').value;
-    document.getElementById('idMotivo').focus();
-  }
-  //Elimina una cuenta de la lista (tabla)
-  public eliminarCuenta(indice) {
-    this.listaCuenta.splice(indice, 1);
-    // this.calcularImportesCuenta(indice);
-  }
-  //Agrega el cambio a la lista de Comprobantes
-  public modificarComprobante() {
-    this.formularioComprobante.get('checked').setValue(true);
-    let indice = this.comprobanteSeleccionado;
-    var id = "mat-checkbox-" + indice;
-    document.getElementById(id).className = "checkBoxSelected";
-    this.listaComprobantes[this.comprobanteSeleccionado] = this.formularioComprobante.value;
-    this.calcularImportesComprobante(indice);
-  }
-  //Agrega un item a la Nota de Credito (aplica a la cuenta)
-  // public modificarCuenta() {
-  //   if (this.cuentaSeleccionada != null) {
-  //     this.listaCuenta[this.cuentaSeleccionada] = this.formularioCuenta.value;
-  //     this.calcularImportesCuenta(this.listaCuenta.length - 1);
-  //   } else {
-  //     this.listaCuenta.push(this.formularioCuenta.value);
-  //     this.calcularImportesCuenta(this.listaCuenta.length - 1);
-  //   }
-  // }
-  //METODO PRINCIPAL - EMITIR NOTA DE CREDITO
-  public emitir() {
-    this.formulario.get('puntoVenta').setValue(this.formulario.get('puntoVenta').value.puntoVenta);
-    if (this.listaComprobantes.length > 0) {
-      let listaCompCheckeados = [];
-      for (let i = 0; i < this.listaComprobantes.length; i++) {
-        if (this.listaComprobantes[i]['checked'] == true)
-          listaCompCheckeados.push(this.listaComprobantes[i]);
-      }
-      this.formulario.get('ventaComprobanteItemNC').setValue(listaCompCheckeados);
-      this.formulario.get('afipConceptoVenta').setValue({ id: listaCompCheckeados[0]['itemTipo']['afipConceptoVenta']['id'] });//guardamos el id de afipConceptoVenta del primer item de la tabla
-    }
-    if (this.listaCuenta.length > 0) {
-      this.formulario.get('ventaComprobanteItemNC').setValue(this.listaCuenta);
-      this.formulario.get('afipConceptoVenta').setValue({ id: this.listaCuenta[0].itemTipo.afipConceptoVenta.id });//guardamos el id de afipConceptoVenta del primer item de la tabla
-    }
-    this.ventaComprobanteService.agregar(this.formulario.value).subscribe(
-      res => {
-        let respuesta = res.json();
-        this.toastr.success(respuesta.mensaje);
-        this.reestablecerFormulario(true);
-      },
-      err => {
-        var respuesta = err.json();
-        document.getElementById("idFecha").classList.add('label-error');
-        document.getElementById("idFecha").classList.add('is-invalid');
-        document.getElementById("idFecha").focus();
-        this.toastr.error(respuesta.mensaje);
-      }
-    );
-  }
-  //Calcula los Importes del pie de la transaccion
-  private calcularImportesComprobante(indice) {
-    let importeNetoGravado = 0;
-    let importeIvaTotal = 0;
-    let importeTotal = 0;
-    for (let i = 0; i < this.listaComprobantes.length; i++) {
-      importeNetoGravado = this.returnDecimales(importeNetoGravado + this.listaComprobantes[i]['subtotalNC'], 2);
-    }
-    for (let i = 0; i < this.listaComprobantes.length; i++) {
-      importeIvaTotal = this.returnDecimales(importeIvaTotal + this.listaComprobantes[i]['importeIva'], 2);
-    }
-    for (let i = 0; i < this.listaComprobantes.length; i++) {
-      importeTotal = this.returnDecimales(importeTotal + this.listaComprobantes[i]['importeTotal'], 2);
-    }
-    this.formulario.get('importeNetoGravado').setValue(this.appService.setDecimales(importeNetoGravado, 2));
-    this.formulario.get('importeIva').setValue(this.appService.setDecimales(importeIvaTotal, 2));
-    this.formulario.get('importeTotal').setValue(this.appService.setDecimales(importeTotal, 2));
-  }
-  //Calcula los Importes Totales
-  // private calcularImportesCuenta(indice) {
-  //   let importeNetoGravado = 0;
-  //   let importeIvaTotal = 0;
-  //   let importeTotal = 0;
-  //   for (let i = 0; i < this.listaCuenta.length; i++) {
-  //     importeNetoGravado = this.returnDecimales((importeNetoGravado + this.listaCuenta[i]['subtotalNC']), 2);
-  //   }
-  //   for (let i = 0; i < this.listaCuenta.length; i++) {
-  //     importeIvaTotal = this.returnDecimales((importeIvaTotal + this.listaCuenta[i]['importeIva']), 2);
-  //   }
-  //   for (let i = 0; i < this.listaCuenta.length; i++) {
-  //     importeTotal = this.returnDecimales((importeTotal + this.listaCuenta[i]['importeTotal']), 2);
-  //   }
-  //   this.formulario.get('importeNetoGravado').setValue(this.returnDecimales(importeNetoGravado, 2));
-  //   this.formulario.get('importeIva').setValue(this.returnDecimales(importeIvaTotal, 2));
-  //   this.formulario.get('importeTotal').setValue(this.returnDecimales(importeTotal, 2));
-  // }
-  //Controla los checkbox
-  public controlCheckbox($event, comprobante, indice) {
-    var id = "mat-checkbox-" + indice;
-    if ($event.checked == true) {
-      document.getElementById(id).className = "checkBoxSelected";
-      this.listaComprobantes[indice]['checked'] = true;
-      this.calcularImportesComprobante(indice);
-    } else {
-      document.getElementById(id).className = "checkBoxNotSelected";
-      this.listaComprobantes[indice]['checked'] = false;
-      //Resta los Importes, de la Nota de Credito, el valor correspondiente al comprobante descheckeado
-      let subtotal = this.listaComprobantes[indice]['subtotalNC'];
-      let importeIva = this.listaComprobantes[indice]['importeIva'];
-      let importeTotal = this.listaComprobantes[indice]['importeTotal'];
-      this.formulario.get('importeIva').setValue(this.formulario.get('importeIva').value - importeIva);
-      this.formulario.get('importeTotal').setValue(this.formulario.get('importeTotal').value - importeTotal);
-      this.formulario.get('importeNetoGravado').setValue(this.formulario.get('importeNetoGravado').value - subtotal);
-    }
-  }
-  //Calcula el campo SubtotalNC del comprobante que se modifica
-  // public calcularSubtotalNC() {
-  //   if (this.subtotalCIVA < this.formularioComprobante.get('importeTotal').value) {
-  //     document.getElementById('idSubtotalCIVA').focus();
-  //     this.toastr.error("El SUBTOTAL C/IVA ingresado debe ser MENOR");
-  //   }
-  //   let iva = String(this.formularioComprobante.get('alicuotaIva').value).split('.');
-  //   let ivaDisvisor = "1.";
-  //   for (let i = 0; i < iva.length; i++) {
-  //     ivaDisvisor = ivaDisvisor + iva[i];
-  //   }
-  //   let subtotal = this.returnDecimales(this.formularioComprobante.get('importeTotal').value / Number(ivaDisvisor), 2);
-  //   this.formularioComprobante.get('subtotalNC').setValue(subtotal);
-  //   let importeIva = this.returnDecimales(subtotal * (this.formularioComprobante.get('alicuotaIva').value / 100), 2);
-  //   this.formularioComprobante.get('importeIva').setValue(importeIva);
-  // }
-  //Calcula el campo SubtotalNC del comprobante que se modifica
-  public calcularSubtotalNCC() {
-    let iva = String(this.formularioCuenta.get('alicuotaIva').value).split('.');
-    let ivaDisvisor = "1.";
-    for (let i = 0; i < iva.length; i++) {
-      ivaDisvisor = ivaDisvisor + iva[i];
-    }
-    let subtotal = this.returnDecimales(this.formularioCuenta.get('importeTotal').value / Number(ivaDisvisor), 2);
-    this.formularioCuenta.get('subtotalNC').setValue(subtotal);
-    let importeIva = this.returnDecimales(subtotal * (this.formularioCuenta.get('alicuotaIva').value / 100), 2);
-    this.formularioCuenta.get('importeIva').setValue(importeIva);
-  }
-
-
-
-
 
 
 
@@ -457,9 +175,8 @@ export class EmitirNotaCreditoComponent implements OnInit {
   //CODIGO A USAR ---------------------------
   //Obtiene una lista para el campo 'Motivo'
   public listarItemsTipo() {
-    /* limpia la lista completa y el formularioVtaItemCpteNC*/
-    this.listaCompleta.data = [];
-    this.reestablecerformularioVtaCpteItemNC();
+    /* limpia la lista completa y formulario */
+    this.formulario.get('cliente').value ? this.reestablecerFormulario(false) : '';
     /* se pasa como parámetro el 3 el cual hace referencia a las Notas de Cdto*/
     this.ventaTipoItemervice.listarItems(3).subscribe(
       res => {
@@ -479,7 +196,7 @@ export class EmitirNotaCreditoComponent implements OnInit {
   private establecerAlicuotaIva() {
     this.afipAlicuotasIva.forEach(elemento => {
       if (elemento.id == 5) {
-        this.formularioVtaCpteItemNC.get('afipAlicuotaIva').setValue(elemento.alicuota);
+        this.formularioVtaCpteItemNC.get('afipAlicuotaIva').setValue(elemento);
       }
     })
   }
@@ -519,13 +236,15 @@ export class EmitirNotaCreditoComponent implements OnInit {
       this.fechaActual = res.json();
       this.formulario.get('fechaEmision').setValue(this.fechaActual);
       this.formulario.get('fechaRegistracion').setValue(this.fechaActual);
+      this.formulario.get('fechaVtoPago').setValue(this.fechaActual);
+
     })
   }
   //Controla el cambio en el campo Fecha
   public cambioFecha() {
-    // this.formulario.get('fechaVtoPago').setValue(this.formulario.value.fechaEmision);
-    // this.formulario.value.puntoVenta ? this.validarFechaEmision() : '';
-    // this.formulario.value.fechaVtoPago ? this.validarFechaVtoPago() : '';
+    this.formulario.get('fechaVtoPago').setValue(this.formulario.value.fechaEmision);
+    this.formulario.value.puntoVenta ? this.validarFechaEmision() : '';
+    this.formulario.value.fechaVtoPago ? this.validarFechaVtoPago() : '';
   }
 
   //Controla que fechaVtoPago no sea menor a fechaEmision
@@ -540,9 +259,8 @@ export class EmitirNotaCreditoComponent implements OnInit {
     let today = new Date(this.fechaActual);
     today.setDate(today.getDate() + dias);
     let date = today.getDate() + dias;
-    console.log(date);
-    let fechaGenerada = today.getFullYear() + '-' + (today.getMonth() + 1) +
-      '-' + (date < 10 ? '0' + date : date); //Al mes se le debe sumar 1
+    //Al mes se le debe sumar 1
+    let fechaGenerada = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + date;
     return fechaGenerada;
   }
   //Controla el campo fecha de emision dependiento el punto de venta seleccionado
@@ -551,17 +269,11 @@ export class EmitirNotaCreditoComponent implements OnInit {
   }
   //Controla el rango valido para la fecha de emision cuando el punto de venta es feCAEA
   private verificarFechaFeCAEA() {
-    let fechaMenos15dias = Date.parse(this.generarFecha(-15));
-    let fechaMas1dia = Date.parse(this.generarFecha(+1));
-    let fechaEmision = Date.parse(this.formulario.value.fechaEmision);
-    console.log(this.formulario.value.fechaEmision, "/", this.generarFecha(-15), "/" + this.formulario.value.fechaEmision, "/" + this.generarFecha(+1));
-    console.log(this.formulario.value.fechaEmision >= this.generarFecha(-15));
-
-    console.log(fechaEmision >= fechaMenos15dias);
-    // console.log(fechaEmision.getTime() >= fechaMenos15dias.getTime());
-
-    if (fechaEmision > fechaMenos15dias) {
-      if (fechaEmision <= fechaMas1dia)
+    let fechaMenos15dias = new Date(this.generarFecha(-15));
+    let fechaMas1dia = new Date(this.generarFecha(+1));
+    let fechaEmision = new Date(this.formulario.value.fechaEmision);
+    if (fechaEmision.getTime() >= fechaMenos15dias.getTime()) {
+      if (fechaEmision.getTime() <= fechaMas1dia.getTime())
         document.getElementById('idCliente').focus();
       else {
         this.toastr.error("Fecha Emisión debe ser menor/igual a: " + this.generarFecha(+1) + ".Se establece fecha actual.");
@@ -576,10 +288,19 @@ export class EmitirNotaCreditoComponent implements OnInit {
   }
   //Controla el rango valido para la fecha de emision cuando el punto de venta no es feCAEA
   private verificarFechaNoFeCAEA() {
-    if (this.formulario.value.fechaEmision >= this.generarFecha(-5) && this.formulario.value.fechaEmision <= this.generarFecha(+1)) {
-      document.getElementById('idCliente').focus();
+    let fechaMenos5dias = new Date(this.generarFecha(-5));
+    let fechaMas1dia = new Date(this.generarFecha(+1));
+    let fechaEmision = new Date(this.formulario.value.fechaEmision);
+    if (fechaEmision.getTime() >= fechaMenos5dias.getTime()) {
+      if (fechaEmision.getTime() <= fechaMas1dia.getTime())
+        document.getElementById('idCliente').focus();
+      else {
+        this.toastr.error("Fecha Emisión debe ser menor/igual a: " + this.generarFecha(+1) + ".Se establece fecha actual.");
+        this.formulario.get('fechaEmision').setValue(this.fechaActual);
+        document.getElementById('idFechaEmision').focus();
+      }
     } else {
-      this.toastr.error("Fecha para no es válido. Se establece fecha actual.");
+      this.toastr.error("Fecha Emisión debe ser mayor a: " + this.generarFecha(-5) + ".Se establece fecha actual.");
       this.formulario.get('fechaEmision').setValue(this.fechaActual);
       document.getElementById('idFechaEmision').focus();
     }
@@ -632,7 +353,7 @@ export class EmitirNotaCreditoComponent implements OnInit {
     this.establecerValoresPorDefecto(fechaEmision, puntoVenta, tipoComprobante);
 
     //Establezco el foco
-    puntoVenta && fechaEmision && tipoComprobante ? document.getElementById('idRemitente').focus() :
+    puntoVenta && fechaEmision && tipoComprobante ? document.getElementById('idCliente').focus() :
       setTimeout(function () {
         document.getElementById('idTipoComprobante').focus();
       }, 20);
@@ -653,7 +374,6 @@ export class EmitirNotaCreditoComponent implements OnInit {
   }
   //Establece valores por defecto
   private establecerValoresPorDefecto(fechaEmision, puntoVenta, tipoComprobante) {
-    console.log(fechaEmision, puntoVenta, tipoComprobante);
     //Contorla los parametros
     if (fechaEmision) {
       this.formulario.get('fechaEmision').setValue(fechaEmision);
@@ -677,22 +397,23 @@ export class EmitirNotaCreditoComponent implements OnInit {
     }
     //Define el valor de los campos en el formulario
     this.formulario.get('pagoEnOrigen').setValue(false);
-    this.formulario.get('importeNoGravado').setValue(0);
-    this.formulario.get('importeOtrosTributos').setValue(0);
     this.formulario.get('ventaComprobanteItemCR').setValue([]);
     this.formulario.get('ventaComprobanteItemND').setValue([]);
     this.formulario.get('ventaComprobanteItemNC').setValue([]);
     this.formulario.get('ventaComprobanteItemFAs').setValue([]);
     this.formulario.get('empresa').setValue(this.appService.getEmpresa());
-    this.formulario.get('usuarioAlta').setValue({ id: this.appService.getUsuario().id });
     this.formulario.get('sucursal').setValue(this.appService.getUsuario().sucursal);
+    this.formulario.get('usuarioAlta').setValue({ id: this.appService.getUsuario().id });
+    this.formulario.get('importeSaldo').setValue(this.appService.establecerDecimales('0.00', 2));
+    this.formulario.get('importeNoGravado').setValue(this.appService.establecerDecimales('0.00', 2));
+    this.formulario.get('importeOtrosTributos').setValue(this.appService.establecerDecimales('0.00', 2));
   }
 
   //Comprueba si ya existe un codigo de afip entonces vuelve a llamar a la funcion que obtiene el valor del campo Numero
   public cambioPuntoVenta() {
     //Establece el formControl puntoVenta
     this.puntoVenta.setValue(this.establecerCerosIzq(this.formulario.get('puntoVenta').value.puntoVenta, "0000", -5));
-    this.validarFechaEmision();
+    // this.validarFechaEmision();
     this.formulario.get('codigoAfip').value != null || this.formulario.get('codigoAfip').value > 0 ?
       this.cargarNumero(this.formulario.get('codigoAfip').value) : '';
     //Establece el atributo 'CAE' 'esCAEA'
@@ -705,6 +426,16 @@ export class EmitirNotaCreditoComponent implements OnInit {
     let cliente = this.formulario.value.cliente;
     let res = this.validarDocumento(cliente.tipoDocumento, cliente.numeroDocumento);
     if (res) {
+      /* establece campos en formulario de cabecera */
+      this.formulario.get('cobrador').setValue(cliente.cobrador);
+      this.formulario.get('afipCondicionIva').setValue(cliente.afipCondicionIva);
+      this.formulario.get('tipoDocumento').setValue(cliente.tipoDocumento);
+      this.formulario.get('numeroDocumento').setValue(cliente.numeroDocumento);
+      this.formulario.get('condicionVenta').setValue(cliente.condicionVenta);
+      this.formulario.get('clienteRemitente').setValue(cliente);
+      this.formulario.get('clienteDestinatario').setValue(cliente);
+
+      /* establece campos de soloLectura en el formulario del Cliente*/
       this.formularioCliente.get('domicilio').setValue(cliente.domicilio);
       this.formularioCliente.get('localidad').setValue(cliente.localidad.nombre);
       this.formularioCliente.get('condicionVenta').setValue(cliente.condicionVenta.nombre);
@@ -747,9 +478,8 @@ export class EmitirNotaCreditoComponent implements OnInit {
     }
     return respuesta;
   }
-  //Controla campos segun datos del Cliente que paga - Sale del metodo 'cambioPagoEnOrigen'
+  //Controla campos segun datos del Cliente  
   private controlCamposPorCliente() {
-    console.log(this.formulario.value);
     // Controla el campo 'Letra' 
     this.formulario.value.cliente.condicionVenta.id == 1 ?
       this.formulario.get('letra').setValue('A') : this.formulario.get('letra').setValue('B');
@@ -773,26 +503,35 @@ export class EmitirNotaCreditoComponent implements OnInit {
   }
   //Setea el numero por el punto de venta y el codigo de Afip
   public cargarNumero(codigoAfip) {
+    this.loaderService.show();
     this.puntoVentaService.obtenerNumero(this.formulario.get('puntoVenta').value.puntoVenta, codigoAfip,
       this.formulario.value.sucursal.id, this.formulario.value.empresa.id).subscribe(
         res => {
           this.formulario.get('numero').setValue(res.text());
+          this.loaderService.hide();
         },
         err => {
           this.formulario.get('numero').reset();
           this.toastr.error("Error al obtener el número para el P. Venta.");
+          this.loaderService.hide();
         }
       );
   }
   //Obtiene la lista de Venta Comprobante NC (para Nota de Credito)
   private listarVentaComprobanteParaNotaCredito() {
+    this.loaderService.show();
     let idCliente = this.formulario.value.cliente.id;
     this.ventaComprobanteService.listarParaCreditosPorClienteYEmpresa(
       idCliente, this.appService.getEmpresa().id).subscribe(
         res => {
-          console.log(res.json());
           this.listaCompleta.data = res.json();
-          this.formulario.get('ventaComprobanteItemNC').setValue(res.json());
+          this.listaCompleta.data.length == 0 ?
+            this.toastr.warning('El Cliente no tiene comprobantes pendientes.') : this.limpiarVtaCpteItemNC();
+          this.loaderService.hide();
+        },
+        err => {
+          this.toastr.error(err.json().mensaje);
+          this.loaderService.hide();
         }
       )
   }
@@ -810,22 +549,22 @@ export class EmitirNotaCreditoComponent implements OnInit {
   }
   //Establece el elemento en el formularioVtaCpteItemNC para modificar
   public activarActualizarElemento(elemento, indice) {
-    console.log(elemento);
     !this.idMod ? this.idMod = indice : '';
     !this.elemento.value ? this.elemento.setValue(elemento) : '';
     this.subtotalCIVA.enable();
     this.formularioVtaCpteItemNC.enable();
     this.formularioVtaCpteItemNC.patchValue(elemento);
+    this.establecerAlicuotaIva();
 
     /* establece los decimales para el importeSaldo */
     this.subtotalCIVA.setValue(elemento.importeSaldo);
 
     /* establece valores por defecto */
-    this.establecerAlicuotaIva();
     this.formularioVtaCpteItemNC.get('ventaComprobanteAplicado').setValue({ id: elemento.id });
     this.formularioVtaCpteItemNC.get('importeExento').setValue(this.appService.establecerDecimales('0.00', 2));
     this.formularioVtaCpteItemNC.get('importeNoGravado').setValue(this.appService.establecerDecimales('0.00', 2));
-    this.formularioVtaCpteItemNC.get('importeNetoGravado').setValue(elemento.importeNetoGravado);
+    // this.formularioVtaCpteItemNC.get('importeNetoGravado').setValue(elemento.importeNetoGravado);
+    this.calcularSubtotalNC();
   }
   //Cancela el actualizar elemento- limpia el formularioVtaCpteItemNC
   public cancelarModElemento() {
@@ -844,20 +583,62 @@ export class EmitirNotaCreditoComponent implements OnInit {
   }
   //Acepta el cambio en el comprobante seleccionado de la tabla
   public aceptarComprobante() {
-    /* habilita el formulario para recuperar los campos de solo lectura*/
+    /* habilita el formulario para recuperar los campos de solo lectura y establece provincia*/
     this.formularioVtaCpteItemNC.enable();
-    //establezco un boolean de control para saber si fue checkeado
-    // this.listaCompleta.data[this.idMod].checked = true;
+    this.formularioVtaCpteItemNC.get('provincia').setValue(this.provincia.value);
+
+    /* controla que si tipo de cpte es FCE MiPymes solo permite saldar un comprobante */
+    this.formulario.value.tipoComprobante.id == 28 ? this.limpiarVtaCpteItemNC() : '';
+
+    /* agrega el formulario vta cpte item NC al comprobante seleccionado */
     this.listaCompleta.data[this.idMod].ventaComprobanteItemNC.push(this.formularioVtaCpteItemNC.value);
     this.reestablecerformularioVtaCpteItemNC();
+
+    /* llama a calcular importes totales*/
+    this.calcularImportesTotales();
   }
+  //Vacia los array de vtaCpteItemNC de cada comprobante
+  private limpiarVtaCpteItemNC() {
+    this.listaCompleta.data.forEach(
+      item => {
+        item.ventaComprobanteItemNC = [];
+      }
+    )
+  }
+  //Calcula los importes totales para la lista de Items agregados
+  private calcularImportesTotales() {
+    let impNetoGravadoTotal = 0;
+    let importeIvaTotal = 0;
+    this.listaCompleta.data.forEach(
+      elemento => {
+        /* si el comprobante tiene vtaCpteItemNC que sume sus totales */
+        if (elemento.ventaComprobanteItemNC.length > 0) {
+          impNetoGravadoTotal += Number(elemento.ventaComprobanteItemNC[0].importeNetoGravado);
+          importeIvaTotal += Number(elemento.ventaComprobanteItemNC[0].importeIva);
+        }
+      }
+    )
+    this.formulario.get('importeNetoGravado').setValue(this.appService.establecerDecimales(
+      impNetoGravadoTotal == 0 ? '0.00' : impNetoGravadoTotal, 2));
+    this.formulario.get('importeIva').setValue(this.appService.establecerDecimales(
+      importeIvaTotal == 0 ? '0.00' : importeIvaTotal, 2));
+    let importeTotal = Number(this.formulario.get('importeNetoGravado').value) + Number(this.formulario.get('importeIva').value);
+    this.formulario.get('importeTotal').setValue(this.appService.establecerDecimales(
+      importeTotal == 0 ? '0.00' : importeTotal, 2));
+  }
+  //Establece los importes totales en cero
+  private limpiarImportesTotales() {
+    this.formulario.get('importeNetoGravado').setValue(this.appService.establecerDecimales('0.00', 2));
+    this.formulario.get('importeIva').setValue(this.appService.establecerDecimales('0.00', 2));
+    this.formulario.get('importeTotal').setValue(this.appService.establecerDecimales('0.00', 2));
+  }
+
   //Cancela la modificacion del comprobante seleccionado
   public cancelarComprobante() {
     this.reestablecerformularioVtaCpteItemNC();
   }
   //Calcula el saldo para cada registro de la tabla 
   public calcularSaldoElemento(elemento) {
-    // let importeTotal CONSULTAR A NESTOR COMO SE CALCULA ESTE IMPORTE
     let subtotalConIva = elemento.importeNetoGravado + elemento.importeIva;
     let saldo = subtotalConIva;
     return saldo;
@@ -871,17 +652,16 @@ export class EmitirNotaCreditoComponent implements OnInit {
   //Controla el cambio los check-box
   public cambioCheck(elemento, indice, $event) {
     //Si el check esta en 'true' crea una variable boolean para controlarlo en el front
-    console.log($event.checked);
     if ($event.checked) {
       this.activarActualizarElemento(elemento, indice);
       this.formularioVtaCpteItemNC.get('ventaTipoItem').setValue(this.resultadosMotivos[0]);
       this.cambioMotivo();
     } else {
       /* elimina el formulario a saldar asignado a dicho comprobante */
-      console.log("entra al false");
-      console.log(this.listaCompleta.data[indice]);
       this.listaCompleta.data[indice].ventaComprobanteItemNC = [];
       this.reestablecerformularioVtaCpteItemNC();
+      /* llama a calcular importes totales*/
+      this.listaCompleta.data.length > 0 ? this.calcularImportesTotales() : this.limpiarImportesTotales();
     }
   }
   //Calcula 'SubtotalNC' de cada registro de la tabla 
@@ -889,17 +669,73 @@ export class EmitirNotaCreditoComponent implements OnInit {
     /* subtotal = total del comprobante que se quiere saldar */
     this.subtotalCIVA.setValue(this.appService.establecerDecimales(this.subtotalCIVA.value, 2));
     let subtotalCIVA = Number(this.subtotalCIVA.value);
-    /* une la parte entera con los decimales */
-    let alicuotaIva = String(this.formularioVtaCpteItemNC.value.afipAlicuotaIva).split('.').join('');
-    /* genera el nuevo valor de la alicuota iva para obtener el valor del subtotalNC, importeIva */
-    let alicuotaGenerada = Number('1.' + String(alicuotaIva));
-    let subtotalNC = subtotalCIVA / alicuotaGenerada;
-    let importeIva = subtotalCIVA - subtotalNC;
-    /* establece el subtotalNC, importeIva calculado */
-    this.formularioVtaCpteItemNC.get('importeNetoGravado').
-      setValue(this.appService.establecerDecimales(String(subtotalNC), 2));
-    this.formularioVtaCpteItemNC.get('importeIva').
-      setValue(this.appService.establecerDecimales(String(importeIva), 2));
+
+    /* subtotalCIVA debe ser siempre menor al importe a saldar */
+    if (subtotalCIVA <= this.elemento.value.importeSaldo) {
+      /* une la parte entera con los decimales */
+      let alicuotaIva = String(this.formularioVtaCpteItemNC.value.afipAlicuotaIva.alicuota).split('.').join('');
+      /* genera el nuevo valor de la alicuota iva para obtener el valor del subtotalNC, importeIva */
+      let alicuotaGenerada = Number('1.' + String(alicuotaIva));
+      let subtotalNC = subtotalCIVA / alicuotaGenerada;
+      let importeIva = subtotalCIVA - subtotalNC;
+      /* establece el subtotalNC, importeIva calculado */
+      this.formularioVtaCpteItemNC.get('importeNetoGravado').
+        setValue(this.appService.establecerDecimales(String(subtotalNC), 2));
+      this.formularioVtaCpteItemNC.get('importeIva').
+        setValue(this.appService.establecerDecimales(String(importeIva), 2));
+    } else {
+      this.toastr.error("El importe a saldar debe ser menor a importe saldo del cpte.");
+      this.subtotalCIVA.reset();
+    }
+
+  }
+  //Asigna los comprobantes seleccionados de la tabla al campo 'ventaComprobanteItemNC' del formulario
+  private establecerformularioVtaCpteItemNC() {
+    for (let i = 0; i < this.listaCompleta.data.length; i++) {
+      if (this.listaCompleta.data[i].ventaComprobanteItemNC.length > 0) {
+        /* setea el campo afipConceptoVenta */
+        !this.formulario.value.afipConceptoVenta ?
+          this.formulario.value.afipConceptoVenta = this.listaCompleta.data[i].afipConceptoVenta : '';
+        /* agrego las ventaComprobanteItemNC de la tabla, las cuales tienen un registro cargado a saldar */
+        this.formulario.value.ventaComprobanteItemNC.push(this.listaCompleta.data[i].ventaComprobanteItemNC[0]);
+      }
+    }
+  }
+  //Emite la Nota de Crédito
+  public agregarNotaCredito() {
+    this.loaderService.show();
+    /* limpia arrays de items */
+    this.formulario.value.ventaComprobanteItemCR = null;
+    this.formulario.value.ventaComprobanteItemFAs = null;
+    this.formulario.value.ventaComprobanteItemND = null;
+
+    /* guardo el punto de venta para luego reestablecerlo */
+    let puntoVenta = this.formulario.value.puntoVenta;
+
+    /* establece el array de items NC, el valor de puntoVenta */
+    this.establecerformularioVtaCpteItemNC();
+    this.formulario.value.puntoVenta = this.formulario.value.puntoVenta.puntoVenta;
+
+    /* agrega el comprobante solo si existen notas de creditos agregadas*/
+    if (this.formulario.value.ventaComprobanteItemNC.length > 0) {
+      this.ventaComprobanteService.agregar(this.formulario.value).subscribe(
+        res => {
+          let respuesta = res.json();
+          this.toastr.success(respuesta.mensaje);
+          this.formulario.get('puntoVenta').setValue(puntoVenta);
+          this.reestablecerFormulario(true);
+          this.loaderService.hide();
+        },
+        err => {
+          let respuesta = err.json();
+          this.toastr.error(respuesta.mensaje);
+          this.loaderService.hide();
+        }
+      )
+    } else {
+      this.toastr.error("Error: no hay comprobantes a saldar.");
+      this.loaderService.hide();
+    }
   }
   //Abre dialogo para agregar un cliente eventual
   public agregarClienteEventual(): void {
@@ -920,7 +756,7 @@ export class EmitirNotaCreditoComponent implements OnInit {
   //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
   private lanzarError(err, idCampo, labelCampo) {
     this.formulario.get('numeroDocumento').setErrors({ 'incorrect': true });
-    var respuesta = err;
+    let respuesta = err;
     if (respuesta.codigo == 11010) {
       document.getElementById(labelCampo).classList.add('label-error');
       document.getElementById(idCampo).classList.add('is-invalid');
