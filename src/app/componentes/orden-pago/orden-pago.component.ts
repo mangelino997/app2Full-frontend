@@ -133,12 +133,26 @@ export class OrdenPagoComponent implements OnInit {
     this.compraComprobanteService.listarPorEmpresaYProveedor(empresa.id, proveedor.id).subscribe(
       res => {
         this.comprasComprobantes = res.json();
+        this.calcularTotalItemsYTotalDeuda();
         this.loaderService.hide();
       },
       err => {
         this.loaderService.hide();
       }
     );
+  }
+  //Determina la cantidad de elementos de la tabla y el total de deuda
+  private calcularTotalItemsYTotalDeuda(): void {
+    this.formularioTotales.get('totalItems').setValue(this.comprasComprobantes.length);
+    let deuda = 0;
+    this.comprasComprobantes.forEach((elemento) => {
+      if(elemento.tipoComprobante.id == 3 || elemento.tipoComprobante.id == 28) {
+        deuda -= elemento.importeSaldo;
+      } else {
+        deuda += elemento.importeSaldo;
+      }
+    });
+    this.formularioTotales.get('deuda').setValue(this.establecerCeros(deuda));
   }
   //Abre el dialogo correspondientes al seleccionar una opcion del campo 'Ingregracion en'
   public determinarIntegracion(): void {
@@ -253,8 +267,12 @@ export class OrdenPagoComponent implements OnInit {
   public eliminar(): void {
 
   }
+  //Mascara un importe decimal
+  public mascararImporte(limit, decimalLimite) {
+    return this.appService.mascararImporte(limit, decimalLimite);
+  }
   //Establece los ceros en los numeros flotantes en tablas
-  public establecerCerosTabla(elemento) {
+  public establecerCeros(elemento) {
     return this.appService.establecerDecimales(elemento, 2);
   }
   //Define como se muestra los datos con ceros a la izquierda

@@ -19,6 +19,7 @@ import { DocumentosComponent } from 'src/app/componentes/orden-pago/documentos/d
 import { OtrasCuentasComponent } from 'src/app/componentes/orden-pago/otras-cuentas/otras-cuentas.component';
 import { OtrasMonedasComponent } from 'src/app/componentes/orden-pago/otras-monedas/otras-monedas.component';
 import { CompraComprobanteService } from 'src/app/servicios/compra-comprobante.service';
+import { TextMaskModule } from 'angular2-text-mask';
 
 @NgModule({
   declarations: [
@@ -49,7 +50,8 @@ import { CompraComprobanteService } from 'src/app/servicios/compra-comprobante.s
     MatIconModule,
     MatTooltipModule,
     MatListModule,
-    MatDialogModule
+    MatDialogModule,
+    TextMaskModule
   ],
   providers: [
     OrdenPagoService,
