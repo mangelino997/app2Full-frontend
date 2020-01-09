@@ -82,11 +82,11 @@
                                 </ng-container>
                                 <ng-container matColumnDef="SALDO">
                                     <th mat-header-cell *matHeaderCellDef mat-sort-header>Saldo</th>
-                                    <td class="number-right" mat-cell *matCellDef="let elemento">$ {{establecerCerosTabla(elemento.importeSaldo)}}</td>
+                                    <td class="number-right" mat-cell *matCellDef="let elemento">$ {{establecerCeros(elemento.importeSaldo)}}</td>
                                 </ng-container>
                                 <ng-container matColumnDef="IMPORTE">
                                     <th mat-header-cell *matHeaderCellDef mat-sort-header>Importe</th>
-                                    <td class="number-right" mat-cell *matCellDef="let elemento">$ {{establecerCerosTabla(elemento.importeTotal)}}</td>
+                                    <td class="number-right" mat-cell *matCellDef="let elemento">$ {{establecerCeros(elemento.importeTotal)}}</td>
                                 </ng-container>
                                 <ng-container matColumnDef="IMPORTE_COBRO">
                                     <th mat-header-cell *matHeaderCellDef mat-sort-header>Importe Cobro</th>
@@ -119,15 +119,15 @@
                             <div class="col-md-2">
                                 <div class="form-group has-float-label">
                                     <label for="idItemsDeuda" class="codigo-label">Items</label>
-                                    <input id="idItemsDeuda" type="text" formControlName="itemsDeuda" readonly
+                                    <input id="idItemsDeuda" type="text" formControlName="totalItems" readonly
                                         class="form-control form-control-sm number-right">
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group has-float-label">
                                     <label for="idDeuda" class="codigo-label">Total Deuda</label>
-                                    <input id="idDeuda" type="text" formControlName="deuda" readonly
-                                        class="form-control form-control-sm number-right">
+                                    <input id="idDeuda" type="text" formControlName="deuda" [textMask]="mascararImporte(10, 2)" 
+                                        readonly class="form-control form-control-sm number-right" placeholder="$ 0.00">
                                 </div>
                             </div>
                         </div>

@@ -29,7 +29,7 @@ export class OrdenPago {
         this.formularioTotales = new FormGroup({
             itemsImporte: new FormControl(),
             importe: new FormControl(),
-            itemsDeuda: new FormControl(),
+            totalItems: new FormControl(),
             deuda: new FormControl()
         });
         //Establece el formulario integrar
