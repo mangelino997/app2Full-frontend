@@ -5,18 +5,18 @@ import { Observable, Subscription, Subject } from 'rxjs';
 import { Message } from '@stomp/stompjs';
 import { StompService } from '@stomp/ng2-stompjs';
 
-@Injectable()
-export class VentaComprobanteService {
+@Injectable({
+  providedIn: 'root'
+})
+export class CobranzaService {
   //Define la ruta al servicio web
-  private ruta:string = "/ventacomprobante";
+  private ruta:string = "/cobranza";
   //Define la url base
   private url:string = null;
   //Define la url para subcripcion a socket
   private topic:string = null;
   //Define el headers y token de autenticacion
   private options = null;
-  //Define la lista obtenida por nombre
-  private listaPorNombre = null;
   //Define la subcripcion
   private subcripcion: Subscription;
   //Define el mensaje de respuesta a la subcripcion
@@ -42,41 +42,21 @@ export class VentaComprobanteService {
   public subscribirse = (m: Message) => {
     this.listaCompleta.next(JSON.parse(m.body));
   }
+  //Obtiene todos los listados
+  public inicializar(idRol, idSubopcion) {
+    return this.http.get(this.url + '/inicializar/' + idRol + '/' + idSubopcion, this.options);
+  }
   //Obtiene el siguiente id
   public obtenerSiguienteId() {
     return this.http.get(this.url + '/obtenerSiguienteId', this.options);
-  }
-  //Obtiene por tipo Comprobante, puntoVenta, letra, numero, 
-  public obtener(punto, letra, numero, idTipoComprobante) {
-    return this.http.get(this.url + '/obtener/' + punto + '/' + letra + '/' + numero + '/' + idTipoComprobante, this.options);
   }
   //Obtiene la lista de registros
   public listar() {
     return this.http.get(this.url, this.options);
   }
-  //Obtiene la lista de letras
-  public listarLetras() {
-    return this.http.get(this.url + '/listarLetras', this.options);
-  }
-  //Obtiene la lista de registros
-  public listarPorClienteYEmpresa(idCliente, idEmpresa) {
-    return this.http.get(this.url + '/listarPorClienteYEmpresa/'+ idCliente + '/' + idEmpresa, this.options);
-  }
-  //Obtiene la lista de registros para nota de credito
-  public listarParaCreditosPorClienteYEmpresa(idCliente, idEmpresa) {
-    return this.http.get(this.url + '/listarParaCreditosPorClienteYEmpresa/'+ idCliente + '/' + idEmpresa, this.options);
-  }
-  //Obtiene un listado por alias
-  public listarPorAlias(alias) {
-    return this.http.get(this.url + '/listarPorAlias/' + alias, this.options).map(res => {
-      return res.json().map(data => {
-        return data;
-      })
-    })
-  }
-  //Obitene lista por empresa y cliente
-  public listarParaCobranza(idCliente, idEmpresa){
-    return this.http.get(this.url + '/listarParaCobranza/' + idCliente + '/' + idEmpresa, this.options);
+  //Obtiene la lista de registros por empresa
+  public listarPorEmpresa(idEmpresa) {
+    return this.http.get(this.url + '/listarPorEmpresa/' + idEmpresa, this.options);
   }
   //Agrega un registro
   public agregar(elemento) {
