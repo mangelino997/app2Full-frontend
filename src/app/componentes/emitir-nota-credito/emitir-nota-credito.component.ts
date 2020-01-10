@@ -333,7 +333,7 @@ export class EmitirNotaCreditoComponent implements OnInit {
     let tipoComprobante;
 
     //Guardo por si existen datos ya cargados
-    if (limpiarTodo) {
+    if (!limpiarTodo) {
       puntoVenta = this.formulario.value.puntoVenta;
       fechaEmision = this.formulario.value.fechaEmision;
       tipoComprobante = this.formulario.value.tipoComprobante;
@@ -723,7 +723,7 @@ export class EmitirNotaCreditoComponent implements OnInit {
           let respuesta = res.json();
           this.toastr.success(respuesta.mensaje);
           this.formulario.get('puntoVenta').setValue(puntoVenta);
-          this.reestablecerFormulario(true);
+          this.reestablecerFormulario(false);
           this.loaderService.hide();
         },
         err => {

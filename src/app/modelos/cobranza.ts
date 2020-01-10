@@ -19,7 +19,9 @@ export class Cobranza {
             observaciones: new FormControl(),
             usuarioAlta: new FormControl(),
             usuarioBaja: new FormControl(),
-            usuarioMod: new FormControl()
+            usuarioMod: new FormControl(),
+            cobranzaItems: new FormControl(),
+            cobranzaRetenciones: new FormControl(),
         });
     }
 }
