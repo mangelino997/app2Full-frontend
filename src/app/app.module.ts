@@ -92,6 +92,15 @@ import { AfipConceptoSueldo } from './modelos/afipConceptoSueldo';
 import { AfipConceptoSueldoGrupoService } from './servicios/afip-concepto-sueldo-grupo.service';
 import { AfipConceptoSueldoGrupo } from './modelos/afipConceptoSueldoGrupo';
 import { TipoConceptoVentaService } from './servicios/tipo-concepto-venta.service';
+import { AnticiposComponent } from './componentes/tesoreria/anticipos/anticipos.component';
+import { EfectivoComponent } from './componentes/tesoreria/efectivo/efectivo.component';
+import { ChequesPropiosComponent } from './componentes/tesoreria/cheques-propios/cheques-propios.component';
+import { ChequesCarteraComponent } from './componentes/tesoreria/cheques-cartera/cheques-cartera.component';
+import { ChequesElectronicosComponent } from './componentes/tesoreria/cheques-electronicos/cheques-electronicos.component';
+import { TransferenciaBancariaComponent } from './componentes/tesoreria/transferencia-bancaria/transferencia-bancaria.component';
+import { DocumentosComponent } from './componentes/tesoreria/documentos/documentos.component';
+import { OtrasCuentasComponent } from './componentes/tesoreria/otras-cuentas/otras-cuentas.component';
+import { OtrasMonedasComponent } from './componentes/tesoreria/otras-monedas/otras-monedas.component';
 
 const stompConfig: StompConfig = {
   url: 'ws://localhost:8080/jitws/socket',
@@ -131,6 +140,15 @@ const stompConfig: StompConfig = {
     UsuariosActivosDialogoComponent,
     BugImagenDialogoComponent,
     CuentaBancariaDialogoComponent,
+    AnticiposComponent,
+    EfectivoComponent,
+    ChequesPropiosComponent,
+    ChequesCarteraComponent,
+    ChequesElectronicosComponent,
+    TransferenciaBancariaComponent,
+    DocumentosComponent,
+    OtrasCuentasComponent,
+    OtrasMonedasComponent
   ],
   imports: [
     FormsModule,
@@ -247,7 +265,16 @@ const stompConfig: StompConfig = {
     TotalesConceptoDialogoComponent,
     UsuariosActivosDialogoComponent,
     BugImagenDialogoComponent,
-    CuentaBancariaDialogoComponent
+    CuentaBancariaDialogoComponent,
+    AnticiposComponent,
+    EfectivoComponent,
+    ChequesPropiosComponent,
+    ChequesCarteraComponent,
+    ChequesElectronicosComponent,
+    TransferenciaBancariaComponent,
+    DocumentosComponent,
+    OtrasCuentasComponent,
+    OtrasMonedasComponent
   ]
 })
 export class AppModule { }

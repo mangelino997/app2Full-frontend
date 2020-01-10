@@ -9,16 +9,16 @@ import { AppService } from 'src/app/servicios/app.service';
 import { FormGroup, FormControl } from '@angular/forms';
 import { ProveedorService } from 'src/app/servicios/proveedor.service';
 import { OrdenPago } from 'src/app/modelos/orden-pago';
-import { AnticiposComponent } from './anticipos/anticipos.component';
-import { EfectivoComponent } from './efectivo/efectivo.component';
-import { ChequesPropiosComponent } from './cheques-propios/cheques-propios.component';
-import { ChequesCarteraComponent } from './cheques-cartera/cheques-cartera.component';
-import { ChequesElectronicosComponent } from './cheques-electronicos/cheques-electronicos.component';
-import { TransferenciaBancariaComponent } from './transferencia-bancaria/transferencia-bancaria.component';
-import { DocumentosComponent } from './documentos/documentos.component';
-import { OtrasCuentasComponent } from './otras-cuentas/otras-cuentas.component';
-import { OtrasMonedasComponent } from './otras-monedas/otras-monedas.component';
 import { CompraComprobanteService } from 'src/app/servicios/compra-comprobante.service';
+import { AnticiposComponent } from '../tesoreria/anticipos/anticipos.component';
+import { EfectivoComponent } from '../tesoreria/efectivo/efectivo.component';
+import { ChequesCarteraComponent } from '../tesoreria/cheques-cartera/cheques-cartera.component';
+import { ChequesElectronicosComponent } from '../tesoreria/cheques-electronicos/cheques-electronicos.component';
+import { ChequesPropiosComponent } from '../tesoreria/cheques-propios/cheques-propios.component';
+import { TransferenciaBancariaComponent } from '../tesoreria/transferencia-bancaria/transferencia-bancaria.component';
+import { DocumentosComponent } from '../tesoreria/documentos/documentos.component';
+import { OtrasCuentasComponent } from '../tesoreria/otras-cuentas/otras-cuentas.component';
+import { OtrasMonedasComponent } from '../tesoreria/otras-monedas/otras-monedas.component';
 
 @Component({
   selector: 'app-orden-pago',
