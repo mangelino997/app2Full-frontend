@@ -1,4 +1,4 @@
-<div class="container-fluid padd-20" (window:keydown)="manejarEvento($event.keyCode)">
+<div class="container-fluid" (window:keydown)="manejarEvento($event.keyCode)">
     <div class="row">
         <div class="centrar">
             <nav mat-tab-nav-bar>
@@ -8,18 +8,18 @@
             </nav>
         </div>
     </div>
-    <div class="row justify-content-center">
-        <h5>Cobranzas de Clientes</h5>
-    </div>
-    <form [formGroup]="formulario">
-        <div class="row">
-            <div class="col-md-9">
+    <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado < 5">
+        <div class="col">
+            <h5 class="text-center">{{pestaniaActual}} Cobranza de Cliente</h5>
+            <form [formGroup]="formulario">
                 <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group has-float-label">
-                            <label for="idCliente">Cliente *</label>
-                            <input id="idCliente" class="form-control form-control-sm" autocomplete="off"
-                                type="text" matInput [formControl]="formulario.get('cliente')"
+                    <div class="col-md-9">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group has-float-label">
+                                    <label for="idCliente">Cliente *</label>
+                                    <input id="idCliente" class="form-control form-control-sm" autocomplete="off"
+                                        type="text" matInput [formControl]="formulario.get('cliente')"
                                         [matAutocomplete]="autoCliente"
                                         placeholder="Buscar por id, razón social, nombre de fantasía o número de documento"
                                         (blur)="verificarSeleccion(formulario.get('cliente'))">
@@ -29,28 +29,29 @@
                                             {{item.alias}}
                                         </mat-option>
                                     </mat-autocomplete>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <button mat-raised-button class="ancho" color="primary"
+                                    (click)="listarComprasPorEmpresaYCliente()">Buscar</button>
+                            </div>
+                            <div class="col-md-1"></div>
+                            <div class="col-md-3">
+                                <div class="form-group has-float-label">
+                                    <label for="iMediosPagos" class="tamanio-label">Integración en</label>
+                                    <mat-select id="idMediosPagos" class="form-control form-control-sm"
+                                        [compareWith]="compareFn" [formControl]="medioPago"
+                                        (selectionChange)="determinarIntegracion()">
+                                        <mat-option *ngFor="let itemMedioPago of mediosPagos" [value]="itemMedioPago">
+                                            {{itemMedioPago.nombre}}
+                                        </mat-option>
+                                    </mat-select>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-md-2">
-                        <button mat-raised-button class="ancho" color="primary" (click)="listarComprasPorEmpresaYCliente()">Buscar</button>
-                    </div>
-                    <div class="col-md-1"></div>
-                    <div class="col-md-3">
-                        <div class="form-group has-float-label">
-                            <label for="iMediosPagos" class="tamanio-label">Integración en</label>
-                            <mat-select id="idMediosPagos" class="form-control form-control-sm"
-                                [compareWith]="compareFn" [formControl]="medioPago"
-                                (selectionChange)="determinarIntegracion()">
-                                <mat-option *ngFor="let itemMedioPago of mediosPagos" [value]="itemMedioPago">
-                                    {{itemMedioPago.nombre}}
-                                </mat-option>
-                            </mat-select>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="tabla">           
-                            <table mat-table [dataSource]="ventasComprobantes" class="mat-elevation-z1">
+                        <div class="row">
+                            <div class="tabla">
+                                <table mat-table [dataSource]="ventasComprobantes" class="mat-elevation-z1">
                                     <ng-container matColumnDef="FECHA_EMISION">
                                         <th mat-header-cell *matHeaderCellDef>Fecha Emisión</th>
                                         <td mat-cell *matCellDef="let elemento">{{elemento.fechaEmision}}</td>
@@ -61,11 +62,13 @@
                                     </ng-container>
                                     <ng-container matColumnDef="TIPO">
                                         <th mat-header-cell *matHeaderCellDef>Tipo</th>
-                                        <td mat-cell *matCellDef="let elemento">{{elemento.tipoComprobante.abreviatura}}</td>
+                                        <td mat-cell *matCellDef="let elemento">{{elemento.tipoComprobante.abreviatura}}
+                                        </td>
                                     </ng-container>
                                     <ng-container matColumnDef="PUNTO_VENTA">
                                         <th mat-header-cell *matHeaderCellDef>Punto Venta</th>
-                                        <td class="number-right" mat-cell *matCellDef="let elemento">{{completarCeros(elemento.puntoVenta,'0000',-5)}}</td>
+                                        <td class="number-right" mat-cell *matCellDef="let elemento">
+                                            {{completarCeros(elemento.puntoVenta,'0000',-5)}}</td>
                                     </ng-container>
                                     <ng-container matColumnDef="LETRA">
                                         <th mat-header-cell *matHeaderCellDef>Letra</th>
@@ -73,15 +76,18 @@
                                     </ng-container>
                                     <ng-container matColumnDef="NUMERO">
                                         <th mat-header-cell *matHeaderCellDef>Número</th>
-                                        <td class="number-right" mat-cell *matCellDef="let elemento">{{completarCeros(elemento.numero,'0000000',-8)}}</td>
+                                        <td class="number-right" mat-cell *matCellDef="let elemento">
+                                            {{completarCeros(elemento.numero,'0000000',-8)}}</td>
                                     </ng-container>
                                     <ng-container matColumnDef="SALDO">
                                         <th mat-header-cell *matHeaderCellDef>Saldo</th>
-                                        <td class="number-right" mat-cell *matCellDef="let elemento">$ {{establecerCerosTabla(elemento.importeSaldo)}}</td>
+                                        <td class="number-right" mat-cell *matCellDef="let elemento">$
+                                            {{establecerCerosTabla(elemento.importeSaldo)}}</td>
                                     </ng-container>
                                     <ng-container matColumnDef="IMPORTE">
                                         <th mat-header-cell *matHeaderCellDef>Importe</th>
-                                        <td class="number-right" mat-cell *matCellDef="let elemento">$ {{establecerCerosTabla(elemento.importeTotal)}}</td>
+                                        <td class="number-right" mat-cell *matCellDef="let elemento">$
+                                            {{establecerCerosTabla(elemento.importeTotal)}}</td>
                                     </ng-container>
                                     <ng-container matColumnDef="IMPORTE_COBRO">
                                         <th mat-header-cell *matHeaderCellDef>Importe Cobro</th>
@@ -89,83 +95,96 @@
                                     </ng-container>
                                     <tr mat-header-row *matHeaderRowDef="columnas"></tr>
                                     <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
-                            </table>
-                    </div>
-                </div>
-                <div class="row">
-                    <h5>Totales</h5>
-                </div>
-                <div class="row">
-                    <div class="col-md-2">
-                        <div class="form-group has-float-label">
-                            <label for="iditems">Items</label>
-                            <input ID="iditems" type="text" maxlength="20" class="form-control form-control-sm" formControlName="items">
+                                </table>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <h5>Totales</h5>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-2">
+                                <div class="form-group has-float-label">
+                                    <label for="iditems">Items</label>
+                                    <input ID="iditems" type="text" maxlength="20" class="form-control form-control-sm"
+                                        formControlName="items">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group has-float-label">
+                                    <label for="idtotalImporteSeleccionado">Total Importe Seleccionado</label>
+                                    <input id="idtotalImporteSeleccionado" type="text" maxlength="20"
+                                        class="form-control form-control-sm" formControlName="totalImporteSeleccionado">
+                                </div>
+                            </div>
+                            <div class="col-md-2"></div>
+                            <div class="col-md-2">
+                                <div class="form-group has-float-label">
+                                    <label for="iditems2">Items</label>
+                                    <input id="iditems2" type="text" maxlength="20" class="form-control form-control-sm"
+                                        formControlName="items2">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group has-float-label">
+                                    <label for="idtotalDeuda">Total Deuda</label>
+                                    <input id="idtotalDeuda" type="text" maxlength="20"
+                                        class="form-control form-control-sm" formControlName="totalDeuda">
+                                </div>
+                            </div>
                         </div>
                     </div>
-                <div class="col-md-3">
-                    <div class="form-group has-float-label">
-                        <label for="idtotalImporteSeleccionado">Total Importe Seleccionado</label>
-                        <input id="idtotalImporteSeleccionado" type="text" maxlength="20" class="form-control form-control-sm" formControlName="totalImporteSeleccionado">
-                    </div>
-                </div>
-                <div class="col-md-2"></div>
-                <div class="col-md-2">
-                    <div class="form-group has-float-label">
-                        <label for="iditems2">Items</label>
-                        <input id="iditems2" type="text" maxlength="20" class="form-control form-control-sm" formControlName="items2">
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="form-group has-float-label">
-                        <label for="idtotalDeuda">Total Deuda</label>
-                        <input id="idtotalDeuda" type="text" maxlength="20" class="form-control form-control-sm" formControlName="totalDeuda">
-                    </div>
-                </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="form-group has-float-label">
-                            <label for="idpendienteDeIntegrar">Pendiente de Integrar</label>
-                            <input id="idpendienteDeIntegrar" type="text" maxlength="20" class="form-control form-control-sm" formControlName="pendienteDeIntegrar" readonly>
+                    <div class="col-md-3">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group has-float-label">
+                                    <label for="idpendienteDeIntegrar">Pendiente de Integrar</label>
+                                    <input id="idpendienteDeIntegrar" type="text" maxlength="20"
+                                        class="form-control form-control-sm" formControlName="pendienteDeIntegrar"
+                                        readonly>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-group has-float-label">
+                                    <label for="idretenciones">Retenciones</label>
+                                    <input id="idretenciones" type="text" maxlength="20"
+                                        class="form-control form-control-sm" formControlName="retenciones">
+                                </div>
+                            </div>
+                            <button class="button-input" mat-raised-button color="primary">+</button>
+                        </div>
+                        <div class="row">
+                            <div class="col lista">
+                                <mat-list>
+                                    <h3 mat-subheader>Medios de Pago</h3>
+                                    <mat-list-item *ngFor="let cobros of columnas">
+                                        <mat-icon mat-list-icon>fiber_manual_record</mat-icon>
+                                        <h4 mat-line>{{cobros}}</h4>
+                                        <button mat-mini-fab color="warn">X</button>
+                                    </mat-list-item>
+                                </mat-list>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group has-float-label">
+                                    <label for="idtotalIntegrado">Total Integrado</label>
+                                    <input id="idtotalIntegrado" type="text" maxlength="20"
+                                        class="form-control form-control-sm" formControlName="totalIntegrado" readonly>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col">
-                        <div class="form-group has-float-label">
-                            <label for="idretenciones">Retenciones</label>
-                            <input id="idretenciones" type="text" maxlength="20" class="form-control form-control-sm" formControlName="retenciones">
-                        </div>
-                    </div>
-                    <button class="button-input" mat-raised-button color="primary">+</button>
+                <br>
+                <div class="row justify-content-center">
+                    <button mat-raised-button class="ancho" color="primary" (click)="confirmar()">Confirmar</button>
                 </div>
-                <div class="row">
-                    <div class="col lista">
-                        <mat-list>
-                            <h3 mat-subheader>Medios de Pago</h3>
-                                <mat-list-item *ngFor="let cobros of columnas">
-                                    <mat-icon mat-list-icon>fiber_manual_record</mat-icon>
-                                    <h4 mat-line>{{cobros}}</h4>
-                                    <button mat-mini-fab color="warn">X</button>
-                                </mat-list-item>
-                        </mat-list>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="form-group has-float-label">
-                            <label for="idtotalIntegrado">Total Integrado</label>
-                            <input id="idtotalIntegrado" type="text" maxlength="20" class="form-control form-control-sm" formControlName="totalIntegrado" readonly>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            </form>
         </div>
-    <br>
-    <div class="row justify-content-center">
-        <button mat-raised-button class="ancho" color="primary" (click)="confirmar()">Confirmar</button>
     </div>
-    </form>
+    <div class="row justify-content-center contenedor" [hidden]="indiceSeleccionado != 5">
+
+    </div>
 </div>
