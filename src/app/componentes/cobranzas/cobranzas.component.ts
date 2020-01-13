@@ -22,7 +22,8 @@ import { Cobranza } from 'src/app/modelos/cobranza';
 import { CobranzaMedioPago } from 'src/app/modelos/cobranzaMedioPago';
 import { CobranzaItem } from 'src/app/modelos/cobranzaItem';
 import { CobranzaMedioPagoService } from 'src/app/servicios/cobranza-medio-pago.service';
-import { CobranzaItemComponent } from './cobranza-item/cobranza-item.component';
+import { CobranzaItemDialogoComponent } from './cobranza-item-dialogo/cobranza-item-dialogo.component';
+import { DetalleRetencionesDialogoComponent } from './detalle-retenciones-dialogo/detalle-retenciones-dialogo.component';
 
 @Component({
   selector: 'app-cobranzas',
@@ -30,6 +31,8 @@ import { CobranzaItemComponent } from './cobranza-item/cobranza-item.component';
   styleUrls: ['./cobranzas.component.css']
 })
 export class CobranzasComponent implements OnInit {
+  //Define el indice del registro seleccionado en la tabla
+  public idMod: number = null;
   //Define la pestania activa
   public activeLink: any = null;
   //Define el indice seleccionado de pestania
@@ -322,12 +325,13 @@ export class CobranzasComponent implements OnInit {
   }
   //Controla el cambio los check-box
   public cambioCheck(elemento, indice, $event) {
+    this.idMod = indice;
     //Si el check esta en 'true' crea una variable boolean para controlarlo en el front
     if ($event.checked) {
       elemento.checked = true;
-    }else{
+    } else {
       elemento.checked = false;
-      this.abrirDialogo(CobranzaItemComponent);
+      this.abrirCobranzaItemDialogo(indice);
     }
     // if ($event.checked) {
     //   this.activarActualizarElemento(elemento, indice);
@@ -381,7 +385,7 @@ export class CobranzasComponent implements OnInit {
         break;
     }
   }
-  //Abre el dialogo para agregar un cliente eventual
+  //Abre el dialogo del componente pasado por parametro
   private abrirDialogo(componente): void {
     this.medioPago.reset();
     const dialogRef = this.dialog.open(componente, {
@@ -390,10 +394,10 @@ export class CobranzasComponent implements OnInit {
       data: {}
     });
     dialogRef.afterClosed().subscribe(resultado => {
-
+      console.log(resultado);
     });
   }
-  //Abre un modal ver los Totales de Carga
+  //Abre ClienteGrupoDialogo
   public abrirClienteGrupoDialogo(): void {
     const dialogRef = this.dialog.open(ClienteGrupoDialogo, {
       width: '1200px',
@@ -403,6 +407,35 @@ export class CobranzasComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe(resultado => { });
   }
+  //Abre CobranzaItemDialogoComponent
+  private abrirCobranzaItemDialogo(indice): void {
+    this.medioPago.reset();
+    const dialogRef = this.dialog.open(CobranzaItemDialogoComponent, {
+      width: '95%',
+      maxWidth: '95%',
+      data: {
+        ventaComprobante: this.ventasComprobantes.data[indice]
+      }
+    });
+    dialogRef.afterClosed().subscribe(resultado => {
+      console.log(resultado);
+    });
+  }
+  //Abre DetalleRetencionesDialogoComponent
+  public abrirRetencionDialogo(): void {
+    this.medioPago.reset();
+    const dialogRef = this.dialog.open(DetalleRetencionesDialogoComponent, {
+      width: '95%',
+      maxWidth: '95%',
+      data: {
+      }
+    });
+    dialogRef.afterClosed().subscribe(resultado => {
+      console.log(resultado);
+      this.formulario.get('cobranzaRetenciones').setValue(resultado);
+    });
+  }
+
   //Obtiene una lista de compras comprobantes por empresa y cliente
   // public listarComprasPorEmpresaYCliente(): void {
   //   this.loaderService.show();
@@ -437,8 +470,8 @@ export class CobranzasComponent implements OnInit {
     this.totalDeuda.setValue(this.appService.establecerDecimales(deuda, 2));
   }
   //Establece atributo 'checked' a cada registro de la lista
-  private establecerAtributoChecked(){
-    for(let i = 0; i < this.ventasComprobantes.data.length; i++){
+  private establecerAtributoChecked() {
+    for (let i = 0; i < this.ventasComprobantes.data.length; i++) {
       this.ventasComprobantes.data[i].checked = false;
     }
   }

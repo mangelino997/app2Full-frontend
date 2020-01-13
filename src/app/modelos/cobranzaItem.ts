@@ -11,7 +11,7 @@ export class CobranzaItem {
             version: new FormControl(),
             cobranza: new FormControl(),
             ventaComprobante: new FormControl(),
-            importe: new FormControl(),
+            importe: new FormControl('', Validators.required),
         });
     }
 }

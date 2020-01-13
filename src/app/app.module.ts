@@ -14,8 +14,10 @@ import { LoginService } from './servicios/login.service';
 import { GuardiaService } from './servicios/guardia.service';
 
 //Modulos
-import { MatMenuModule, MatDividerModule, MatIconModule, MatToolbarModule, MatDialogModule, 
-  MatSelectModule, MatProgressSpinnerModule, MatCardModule, MatTableModule, MatButtonModule, MatPaginatorIntl, MatProgressBarModule, MatTreeModule, MatAutocompleteModule, MatCheckboxModule, MatSortModule } from '@angular/material';
+import {
+  MatMenuModule, MatDividerModule, MatIconModule, MatToolbarModule, MatDialogModule,
+  MatSelectModule, MatProgressSpinnerModule, MatCardModule, MatTableModule, MatButtonModule, MatPaginatorIntl, MatProgressBarModule, MatTreeModule, MatAutocompleteModule, MatCheckboxModule, MatSortModule
+} from '@angular/material';
 import { ReporteService } from './servicios/reporte.service';
 import { HttpModule } from '@angular/http';
 
@@ -92,6 +94,10 @@ import { AfipConceptoSueldo } from './modelos/afipConceptoSueldo';
 import { AfipConceptoSueldoGrupoService } from './servicios/afip-concepto-sueldo-grupo.service';
 import { AfipConceptoSueldoGrupo } from './modelos/afipConceptoSueldoGrupo';
 import { TipoConceptoVentaService } from './servicios/tipo-concepto-venta.service';
+import { CobranzaItemDialogoComponent } from './componentes/cobranzas/cobranza-item-dialogo/cobranza-item-dialogo.component';
+import { DetalleRetencionesDialogoComponent } from './componentes/cobranzas/detalle-retenciones-dialogo/detalle-retenciones-dialogo.component';
+import { CobranzaRetencionService } from './servicios/cobranza-retencion.service';
+import { CobranzaRetencion } from './modelos/cobranzaRetencion';
 
 const stompConfig: StompConfig = {
   url: 'ws://localhost:8080/jitws/socket',
@@ -131,6 +137,8 @@ const stompConfig: StompConfig = {
     UsuariosActivosDialogoComponent,
     BugImagenDialogoComponent,
     CuentaBancariaDialogoComponent,
+    CobranzaItemDialogoComponent,
+    DetalleRetencionesDialogoComponent
   ],
   imports: [
     FormsModule,
@@ -219,6 +227,8 @@ const stompConfig: StompConfig = {
     AfipConceptoSueldoGrupoService,
     AfipConceptoSueldoGrupo,
     TipoConceptoVentaService,
+    CobranzaRetencionService,
+    CobranzaRetencion,
     {
       provide: StompConfig,
       useValue: stompConfig
@@ -248,6 +258,8 @@ const stompConfig: StompConfig = {
     UsuariosActivosDialogoComponent,
     BugImagenDialogoComponent,
     CuentaBancariaDialogoComponent,
+    CobranzaItemDialogoComponent,
+    DetalleRetencionesDialogoComponent
   ]
 })
 export class AppModule { }
