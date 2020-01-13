@@ -100,8 +100,8 @@ export class VehiculoService {
       this.options);
   }
   //Obtiene todos los listados
-  public inicializar( idRol, idSubopcion) {
-    return this.http.get(this.url + '/inicializar/' + idRol + '/' + idSubopcion, this.options);
+  public inicializar( idRol, idSubopcion, idEmpresa) {
+    return this.http.get(this.url + '/inicializar/' + idRol + '/' + idSubopcion + '/' + idEmpresa, this.options);
   }
   //Agrega un registro
   public agregar(elemento) {

@@ -20,7 +20,6 @@ import { SucursalBancoService } from 'src/app/servicios/sucursal-banco.service';
 import { MensajeExcepcion } from 'src/app/modelos/mensaje-excepcion';
 import { PersonalCuentaBancariaService } from 'src/app/servicios/personal-cuenta-bancaria.service';
 
-
 @Component({
   selector: 'app-personal',
   templateUrl: './personal.component.html',
