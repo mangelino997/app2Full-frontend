@@ -297,7 +297,7 @@ export class ClienteComponent implements OnInit {
         this.formulario.get('id').setValue(this.ultimoId);
         this.crearCuentasBancarias(respuesta.empresas);
         //Establece los valores de la primera pestania activa
-        this.seleccionarPestania(1, 'Agregar', true);
+        this.seleccionarPestania(1, 'Agregar');
         //Establece la primera opcion seleccionada
         this.seleccionarOpcion(1, 0);
         this.render = false;
@@ -573,7 +573,6 @@ export class ClienteComponent implements OnInit {
         }
       )
     }
-    // this.cuentasBancarias = new MatTableDataSource(elemento.clienteCuentasBancarias);
   }
   // Establece las cuentas bancarias del cliente en la empresa correspondiente
   private establecerCuentasBancariasCliente(clienteCuentaBancaria) {
@@ -660,8 +659,9 @@ export class ClienteComponent implements OnInit {
     }
   }
   //Establece valores al seleccionar una pestania
-  public seleccionarPestania(id, nombre, opcion) {
+  public seleccionarPestania(id, nombre) {
     this.indiceSeleccionado = id;
+    this.seleccionarOpcion(1, 0);
     this.activeLink = nombre;
     this.reestablecerFormulario(null);
     switch (id) {
@@ -978,13 +978,13 @@ export class ClienteComponent implements OnInit {
   }
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
-    this.seleccionarPestania(2, this.pestanias[1].nombre, false);
+    this.seleccionarPestania(2, this.pestanias[1].nombre);
     this.autocompletado.patchValue(elemento);
     this.establecerFormulario();
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
-    this.seleccionarPestania(3, this.pestanias[2].nombre, false);
+    this.seleccionarPestania(3, this.pestanias[2].nombre);
     this.autocompletado.patchValue(elemento);
     this.establecerFormulario();
   }
@@ -1166,9 +1166,9 @@ export class ClienteComponent implements OnInit {
     let opcion = this.opcionSeleccionada;
     if (keycode == 113) {
       if (indice < this.pestanias.length) {
-        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre, true);
+        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre);
       } else {
-        this.seleccionarPestania(1, this.pestanias[0].nombre, true);
+        this.seleccionarPestania(1, this.pestanias[0].nombretrue);
       }
     } else if (keycode == 115) {
       if (opcion < this.opciones.length) {
