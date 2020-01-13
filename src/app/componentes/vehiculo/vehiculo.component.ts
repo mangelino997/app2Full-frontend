@@ -103,13 +103,11 @@ export class VehiculoComponent implements OnInit {
   //Define la paginacion
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Constructor
-  constructor(private servicio: VehiculoService, private subopcionPestaniaService: SubopcionPestaniaService,
-    private toastr: ToastrService, private loaderService: LoaderService,
-    private tipoVehiculoServicio: TipoVehiculoService, private marcaVehiculoServicio: MarcaVehiculoService,
-    private localidadServicio: LocalidadService, private empresaServicio: EmpresaService,
-    private companiaSeguroPolizaServicio: CompaniaSeguroPolizaService, private companiaSeguroService: CompaniaSeguroService,
-    private configuracionVehiculoServicio: ConfiguracionVehiculoService, private pdfServicio: PdfService, public dialog: MatDialog,
-    private personalServicio: PersonalService, private vehiculoModelo: Vehiculo, private appService: AppService, private reporteServicio: ReporteService) {
+  constructor(private servicio: VehiculoService, private toastr: ToastrService, private loaderService: LoaderService,
+    private localidadServicio: LocalidadService, private companiaSeguroPolizaServicio: CompaniaSeguroPolizaService, 
+    private companiaSeguroService: CompaniaSeguroService, private configuracionVehiculoServicio: ConfiguracionVehiculoService, 
+    private pdfServicio: PdfService, public dialog: MatDialog, private personalServicio: PersonalService, 
+    private vehiculoModelo: Vehiculo, private appService: AppService, private reporteServicio: ReporteService) {
     //Autocompletado - Buscar por alias
     this.autocompletado.valueChanges.subscribe(data => {
       if (typeof data == 'string') {
@@ -194,33 +192,12 @@ export class VehiculoComponent implements OnInit {
         }
       }
     })
-    //Autocompletado Compania de Seguro - Buscar por nombre
-    this.formulario.get('companiaSeguroPoliza').valueChanges.subscribe(data => {
-      if (typeof data == 'string') {
-        data = data.trim();
-        if (data == '*' || data.length > 0) {
-          this.loaderService.show();
-          this.companiaSeguroPolizaServicio.listarPorCompaniaSeguroNombre(data).subscribe(response => {
-            this.resultadosCompaniasSegurosPolizas = response;
-            this.loaderService.hide();
-          },
-            err => {
-              this.loaderService.hide();
-            })
-        }
-      }
-    })
-    //Obtiene la lista de tipos de vehiculos
-    // this.listarTiposVehiculos();
-    // //Obtiene la lista de marcas de vehiculos
-    // this.listarMarcasVehiculos();
-    // //Obtiene la lista de empresas
-    // this.listarEmpresas();
   }
   //Obtiene los datos necesarios para el componente
   private inicializar(idRol, idSubopcion) {
     this.render = true;
-    this.servicio.inicializar(idRol, idSubopcion).subscribe(
+    let empresa = this.appService.getEmpresa();
+    this.servicio.inicializar(idRol, idSubopcion, empresa.id).subscribe(
       res => {
         let respuesta = res.json();
         //Establece las pestanias
@@ -232,6 +209,7 @@ export class VehiculoComponent implements OnInit {
         this.tiposVehiculos = respuesta.tipoVehiculos;
         this.marcasVehiculos = respuesta.marcaVehiculos;
         this.formulario.get('id').setValue(this.ultimoId);
+        this.companiasSeguros = respuesta.companiasSeguros;
         this.render = false;
       },
       err => {
@@ -240,24 +218,6 @@ export class VehiculoComponent implements OnInit {
       }
     )
   }
-  //Obtiene la lista de tipos de vehiculos
-  private listarTiposVehiculos() {
-    this.tipoVehiculoServicio.listar().subscribe(res => {
-      this.tiposVehiculos = res.json();
-    })
-  }
-  //Obtiene la lista de marcas de vehiculos
-  private listarMarcasVehiculos() {
-    this.marcaVehiculoServicio.listar().subscribe(res => {
-      this.marcasVehiculos = res.json();
-    })
-  }
-  //Obtiene la lista de empresas
-  private listarEmpresas() {
-    this.empresaServicio.listar().subscribe(res => {
-      this.empresas = res.json();
-    })
-  }
   //Obtiene un registro por id (trae los pdfs)
   private obtenerPorId(elemento) {
     this.loaderService.show();
@@ -265,34 +225,30 @@ export class VehiculoComponent implements OnInit {
       res => {
         this.loaderService.hide();
         /* el primer parámetro le envía los pdfs y el segundo el resto de datos*/
-        this.establecerElementoYFotoYPdfs(res.json(), elemento);
+        this.establecerElementoYFotoYPdfs(res.json());
       },
       err => {
         this.loaderService.hide();
       }
     );
   }
-  /* Establece el elemento,foto y pdfs. Recibe como primer parametro un objeto con los datos de 
-      los pdfs y como segundo parametro el elemento con los datos completos (menos los pdfs) */
-  private establecerElementoYFotoYPdfs(elemento, elementoDatoFalt): void {
+  /* 
+  * Establece el elemento,foto y pdfs. Recibe como primer parametro un objeto con los datos de 
+  * los pdfs y como segundo parametro el elemento con los datos completos (menos los pdfs) 
+  */
+  private establecerElementoYFotoYPdfs(elemento): void {
     this.formulario.setValue(elemento);
-
-    /* establece los formControls */
+    //Establece los formControls
     this.tipoVehiculo.setValue(elemento.configuracionVehiculo.tipoVehiculo);
     this.marcaVehiculo.setValue(elemento.configuracionVehiculo.marcaVehiculo);
-
-    /* realiza el control de los pdfs*/
+    //Realiza el control de los pdfs
     this.controlarPdf(elemento);
-
-    /* llama a métodos para completar las listas */
-    this.listarCompaniasSeguroPorEmpresa(elementoDatoFalt.empresa, elemento.companiaSeguroPoliza);
+    //Llama a métodos para completar las listas
+    this.listarCompaniasSeguroPorEmpresa(elemento.empresa, elemento.companiaSeguroPoliza);
     this.establecerConfiguracion();
     this.listarConfiguracionesPorTipoVehiculoMarcaVehiculo();
-
-    /* establece compañia de seguro */
+    //Establece compañia de seguro
     this.companiaSeguro.patchValue(elemento.companiaSeguroPoliza.companiaSeguro);
-    // this.listarPolizas();
-    // this.companiasSegurosPolizas.length > 0 ? this.formulario.value.companiaSeguroPoliza = elemento.companiaSeguroPoliza : '';
   }
   //Controla la carga de los pdfs del elemento seleccionado 
   private controlarPdf(elemento) {
@@ -324,35 +280,34 @@ export class VehiculoComponent implements OnInit {
   }
   //Obtiene la lista de compania de seguros poliza por empresa
   public listarCompaniasSeguroPorEmpresa(empresa, companiaSeguroPoliza): void {
-    let idEmpresa;
-    this.loaderService.show();
-    this.companiaSeguro.reset();
-    this.companiasSeguros = [];
-    this.companiasSegurosPolizas = [];
     this.formulario.get('companiaSeguroPoliza').reset();
-
-    /* establece el idEmpresa para la consulta al service */
-    empresa ?
-      [idEmpresa = empresa.id, this.formulario.value.empresa = empresa] : idEmpresa = this.formulario.value.empresa.id;
-    if (idEmpresa) {
-      this.companiaSeguroService.listarPorEmpresa(idEmpresa).subscribe(res => {
-        this.companiasSeguros = res.json();
-        this.companiasSeguros.length == 0 ? this.toastr.warning("El Titular no tiene Compañía de Seguro asigandas.") : '';
-        companiaSeguroPoliza ? this.listarPolizas(companiaSeguroPoliza) : '';
-      })
+    if (empresa) {
+      this.loaderService.show();
+      this.companiaSeguroService.listarPorEmpresa(empresa.id).subscribe(
+        res => {
+          this.companiasSeguros = res.json();
+          this.companiasSeguros.length == 0 ? this.toastr.warning("El Titular no tiene Compañía de Seguro asigandas.") : '';
+          this.loaderService.hide();
+          this.listarPolizas(companiaSeguroPoliza);
+        },
+        err => {
+          this.loaderService.hide();
+        })
     }
-    this.loaderService.hide();
   }
   /*Obtiene la lista de polizas por compania de seguro. Puede recibir como parámetro la 'companiaSeguroPoliza'
    (caso Actualizar o Listar) */
   public listarPolizas(companiaSeguroPoliza): void {
     this.loaderService.show();
     let companiaSeguro = this.companiaSeguro.value;
-    this.companiaSeguroPolizaServicio.listarPorCompaniaSeguro(companiaSeguro.id).subscribe(res => {
-      this.companiasSegurosPolizas = res.json();
-      companiaSeguroPoliza ? this.formulario.value.companiaSeguroPoliza = companiaSeguroPoliza : '';
-      this.loaderService.hide();
-    },
+    this.companiaSeguroPolizaServicio.listarPorCompaniaSeguro(companiaSeguro.id).subscribe(
+      res => {
+        this.companiasSegurosPolizas = res.json();
+        if(companiaSeguroPoliza) {
+          this.formulario.get('companiaSeguroPoliza').setValue(companiaSeguroPoliza);
+        }
+        this.loaderService.hide();
+      },
       err => {
         this.toastr.error(err.json().mensaje);
         this.loaderService.hide();
@@ -463,16 +418,6 @@ export class VehiculoComponent implements OnInit {
         break;
     }
   }
-  //Obtiene el siguiente id
-  // private obtenerSiguienteId() {
-  //   this.servicio.obtenerSiguienteId().subscribe(
-  //     res => {
-  //       this.formulario.get('id').setValue(res.json());
-  //     },
-  //     err => {
-  //     }
-  //   );
-  // }
   //Obtiene el listado de registros
   public listarTodos() {
     this.loaderService.show();
@@ -675,7 +620,6 @@ export class VehiculoComponent implements OnInit {
     this.tipoVehiculo.setValue(undefined);
     this.marcaVehiculo.setValue(undefined);
     this.configuracion.setValue(undefined);
-
     /* deshabilita el control'Lista de Configuraciones' */
     this.formulario.get('configuracionVehiculo').disable();
     id ? this.formulario.get('id').setValue(id) : this.formulario.get('id').setValue(this.ultimoId);
@@ -771,13 +715,6 @@ export class VehiculoComponent implements OnInit {
       }
     });
     dialogRef.afterClosed().subscribe(resultado => { });
-  }
-  //Define el mostrado de datos y comparacion en campo select de polizas
-  public compareFp = this.compararFp.bind(this);
-  private compararFp(a, b) {
-    if (a != null && b != null) {
-      return a === b;
-    }
   }
   //Define el mostrado de datos y comparacion en campo select
   public compareFn = this.compararFn.bind(this);

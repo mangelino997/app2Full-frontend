@@ -5,7 +5,7 @@
       <nav mat-tab-nav-bar>
         <a mat-tab-link disabled>CLIENTE</a>
         <a mat-tab-link *ngFor="let pestania of pestanias" [active]="activeLink == pestania.nombre"
-          (click)="seleccionarPestania(pestania.id, pestania.nombre, true)">{{pestania.nombre}}</a>
+          (click)="seleccionarPestania(pestania.id, pestania.nombre)">{{pestania.nombre}}</a>
       </nav>
     </div>
   </div>
@@ -307,7 +307,7 @@
                   </div>
                   <div class="row">
                     <div class="col-md-3">
-                      <button id="idBoton" mat-raised-button color="primary" (click)="abrirListasPrecios()">
+                      <button mat-raised-button color="primary" (click)="abrirListasPrecios()">
                         Listas de Precios
                       </button>
                     </div>
@@ -606,7 +606,7 @@
             </div>
           </div>
           <div class="col-md-1">
-            <button id="idBoton" mat-raised-button color="primary" formnovalidate (click)="accion(indiceSeleccionado)"
+            <button mat-raised-button color="primary" formnovalidate (click)="accion(indiceSeleccionado)"
               [disabled]="!formularioFiltro.valid">Listar
             </button>
           </div>
