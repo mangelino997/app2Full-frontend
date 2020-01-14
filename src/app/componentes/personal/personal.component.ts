@@ -117,7 +117,7 @@ export class PersonalComponent implements OnInit {
   //Define las columnas de la tabla
   public columnas: string[] = ['ID', 'NOMBRE', 'TIPO DOCUMENTO', 'DOCUMENTO', 'TELEFONO MOVIL', 'DOMICILIO', 'LOCALIDAD', 'EDITAR'];
   //Define las columnas de la tabla para la opcion Bancos - lista de Cuentas Bancarias
-  public columnasCuentaBancaria: string[] = ['BANCO', 'TIPO_CUENTA', 'NUMERO_CUENTA', 'MONEDA', 'TITULAR', 'CBU', 
+  public columnasCuentaBancaria: string[] = ['BANCO', 'TIPO_CUENTA', 'TITULAR', 'NUMERO_CUENTA', 'CBU', 'MONEDA', 
     'ACTIVA', 'CUENTA_PPAL', 'EDITAR'];
   //Define la lista de tipos de imagenes
   private tiposImagenes = ['image/png', 'image/jpg', 'image/jpeg'];
