@@ -29,12 +29,13 @@ export class MensajeExcepcion {
 
     public static SELECCIONAR_PESTANIA = "Falta seleccionar, como mínimo, una pestaña";
 
+    public static REGISTRO_EXISTENTE_LISTA = "Registro existente en lista";
+
 
     /*
     * FIN ERRORES GENERALES
     */
 
-    
 
     /*
     * DATO DUPLICADO 

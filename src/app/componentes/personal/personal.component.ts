@@ -17,8 +17,8 @@ import { BugImagenDialogoComponent } from '../bugImagen-dialogo/bug-imagen-dialo
 import { ReporteService } from 'src/app/servicios/reporte.service';
 import { BancoService } from 'src/app/servicios/banco.service';
 import { SucursalBancoService } from 'src/app/servicios/sucursal-banco.service';
-import { MensajeExcepcion } from 'src/app/modelos/mensaje-excepcion';
 import { PersonalCuentaBancariaService } from 'src/app/servicios/personal-cuenta-bancaria.service';
+import { MensajeExcepcion } from 'src/app/modelos/mensaje-excepcion';
 
 @Component({
   selector: 'app-personal',
@@ -117,8 +117,8 @@ export class PersonalComponent implements OnInit {
   //Define las columnas de la tabla
   public columnas: string[] = ['ID', 'NOMBRE', 'TIPO DOCUMENTO', 'DOCUMENTO', 'TELEFONO MOVIL', 'DOMICILIO', 'LOCALIDAD', 'EDITAR'];
   //Define las columnas de la tabla para la opcion Bancos - lista de Cuentas Bancarias
-  public columnasCuentaBancaria: string[] = ['ID', 'BANCO', 'SUCURSAL',
-    'TIPO_CUENTA', 'NUMERO_CUENTA', 'MONEDA', 'TITULAR', 'CBU', 'ACTIVA', 'CUENTA_PPAL', 'EDITAR'];
+  public columnasCuentaBancaria: string[] = ['BANCO', 'TIPO_CUENTA', 'NUMERO_CUENTA', 'MONEDA', 'TITULAR', 'CBU', 
+    'ACTIVA', 'CUENTA_PPAL', 'EDITAR'];
   //Define la lista de tipos de imagenes
   private tiposImagenes = ['image/png', 'image/jpg', 'image/jpeg'];
   //Define la matSort
@@ -980,14 +980,13 @@ export class PersonalComponent implements OnInit {
   }
   //Recorre la lista de Cuentas Bancarias y determina si ya fue asignado anteriormente 
   private verificarListaCB(elemento) {
-    /* establezco un boolean como control */
+    //Establece un boolean como control
     let bandera = false;
     for (let i = 0; i < this.listaCuentaBancaria.data.length; i++) {
       let cbuLista = this.listaCuentaBancaria.data[i].cbu;
       let numeroCuentaLista = this.listaCuentaBancaria.data[i].numeroCuenta;
-
-      /* por proveedor no controlo porque es siempre el mismo a quien se agregan las distinas
-        cuentas bancarias */
+      /*Por proveedor no controlo porque es siempre el mismo a quien se agregan las distinas
+        cuentas bancarias*/
       if (elemento.cbu == cbuLista && elemento.numeroCuenta == numeroCuentaLista) {
         bandera = true;
         break;
@@ -1004,7 +1003,7 @@ export class PersonalComponent implements OnInit {
       this.reestablecerFormularioCB();
       document.getElementById("idBanco").focus();
     } else {
-      this.toastr.error("Cuenta Bancaria ya agregada a la lista.");
+      this.toastr.error(MensajeExcepcion.REGISTRO_EXISTENTE_LISTA);
       document.getElementById("idBanco").focus();
     }
   }
