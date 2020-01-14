@@ -51,10 +51,22 @@
                     <div class="row justify-content-center">
                         <div class="tabla">
                             <table mat-table [dataSource]="comprasComprobantes" matSort class="mat-elevation-z1">
-                                <ng-container matColumnDef="CHECK" sticky>
-                                    <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
-                                    <td mat-cell *matCellDef="let elemento"></td>
-                                </ng-container>
+                                <ng-container matColumnDef="CHECK">
+                                    <th mat-header-cell *matHeaderCellDef>
+                                      <mat-checkbox (change)="$event ? alternarSeleccion() : null"
+                                                    [checked]="comprasComprobantesSeleccionados.hasValue() && estanTodosSeleccionados()"
+                                                    [indeterminate]="comprasComprobantesSeleccionados.hasValue() && !estanTodosSeleccionados()"
+                                                    [aria-label]="checkboxLabel()">
+                                      </mat-checkbox>
+                                    </th>
+                                    <td mat-cell *matCellDef="let row">
+                                      <mat-checkbox (click)="$event.stopPropagation()"
+                                                    (change)="$event ? seleccionarCheckbox(row) : null"
+                                                    [checked]="comprasComprobantesSeleccionados.isSelected(row)"
+                                                    [aria-label]="checkboxLabel(row)">
+                                      </mat-checkbox>
+                                    </td>
+                                  </ng-container>
                                 <ng-container matColumnDef="FECHA_EMISION">
                                     <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha Emisión</th>
                                     <td mat-cell *matCellDef="let elemento">{{elemento.fechaEmision}}</td>
@@ -69,7 +81,7 @@
                                     </td>
                                 </ng-container>
                                 <ng-container matColumnDef="PUNTO_VENTA">
-                                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Punto Venta</th>
+                                    <th mat-header-cell *matHeaderCellDef mat-sort-header>P. Vta</th>
                                     <td class="number-right" mat-cell *matCellDef="let elemento">{{completarCeros(elemento.puntoVenta, '0000', -5)}}</td>
                                 </ng-container>
                                 <ng-container matColumnDef="LETRA">
@@ -105,14 +117,14 @@
                                 <div class="form-group has-float-label">
                                     <label for="idItemsImporte" class="codigo-label">Items</label>
                                     <input id="idItemsImporte" type="text" formControlName="itemsImporte" readonly
-                                        class="form-control form-control-sm number-right">
+                                        class="form-control form-control-sm number-right" placeholder="0">
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group has-float-label">
                                     <label for="idImporte" class="codigo-label">Total Importe Seleccionado</label>
-                                    <input id="idImporte" type="text" formControlName="importe" readonly
-                                        class="form-control form-control-sm number-right">
+                                    <input id="idImporte" type="text" formControlName="importe" [textMask]="mascararImporte(10, 2)" 
+                                        readonly class="form-control form-control-sm number-right" placeholder="$ 0.00">
                                 </div>
                             </div>
                             <div class="col-md-2"></div>
@@ -120,7 +132,7 @@
                                 <div class="form-group has-float-label">
                                     <label for="idItemsDeuda" class="codigo-label">Items</label>
                                     <input id="idItemsDeuda" type="text" formControlName="totalItems" readonly
-                                        class="form-control form-control-sm number-right">
+                                        class="form-control form-control-sm number-right" placeholder="0">
                                 </div>
                             </div>
                             <div class="col-md-3">
@@ -158,10 +170,10 @@
                             <div class="col lista">
                                 <mat-list>
                                     <h3 mat-subheader>Medios de Pago</h3>
-                                    <mat-list-item *ngFor="let pagos of columnas">
-                                        <mat-icon mat-list-icon>fiber_manual_record</mat-icon>
-                                        <h4 mat-line>{{pagos}}</h4>
-                                        <button mat-mini-fab color="warn">X</button>
+                                    <mat-list-item *ngFor="let medioPago of mediosPagosSeleccionados ; let i = index">
+                                        <mat-icon mat-list-icon class="cursor-color-rojo" (click)="eliminarItemLista(i)">delete_forever</mat-icon>
+                                        <h4 mat-line>{{medioPago. nombre}}</h4>
+                                        <span><b>${{medioPago.importe}}</b></span>
                                     </mat-list-item>
                                 </mat-list>
                             </div>

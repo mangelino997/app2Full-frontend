@@ -61,7 +61,8 @@ import { TransferenciaBancariaComponent } from '../componentes/tesoreria/transfe
     MatTooltipModule,
     MatListModule,
     MatDialogModule,
-    TextMaskModule
+    TextMaskModule,
+    MatCheckboxModule
   ],
   entryComponents: [
     AnticiposComponent,

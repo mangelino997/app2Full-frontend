@@ -19,6 +19,7 @@ import { TransferenciaBancariaComponent } from '../tesoreria/transferencia-banca
 import { DocumentosComponent } from '../tesoreria/documentos/documentos.component';
 import { OtrasCuentasComponent } from '../tesoreria/otras-cuentas/otras-cuentas.component';
 import { OtrasMonedasComponent } from '../tesoreria/otras-monedas/otras-monedas.component';
+import { SelectionModel } from '@angular/cdk/collections';
 
 @Component({
   selector: 'app-orden-pago',
@@ -46,6 +47,8 @@ export class OrdenPagoComponent implements OnInit {
   public formularioTotales:FormGroup;
   //Define el formulario de integrar
   public formularioIntegrar:FormGroup;
+  //Define el formulario de medios de pagos
+  public formularioMedioPago:FormGroup;
   //Defiene el render
   public render: boolean = false;
   //Define el mostrar del circulo de progreso
@@ -60,6 +63,8 @@ export class OrdenPagoComponent implements OnInit {
   public mediosPagosSeleccionados:Array<any> = [];
   //Define la lista de compras comprobantes
   public comprasComprobantes= new MatTableDataSource ([]);
+  //Define la lista de compras comprobantes seleccionados
+  public comprasComprobantesSeleccionados = new SelectionModel<any>(true, []);
   //Define las columnas de la tabla
   public columnas: string[] = ['CHECK', 'FECHA_EMISION', 'FECHA_VTO_PAGO', 'TIPO', 'PUNTO_VENTA', 
     'LETRA', 'NUMERO', 'SALDO', 'IMPORTE', 'IMPORTE_COBRO'];
@@ -85,6 +90,8 @@ export class OrdenPagoComponent implements OnInit {
     this.formularioTotales = this.modelo.formularioTotales;
     //Establece el formulario integrar
     this.formularioIntegrar = this.modelo.formularioIntegrar;
+    //Establece el formulario de los medios pago seleccionados
+    this.formularioMedioPago = this.modelo.formularioMedioPago;
     //Obtiene los datos de inicializacion desde servicio web
     this.inicializar(this.appService.getRol().id, this.appService.getSubopcion());
     //Establece los valores de la primera pestania activa
@@ -123,6 +130,33 @@ export class OrdenPagoComponent implements OnInit {
       }
     );
   }
+  //El numero de elemento seleccionados es igual al numero total de filas (Tabla de Compras Comprobantes)
+  public estanTodosSeleccionados(): boolean {
+    let numSeleccionado = this.comprasComprobantesSeleccionados.selected.length;
+    let numFilas = this.comprasComprobantes.data.length;
+    return numSeleccionado === numFilas;
+  }
+  //Selecciona todos los elementos si no hay ninguno seleccionado, caso contrario, limpia todas las selecciones
+  public alternarSeleccion(): void {
+    this.estanTodosSeleccionados() ?
+        this.comprasComprobantesSeleccionados.clear() :
+        this.comprasComprobantes.data.forEach(row => this.comprasComprobantesSeleccionados.select(row));
+    //Establece el total de items seleccionados e importe total seleccionado
+    this.calcularTotalItemsEImporteTotalSeleccionado();
+  }
+  //Retorna la etiqueta de seleccionada o no
+  public checkboxLabel(row?: any): string {
+    if (!row) {
+      return `${this.estanTodosSeleccionados() ? 'select' : 'deselect'} all`;
+    }
+    return `${this.comprasComprobantesSeleccionados.isSelected(row) ? 'deselect' : 'select'} row ${row.position + 1}`;
+  }
+  //Al seleccionar un checkbox
+  public seleccionarCheckbox(row): void {
+    this.comprasComprobantesSeleccionados.toggle(row);
+    //Establece el total de items seleccionados e importe total seleccionado
+    this.calcularTotalItemsEImporteTotalSeleccionado();
+  }
   //Obtiene una lista de compras comprobantes por empresa y proveedor
   public listarComprasPorEmpresaYProveedor(): void {
     this.loaderService.show();
@@ -154,6 +188,19 @@ export class OrdenPagoComponent implements OnInit {
     });
     this.formularioTotales.get('deuda').setValue(this.establecerCeros(deuda));
   }
+  //Calcula el importe total seleccionado
+  public calcularTotalItemsEImporteTotalSeleccionado(): void {
+    this.formularioTotales.get('itemsImporte').setValue(this.comprasComprobantesSeleccionados.selected.length);
+    let deuda = 0;
+    this.comprasComprobantesSeleccionados.selected.forEach((elemento) => {
+      if(elemento.tipoComprobante.id == 3 || elemento.tipoComprobante.id == 28) {
+        deuda -= elemento.importeSaldo;
+      } else {
+        deuda += elemento.importeSaldo;
+      }
+    });
+    this.formularioTotales.get('importe').setValue(this.establecerCeros(deuda == 0 ? '0' : deuda));
+  }
   //Abre el dialogo correspondientes al seleccionar una opcion del campo 'Ingregracion en'
   public determinarIntegracion(): void {
     let elemento = this.medioPago.value.nombre;
@@ -162,36 +209,36 @@ export class OrdenPagoComponent implements OnInit {
     elemento = elemento.replace(new RegExp(/[òó]/g), "o");
     switch(elemento) {
       case 'anticipos':
-        this.abrirDialogo(AnticiposComponent);
+        this.abrirDialogo(AnticiposComponent, 1);
         break;
       case 'efectivo':
-        this.abrirDialogo(EfectivoComponent);
+        this.abrirDialogo(EfectivoComponent, 2);
         break;
       case 'cheques':
-        this.abrirDialogo(ChequesCarteraComponent);
+        this.abrirDialogo(ChequesCarteraComponent, 3);
         break;
       case 'chequeselectronicos':
-        this.abrirDialogo(ChequesElectronicosComponent);
+        this.abrirDialogo(ChequesElectronicosComponent, 4);
         break;
       case 'chequespropios':
-        this.abrirDialogo(ChequesPropiosComponent);
+        this.abrirDialogo(ChequesPropiosComponent, 5);
         break;
       case 'transferenciabancaria':
-        this.abrirDialogo(TransferenciaBancariaComponent);
+        this.abrirDialogo(TransferenciaBancariaComponent, 6);
         break;
       case 'documentos':
-        this.abrirDialogo(DocumentosComponent);
+        this.abrirDialogo(DocumentosComponent, 7);
         break;
       case 'otrascuentas':
-        this.abrirDialogo(OtrasCuentasComponent);
+        this.abrirDialogo(OtrasCuentasComponent, 8);
         break;
       case 'otrasmonedas':
-        this.abrirDialogo(OtrasMonedasComponent);
+        this.abrirDialogo(OtrasMonedasComponent, 9);
         break;
     }
   }
   //Abre el dialogo para agregar un cliente eventual
-  private abrirDialogo(componente): void {
+  private abrirDialogo(componente, opcion): void {
     this.medioPago.reset();
     const dialogRef = this.dialog.open(componente, {
       width: '50%',
@@ -199,8 +246,23 @@ export class OrdenPagoComponent implements OnInit {
       data: { }
     });
     dialogRef.afterClosed().subscribe(resultado => {
-      
+      if(resultado != 0) {
+        let formulario = {
+          nombre: null,
+          importe: 0
+        }
+        switch(opcion) {
+          case 2:
+            formulario.nombre = 'Efectivo';
+            formulario.importe = resultado;
+        }
+        this.mediosPagosSeleccionados.push(formulario);
+      }
     });
+  }
+  //Elimina un item de la lista de medios de pagos
+  public eliminarItemLista(indice): void {
+    this.mediosPagosSeleccionados.splice(indice, 1);
   }
   //Funcion para determina que accion se requiere (Agregar, Actualizar, Eliminar)
   public accion(indice) {

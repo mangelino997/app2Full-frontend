@@ -100,8 +100,8 @@ export class ProveedorComponent implements OnInit {
   public columnas: string[] = ['ID', 'RAZON_SOCIAL', 'TIPO_DOCUMENTO',
     'NUMERO_DOCUMENTO', 'TELEFONO', 'DOMICILIO', 'LOCALIDAD', 'EDITAR'];
   //Define las columnas de la tabla para la opcion Bancos - lista de Cuentas Bancarias
-  public columnasCuentaBancaria: string[] = ['ID', 'BANCO', 'SUCURSAL',
-    'TIPO_CUENTA', 'NUMERO_CUENTA', 'MONEDA', 'TITULAR', 'CBU', 'ACTIVA', 'CUENTA_PPAL', 'EDITAR'];
+  public columnasCuentaBancaria: string[] = ['BANCO', 'TIPO_CUENTA', 'TITULAR', 'NUMERO_CUENTA', 'CBU', 'MONEDA', 
+    'ACTIVA', 'CUENTA_PPAL', 'EDITAR'];
   //Define las columnas de la tabla
   public columnasPlanCuenta: string[] = ['empresa', 'cuentaContable', 'planCuenta', 'eliminar'];
   //Define la matSort
@@ -474,6 +474,7 @@ export class ProveedorComponent implements OnInit {
   //Establece valores al seleccionar una pestania
   public seleccionarPestania(id, nombre) {
     this.indiceSeleccionado = id;
+    this.seleccionarOpcion(8, 0);
     this.activeLink = nombre;
     this.reestablecerFormulario(null);
     switch (id) {
@@ -691,13 +692,12 @@ export class ProveedorComponent implements OnInit {
   }
   //Recorre la lista de Cuentas Bancarias y determina si ya fue asignado anteriormente 
   private verificarListaCB(elemento) {
-    /* establezco un boolean como control */
+    //Establece un boolean como control
     let bandera = false;
     for (let i = 0; i < this.listaCuentaBancaria.data.length; i++) {
       let cbuLista = this.listaCuentaBancaria.data[i].cbu;
       let numeroCuentaLista = this.listaCuentaBancaria.data[i].numeroCuenta;
-
-      /* por proveedor no controlo porque es siempre el mismo a quien se agregan las distinas
+      /*Por proveedor no controlo porque es siempre el mismo a quien se agregan las distinas
         cuentas bancarias */
       if (elemento.cbu == cbuLista && elemento.numeroCuenta == numeroCuentaLista) {
         bandera = true;
@@ -715,7 +715,7 @@ export class ProveedorComponent implements OnInit {
       this.reestablecerFormularioCB();
       document.getElementById("idBanco").focus();
     } else {
-      this.toastr.error("Cuenta Bancaria ya agregada a la lista.");
+      this.toastr.error(MensajeExcepcion.REGISTRO_EXISTENTE_LISTA);
       document.getElementById("idBanco").focus();
     }
   }
@@ -735,7 +735,7 @@ export class ProveedorComponent implements OnInit {
       res => {
         let respuesta = res.json();
         if (respuesta.codigo == 200) {
-          //establece la nueva lista de cuentas bancarias del proveedor
+          //Establece la nueva lista de cuentas bancarias del proveedor
           this.listarCuentaBancariaPorPersonal(this.formulario.value.id);
           this.toastr.success(MensajeExcepcion.ELIMINADO);
         }
@@ -768,7 +768,6 @@ export class ProveedorComponent implements OnInit {
     this.banco.setValue(elemento.sucursalBanco.banco);
     this.formularioCuentaBancaria.patchValue(elemento);
     this.establecerSucursal(elemento.sucursalBanco.banco.id, elemento.sucursalBanco);
-    this.establecerModCamposCuentaBancaria();
     document.getElementById("idBanco").focus();
   }
   //Actualiza el registro, seleccionado, en la lista - tabla
