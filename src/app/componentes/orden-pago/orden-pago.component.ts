@@ -143,6 +143,8 @@ export class OrdenPagoComponent implements OnInit {
         this.comprasComprobantes.data.forEach(row => this.comprasComprobantesSeleccionados.select(row));
     //Establece el total de items seleccionados e importe total seleccionado
     this.calcularTotalItemsEImporteTotalSeleccionado();
+    //Calcula importe Pendiente de Integrar
+    this.formularioIntegrar.get('pendienteIntegrar').setValue(this.calcularPendienteIntegrar());
   }
   //Retorna la etiqueta de seleccionada o no
   public checkboxLabel(row?: any): string {
@@ -156,6 +158,8 @@ export class OrdenPagoComponent implements OnInit {
     this.comprasComprobantesSeleccionados.toggle(row);
     //Establece el total de items seleccionados e importe total seleccionado
     this.calcularTotalItemsEImporteTotalSeleccionado();
+    //Calcula importe Pendiente de Integrar
+    this.formularioIntegrar.get('pendienteIntegrar').setValue(this.calcularPendienteIntegrar());;
   }
   //Obtiene una lista de compras comprobantes por empresa y proveedor
   public listarComprasPorEmpresaYProveedor(): void {
@@ -257,12 +261,29 @@ export class OrdenPagoComponent implements OnInit {
             formulario.importe = resultado;
         }
         this.mediosPagosSeleccionados.push(formulario);
+        //Calcula importe Pendiente de Integrar
+        this.formularioIntegrar.get('pendienteIntegrar').setValue(this.calcularPendienteIntegrar());
       }
     });
+  }
+  //Calcula el importe total de la lista de medios de pago
+  private calcularImporteMediosPagos(): number {
+    let importe = 0;
+    this.mediosPagosSeleccionados.forEach((elemento) => {
+      importe += Number(elemento.importe);
+    });
+    return importe;
+  }
+  //Calcula importe Pendiente de Integrar
+  private calcularPendienteIntegrar(): number {
+    let importeTotal = this.calcularImporteMediosPagos();
+    return this.establecerCeros(this.formularioTotales.get('importe').value - importeTotal);
   }
   //Elimina un item de la lista de medios de pagos
   public eliminarItemLista(indice): void {
     this.mediosPagosSeleccionados.splice(indice, 1);
+    //Calcula importe Pendiente de Integrar
+    this.formularioIntegrar.get('pendienteIntegrar').setValue(this.calcularPendienteIntegrar());
   }
   //Funcion para determina que accion se requiere (Agregar, Actualizar, Eliminar)
   public accion(indice) {

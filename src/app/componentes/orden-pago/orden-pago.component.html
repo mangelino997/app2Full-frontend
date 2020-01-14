@@ -51,22 +51,22 @@
                     <div class="row justify-content-center">
                         <div class="tabla">
                             <table mat-table [dataSource]="comprasComprobantes" matSort class="mat-elevation-z1">
-                                <ng-container matColumnDef="CHECK">
-                                    <th mat-header-cell *matHeaderCellDef>
+                                <ng-container matColumnDef="CHECK" sticky>
+                                    <th style="padding-right: 5px;" mat-header-cell *matHeaderCellDef>
                                       <mat-checkbox (change)="$event ? alternarSeleccion() : null"
                                                     [checked]="comprasComprobantesSeleccionados.hasValue() && estanTodosSeleccionados()"
                                                     [indeterminate]="comprasComprobantesSeleccionados.hasValue() && !estanTodosSeleccionados()"
                                                     [aria-label]="checkboxLabel()">
                                       </mat-checkbox>
                                     </th>
-                                    <td mat-cell *matCellDef="let row">
+                                    <td style="padding-right: 5px;" mat-cell *matCellDef="let row">
                                       <mat-checkbox (click)="$event.stopPropagation()"
                                                     (change)="$event ? seleccionarCheckbox(row) : null"
                                                     [checked]="comprasComprobantesSeleccionados.isSelected(row)"
                                                     [aria-label]="checkboxLabel(row)">
                                       </mat-checkbox>
                                     </td>
-                                  </ng-container>
+                                </ng-container>
                                 <ng-container matColumnDef="FECHA_EMISION">
                                     <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha Emisión</th>
                                     <td mat-cell *matCellDef="let elemento">{{elemento.fechaEmision}}</td>
@@ -81,7 +81,7 @@
                                     </td>
                                 </ng-container>
                                 <ng-container matColumnDef="PUNTO_VENTA">
-                                    <th mat-header-cell *matHeaderCellDef mat-sort-header>P. Vta</th>
+                                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Punto Vta</th>
                                     <td class="number-right" mat-cell *matCellDef="let elemento">{{completarCeros(elemento.puntoVenta, '0000', -5)}}</td>
                                 </ng-container>
                                 <ng-container matColumnDef="LETRA">
@@ -101,7 +101,7 @@
                                     <td class="number-right" mat-cell *matCellDef="let elemento">$ {{establecerCeros(elemento.importeTotal)}}</td>
                                 </ng-container>
                                 <ng-container matColumnDef="IMPORTE_COBRO">
-                                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Importe Cobro</th>
+                                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Imp. Cobro</th>
                                     <td class="number-right" mat-cell *matCellDef="let elemento">$ 0.00</td>
                                 </ng-container>
                                 <tr mat-header-row *matHeaderRowDef="columnas"></tr>
@@ -152,7 +152,8 @@
                                 <div class="form-group has-float-label">
                                     <label for="idPendienteIntegrar" class="codigo-label">Pendiente de Integrar</label>
                                     <input id="idPendienteIntegrar" type="text" formControlName="pendienteIntegrar"
-                                        readonly class="form-control form-control-sm number-right">
+                                        readonly class="form-control form-control-sm number-right" [textMask]="mascararImporte(10, 2)"
+                                        placeholder="$ 0.00">
                                 </div>
                             </div>
                         </div>
@@ -173,7 +174,7 @@
                                     <mat-list-item *ngFor="let medioPago of mediosPagosSeleccionados ; let i = index">
                                         <mat-icon mat-list-icon class="cursor-color-rojo" (click)="eliminarItemLista(i)">delete_forever</mat-icon>
                                         <h4 mat-line>{{medioPago. nombre}}</h4>
-                                        <span><b>${{medioPago.importe}}</b></span>
+                                        <span><b>${{establecerCeros(medioPago.importe)}}</b></span>
                                     </mat-list-item>
                                 </mat-list>
                             </div>
