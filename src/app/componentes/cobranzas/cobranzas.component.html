@@ -122,15 +122,15 @@
                                 <div class="form-group has-float-label">
                                     <label for="iditems">Items</label>
                                     <input ID="iditems" type="text" maxlength="20" class="form-control form-control-sm"
-                                        >
+                                    [formControl]="totalesItemSeleccionados" >
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group has-float-label">
                                     <label for="idtotalImporteSeleccionado">Total Importe Seleccionado</label>
                                     <input id="idtotalImporteSeleccionado" type="text" placeholder="$ 0.00"
-                                        class="form-control form-control-sm" 
-                                        [textMask]="mascararImporte(8, 2)"
+                                        class="form-control form-control-sm" [formControl]="totalDeudaSeleccionados"
+                                        [textMask]="mascararImporte(8, 2)" 
                                         (blur)="setDecimales(formulario.get('importeIva'), 2)">
                                 </div>
                             </div>
@@ -170,9 +170,9 @@
                                 <div class="form-group has-float-label">
                                     <label for="idretenciones">Retenciones</label>
                                     <input id="idretenciones" type="text" placeholder="$ 0.00"
-                                        class="form-control form-control-sm" formControlName="cobranzaRetenciones"
+                                        class="form-control form-control-sm" [formControl]="totalCobranzaRetenciones"
                                         [textMask]="mascararImporte(8, 2)"
-                                        (blur)="setDecimales(formulario.get('cobranzaRetenciones'), 2)">
+                                        (blur)="setDecimales(totalCobranzaRetenciones, 2)">
                                 </div>
                             </div>
                             <button class="button-input" mat-raised-button color="primary" (click)="abrirRetencionDialogo()">+</button>

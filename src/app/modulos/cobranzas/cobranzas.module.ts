@@ -12,12 +12,13 @@ import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModul
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TextMaskModule } from 'angular2-text-mask';
 import { CobranzaMedioPagoService } from 'src/app/servicios/cobranza-medio-pago.service';
+import { CobranzaAnticiposService } from 'src/app/servicios/cobranza-anticipos.service';
 
 @NgModule({
   declarations: [
     CobranzasComponent,
     ClienteGrupoDialogo,
-    
+
   ],
   imports: [
     CobranzasRoutingModule,
@@ -44,7 +45,8 @@ import { CobranzaMedioPagoService } from 'src/app/servicios/cobranza-medio-pago.
     CobranzaMedioPagoService,
     Cobranza,
     CobranzaMedioPago,
-    CobranzaItem
+    CobranzaItem,
+    CobranzaAnticiposService
   ],
   entryComponents: [
     ClienteGrupoDialogo,

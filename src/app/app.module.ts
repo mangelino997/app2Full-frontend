@@ -138,7 +138,7 @@ const stompConfig: StompConfig = {
     BugImagenDialogoComponent,
     CuentaBancariaDialogoComponent,
     CobranzaItemDialogoComponent,
-    DetalleRetencionesDialogoComponent
+    DetalleRetencionesDialogoComponent,
   ],
   imports: [
     FormsModule,
@@ -259,7 +259,7 @@ const stompConfig: StompConfig = {
     BugImagenDialogoComponent,
     CuentaBancariaDialogoComponent,
     CobranzaItemDialogoComponent,
-    DetalleRetencionesDialogoComponent
+    DetalleRetencionesDialogoComponent,
   ]
 })
 export class AppModule { }

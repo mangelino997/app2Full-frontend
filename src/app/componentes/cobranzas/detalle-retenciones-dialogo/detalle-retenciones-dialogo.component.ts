@@ -84,6 +84,11 @@ export class DetalleRetencionesDialogoComponent implements OnInit {
     this.formulario.get('provincia').setValue(this.provincias[0]);
     this.formulario.get('tipoRetencion').setValue(this.tiposRetencion[0]);
     this.cambioTipoRetencion();
+    //Seteo registros que vienen de Cobranza si la lista de Retenciones no es null
+    if (this.data.listaCobranzaRetenciones) {
+      this.listaCompleta.data = this.data.listaCobranzaRetenciones;
+      this.calcularTotal();
+    }
   }
   //Controla el cambio en el campo de seleccion 'Tipo de Retención'
   public cambioTipoRetencion() {

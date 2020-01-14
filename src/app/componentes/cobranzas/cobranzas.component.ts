@@ -53,8 +53,12 @@ export class CobranzasComponent implements OnInit {
   public medioPago: FormControl = new FormControl();
   //Define totalesItems como un formControl
   public totalesItems: FormControl = new FormControl();
+  //Define totalesItems seleccionados como un formControl
+  public totalesItemSeleccionados: FormControl = new FormControl();
   //Define totalDeuda como un formControl
   public totalDeuda: FormControl = new FormControl();
+  //Define totalDeuda de items seleccionados como un formControl
+  public totalDeudaSeleccionados: FormControl = new FormControl();
   //Define la lista completa de registros
   public listaCompleta = new MatTableDataSource([]);
   //Define los medios de pago
@@ -63,6 +67,8 @@ export class CobranzasComponent implements OnInit {
   public mediosPagosSeleccionados: Array<any> = [];
   //Define la lista de resultados de busqueda de cliente
   public resultadosClientes: Array<any> = [];
+  //Define el importe total de la lista 'CobranzaRetenciones'
+  public totalCobranzaRetenciones: FormControl = new FormControl();
   public columnas: string[] = ['CHECK', 'FECHA_EMISION', 'FECHA_VTO_PAGO', 'TIPO', 'PUNTO_VENTA', 'LETRA', 'NUMERO', 'SALDO', 'IMPORTE', 'IMPORTE_COBRO'];
   //Define la lista completa de registro
   public ventasComprobantes = new MatTableDataSource([]);
@@ -333,6 +339,7 @@ export class CobranzasComponent implements OnInit {
       elemento.checked = false;
       this.abrirCobranzaItemDialogo(indice);
     }
+    this.calcularTotalItemsYTotalDeuda();
     // if ($event.checked) {
     //   this.activarActualizarElemento(elemento, indice);
     //   this.formularioVtaCpteItemNC.get('ventaTipoItem').setValue(this.resultadosMotivos[0]);
@@ -391,7 +398,9 @@ export class CobranzasComponent implements OnInit {
     const dialogRef = this.dialog.open(componente, {
       width: '95%',
       maxWidth: '95%',
-      data: {}
+      data: {
+        cliente: this.formulario.value.cliente,
+      }
     });
     dialogRef.afterClosed().subscribe(resultado => {
       console.log(resultado);
@@ -423,17 +432,32 @@ export class CobranzasComponent implements OnInit {
   }
   //Abre DetalleRetencionesDialogoComponent
   public abrirRetencionDialogo(): void {
-    this.medioPago.reset();
     const dialogRef = this.dialog.open(DetalleRetencionesDialogoComponent, {
       width: '95%',
       maxWidth: '95%',
       data: {
+        listaCobranzaRetenciones:
+          this.formulario.value.cobranzaRetenciones ? this.formulario.value.cobranzaRetenciones : null,
       }
     });
     dialogRef.afterClosed().subscribe(resultado => {
       console.log(resultado);
       this.formulario.get('cobranzaRetenciones').setValue(resultado);
+      this.calcularImpTotalCobranzaRetenciones();
     });
+  }
+  //Calcula el total de importes de la lista 'cobranzaRetenciones'
+  private calcularImpTotalCobranzaRetenciones() {
+    let importeTotal = 0;
+    if (this.formulario.get('cobranzaRetenciones').value.length > 0) {
+      this.formulario.get('cobranzaRetenciones').value.forEach(
+        item => {
+          importeTotal += Number(item.importe);
+        }
+      )
+    }
+    console.log(importeTotal);
+    this.totalCobranzaRetenciones.setValue(this.appService.setDecimales(String(importeTotal), 2));
   }
 
   //Obtiene una lista de compras comprobantes por empresa y cliente
@@ -454,18 +478,30 @@ export class CobranzasComponent implements OnInit {
   //     }
   //   );
   // }
-  //Determina la cantidad de elementos de la tabla y el total de deuda
+  /* Determina la cantidad de elementos de la tabla y el total de deuda, 
+     tanto para registros seleccionados como para todos */
   private calcularTotalItemsYTotalDeuda(): void {
+    //suma el importesaldo de todos los registros
     let deuda = 0;
+    //suma el importe saldo de los registros seleccionados de la lista
+    let deudaItemsSeleccionados = 0;
+    //cantidad de items seleccionados de la lista
+    let cantidadItemSeleccionados = 0;
     this.ventasComprobantes.data.forEach((elemento) => {
       if (elemento.tipoComprobante.id == 3 || elemento.tipoComprobante.id == 28) {
         deuda -= elemento.importeSaldo;
+        elemento.checked ?
+          [deudaItemsSeleccionados -= elemento.importeSaldo, cantidadItemSeleccionados += 1] : '';
       } else {
         deuda += elemento.importeSaldo;
+        elemento.checked ? [deudaItemsSeleccionados += elemento.importeSaldo, cantidadItemSeleccionados += 1] : '';
       }
-    });
-    // this.formulario.get('items2').setValue(this.ventasComprobantes.data.length);
-    // this.formulario.get('totalDeuda').setValue(this.establecerCeros(deuda));
+    })
+    //Establece los valores para los controles que corresponden al total de items seleccionados de la tabla
+    this.totalesItemSeleccionados.setValue(cantidadItemSeleccionados);
+    this.totalDeudaSeleccionados.setValue(this.appService.establecerDecimales(
+      deudaItemsSeleccionados == 0 ? '0.00' : deudaItemsSeleccionados, 2));
+    //Establece los valores para los controles que corresponden al total de items de la tabla
     this.totalesItems.setValue(this.ventasComprobantes.data.length);
     this.totalDeuda.setValue(this.appService.establecerDecimales(deuda, 2));
   }

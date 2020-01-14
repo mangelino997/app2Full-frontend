@@ -50,11 +50,11 @@
             <div class="row justify-content-center">
                 <div class="col-md-1">
                     <button id="idBotonConfirmar" mat-raised-button color="primary"
-                        [mat-dialog-close]="formulario.value" [disabled]="listaCompleta.data">Confirmar</button>
+                        [mat-dialog-close]="formulario.value" [disabled]="!formulario.value">Confirmar</button>
                 </div>
                 <div class="col-md-1">
                     <button id="idBotonCerrar" mat-raised-button color="secondary"
-                        [mat-dialog-close]="[]">Cerrar</button>
+                        [mat-dialog-close]="null">Cerrar</button>
                 </div>
             </div>
         </form>
