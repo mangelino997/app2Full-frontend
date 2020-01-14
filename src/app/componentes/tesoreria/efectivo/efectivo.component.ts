@@ -16,7 +16,7 @@ export class EfectivoComponent implements OnInit {
   ngOnInit() {
   }
   //Cierra el dialogo
-  public cerrar(): void {
-    this.dialogRef.close();
+  public cerrar(importe): void {
+    this.dialogRef.close(importe);
   }
 }

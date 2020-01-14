@@ -218,6 +218,7 @@ export class AppService {
         decimalLimit: decimalLimite,
         decimalSymbol: '.',
         allowLeadingZeroes: true,
+        allowNegative: true
       }),
       guide: false,
       keepCharPositions: true

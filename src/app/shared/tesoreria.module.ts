@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, MatSelectModule, MatProgressBarModule, MatButtonModule, MatIconModule, MatTooltipModule, MatListModule, MatDialogModule } from '@angular/material';
+import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, MatSelectModule, MatProgressBarModule, MatButtonModule, MatIconModule, MatTooltipModule, MatListModule, MatDialogModule, MatCheckboxModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TextMaskModule } from 'angular2-text-mask';
 import { AnticiposComponent } from '../componentes/tesoreria/anticipos/anticipos.component';
@@ -60,7 +60,8 @@ import { TransferenciaBancariaComponent } from '../componentes/tesoreria/transfe
     MatTooltipModule,
     MatListModule,
     MatDialogModule,
-    TextMaskModule
+    TextMaskModule,
+    MatCheckboxModule
   ],
   entryComponents: [
     AnticiposComponent,

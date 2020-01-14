@@ -7,6 +7,8 @@ export class OrdenPago {
     public formularioTotales: FormGroup;
     //Define formulario de Integración
     public formularioIntegrar: FormGroup;
+    //Define formulario de medio de pago
+    public formularioMedioPago: FormGroup;
     //constructor
     constructor() {
         // crear el formulario para la seccion de modulos
@@ -37,6 +39,11 @@ export class OrdenPago {
             pendienteIntegrar: new FormControl(),
             retenciones: new FormControl(),
             totalIntegrado: new FormControl()
+        });
+        //Establece el formulario de medio de pago
+        this.formularioMedioPago = new FormGroup({
+            nombre: new FormControl(),
+            importe: new FormControl()
         });
     }
 }

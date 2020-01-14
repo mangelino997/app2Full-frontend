@@ -6,13 +6,13 @@
         <div class="col-md-4">
             <div class="form-group has-float-label">
                 <label for="idImporte" class="codigo-label">Importe *</label>
-                <input id="idImporte" type="text" [formControl]="importe" 
+                <input id="idImporte" type="text" [formControl]="importe" autocomplete="off"
                     class="form-control form-control-sm number-right">
             </div>
         </div>
     </div>
     <div class="row justify-content-center">
-        <button mat-raised-button color="primary">Confirmar</button>
-        <button class="margin-left-3" mat-raised-button (click)="cerrar()">Cancelar</button>
+        <button mat-raised-button color="primary" (click)="cerrar(importe.value)">Confirmar</button>
+        <button class="margin-left-3" mat-raised-button (click)="cerrar(0)">Cancelar</button>
     </div>
 </div>
