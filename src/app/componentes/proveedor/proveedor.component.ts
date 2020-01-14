@@ -474,6 +474,7 @@ export class ProveedorComponent implements OnInit {
   //Establece valores al seleccionar una pestania
   public seleccionarPestania(id, nombre) {
     this.indiceSeleccionado = id;
+    this.seleccionarOpcion(8, 0);
     this.activeLink = nombre;
     this.reestablecerFormulario(null);
     switch (id) {
@@ -767,7 +768,6 @@ export class ProveedorComponent implements OnInit {
     this.banco.setValue(elemento.sucursalBanco.banco);
     this.formularioCuentaBancaria.patchValue(elemento);
     this.establecerSucursal(elemento.sucursalBanco.banco.id, elemento.sucursalBanco);
-    this.establecerModCamposCuentaBancaria();
     document.getElementById("idBanco").focus();
   }
   //Actualiza el registro, seleccionado, en la lista - tabla
