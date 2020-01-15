@@ -41,6 +41,8 @@ export class AfipConceptoSueldoComponent implements OnInit {
   public resultadosTiposConcepto: Array<any> = [];
   //Define la lista de afipConceptoSueldoGrupo
   public tipoCptoSueldo: FormControl = new FormControl();
+  //Define la lista de afipConceptoSueldoGrupo para la pestaña 'Listar'
+  public tipoCptoSueldoFiltro: FormControl = new FormControl();
   //Define un formulario para validaciones de campos
   public formulario: FormGroup;
   //Define un formulario para validaciones de campos
@@ -184,8 +186,7 @@ export class AfipConceptoSueldoComponent implements OnInit {
         this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
         break;
       case 5:
-        this.formulario.get('afipConceptoSueldoGrupo').enable();
-        this.tipoCptoSueldo.enable();
+        this.tipoCptoSueldoFiltro.value ? [this.cambioTipoConcepto(), this.listarPorFiltro()] : '';
         break;
       default:
         break;
@@ -319,17 +320,10 @@ export class AfipConceptoSueldoComponent implements OnInit {
   private reestablecerFormulario(id) {
     this.resultados = [];
     this.formulario.reset();
-    this.formularioFiltro.reset();
-    this.tipoCptoSueldo.reset();
     this.autocompletado.reset();
-    this.vaciasListas();
     id ? this.formulario.get('id').setValue(id) : this.formulario.get('id').setValue(this.ultimoId);
   }
-  //Vacía las listas
-  private vaciasListas() {
-    this.resultadosAfipCptoSueldoGrupos = [];
-    this.listaCompleta.data = [];
-  }
+
   //Valida que el campo 'Codigo AFIP' tenga como minimo y máx 6 carácteres
   public validarCodigoAFIP() {
     let codigoAFIP = this.formulario.get('codigoAfip').value;
@@ -402,13 +396,14 @@ export class AfipConceptoSueldoComponent implements OnInit {
   }
   //Controla el cambio en select 'Tipo de Concepto'. Obtiene los grupos de AFIP concepto
   public cambioTipoConcepto() {
+    let idTipoConcepto = null;
     if (this.indiceSeleccionado == 5) {
-      this.listaCompleta.data = [];
-      this.formularioFiltro.get('afipConceptoSueldoGrupo').reset();
+      idTipoConcepto = this.tipoCptoSueldoFiltro.value.id;
     } else {
       this.formulario.get('afipConceptoSueldoGrupo').reset();
+      idTipoConcepto = this.tipoCptoSueldo.value.id;
     }
-    this.afipGrupoConcepto.listarPorTipoConceptoSueldo(this.tipoCptoSueldo.value.id).subscribe(
+    this.afipGrupoConcepto.listarPorTipoConceptoSueldo(idTipoConcepto).subscribe(
       res => {
         this.resultadosAfipCptoSueldoGrupos = res.json();
         this.resultadosAfipCptoSueldoGrupos.length == 0 ? this.toastr.warning("Sin registros para AFIP Grupo Concepto.") : '';

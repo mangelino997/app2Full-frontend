@@ -78,7 +78,7 @@
           <div class="col-md-3">
             <div class="form-group has-float-label">
               <label for="idTipoConcepto" class="tamanio-label">Tipo de Concepto * </label>
-              <mat-select id="idTipoConcepto" class="form-control form-control-sm" [formControl]="tipoCptoSueldo"
+              <mat-select id="idTipoConcepto" class="form-control form-control-sm" [formControl]="tipoCptoSueldoFiltro"
                 [compareWith]="compareFn" (selectionChange)="cambioTipoConcepto()">
                 <mat-option *ngFor="let item of resultadosTiposConcepto" [value]="item">
                   {{item.nombre}}
@@ -98,7 +98,7 @@
             </div>
           </div>
           <div class="col-md-1">
-            <button id="idBotonFiltrar" *ngIf="mostrarBoton && !show" mat-raised-button color="primary" formnovalidate
+            <button id="idBotonFiltrar" mat-raised-button color="primary" formnovalidate
               (click)="listarPorFiltro()" [disabled]="!formularioFiltro.valid">Buscar
             </button>
           </div>
