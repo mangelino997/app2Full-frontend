@@ -96,7 +96,7 @@ export class AfipConceptoSueldoComponent implements OnInit {
     //Define el formulario de la pestaña Listar y sus validaciones
     this.formularioFiltro = new FormGroup({
       afipConceptoSueldoGrupo: new FormControl('', Validators.required)
-    });
+    })
     /* Obtiene todos los listados */
     this.inicializar(this.appService.getRol().id, this.appService.getSubopcion());
     //Establece los valores de la primera pestania activa
@@ -108,7 +108,6 @@ export class AfipConceptoSueldoComponent implements OnInit {
     this.servicio.inicializar(idRol, idSubopcion).subscribe(
       res => {
         let respuesta = res.json();
-        console.log(respuesta);
         //Establece las pestanias
         this.pestanias = respuesta.pestanias;
         //Establece demas datos necesarios
@@ -124,7 +123,13 @@ export class AfipConceptoSueldoComponent implements OnInit {
     )
   }
   //Establece el formulario al seleccionar elemento del autocompletado
-  public cambioAutocompletado(elemento) {
+  public cambioAutocompletado() {
+    let elemento = this.autocompletado.value;
+    //establece el tipo de concepto
+    this.tipoCptoSueldo.setValue(elemento.afipConceptoSueldoGrupo.tipoConceptoSueldo);
+    //obtiene la lista de AFIP grupo concepto para el tipo concepto
+    this.cambioTipoConcepto();
+    //establece el formulario
     this.formulario.patchValue(elemento);
   }
   //Formatea el valor del autocompletado
@@ -149,7 +154,13 @@ export class AfipConceptoSueldoComponent implements OnInit {
     this.soloLectura = soloLectura;
     this.mostrarBoton = boton;
     this.indiceSeleccionado != 1 ? this.formulario.reset() : '';
-    this.soloLectura ? this.formulario.get('afipConceptoSueldoGrupo').disable() : this.formulario.get('afipConceptoSueldoGrupo').enable();
+    if (this.soloLectura) {
+      this.formulario.get('afipConceptoSueldoGrupo').disable();
+      this.tipoCptoSueldo.disable();
+    } else {
+      this.formulario.get('afipConceptoSueldoGrupo').enable();
+      this.tipoCptoSueldo.enable();
+    }
     setTimeout(function () {
       document.getElementById(componente).focus();
     }, 20);
@@ -173,7 +184,8 @@ export class AfipConceptoSueldoComponent implements OnInit {
         this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
         break;
       case 5:
-        this.listarPorFiltro();
+        this.formulario.get('afipConceptoSueldoGrupo').enable();
+        this.tipoCptoSueldo.enable();
         break;
       default:
         break;
@@ -301,8 +313,16 @@ export class AfipConceptoSueldoComponent implements OnInit {
   private reestablecerFormulario(id) {
     this.resultados = [];
     this.formulario.reset();
+    this.formularioFiltro.reset();
+    this.tipoCptoSueldo.reset();
     this.autocompletado.reset();
+    this.vaciasListas();
     id ? this.formulario.get('id').setValue(id) : this.formulario.get('id').setValue(this.ultimoId);
+  }
+  //Vacía las listas
+  private vaciasListas() {
+    this.resultadosAfipCptoSueldoGrupos = [];
+    this.listaCompleta.data = [];
   }
   //Valida que el campo 'Codigo AFIP' tenga como minimo y máx 6 carácteres
   public validarCodigoAFIP() {
@@ -324,13 +344,13 @@ export class AfipConceptoSueldoComponent implements OnInit {
   public activarConsultar(elemento) {
     this.seleccionarPestania(2, this.pestanias[1].nombre);
     this.autocompletado.setValue(elemento);
-    this.formulario.patchValue(elemento);
+    this.cambioAutocompletado();
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
     this.seleccionarPestania(3, this.pestanias[2].nombre);
     this.autocompletado.setValue(elemento);
-    this.formulario.patchValue(elemento);
+    this.cambioAutocompletado();
   }
   //Maneja los evento al presionar una tacla (para pestanias y opciones)
   public manejarEvento(keycode) {
@@ -374,12 +394,14 @@ export class AfipConceptoSueldoComponent implements OnInit {
     }
     this.reporteServicio.abrirDialogo(datos);
   }
-  //Muestra el nombre de Tipo Concepto de AFIP Grupo Concepto seleccionado en pestaña 'Listar'  
-  public establecerTipoConcepto() {
-    this.tipoCptoSueldo.setValue(this.formularioFiltro.get('afipConceptoSueldoGrupo').value.tipoConceptoSueldo.nombre);
-  }
   //Controla el cambio en select 'Tipo de Concepto'. Obtiene los grupos de AFIP concepto
   public cambioTipoConcepto() {
+    if (this.indiceSeleccionado == 5) {
+      this.listaCompleta.data = [];
+      this.formularioFiltro.get('afipConceptoSueldoGrupo').reset();
+    } else {
+      this.formulario.get('afipConceptoSueldoGrupo').reset();
+    }
     this.afipGrupoConcepto.listarPorTipoConceptoSueldo(this.tipoCptoSueldo.value.id).subscribe(
       res => {
         this.resultadosAfipCptoSueldoGrupos = res.json();

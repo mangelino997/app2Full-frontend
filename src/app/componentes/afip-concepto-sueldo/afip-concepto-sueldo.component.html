@@ -17,8 +17,9 @@
           <input id="idAutocompletado" class="form-control form-control-sm color-busqueda" type="text" matInput
             [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off"
             (blur)="verificarSeleccion(autocompletado)" placeholder="Por Nombre">
-          <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)">
-            <mat-option *ngFor="let item of resultados" [value]="item" (onSelectionChange)="cambioAutocompletado(item)">
+          <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)"
+            (optionSelected)="cambioAutocompletado()">
+            <mat-option *ngFor="let item of resultados" [value]="item">
               {{item.nombre}}
             </mat-option>
           </mat-autocomplete>
@@ -29,9 +30,8 @@
         </div>
         <div class="form-group has-float-label">
           <label for="idConceptoGrupo" class="tamanio-label">Tipo de Concepto * </label>
-          <mat-select id="idConceptoGrupo" class="form-control form-control-sm"
-          [formControl]="tipoCptoSueldo" [compareWith]="compareFn"
-            (selectionChange)="cambioTipoConcepto()">
+          <mat-select id="idConceptoGrupo" class="form-control form-control-sm" [formControl]="tipoCptoSueldo"
+            [compareWith]="compareFn" (selectionChange)="cambioTipoConcepto()">
             <mat-option *ngFor="let item of resultadosTiposConcepto" [value]="item">
               {{item.nombre}}
             </mat-option>
@@ -46,11 +46,6 @@
             </mat-option>
           </mat-select>
         </div>
-        <!-- <div class="form-group has-float-label">
-          <label id="labelTipoConcepto" for="idTipoConcepto" class="tamanio-label">Tipo de Concepto *</label>
-          <input id="idTipoConcepto" type="text" [formControl]="tipoCptoSueldo" autocomplete="off"
-            class="form-control form-control-sm upper-case" readonly>
-        </div> -->
         <div class="form-group has-float-label">
           <label id="labelNombre" for="idNombre" class="tamanio-label">Descripción *</label>
           <input id="idNombre" type="text" formControlName="nombre" autocomplete="off"
@@ -82,21 +77,24 @@
         <div class="row">
           <div class="col-md-3">
             <div class="form-group has-float-label">
-              <label for="idConceptoGrupo" class="tamanio-label">Concepto Grupo AFIP * </label>
-              <mat-select id="idConceptoGrupo" class="form-control form-control-sm"
-                formControlName="afipConceptoSueldoGrupo" [compareWith]="compareFn"
-                (selectionChange)="establecerTipoConcepto()">
-                <mat-option *ngFor="let item of resultadosAfipCptoSueldoGrupos" [value]="item">
+              <label for="idTipoConcepto" class="tamanio-label">Tipo de Concepto * </label>
+              <mat-select id="idTipoConcepto" class="form-control form-control-sm" [formControl]="tipoCptoSueldo"
+                [compareWith]="compareFn" (selectionChange)="cambioTipoConcepto()">
+                <mat-option *ngFor="let item of resultadosTiposConcepto" [value]="item">
                   {{item.nombre}}
                 </mat-option>
               </mat-select>
             </div>
           </div>
-          <div class="col-md-2">
+          <div class="col-md-3">
             <div class="form-group has-float-label">
-              <label id="labelTipoConcepto" for="idTipoConcepto" class="tamanio-label">Tipo de Concepto *</label>
-              <input id="idTipoConcepto" type="text" [formControl]="tipoCptoSueldo" autocomplete="off"
-                class="form-control form-control-sm upper-case" readonly>
+              <label for="idConceptoGrupo" class="tamanio-label">AFIP Grupo Concepto * </label>
+              <mat-select id="idConceptoGrupo" class="form-control form-control-sm"
+                formControlName="afipConceptoSueldoGrupo" [compareWith]="compareFn">
+                <mat-option *ngFor="let item of resultadosAfipCptoSueldoGrupos" [value]="item">
+                  {{item.nombre}}
+                </mat-option>
+              </mat-select>
             </div>
           </div>
           <div class="col-md-1">
