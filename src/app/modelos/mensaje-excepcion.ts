@@ -31,6 +31,8 @@ export class MensajeExcepcion {
 
     public static REGISTRO_EXISTENTE_LISTA = "Registro existente en lista";
 
+    public static SELECCIONAR_PROVEEDOR = "Seleccione un proveedor"
+
 
     /*
     * FIN ERRORES GENERALES

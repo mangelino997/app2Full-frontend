@@ -3,7 +3,6 @@ import { NgModule } from '@angular/core';
 import { CobranzasRoutingModule } from './cobranzas-routing.module';
 import { CobranzasComponent, ClienteGrupoDialogo } from 'src/app/componentes/cobranzas/cobranzas.component';
 import { CobranzaService } from 'src/app/servicios/cobranza.service';
-import { TesoreriaModule } from 'src/app/shared/tesoreria.module';
 import { Cobranza } from 'src/app/modelos/cobranza';
 import { CobranzaMedioPago } from 'src/app/modelos/cobranzaMedioPago';
 import { CobranzaItem } from 'src/app/modelos/cobranzaItem';
@@ -18,11 +17,9 @@ import { CobranzaAnticiposService } from 'src/app/servicios/cobranza-anticipos.s
   declarations: [
     CobranzasComponent,
     ClienteGrupoDialogo,
-
   ],
   imports: [
     CobranzasRoutingModule,
-    TesoreriaModule,
     CommonModule,
     MatTabsModule,
     FormsModule,

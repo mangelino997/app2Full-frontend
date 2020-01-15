@@ -7,15 +7,15 @@ import { ClienteService } from 'src/app/servicios/cliente.service';
 import { VentaComprobanteService } from 'src/app/servicios/venta-comprobante.service';
 import { CobranzaService } from 'src/app/servicios/cobranza.service';
 import { MatTableDataSource, MatSort, MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { AnticiposComponent } from '../tesoreria/anticipos/anticipos.component';
-import { EfectivoComponent } from '../tesoreria/efectivo/efectivo.component';
-import { ChequesCarteraComponent } from '../tesoreria/cheques-cartera/cheques-cartera.component';
-import { ChequesElectronicosComponent } from '../tesoreria/cheques-electronicos/cheques-electronicos.component';
-import { ChequesPropiosComponent } from '../tesoreria/cheques-propios/cheques-propios.component';
-import { TransferenciaBancariaComponent } from '../tesoreria/transferencia-bancaria/transferencia-bancaria.component';
-import { DocumentosComponent } from '../tesoreria/documentos/documentos.component';
-import { OtrasCuentasComponent } from '../tesoreria/otras-cuentas/otras-cuentas.component';
-import { OtrasMonedasComponent } from '../tesoreria/otras-monedas/otras-monedas.component';
+import { PagoAnticiposComponent } from '../orden-pago/pago-anticipos/pago-anticipos.component';
+import { PagoEfectivoComponent } from '../orden-pago/pago-efectivo/pago-efectivo.component';
+import { PagoChequesCarteraComponent } from '../orden-pago/pago-cheques-cartera/pago-cheques-cartera.component';
+import { PagoChequesElectronicosComponent } from '../orden-pago/pago-cheques-electronicos/pago-cheques-electronicos.component';
+import { PagoChequesPropiosComponent } from '../orden-pago/pago-cheques-propios/pago-cheques-propios.component';
+import { PagoTransferenciaBancariaComponent } from '../orden-pago/pago-transferencia-bancaria/pago-transferencia-bancaria.component';
+import { PagoDocumentosComponent } from '../orden-pago/pago-documentos/pago-documentos.component';
+import { PagoOtrasCuentasComponent } from '../orden-pago/pago-otras-cuentas/pago-otras-cuentas.component';
+import { PagoOtrasMonedasComponent } from '../orden-pago/pago-otras-monedas/pago-otras-monedas.component';
 import { Subscription } from 'rxjs';
 import { LoaderState } from 'src/app/modelos/loader';
 import { Cobranza } from 'src/app/modelos/cobranza';
@@ -364,31 +364,31 @@ export class CobranzasComponent implements OnInit {
     elemento = elemento.replace(new RegExp(/[òó]/g), "o");
     switch (elemento) {
       case 'anticipos':
-        this.abrirDialogo(AnticiposComponent);
+        this.abrirDialogo(PagoAnticiposComponent);
         break;
       case 'efectivo':
-        this.abrirDialogo(EfectivoComponent);
+        this.abrirDialogo(PagoEfectivoComponent);
         break;
       case 'cheques':
-        this.abrirDialogo(ChequesCarteraComponent);
+        this.abrirDialogo(PagoChequesCarteraComponent);
         break;
       case 'chequeselectronicos':
-        this.abrirDialogo(ChequesElectronicosComponent);
+        this.abrirDialogo(PagoChequesElectronicosComponent);
         break;
       case 'chequespropios':
-        this.abrirDialogo(ChequesPropiosComponent);
+        this.abrirDialogo(PagoChequesPropiosComponent);
         break;
       case 'transferenciabancaria':
-        this.abrirDialogo(TransferenciaBancariaComponent);
+        this.abrirDialogo(PagoTransferenciaBancariaComponent);
         break;
       case 'documentos':
-        this.abrirDialogo(DocumentosComponent);
+        this.abrirDialogo(PagoDocumentosComponent);
         break;
       case 'otrascuentas':
-        this.abrirDialogo(OtrasCuentasComponent);
+        this.abrirDialogo(PagoOtrasCuentasComponent);
         break;
       case 'otrasmonedas':
-        this.abrirDialogo(OtrasMonedasComponent);
+        this.abrirDialogo(PagoOtrasMonedasComponent);
         break;
     }
   }

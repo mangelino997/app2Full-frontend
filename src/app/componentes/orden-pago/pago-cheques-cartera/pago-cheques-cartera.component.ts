@@ -3,11 +3,11 @@ import { FormGroup, FormControl } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 
 @Component({
-  selector: 'app-transferencia-bancaria',
-  templateUrl: './transferencia-bancaria.component.html',
-  styleUrls: ['./transferencia-bancaria.component.css']
+  selector: 'app-pago-cheques-cartera',
+  templateUrl: './pago-cheques-cartera.component.html',
+  styleUrls: ['./pago-cheques-cartera.component.css']
 })
-export class TransferenciaBancariaComponent implements OnInit {
+export class PagoChequesCarteraComponent implements OnInit {
   //Define el formulario
   public formulario: FormGroup;
   //Define el total
@@ -15,16 +15,18 @@ export class TransferenciaBancariaComponent implements OnInit {
   //Define variable para mostrar o no el progress bar
   public show: boolean = false;
   //Defiene la columnas de la tabla
-  public columnas: Array<string> = ['CUENTA_BANCARIA', 'FECHA', 'IMPORTE'];
+  public columnas: Array<string> = ['BANCO', 'NUMERO_CHEQUE', 'FECHA_PAGO', 'CUIT_EMISOR', 'IMPORTE'];
   //Define el constructor de la clase
-  constructor(public dialogRef: MatDialogRef<TransferenciaBancariaComponent>, @Inject(MAT_DIALOG_DATA) public data) { }
+  constructor(public dialogRef: MatDialogRef<PagoChequesCarteraComponent>, @Inject(MAT_DIALOG_DATA) public data) { }
   //Al inicializarse el componente
   ngOnInit() {
     //Establece el formulario
     this.formulario = new FormGroup({
-      cuentaBancaria: new FormControl(),
-      fecha: new FormControl(),
-      importe: new FormControl()
+      fechaPagoDesde: new FormControl(),
+      fechaPagoHasta: new FormControl(),
+      importeDesde: new FormControl(),
+      importeHasta: new FormControl(),
+      numeroCheque: new FormControl()
     });
   }
   //Cierra el dialogo

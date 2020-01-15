@@ -3,11 +3,11 @@ import { FormGroup, FormControl } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 
 @Component({
-  selector: 'app-cheques-propios',
-  templateUrl: './cheques-propios.component.html',
-  styleUrls: ['./cheques-propios.component.css']
+  selector: 'app-pago-cheques-propios',
+  templateUrl: './pago-cheques-propios.component.html',
+  styleUrls: ['./pago-cheques-propios.component.css']
 })
-export class ChequesPropiosComponent implements OnInit {
+export class PagoChequesPropiosComponent implements OnInit {
   //Define el formulario
   public formulario:FormGroup;
   //Define el total
@@ -17,7 +17,7 @@ export class ChequesPropiosComponent implements OnInit {
   //Defiene la columnas de la tabla
   public columnas:Array<string> = ['CUENTA_BANCARIA', 'NUMERO_CHEQUE', 'FECHA_PAGO', 'IMPORTE'];
   //Define el constructor de la clase
-  constructor(public dialogRef: MatDialogRef<ChequesPropiosComponent>, @Inject(MAT_DIALOG_DATA) public data) { }
+  constructor(public dialogRef: MatDialogRef<PagoChequesPropiosComponent>, @Inject(MAT_DIALOG_DATA) public data) { }
   //Al inicializarse el componente
   ngOnInit() {
     //Establece el formulario

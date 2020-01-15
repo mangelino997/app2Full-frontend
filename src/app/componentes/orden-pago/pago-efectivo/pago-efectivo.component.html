@@ -7,7 +7,8 @@
             <div class="form-group has-float-label">
                 <label for="idImporte" class="codigo-label">Importe *</label>
                 <input id="idImporte" type="text" [formControl]="importe" autocomplete="off"
-                    class="form-control form-control-sm number-right">
+                    class="form-control form-control-sm number-right" [textMask]="mascararImporte(10, 2)"
+                    placeholder="$ 0.00" (blur)="establecerDecimales(importe, 2)">
             </div>
         </div>
     </div>

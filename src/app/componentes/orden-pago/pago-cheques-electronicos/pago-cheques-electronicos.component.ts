@@ -3,11 +3,11 @@ import { FormGroup, FormControl } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 
 @Component({
-  selector: 'app-cheques-electronicos',
-  templateUrl: './cheques-electronicos.component.html',
-  styleUrls: ['./cheques-electronicos.component.css']
+  selector: 'app-pago-cheques-electronicos',
+  templateUrl: './pago-cheques-electronicos.component.html',
+  styleUrls: ['./pago-cheques-electronicos.component.css']
 })
-export class ChequesElectronicosComponent implements OnInit {
+export class PagoChequesElectronicosComponent implements OnInit {
   //Define el formulario
   public formulario: FormGroup;
   //Define el total
@@ -17,7 +17,7 @@ export class ChequesElectronicosComponent implements OnInit {
   //Defiene la columnas de la tabla
   public columnas: Array<string> = ['BANCO', 'NUMERO_CHEQUE', 'FECHA_PAGO', 'CUIT_EMISOR', 'IMPORTE'];
   //Define el constructor de la clase
-  constructor(public dialogRef: MatDialogRef<ChequesElectronicosComponent>, @Inject(MAT_DIALOG_DATA) public data) { }
+  constructor(public dialogRef: MatDialogRef<PagoChequesElectronicosComponent>, @Inject(MAT_DIALOG_DATA) public data) { }
   //Al inicializarse el componente
   ngOnInit() {
     //Establece el formulario

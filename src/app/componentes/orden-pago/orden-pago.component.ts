@@ -10,16 +10,17 @@ import { FormGroup, FormControl } from '@angular/forms';
 import { ProveedorService } from 'src/app/servicios/proveedor.service';
 import { OrdenPago } from 'src/app/modelos/orden-pago';
 import { CompraComprobanteService } from 'src/app/servicios/compra-comprobante.service';
-import { AnticiposComponent } from '../tesoreria/anticipos/anticipos.component';
-import { EfectivoComponent } from '../tesoreria/efectivo/efectivo.component';
-import { ChequesCarteraComponent } from '../tesoreria/cheques-cartera/cheques-cartera.component';
-import { ChequesElectronicosComponent } from '../tesoreria/cheques-electronicos/cheques-electronicos.component';
-import { ChequesPropiosComponent } from '../tesoreria/cheques-propios/cheques-propios.component';
-import { TransferenciaBancariaComponent } from '../tesoreria/transferencia-bancaria/transferencia-bancaria.component';
-import { DocumentosComponent } from '../tesoreria/documentos/documentos.component';
-import { OtrasCuentasComponent } from '../tesoreria/otras-cuentas/otras-cuentas.component';
-import { OtrasMonedasComponent } from '../tesoreria/otras-monedas/otras-monedas.component';
+import { PagoAnticiposComponent } from './pago-anticipos/pago-anticipos.component';
+import { PagoEfectivoComponent } from './pago-efectivo/pago-efectivo.component';
+import { PagoChequesCarteraComponent } from './pago-cheques-cartera/pago-cheques-cartera.component';
+import { PagoChequesElectronicosComponent } from './pago-cheques-electronicos/pago-cheques-electronicos.component';
+import { PagoChequesPropiosComponent } from './pago-cheques-propios/pago-cheques-propios.component';
+import { PagoTransferenciaBancariaComponent } from './pago-transferencia-bancaria/pago-transferencia-bancaria.component';
+import { PagoDocumentosComponent } from './pago-documentos/pago-documentos.component';
+import { PagoOtrasCuentasComponent } from './pago-otras-cuentas/pago-otras-cuentas.component';
+import { PagoOtrasMonedasComponent } from './pago-otras-monedas/pago-otras-monedas.component';
 import { SelectionModel } from '@angular/cdk/collections';
+import { MensajeExcepcion } from 'src/app/modelos/mensaje-excepcion';
 
 @Component({
   selector: 'app-orden-pago',
@@ -213,31 +214,36 @@ export class OrdenPagoComponent implements OnInit {
     elemento = elemento.replace(new RegExp(/[òó]/g), "o");
     switch(elemento) {
       case 'anticipos':
-        this.abrirDialogo(AnticiposComponent, 1);
+        if(this.formulario.get('proveedor').value) {
+          this.abrirDialogo(PagoAnticiposComponent, 1);
+        } else {
+          this.medioPago.reset();
+          this.toastr.error(MensajeExcepcion.SELECCIONAR_PROVEEDOR);
+        }
         break;
       case 'efectivo':
-        this.abrirDialogo(EfectivoComponent, 2);
+        this.abrirDialogo(PagoEfectivoComponent, 2);
         break;
       case 'cheques':
-        this.abrirDialogo(ChequesCarteraComponent, 3);
+        this.abrirDialogo(PagoChequesCarteraComponent, 3);
         break;
       case 'chequeselectronicos':
-        this.abrirDialogo(ChequesElectronicosComponent, 4);
+        this.abrirDialogo(PagoChequesElectronicosComponent, 4);
         break;
       case 'chequespropios':
-        this.abrirDialogo(ChequesPropiosComponent, 5);
+        this.abrirDialogo(PagoChequesPropiosComponent, 5);
         break;
       case 'transferenciabancaria':
-        this.abrirDialogo(TransferenciaBancariaComponent, 6);
+        this.abrirDialogo(PagoTransferenciaBancariaComponent, 6);
         break;
       case 'documentos':
-        this.abrirDialogo(DocumentosComponent, 7);
+        this.abrirDialogo(PagoDocumentosComponent, 7);
         break;
       case 'otrascuentas':
-        this.abrirDialogo(OtrasCuentasComponent, 8);
+        this.abrirDialogo(PagoOtrasCuentasComponent, 8);
         break;
       case 'otrasmonedas':
-        this.abrirDialogo(OtrasMonedasComponent, 9);
+        this.abrirDialogo(PagoOtrasMonedasComponent, 9);
         break;
     }
   }
@@ -245,21 +251,15 @@ export class OrdenPagoComponent implements OnInit {
   private abrirDialogo(componente, opcion): void {
     this.medioPago.reset();
     const dialogRef = this.dialog.open(componente, {
-      width: '50%',
+      width: '60%',
       maxWidth: '95%',
-      data: { }
+      data: { 
+        idProveedor: this.formulario.get('proveedor').value.id
+      }
     });
-    dialogRef.afterClosed().subscribe(resultado => {
-      if(resultado != 0) {
-        let formulario = {
-          nombre: null,
-          importe: 0
-        }
-        switch(opcion) {
-          case 2:
-            formulario.nombre = 'Efectivo';
-            formulario.importe = resultado;
-        }
+    dialogRef.afterClosed().subscribe(formulario => {
+      console.log(formulario);
+      if(formulario.importe != 0) {
         this.mediosPagosSeleccionados.push(formulario);
         //Calcula importe Pendiente de Integrar
         this.formularioIntegrar.get('pendienteIntegrar').setValue(this.calcularPendienteIntegrar());
@@ -351,8 +351,8 @@ export class OrdenPagoComponent implements OnInit {
 
   }
   //Mascara un importe decimal
-  public mascararImporte(limit, decimalLimite) {
-    return this.appService.mascararImporte(limit, decimalLimite);
+  public mascararImporte(limite, decimalLimite) {
+    return this.appService.mascararImporte(limite, decimalLimite);
   }
   //Establece los ceros en los numeros flotantes en tablas
   public establecerCeros(elemento) {

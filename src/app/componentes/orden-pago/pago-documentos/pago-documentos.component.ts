@@ -3,11 +3,11 @@ import { FormGroup, FormControl } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 
 @Component({
-  selector: 'app-otras-monedas',
-  templateUrl: './otras-monedas.component.html',
-  styleUrls: ['./otras-monedas.component.css']
+  selector: 'app-pago-documentos',
+  templateUrl: './pago-documentos.component.html',
+  styleUrls: ['./pago-documentos.component.css']
 })
-export class OtrasMonedasComponent implements OnInit {
+export class PagoDocumentosComponent implements OnInit {
   //Define el formulario
   public formulario: FormGroup;
   //Define el total
@@ -15,16 +15,16 @@ export class OtrasMonedasComponent implements OnInit {
   //Define variable para mostrar o no el progress bar
   public show: boolean = false;
   //Defiene la columnas de la tabla
-  public columnas: Array<string> = ['MONEDA', 'CAMBIO', 'IMPORTE'];
+  public columnas: Array<string> = ['DOCUMENTO', 'NUMERO', 'FECHA_PAGO', 'IMPORTE'];
   //Define el constructor de la clase
-  constructor(public dialogRef: MatDialogRef<OtrasMonedasComponent>, @Inject(MAT_DIALOG_DATA) public data) { }
+  constructor(public dialogRef: MatDialogRef<PagoDocumentosComponent>, @Inject(MAT_DIALOG_DATA) public data) { }
   //Al inicializarse el componente
   ngOnInit() {
     //Establece el formulario
     this.formulario = new FormGroup({
-      moneda: new FormControl(),
-      cantidad: new FormControl(),
-      cotizacion: new FormControl(),
+      documento: new FormControl(),
+      numero: new FormControl(),
+      fechaPago: new FormControl(),
       importe: new FormControl()
     });
   }
