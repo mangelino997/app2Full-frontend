@@ -28,20 +28,29 @@
           <input id="idCodigo" type="number" formControlName="id" class="form-control form-control-sm" readonly>
         </div>
         <div class="form-group has-float-label">
-          <label for="idConceptoGrupo" class="tamanio-label">Concepto Grupo AFIP * </label>
+          <label for="idConceptoGrupo" class="tamanio-label">Tipo de Concepto * </label>
           <mat-select id="idConceptoGrupo" class="form-control form-control-sm"
-            formControlName="afipConceptoSueldoGrupo" [compareWith]="compareFn"
-            (selectionChange)="establecerTipoConcepto()">
-            <mat-option *ngFor="let item of resultadosAfipCptoSueldoGrupos" [value]="item">
+          [formControl]="tipoCptoSueldo" [compareWith]="compareFn"
+            (selectionChange)="cambioTipoConcepto()">
+            <mat-option *ngFor="let item of resultadosTiposConcepto" [value]="item">
               {{item.nombre}}
             </mat-option>
           </mat-select>
         </div>
         <div class="form-group has-float-label">
+          <label for="idConceptoGrupo" class="tamanio-label">AFIP Grupo Concepto * </label>
+          <mat-select id="idConceptoGrupo" class="form-control form-control-sm"
+            formControlName="afipConceptoSueldoGrupo" [compareWith]="compareFn">
+            <mat-option *ngFor="let item of resultadosAfipCptoSueldoGrupos" [value]="item">
+              {{item.nombre}}
+            </mat-option>
+          </mat-select>
+        </div>
+        <!-- <div class="form-group has-float-label">
           <label id="labelTipoConcepto" for="idTipoConcepto" class="tamanio-label">Tipo de Concepto *</label>
           <input id="idTipoConcepto" type="text" [formControl]="tipoCptoSueldo" autocomplete="off"
             class="form-control form-control-sm upper-case" readonly>
-        </div>
+        </div> -->
         <div class="form-group has-float-label">
           <label id="labelNombre" for="idNombre" class="tamanio-label">Descripción *</label>
           <input id="idNombre" type="text" formControlName="nombre" autocomplete="off"
@@ -109,7 +118,8 @@
           <td mat-cell *matCellDef="let elemento" class="number-right">{{elemento.id}}</td>
         </ng-container>
         <ng-container matColumnDef="CONCEPTO_GRUPO">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header style="max-width: 140px !important">AFIP Grupo Concepto</th>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header style="max-width: 140px !important">AFIP Grupo Concepto
+          </th>
           <td mat-cell *matCellDef="let elemento">{{elemento.afipConceptoSueldoGrupo.nombre}}</td>
         </ng-container>
         <ng-container matColumnDef="NOMBRE">

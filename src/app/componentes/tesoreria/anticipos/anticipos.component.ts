@@ -16,14 +16,14 @@ export class AnticiposComponent implements OnInit {
   public idMod: number = null;
   //Define el formulario
   public formulario: FormGroup;
-  //Define el total
+  //Define el totalDisponible como un formControl
+  public totalDisponible: FormControl = new FormControl();
+  //Define el total como un formControl
   public total: FormControl = new FormControl();
   //Define variable para mostrar o no el progress bar
   public show: boolean = false;
   //Define la lista completa de registros (se modificaran)
   public listaCompleta = new MatTableDataSource([]);
-  //Define la lista completa de registros (para reestablecer)
-  public listaCompletaRecuperacion = new MatTableDataSource([]);
   //Define la matSort
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   //Defiene la columnas de la tabla
@@ -38,10 +38,13 @@ export class AnticiposComponent implements OnInit {
   ngOnInit() {
     //Establece el formulario
     this.formulario = new FormGroup({
-      totalDisponible: new FormControl(),
+      id: new FormControl(),
+      cobranza: new FormControl(),
       saldo: new FormControl(),
       importe: new FormControl()
     })
+    //Bloqueo el formulario hasta que selecione el boton editar
+    this.formulario.disable();
     //Obtiene la lista de registros por Cliente
     this.listarPorCliente();
   }
@@ -53,7 +56,6 @@ export class AnticiposComponent implements OnInit {
           console.log(res.json());
           this.listaCompleta.data = res.json();
           this.listaCompleta.sort = this.sort;
-          this.listaCompletaRecuperacion.data = res.json();
           this.listaCompleta.data.length == 0 ? this.toastr.warning("Sin datos para mostrar.") :
             [this.calcularTotalDisponible(), this.establecerAtributoChecked()];
         },
@@ -61,7 +63,6 @@ export class AnticiposComponent implements OnInit {
           this.toastr.error(err.json().mensaje);
         }
       )
-
     } else {
       this.toastr.error("Debe seleccionar un Cliente en la ventana principal.");
     }
@@ -77,7 +78,7 @@ export class AnticiposComponent implements OnInit {
       )
     }
     console.log(totalDisponible);
-    this.formulario.get('totalDisponible').setValue(this.appService.setDecimales(String(totalDisponible), 2));
+    this.totalDisponible.setValue(this.appService.setDecimales(String(totalDisponible), 2));
   }
   //Establece atributo 'checked' a cada registro de la lista
   private establecerAtributoChecked() {
@@ -103,10 +104,12 @@ export class AnticiposComponent implements OnInit {
     //Si el check esta en 'true' crea una variable boolean para controlarlo en el front
     if ($event.checked) {
       elemento.checked = true;
+      this.listaCompleta.data[indice].importe = this.listaCompleta.data[indice].saldo;
       this.listaCompleta.data[indice].saldo = 0;
     } else {
       elemento.checked = false;
-      this.listaCompleta.data[indice].saldo = this.listaCompletaRecuperacion.data[indice].saldo;
+      this.listaCompleta.data[indice].saldo = Number(this.listaCompleta.data[indice].saldo) + Number(this.listaCompleta.data[indice].importe);
+      this.listaCompleta.data[indice].importe = 0;
     }
     this.calcularTotalItemsYTotalDeuda();
   }
@@ -124,6 +127,7 @@ export class AnticiposComponent implements OnInit {
   }
   //Completa los campos del formulario con los datos del registro a modificar
   public activarActualizar(elemento, indice) {
+    this.formulario.enable();
     this.formulario.patchValue(elemento);
     this.formulario.get('importe').setValue(this.appService.establecerDecimales(elemento.importe, 2));
     this.formulario.get('saldo').setValue(this.appService.establecerDecimales(elemento.importe, 2));
@@ -131,9 +135,34 @@ export class AnticiposComponent implements OnInit {
   }
   //Actualiza el campo 'saldo' del elemento seleccionado
   public actualizarAnticipo() {
-    let saldo = this.listaCompleta.data[this.idMod].saldo - Number(this.formulario.value.saldo);
-    this.listaCompleta.data[this.idMod].saldo = saldo;
+    console.log(this.formulario.value, this.idMod);
+    //Calculo el saldo restante
+    let saldo = Number(this.formulario.value.saldo) - Number(this.formulario.value.importe);
+    this.formulario.value.saldo = saldo;
+    console.log(saldo);
+    //Establezco el atributo 'checked'
+    this.formulario.value.checked = true;
+    //Reemplazo el registro de la tabla por el formulario 
+    this.listaCompleta.data[this.idMod] = this.formulario.value;
+    this.listaCompleta.sort = this.sort;
+    //Calculo los totales
+    this.calcularTotalItemsYTotalDeuda();
+    //Reestablezco 
     this.idMod = null;
+    this.formulario.reset();
+    this.formulario.disable();
+
+  }
+  //Controla que importe sea menor o igual a saldo
+  public cambioImporte() {
+    if (this.formulario.value.importe) {
+      this.setDecimales(this.formulario.get('importe'), 2);
+      let importe = Number(this.formulario.value.importe);
+      let saldo = Number(this.formulario.value.saldo);
+      console.log(importe, saldo);
+      (importe > saldo) || (importe < 0) ?
+        [this.toastr.error("Importe debe ser mayor a 0 y menor a saldo."), this.formulario.get('importe').reset()] : '';
+    }
   }
   //Obtiene la mascara de importe
   public mascararImporte(intLimite, decimalLimite) {

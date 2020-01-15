@@ -9,6 +9,7 @@ import { ReporteService } from 'src/app/servicios/reporte.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { AfipConceptoSueldoService } from 'src/app/servicios/afip-concepto-sueldo.service';
 import { AfipConceptoSueldo } from 'src/app/modelos/afipConceptoSueldo';
+import { AfipConceptoSueldoGrupoService } from 'src/app/servicios/afip-concepto-sueldo-grupo.service';
 
 @Component({
   selector: 'app-afip-concepto-sueldo',
@@ -36,6 +37,8 @@ export class AfipConceptoSueldoComponent implements OnInit {
   public pestanias: Array<any> = [];
   //Define la lista de afipConceptoSueldoGrupo
   public resultadosAfipCptoSueldoGrupos: Array<any> = [];
+  //Define la lista de resultadosTiposConcepto
+  public resultadosTiposConcepto: Array<any> = [];
   //Define la lista de afipConceptoSueldoGrupo
   public tipoCptoSueldo: FormControl = new FormControl();
   //Define un formulario para validaciones de campos
@@ -61,7 +64,8 @@ export class AfipConceptoSueldoComponent implements OnInit {
   //Define la paginacion
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Constructor
-  constructor(private servicio: AfipConceptoSueldoService, private appService: AppService, private modelo: AfipConceptoSueldo,
+  constructor(private servicio: AfipConceptoSueldoService, private appService: AppService,
+    private modelo: AfipConceptoSueldo, private afipGrupoConcepto: AfipConceptoSueldoGrupoService,
     private toastr: ToastrService, private loaderService: LoaderService, private reporteServicio: ReporteService) {
     //Autocompletado - Buscar por nombre
     this.autocompletado.valueChanges.subscribe(data => {
@@ -110,7 +114,7 @@ export class AfipConceptoSueldoComponent implements OnInit {
         //Establece demas datos necesarios
         this.ultimoId = respuesta.ultimoId;
         this.formulario.get('id').setValue(this.ultimoId);
-        this.resultadosAfipCptoSueldoGrupos = respuesta.afipConceptoSueldoGrupos;
+        this.resultadosTiposConcepto = respuesta.tipoConceptoSueldos;
         this.render = false;
       },
       err => {
@@ -370,10 +374,20 @@ export class AfipConceptoSueldoComponent implements OnInit {
     }
     this.reporteServicio.abrirDialogo(datos);
   }
+  //Muestra el nombre de Tipo Concepto de AFIP Grupo Concepto seleccionado en pestaña 'Listar'  
   public establecerTipoConcepto() {
-    console.log(this.formulario.value);
-    this.indiceSeleccionado == 5 ?
-      this.tipoCptoSueldo.setValue(this.formularioFiltro.get('afipConceptoSueldoGrupo').value.tipoConceptoSueldo.nombre) :
-      this.tipoCptoSueldo.setValue(this.formulario.get('afipConceptoSueldoGrupo').value.tipoConceptoSueldo.nombre);
+    this.tipoCptoSueldo.setValue(this.formularioFiltro.get('afipConceptoSueldoGrupo').value.tipoConceptoSueldo.nombre);
+  }
+  //Controla el cambio en select 'Tipo de Concepto'. Obtiene los grupos de AFIP concepto
+  public cambioTipoConcepto() {
+    this.afipGrupoConcepto.listarPorTipoConceptoSueldo(this.tipoCptoSueldo.value.id).subscribe(
+      res => {
+        this.resultadosAfipCptoSueldoGrupos = res.json();
+        this.resultadosAfipCptoSueldoGrupos.length == 0 ? this.toastr.warning("Sin registros para AFIP Grupo Concepto.") : '';
+      },
+      err => {
+        this.toastr.error(err.json().mensaje);
+      }
+    )
   }
 }

@@ -7,7 +7,7 @@
             <div class="col-md-4">
                 <div class="form-group has-float-label">
                     <label for="idTotalDisponible" class="codigo-label">Total Disponible</label>
-                    <input id="idTotalDisponible" type="text" formControlName="totalDisponible" readonly
+                    <input id="idTotalDisponible" type="text" [formControl]="totalDisponible" readonly
                         class="form-control form-control-sm number-right" [textMask]="mascararImporte(8, 2)">
                 </div>
             </div>
@@ -25,7 +25,7 @@
                     <label for="idImporte" class="codigo-label">Importe</label>
                     <input id="idImporte" type="text" formControlName="importe"
                         class="form-control form-control-sm number-right" [textMask]="mascararImporte(8, 2)"
-                        (blur)="setDecimales(formulario.get('importe'), 2)">
+                        (blur)="cambioImporte()">
                 </div>
             </div>
             <div class="col-md-4">
@@ -55,7 +55,7 @@
                 <ng-container matColumnDef="ANTICIPO">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>Anticipo</th>
                     <td mat-cell *matCellDef="let elemento">
-                        ${{elemento.importe ? (elemento.importe | number: '1.2-2') : '0.00'}}
+                        ${{elemento.cobranza.importe ? (elemento.cobranza.importe | number: '1.2-2') : '0.00'}}
                     </td>
                 </ng-container>
                 <ng-container matColumnDef="SALDO">
@@ -67,18 +67,20 @@
                 <ng-container matColumnDef="IMPORTE">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>Importe</th>
                     <td mat-cell *matCellDef="let elemento">
-                        <!-- {{elemento.importe}} -->
+                        <span *ngIf="elemento.checked">
+                            ${{elemento.importe ? (elemento.importe | number: '1.2-2') : '0.00'}}
+                        </span>
                     </td>
                 </ng-container>
                 <ng-container matColumnDef="EDITAR">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
-                    <td mat-cell *matCellDef="let elemento">
+                    <td mat-cell *matCellDef="let elemento; let i= index">
                         <mat-checkbox class="cursor-color" (change)="cambioCheck(elemento, i, $event)"
                             [checked]="elemento.checked">
                         </mat-checkbox>
                         <button mat-icon-button class="mat-icon-button-table margin-left-3"
-                            (click)="activarActualizar(elemento, i)" matTooltip="Editar" 
-                            matTooltipPosition="above" [disabled]="!elemento.checked">
+                            (click)="activarActualizar(elemento, i)" matTooltip="Editar" matTooltipPosition="above"
+                            [disabled]="!elemento.checked">
                             <mat-icon>edit</mat-icon>
                         </button>
                     </td>
@@ -92,7 +94,7 @@
         <div class="col-md-4">
             <div class="form-group has-float-label">
                 <label for="idTotal" class="codigo-label">Total</label>
-                <input id="idTotal" type="text" [formControl]="total" readonly
+                <input id="idTotal" type="text" [formControl]="total" readonly [textMask]="mascararImporte(8, 2)"
                     class="form-control form-control-sm number-right">
             </div>
         </div>
