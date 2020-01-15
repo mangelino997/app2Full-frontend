@@ -100,8 +100,8 @@
         </div>
     </div>
     <div class="row justify-content-center">
-        <button mat-raised-button color="primary" 
-        [mat-dialog-close]="listaCompleta.data" [disabled]="listaCompleta.data.length == 0">Confirmar</button>
+        <button mat-raised-button color="primary" [mat-dialog-close]="listaCompleta.data"
+            [disabled]="total.value == 0 || !total.value">Confirmar</button>
         <button class="margin-left-3" mat-raised-button (click)="cerrar()">Cancelar</button>
     </div>
 </div>

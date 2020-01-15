@@ -234,14 +234,20 @@ export class AfipConceptoSueldoComponent implements OnInit {
   private agregar() {
     this.loaderService.show();
     this.formulario.get('id').setValue(null);
-    let conceptoGrupoAfip = this.formulario.get('afipConceptoSueldoGrupo').value;
+    //Guardo tipo concepto y afip grupo concepto para reestablecerlos
+    let tipoConcepto = this.tipoCptoSueldo.value;
+    let listaGruposConceptos = this.resultadosAfipCptoSueldoGrupos;
+    let afipGrupoConcepto = this.formulario.get('afipConceptoSueldoGrupo').value;
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         let respuesta = res.json();
         if (respuesta.codigo == 201) {
           this.ultimoId = respuesta.id;
           this.reestablecerFormulario(respuesta.id);
-          this.formulario.get('afipConceptoSueldoGrupo').setValue(conceptoGrupoAfip);
+          //reestablece valores
+          this.tipoCptoSueldo.setValue(tipoConcepto);
+          this.resultadosAfipCptoSueldoGrupos = listaGruposConceptos;
+          this.formulario.get('afipConceptoSueldoGrupo').setValue(afipGrupoConcepto);
           document.getElementById('idNombre').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();

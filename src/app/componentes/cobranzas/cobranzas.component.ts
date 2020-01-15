@@ -24,6 +24,7 @@ import { CobranzaItem } from 'src/app/modelos/cobranzaItem';
 import { CobranzaMedioPagoService } from 'src/app/servicios/cobranza-medio-pago.service';
 import { CobranzaItemDialogoComponent } from './cobranza-item-dialogo/cobranza-item-dialogo.component';
 import { DetalleRetencionesDialogoComponent } from './detalle-retenciones-dialogo/detalle-retenciones-dialogo.component';
+import { CobranzaAnticipoComponent } from './cobranza-anticipo/cobranza-anticipo.component';
 
 @Component({
   selector: 'app-cobranzas',
@@ -364,7 +365,7 @@ export class CobranzasComponent implements OnInit {
     elemento = elemento.replace(new RegExp(/[òó]/g), "o");
     switch (elemento) {
       case 'anticipos':
-        this.abrirDialogo(AnticiposComponent);
+        this.abrirDialogo(CobranzaAnticipoComponent);
         break;
       case 'efectivo':
         this.abrirDialogo(EfectivoComponent);

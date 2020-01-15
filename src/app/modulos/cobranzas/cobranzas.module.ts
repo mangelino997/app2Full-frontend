@@ -13,12 +13,13 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TextMaskModule } from 'angular2-text-mask';
 import { CobranzaMedioPagoService } from 'src/app/servicios/cobranza-medio-pago.service';
 import { CobranzaAnticiposService } from 'src/app/servicios/cobranza-anticipos.service';
+import { CobranzaAnticipoComponent } from 'src/app/componentes/cobranzas/cobranza-anticipo/cobranza-anticipo.component';
 
 @NgModule({
   declarations: [
     CobranzasComponent,
     ClienteGrupoDialogo,
-
+    CobranzaAnticipoComponent
   ],
   imports: [
     CobranzasRoutingModule,
@@ -50,6 +51,7 @@ import { CobranzaAnticiposService } from 'src/app/servicios/cobranza-anticipos.s
   ],
   entryComponents: [
     ClienteGrupoDialogo,
+    CobranzaAnticipoComponent
   ],
 })
 export class CobranzasModule { }
