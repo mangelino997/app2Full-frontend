@@ -9,6 +9,7 @@ import { ReporteService } from 'src/app/servicios/reporte.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { AfipConceptoSueldoService } from 'src/app/servicios/afip-concepto-sueldo.service';
 import { AfipConceptoSueldo } from 'src/app/modelos/afipConceptoSueldo';
+import { AfipConceptoSueldoGrupoService } from 'src/app/servicios/afip-concepto-sueldo-grupo.service';
 
 @Component({
   selector: 'app-afip-concepto-sueldo',
@@ -36,8 +37,12 @@ export class AfipConceptoSueldoComponent implements OnInit {
   public pestanias: Array<any> = [];
   //Define la lista de afipConceptoSueldoGrupo
   public resultadosAfipCptoSueldoGrupos: Array<any> = [];
+  //Define la lista de resultadosTiposConcepto
+  public resultadosTiposConcepto: Array<any> = [];
   //Define la lista de afipConceptoSueldoGrupo
   public tipoCptoSueldo: FormControl = new FormControl();
+  //Define la lista de afipConceptoSueldoGrupo para la pestaña 'Listar'
+  public tipoCptoSueldoFiltro: FormControl = new FormControl();
   //Define un formulario para validaciones de campos
   public formulario: FormGroup;
   //Define un formulario para validaciones de campos
@@ -61,7 +66,8 @@ export class AfipConceptoSueldoComponent implements OnInit {
   //Define la paginacion
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Constructor
-  constructor(private servicio: AfipConceptoSueldoService, private appService: AppService, private modelo: AfipConceptoSueldo,
+  constructor(private servicio: AfipConceptoSueldoService, private appService: AppService,
+    private modelo: AfipConceptoSueldo, private afipGrupoConcepto: AfipConceptoSueldoGrupoService,
     private toastr: ToastrService, private loaderService: LoaderService, private reporteServicio: ReporteService) {
     //Autocompletado - Buscar por nombre
     this.autocompletado.valueChanges.subscribe(data => {
@@ -92,7 +98,7 @@ export class AfipConceptoSueldoComponent implements OnInit {
     //Define el formulario de la pestaña Listar y sus validaciones
     this.formularioFiltro = new FormGroup({
       afipConceptoSueldoGrupo: new FormControl('', Validators.required)
-    });
+    })
     /* Obtiene todos los listados */
     this.inicializar(this.appService.getRol().id, this.appService.getSubopcion());
     //Establece los valores de la primera pestania activa
@@ -104,13 +110,12 @@ export class AfipConceptoSueldoComponent implements OnInit {
     this.servicio.inicializar(idRol, idSubopcion).subscribe(
       res => {
         let respuesta = res.json();
-        console.log(respuesta);
         //Establece las pestanias
         this.pestanias = respuesta.pestanias;
         //Establece demas datos necesarios
         this.ultimoId = respuesta.ultimoId;
         this.formulario.get('id').setValue(this.ultimoId);
-        this.resultadosAfipCptoSueldoGrupos = respuesta.afipConceptoSueldoGrupos;
+        this.resultadosTiposConcepto = respuesta.tipoConceptoSueldos;
         this.render = false;
       },
       err => {
@@ -120,7 +125,13 @@ export class AfipConceptoSueldoComponent implements OnInit {
     )
   }
   //Establece el formulario al seleccionar elemento del autocompletado
-  public cambioAutocompletado(elemento) {
+  public cambioAutocompletado() {
+    let elemento = this.autocompletado.value;
+    //establece el tipo de concepto
+    this.tipoCptoSueldo.setValue(elemento.afipConceptoSueldoGrupo.tipoConceptoSueldo);
+    //obtiene la lista de AFIP grupo concepto para el tipo concepto
+    this.cambioTipoConcepto();
+    //establece el formulario
     this.formulario.patchValue(elemento);
   }
   //Formatea el valor del autocompletado
@@ -145,7 +156,13 @@ export class AfipConceptoSueldoComponent implements OnInit {
     this.soloLectura = soloLectura;
     this.mostrarBoton = boton;
     this.indiceSeleccionado != 1 ? this.formulario.reset() : '';
-    this.soloLectura ? this.formulario.get('afipConceptoSueldoGrupo').disable() : this.formulario.get('afipConceptoSueldoGrupo').enable();
+    if (this.soloLectura) {
+      this.formulario.get('afipConceptoSueldoGrupo').disable();
+      this.tipoCptoSueldo.disable();
+    } else {
+      this.formulario.get('afipConceptoSueldoGrupo').enable();
+      this.tipoCptoSueldo.enable();
+    }
     setTimeout(function () {
       document.getElementById(componente).focus();
     }, 20);
@@ -169,7 +186,7 @@ export class AfipConceptoSueldoComponent implements OnInit {
         this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
         break;
       case 5:
-        this.listarPorFiltro();
+        this.tipoCptoSueldoFiltro.value ? [this.cambioTipoConcepto(), this.listarPorFiltro()] : '';
         break;
       default:
         break;
@@ -218,14 +235,20 @@ export class AfipConceptoSueldoComponent implements OnInit {
   private agregar() {
     this.loaderService.show();
     this.formulario.get('id').setValue(null);
-    let conceptoGrupoAfip = this.formulario.get('afipConceptoSueldoGrupo').value;
+    //Guardo tipo concepto y afip grupo concepto para reestablecerlos
+    let tipoConcepto = this.tipoCptoSueldo.value;
+    let listaGruposConceptos = this.resultadosAfipCptoSueldoGrupos;
+    let afipGrupoConcepto = this.formulario.get('afipConceptoSueldoGrupo').value;
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         let respuesta = res.json();
         if (respuesta.codigo == 201) {
           this.ultimoId = respuesta.id;
           this.reestablecerFormulario(respuesta.id);
-          this.formulario.get('afipConceptoSueldoGrupo').setValue(conceptoGrupoAfip);
+          //reestablece valores
+          this.tipoCptoSueldo.setValue(tipoConcepto);
+          this.resultadosAfipCptoSueldoGrupos = listaGruposConceptos;
+          this.formulario.get('afipConceptoSueldoGrupo').setValue(afipGrupoConcepto);
           document.getElementById('idNombre').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
@@ -300,6 +323,7 @@ export class AfipConceptoSueldoComponent implements OnInit {
     this.autocompletado.reset();
     id ? this.formulario.get('id').setValue(id) : this.formulario.get('id').setValue(this.ultimoId);
   }
+
   //Valida que el campo 'Codigo AFIP' tenga como minimo y máx 6 carácteres
   public validarCodigoAFIP() {
     let codigoAFIP = this.formulario.get('codigoAfip').value;
@@ -320,13 +344,13 @@ export class AfipConceptoSueldoComponent implements OnInit {
   public activarConsultar(elemento) {
     this.seleccionarPestania(2, this.pestanias[1].nombre);
     this.autocompletado.setValue(elemento);
-    this.formulario.patchValue(elemento);
+    this.cambioAutocompletado();
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
     this.seleccionarPestania(3, this.pestanias[2].nombre);
     this.autocompletado.setValue(elemento);
-    this.formulario.patchValue(elemento);
+    this.cambioAutocompletado();
   }
   //Maneja los evento al presionar una tacla (para pestanias y opciones)
   public manejarEvento(keycode) {
@@ -370,10 +394,23 @@ export class AfipConceptoSueldoComponent implements OnInit {
     }
     this.reporteServicio.abrirDialogo(datos);
   }
-  public establecerTipoConcepto() {
-    console.log(this.formulario.value);
-    this.indiceSeleccionado == 5 ?
-      this.tipoCptoSueldo.setValue(this.formularioFiltro.get('afipConceptoSueldoGrupo').value.tipoConceptoSueldo.nombre) :
-      this.tipoCptoSueldo.setValue(this.formulario.get('afipConceptoSueldoGrupo').value.tipoConceptoSueldo.nombre);
+  //Controla el cambio en select 'Tipo de Concepto'. Obtiene los grupos de AFIP concepto
+  public cambioTipoConcepto() {
+    let idTipoConcepto = null;
+    if (this.indiceSeleccionado == 5) {
+      idTipoConcepto = this.tipoCptoSueldoFiltro.value.id;
+    } else {
+      this.formulario.get('afipConceptoSueldoGrupo').reset();
+      idTipoConcepto = this.tipoCptoSueldo.value.id;
+    }
+    this.afipGrupoConcepto.listarPorTipoConceptoSueldo(idTipoConcepto).subscribe(
+      res => {
+        this.resultadosAfipCptoSueldoGrupos = res.json();
+        this.resultadosAfipCptoSueldoGrupos.length == 0 ? this.toastr.warning("Sin registros para AFIP Grupo Concepto.") : '';
+      },
+      err => {
+        this.toastr.error(err.json().mensaje);
+      }
+    )
   }
 }

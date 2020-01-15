@@ -1,0 +1,107 @@
+<div class="container-fluid padd-20">
+    <div class="row justify-content-center">
+        <h4>Anticipos Disponibles</h4>
+    </div>
+    <form [formGroup]="formulario">
+        <div class="row justify-content-end">
+            <div class="col-md-4">
+                <div class="form-group has-float-label">
+                    <label for="idTotalDisponible" class="codigo-label">Total Disponible</label>
+                    <input id="idTotalDisponible" type="text" [formControl]="totalDisponible" readonly
+                        class="form-control form-control-sm number-right" [textMask]="mascararImporte(8, 2)">
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group has-float-label">
+                    <label for="idSaldo" class="codigo-label">Saldo</label>
+                    <input id="idSaldo" type="text" formControlName="saldo" readonly
+                        class="form-control form-control-sm number-right" [textMask]="mascararImporte(8, 2)">
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group has-float-label">
+                    <label for="idImporte" class="codigo-label">Importe</label>
+                    <input id="idImporte" type="text" formControlName="importe"
+                        class="form-control form-control-sm number-right" [textMask]="mascararImporte(8, 2)"
+                        (blur)="cambioImporte()">
+                </div>
+            </div>
+            <div class="col-md-4">
+                <button mat-raised-button color="primary" (click)="actualizarAnticipo()">Aceptar</button>
+            </div>
+        </div>
+    </form>
+    <div class="row">
+        <div class="tabla">
+            <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
+                <ng-container matColumnDef="FECHA" sticky>
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha</th>
+                    <td mat-cell *matCellDef="let elemento">{{elemento.cobranza.fechaEmision | date: 'dd-MM-yyyy'}}</td>
+                </ng-container>
+                <ng-container matColumnDef="ORDEN_PAGO">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>N° Recibo</th>
+                    <td mat-cell *matCellDef="let elemento">{{elemento.id}}</td>
+                </ng-container>
+                <ng-container matColumnDef="OBSERVACIONES">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Observaciones</th>
+                    <td mat-cell *matCellDef="let elemento">
+                        <span *ngIf="elemento.cobranza.observaciones" class="cursor-color"
+                            (click)="verObservacionesDialogo(elemento.cobranza.observaciones)">ver</span>
+                        <span *ngIf="!elemento.cobranza.observaciones">Vacío</span>
+                    </td>
+                </ng-container>
+                <ng-container matColumnDef="ANTICIPO">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Anticipo</th>
+                    <td mat-cell *matCellDef="let elemento">
+                        ${{elemento.cobranza.importe ? (elemento.cobranza.importe | number: '1.2-2') : '0.00'}}
+                    </td>
+                </ng-container>
+                <ng-container matColumnDef="SALDO">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Saldo</th>
+                    <td mat-cell *matCellDef="let elemento">
+                        ${{elemento.saldo ? (elemento.saldo | number: '1.2-2') : '0.00'}}
+                    </td>
+                </ng-container>
+                <ng-container matColumnDef="IMPORTE">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Importe</th>
+                    <td mat-cell *matCellDef="let elemento">
+                        <span *ngIf="elemento.checked">
+                            ${{elemento.importe ? (elemento.importe | number: '1.2-2') : '0.00'}}
+                        </span>
+                    </td>
+                </ng-container>
+                <ng-container matColumnDef="EDITAR">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
+                    <td mat-cell *matCellDef="let elemento; let i= index">
+                        <mat-checkbox class="cursor-color" (change)="cambioCheck(elemento, i, $event)"
+                            [checked]="elemento.checked">
+                        </mat-checkbox>
+                        <button mat-icon-button class="mat-icon-button-table margin-left-3"
+                            (click)="activarActualizar(elemento, i)" matTooltip="Editar" matTooltipPosition="above"
+                            [disabled]="!elemento.checked">
+                            <mat-icon>edit</mat-icon>
+                        </button>
+                    </td>
+                </ng-container>
+                <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+                <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
+            </table>
+        </div>
+    </div>
+    <div class="row justify-content-end">
+        <div class="col-md-4">
+            <div class="form-group has-float-label">
+                <label for="idTotal" class="codigo-label">Total</label>
+                <input id="idTotal" type="text" [formControl]="total" readonly [textMask]="mascararImporte(8, 2)"
+                    class="form-control form-control-sm number-right">
+            </div>
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <button mat-raised-button color="primary" [mat-dialog-close]="listaCompleta.data"
+            [disabled]="total.value == 0 || !total.value">Confirmar</button>
+        <button class="margin-left-3" mat-raised-button (click)="cerrar()">Cancelar</button>
+    </div>
+</div>
