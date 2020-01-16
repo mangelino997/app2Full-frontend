@@ -108,7 +108,7 @@
         <mat-progress-bar mode="indeterminate"></mat-progress-bar>
     </div>
     <div class="row justify-content-center" *ngIf="!show">
-        <button mat-raised-button color="primary" (click)="cerrar(total.value)">Confirmar</button>
+        <button mat-raised-button color="primary" (click)="cerrar(total.value)" [disabled]="obtenerEstadoBtnConfirmar()">Confirmar</button>
         <button class="margin-left-3" mat-raised-button (click)="cerrar(0)">Cancelar</button>
     </div>
 </div>

@@ -51,8 +51,8 @@ export class PagoAnticiposComponent implements OnInit {
     });
     //Establece importe como readonly
     this.formulario.get('importe').disable();
-    //Obtiene la lista de anticipos
-    this.listarPorProveedorYSaldoMayorCero();
+    //Verifica si ya se cargo, anteriormente, datos en el dialogo
+    this.verificarDatosExistentes(); 
   }
   //El numero de elemento seleccionados es igual al numero total de filas (Tabla de Compras Comprobantes)
   public estanTodosSeleccionados(): boolean {
@@ -62,9 +62,16 @@ export class PagoAnticiposComponent implements OnInit {
   }
   //Selecciona todos los elementos si no hay ninguno seleccionado, caso contrario, limpia todas las selecciones
   public alternarSeleccion(): void {
-    this.estanTodosSeleccionados() ?
-        this.anticiposSeleccionados.clear() :
-        this.anticipos.data.forEach(row => this.anticiposSeleccionados.select(row));
+    if(this.estanTodosSeleccionados()) {
+      //Todos deseleccionados
+      this.anticiposSeleccionados.clear()
+      //Establece importe de la tabla en cero y total en cero
+      this.anticipos.data.forEach(row => row.importeAnticipo = 0);
+      this.total.setValue(this.establecerDecimales('0', 2));
+    } else {
+      //Todos seleccionados
+      this.anticipos.data.forEach(row => this.anticiposSeleccionados.select(row));
+    }
   }
   //Retorna la etiqueta de seleccionada o no
   public checkboxLabel(row?: any): string {
@@ -74,20 +81,26 @@ export class PagoAnticiposComponent implements OnInit {
     return `${this.anticiposSeleccionados.isSelected(row) ? 'deselect' : 'select'} row ${row.position + 1}`;
   }
   //Al seleccionar un checkbox
-  public seleccionarCheckbox(row): void {
-    this.anticiposSeleccionados.toggle(row);
-    if(!this.anticiposSeleccionados.isSelected(row)) {
-      row.importeAnticipo = 0;
+  public seleccionarCheckbox(elemento): void {
+    this.anticiposSeleccionados.toggle(elemento);
+    if(!this.anticiposSeleccionados.isSelected(elemento)) {
+      elemento.importeAnticipo = 0;
       this.total.setValue(this.calcularTotal());
     }
   }
   //Verifica si ya se cargo datos en el dialogo actual
   private verificarDatosExistentes(): void {
-    let elemento = this.data.elemento.value
+    let elemento = this.data.elemento.value;
     if(elemento) {
-      console.log(elemento.anticiposSeleccionados);
-      console.log(elemento.anticiposSeleccionados.selected);
-      this.anticiposSeleccionados = new SelectionModel<any>(true, elemento.anticiposSeleccionados.selected);
+      this.anticipos = new MatTableDataSource(elemento.anticipos);
+      elemento.anticiposSeleccionados.selected.forEach((elem) => {
+        this.anticiposSeleccionados.toggle(elem);
+      });
+      this.formulario.get('totalDisponible').setValue(this.calcularTotalDisponible());
+      this.total.setValue(this.calcularTotal());
+    } else {
+      //Obtiene la lista de anticipos
+      this.listarPorProveedorYSaldoMayorCero();
     }
   }
   //Obtiene la lista de anticipo por proveedor y saldo mayor a cero
@@ -98,8 +111,6 @@ export class PagoAnticiposComponent implements OnInit {
       res => {
         this.anticipos = new MatTableDataSource(res.json());
         this.formulario.get('totalDisponible').setValue(this.calcularTotalDisponible());
-        //Verifica si ya se cargo datos en el dialogo actual
-        this.verificarDatosExistentes();
         this.show = false;
       },
       err => {
@@ -119,7 +130,7 @@ export class PagoAnticiposComponent implements OnInit {
   private calcularTotal(): number {
     let total = 0;
     this.anticiposSeleccionados.selected.forEach((elemento) => {
-      total += parseFloat(elemento.importeAnticipo);
+      total += parseFloat(elemento.importeAnticipo ? elemento.importeAnticipo : 0);
     });
     return this.appService.establecerDecimales(total != 0 ? total : '0', 2);
   }
@@ -136,11 +147,15 @@ export class PagoAnticiposComponent implements OnInit {
     let formulario = this.formulario.value;
     let indice = this.anticiposSeleccionados.selected.indexOf(this.idMod);
     this.anticiposSeleccionados.selected[indice].importeAnticipo = this.appService.establecerDecimales(formulario.importe, 2);
-    this.formulario.get('importe').disable();
-    this.mostrarBoton = false;
     this.formulario.get('saldo').reset();
     this.formulario.get('importe').reset();
+    this.formulario.get('importe').disable();
+    this.mostrarBoton = false;
     this.total.setValue(this.calcularTotal());
+  }
+  //Controla el estado del boton confirmar
+  public obtenerEstadoBtnConfirmar(): boolean {
+    return this.total.value == null || this.total.value == 0 || this.total.value == '0.00' ? true : false;
   }
   //Mascara un importe decimal
   public mascararImporte(limite, decimalLimite) {
@@ -157,6 +172,7 @@ export class PagoAnticiposComponent implements OnInit {
   public cerrar(importe): void {
     let elemento = {
       indice: this.data.elemento.value ? this.data.elemento.value.indice : -1,
+      anticipos: this.anticipos.data,
       anticiposSeleccionados: this.anticiposSeleccionados,
       total: this.total.value,
       formulario: {

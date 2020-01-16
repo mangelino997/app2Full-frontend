@@ -21,6 +21,7 @@ import { PagoOtrasCuentasComponent } from './pago-otras-cuentas/pago-otras-cuent
 import { PagoOtrasMonedasComponent } from './pago-otras-monedas/pago-otras-monedas.component';
 import { SelectionModel } from '@angular/cdk/collections';
 import { MensajeExcepcion } from 'src/app/modelos/mensaje-excepcion';
+import { ContactoCliente } from 'src/app/modelos/contactoCliente';
 
 @Component({
   selector: 'app-orden-pago',
@@ -211,8 +212,7 @@ export class OrdenPagoComponent implements OnInit {
     this.formularioTotales.get('importe').setValue(this.establecerCeros(deuda == 0 ? '0' : deuda));
   }
   //Abre el dialogo correspondientes al seleccionar una opcion del campo 'Ingregracion en'
-  public determinarIntegracion(): void {
-    let elemento = this.medioPago.value.nombre;
+  public determinarIntegracion(elemento): void {
     elemento = elemento.toLowerCase();
     elemento = elemento.replace(new RegExp(/\s/g), "");
     elemento = elemento.replace(new RegExp(/[òó]/g), "o");
@@ -264,7 +264,7 @@ export class OrdenPagoComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe(elemento => {
       //Si el importe establecido en el dialogo es diferente de cero, agrega el medio de pago a la lista
-      if(elemento.formulario.importe != 0) {
+      if(elemento.formulario.importe != 0 && elemento.formulario.importe != '0.00') {
         //Verifica si en la lista de medios de pagos seleccionados ya esta cargado el medio de pago actual
         let objeto = elemento.indice != -1 ? this.mediosPagosSeleccionados[elemento.indice] : null;
         if(objeto) {
@@ -281,6 +281,10 @@ export class OrdenPagoComponent implements OnInit {
         }
         //Calcula importe Pendiente de Integrar
         this.formularioIntegrar.get('pendienteIntegrar').setValue(this.calcularPendienteIntegrar());
+      } else {
+        if(elemento.indice != null && elemento.total == 0) {
+          this.eliminarItemLista(elemento.indice);
+        }
       }
     });
   }
