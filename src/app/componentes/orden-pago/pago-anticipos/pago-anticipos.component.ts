@@ -81,6 +81,15 @@ export class PagoAnticiposComponent implements OnInit {
       this.total.setValue(this.calcularTotal());
     }
   }
+  //Verifica si ya se cargo datos en el dialogo actual
+  private verificarDatosExistentes(): void {
+    let elemento = this.data.elemento.value
+    if(elemento) {
+      console.log(elemento.anticiposSeleccionados);
+      console.log(elemento.anticiposSeleccionados.selected);
+      this.anticiposSeleccionados = new SelectionModel<any>(true, elemento.anticiposSeleccionados.selected);
+    }
+  }
   //Obtiene la lista de anticipo por proveedor y saldo mayor a cero
   private listarPorProveedorYSaldoMayorCero(): void {
     this.show = true;
@@ -89,6 +98,8 @@ export class PagoAnticiposComponent implements OnInit {
       res => {
         this.anticipos = new MatTableDataSource(res.json());
         this.formulario.get('totalDisponible').setValue(this.calcularTotalDisponible());
+        //Verifica si ya se cargo datos en el dialogo actual
+        this.verificarDatosExistentes();
         this.show = false;
       },
       err => {
@@ -144,10 +155,15 @@ export class PagoAnticiposComponent implements OnInit {
   }
   //Cierra el dialogo
   public cerrar(importe): void {
-    let formulario = {
-      nombre: 'Anticipos',
-      importe: importe
+    let elemento = {
+      indice: this.data.elemento.value ? this.data.elemento.value.indice : -1,
+      anticiposSeleccionados: this.anticiposSeleccionados,
+      total: this.total.value,
+      formulario: {
+        nombre: 'Anticipos',
+        importe: importe
+      }
     }
-    this.dialogRef.close(formulario);
+    this.dialogRef.close(elemento);
   }
 }

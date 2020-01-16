@@ -50,6 +50,8 @@ export class OrdenPagoComponent implements OnInit {
   public formularioIntegrar:FormGroup;
   //Define el formulario de medios de pagos
   public formularioMedioPago:FormGroup;
+  //Define un formulario para guardar el contenido que se establece en cada dialogo
+  public formularioDialogo:FormGroup;
   //Defiene el render
   public render: boolean = false;
   //Define el mostrar del circulo de progreso
@@ -93,6 +95,8 @@ export class OrdenPagoComponent implements OnInit {
     this.formularioIntegrar = this.modelo.formularioIntegrar;
     //Establece el formulario de los medios pago seleccionados
     this.formularioMedioPago = this.modelo.formularioMedioPago;
+    //Establece el formulario dialogo que contiene los datos de cada dialogo
+    this.formularioDialogo = this.modelo.formularioDialogo;
     //Obtiene los datos de inicializacion desde servicio web
     this.inicializar(this.appService.getRol().id, this.appService.getSubopcion());
     //Establece los valores de la primera pestania activa
@@ -215,52 +219,66 @@ export class OrdenPagoComponent implements OnInit {
     switch(elemento) {
       case 'anticipos':
         if(this.formulario.get('proveedor').value) {
-          this.abrirDialogo(PagoAnticiposComponent, 1);
+          this.abrirDialogo(PagoAnticiposComponent, this.formularioDialogo.get('anticipos'));
         } else {
           this.medioPago.reset();
           this.toastr.error(MensajeExcepcion.SELECCIONAR_PROVEEDOR);
         }
         break;
       case 'efectivo':
-        this.abrirDialogo(PagoEfectivoComponent, 2);
+        this.abrirDialogo(PagoEfectivoComponent, this.formularioDialogo.get('efectivo'));
         break;
       case 'cheques':
-        this.abrirDialogo(PagoChequesCarteraComponent, 3);
+        this.abrirDialogo(PagoChequesCarteraComponent, 2);
         break;
       case 'chequeselectronicos':
-        this.abrirDialogo(PagoChequesElectronicosComponent, 4);
+        this.abrirDialogo(PagoChequesElectronicosComponent, 2);
         break;
       case 'chequespropios':
-        this.abrirDialogo(PagoChequesPropiosComponent, 5);
+        this.abrirDialogo(PagoChequesPropiosComponent, 2);
         break;
       case 'transferenciabancaria':
-        this.abrirDialogo(PagoTransferenciaBancariaComponent, 6);
+        this.abrirDialogo(PagoTransferenciaBancariaComponent, 2);
         break;
       case 'documentos':
-        this.abrirDialogo(PagoDocumentosComponent, 7);
+        this.abrirDialogo(PagoDocumentosComponent, 2);
         break;
       case 'otrascuentas':
-        this.abrirDialogo(PagoOtrasCuentasComponent, 8);
+        this.abrirDialogo(PagoOtrasCuentasComponent, 2);
         break;
       case 'otrasmonedas':
-        this.abrirDialogo(PagoOtrasMonedasComponent, 9);
+        this.abrirDialogo(PagoOtrasMonedasComponent, 2);
         break;
     }
   }
   //Abre el dialogo para agregar un cliente eventual
-  private abrirDialogo(componente, opcion): void {
+  private abrirDialogo(componente, formularioDialogo): void {
     this.medioPago.reset();
     const dialogRef = this.dialog.open(componente, {
       width: '60%',
       maxWidth: '95%',
       data: { 
-        idProveedor: this.formulario.get('proveedor').value.id
+        idProveedor: this.formulario.get('proveedor').value.id,
+        elemento: formularioDialogo
       }
     });
-    dialogRef.afterClosed().subscribe(formulario => {
-      console.log(formulario);
-      if(formulario.importe != 0) {
-        this.mediosPagosSeleccionados.push(formulario);
+    dialogRef.afterClosed().subscribe(elemento => {
+      //Si el importe establecido en el dialogo es diferente de cero, agrega el medio de pago a la lista
+      if(elemento.formulario.importe != 0) {
+        //Verifica si en la lista de medios de pagos seleccionados ya esta cargado el medio de pago actual
+        let objeto = elemento.indice != -1 ? this.mediosPagosSeleccionados[elemento.indice] : null;
+        if(objeto) {
+          //El medio de pago ya existe, entonces hay que reemplazar por los nuevos valores
+          this.mediosPagosSeleccionados[elemento.indice] = elemento.formulario;
+        } else {
+          //Se crea el nuevo medio de pago en la lista
+          this.mediosPagosSeleccionados.push(elemento.formulario);
+          let indice = this.mediosPagosSeleccionados.indexOf(elemento.formulario);
+          //Establece el indice para proximas aperturas del dialogo
+          elemento.indice = indice;
+          //Almacena los datos establecidos en el dialogo actual
+          formularioDialogo.setValue(elemento);
+        }
         //Calcula importe Pendiente de Integrar
         this.formularioIntegrar.get('pendienteIntegrar').setValue(this.calcularPendienteIntegrar());
       }

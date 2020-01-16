@@ -1,7 +1,6 @@
 import { Component, OnInit, ViewChild, Inject } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
 import { MatTableDataSource, MatSort, MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material';
-import { AnticiposComponent } from '../../tesoreria/anticipos/anticipos.component';
 import { AppService } from 'src/app/servicios/app.service';
 import { CobranzaAnticiposService } from 'src/app/servicios/cobranza-anticipos.service';
 import { ToastrService } from 'ngx-toastr';
@@ -30,7 +29,7 @@ public listaCompleta = new MatTableDataSource([]);
 //Defiene la columnas de la tabla
 public columnas: Array<string> = ['FECHA', 'ORDEN_PAGO', 'OBSERVACIONES', 'ANTICIPO', 'SALDO', 'IMPORTE', 'EDITAR'];
 //Define el constructor de la clase
-constructor(public dialogRef: MatDialogRef<AnticiposComponent>, @Inject(MAT_DIALOG_DATA) public data,
+constructor(public dialogRef: MatDialogRef<CobranzaAnticipoComponent>, @Inject(MAT_DIALOG_DATA) public data,
   public appService: AppService, private servicio: CobranzaAnticiposService, private toastr: ToastrService,
   private dialog: MatDialog) {
   this.dialogRef.disableClose = true;

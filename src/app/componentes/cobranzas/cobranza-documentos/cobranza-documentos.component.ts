@@ -1,14 +1,13 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { DocumentosComponent } from '../../tesoreria/documentos/documentos.component';
 
 @Component({
-  selector: 'app-cobranza-documentos-cartera',
-  templateUrl: './cobranza-documentos-cartera.component.html',
-  styleUrls: ['./cobranza-documentos-cartera.component.css']
+  selector: 'app-cobranza-documentos',
+  templateUrl: './cobranza-documentos.component.html',
+  styleUrls: ['./cobranza-documentos.component.css']
 })
-export class CobranzaDocumentosCarteraComponent implements OnInit {
+export class CobranzaDocumentosComponent implements OnInit {
 
   //Define el formulario
   public formulario: FormGroup;
@@ -19,7 +18,7 @@ export class CobranzaDocumentosCarteraComponent implements OnInit {
   //Defiene la columnas de la tabla
   public columnas: Array<string> = ['DOCUMENTO', 'NUMERO', 'FECHA_PAGO', 'IMPORTE'];
   //Define el constructor de la clase
-  constructor(public dialogRef: MatDialogRef<DocumentosComponent>, @Inject(MAT_DIALOG_DATA) public data) { }
+  constructor(public dialogRef: MatDialogRef<CobranzaDocumentosComponent>, @Inject(MAT_DIALOG_DATA) public data) { }
   //Al inicializarse el componente
   ngOnInit() {
     //Establece el formulario

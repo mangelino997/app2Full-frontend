@@ -7,15 +7,6 @@ import { ClienteService } from 'src/app/servicios/cliente.service';
 import { VentaComprobanteService } from 'src/app/servicios/venta-comprobante.service';
 import { CobranzaService } from 'src/app/servicios/cobranza.service';
 import { MatTableDataSource, MatSort, MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { PagoAnticiposComponent } from '../orden-pago/pago-anticipos/pago-anticipos.component';
-import { PagoEfectivoComponent } from '../orden-pago/pago-efectivo/pago-efectivo.component';
-import { PagoChequesCarteraComponent } from '../orden-pago/pago-cheques-cartera/pago-cheques-cartera.component';
-import { PagoChequesElectronicosComponent } from '../orden-pago/pago-cheques-electronicos/pago-cheques-electronicos.component';
-import { PagoChequesPropiosComponent } from '../orden-pago/pago-cheques-propios/pago-cheques-propios.component';
-import { PagoTransferenciaBancariaComponent } from '../orden-pago/pago-transferencia-bancaria/pago-transferencia-bancaria.component';
-import { PagoDocumentosComponent } from '../orden-pago/pago-documentos/pago-documentos.component';
-import { PagoOtrasCuentasComponent } from '../orden-pago/pago-otras-cuentas/pago-otras-cuentas.component';
-import { PagoOtrasMonedasComponent } from '../orden-pago/pago-otras-monedas/pago-otras-monedas.component';
 import { Subscription } from 'rxjs';
 import { LoaderState } from 'src/app/modelos/loader';
 import { Cobranza } from 'src/app/modelos/cobranza';
@@ -25,6 +16,14 @@ import { CobranzaMedioPagoService } from 'src/app/servicios/cobranza-medio-pago.
 import { CobranzaItemDialogoComponent } from './cobranza-item-dialogo/cobranza-item-dialogo.component';
 import { DetalleRetencionesDialogoComponent } from './detalle-retenciones-dialogo/detalle-retenciones-dialogo.component';
 import { CobranzaAnticipoComponent } from './cobranza-anticipo/cobranza-anticipo.component';
+import { CobranzaEfectivoComponent } from './cobranza-efectivo/cobranza-efectivo.component';
+import { CobranzaChequesCarteraComponent } from './cobranza-cheques-cartera/cobranza-cheques-cartera.component';
+import { CobranzaChequesElectronicosComponent } from './cobranza-cheques-electronicos/cobranza-cheques-electronicos.component';
+import { CobranzaChequesPropiosComponent } from './cobranza-cheques-propios/cobranza-cheques-propios.component';
+import { CobranzaTransferenciaBancariaComponent } from './cobranza-transferencia-bancaria/cobranza-transferencia-bancaria.component';
+import { CobranzaOtrasCuentasComponent } from './cobranza-otras-cuentas/cobranza-otras-cuentas.component';
+import { CobranzaOtrasMonedasComponent } from './cobranza-otras-monedas/cobranza-otras-monedas.component';
+import { CobranzaDocumentosComponent } from './cobranza-documentos/cobranza-documentos.component';
 
 @Component({
   selector: 'app-cobranzas',
@@ -368,28 +367,28 @@ export class CobranzasComponent implements OnInit {
         this.abrirDialogo(CobranzaAnticipoComponent);
         break;
       case 'efectivo':
-        this.abrirDialogo(PagoEfectivoComponent);
+        this.abrirDialogo(CobranzaEfectivoComponent);
         break;
       case 'cheques':
-        this.abrirDialogo(PagoChequesCarteraComponent);
+        this.abrirDialogo(CobranzaChequesCarteraComponent);
         break;
       case 'chequeselectronicos':
-        this.abrirDialogo(PagoChequesElectronicosComponent);
+        this.abrirDialogo(CobranzaChequesElectronicosComponent);
         break;
       case 'chequespropios':
-        this.abrirDialogo(PagoChequesPropiosComponent);
+        this.abrirDialogo(CobranzaChequesPropiosComponent);
         break;
       case 'transferenciabancaria':
-        this.abrirDialogo(PagoTransferenciaBancariaComponent);
+        this.abrirDialogo(CobranzaTransferenciaBancariaComponent);
         break;
       case 'documentos':
-        this.abrirDialogo(PagoDocumentosComponent);
+        this.abrirDialogo(CobranzaDocumentosComponent);
         break;
       case 'otrascuentas':
-        this.abrirDialogo(PagoOtrasCuentasComponent);
+        this.abrirDialogo(CobranzaOtrasCuentasComponent);
         break;
       case 'otrasmonedas':
-        this.abrirDialogo(PagoOtrasMonedasComponent);
+        this.abrirDialogo(CobranzaOtrasMonedasComponent);
         break;
     }
   }

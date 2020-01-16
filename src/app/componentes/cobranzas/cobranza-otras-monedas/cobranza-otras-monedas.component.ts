@@ -1,7 +1,6 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { OtrasMonedasComponent } from '../../tesoreria/otras-monedas/otras-monedas.component';
 
 @Component({
   selector: 'app-cobranza-otras-monedas',
@@ -9,7 +8,6 @@ import { OtrasMonedasComponent } from '../../tesoreria/otras-monedas/otras-moned
   styleUrls: ['./cobranza-otras-monedas.component.css']
 })
 export class CobranzaOtrasMonedasComponent implements OnInit {
-
   //Define el formulario
   public formulario: FormGroup;
   //Define el total
@@ -19,7 +17,7 @@ export class CobranzaOtrasMonedasComponent implements OnInit {
   //Defiene la columnas de la tabla
   public columnas: Array<string> = ['MONEDA', 'CAMBIO', 'IMPORTE'];
   //Define el constructor de la clase
-  constructor(public dialogRef: MatDialogRef<OtrasMonedasComponent>, @Inject(MAT_DIALOG_DATA) public data) { }
+  constructor(public dialogRef: MatDialogRef<CobranzaOtrasMonedasComponent>, @Inject(MAT_DIALOG_DATA) public data) { }
   //Al inicializarse el componente
   ngOnInit() {
     //Establece el formulario

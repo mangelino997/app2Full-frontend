@@ -16,12 +16,11 @@ import { CobranzaAnticipoComponent } from 'src/app/componentes/cobranzas/cobranz
 import { CobranzaChequesCarteraComponent } from 'src/app/componentes/cobranzas/cobranza-cheques-cartera/cobranza-cheques-cartera.component';
 import { CobranzaChequesElectronicosComponent } from 'src/app/componentes/cobranzas/cobranza-cheques-electronicos/cobranza-cheques-electronicos.component';
 import { CobranzaChequesPropiosComponent } from 'src/app/componentes/cobranzas/cobranza-cheques-propios/cobranza-cheques-propios.component';
-import { CobranzaDocumentosCarteraComponent } from 'src/app/componentes/cobranzas/cobranza-documentos-cartera/cobranza-documentos-cartera.component';
+import { CobranzaDocumentosComponent } from 'src/app/componentes/cobranzas/cobranza-documentos/cobranza-documentos.component';
 import { CobranzaEfectivoComponent } from 'src/app/componentes/cobranzas/cobranza-efectivo/cobranza-efectivo.component';
 import { CobranzaOtrasCuentasComponent } from 'src/app/componentes/cobranzas/cobranza-otras-cuentas/cobranza-otras-cuentas.component';
 import { CobranzaOtrasMonedasComponent } from 'src/app/componentes/cobranzas/cobranza-otras-monedas/cobranza-otras-monedas.component';
 import { CobranzaTransferenciaBancariaComponent } from 'src/app/componentes/cobranzas/cobranza-transferencia-bancaria/cobranza-transferencia-bancaria.component';
-
 
 @NgModule({
   declarations: [
@@ -31,7 +30,7 @@ import { CobranzaTransferenciaBancariaComponent } from 'src/app/componentes/cobr
     CobranzaChequesCarteraComponent,
     CobranzaChequesElectronicosComponent,
     CobranzaChequesPropiosComponent,
-    CobranzaDocumentosCarteraComponent,
+    CobranzaDocumentosComponent,
     CobranzaEfectivoComponent,
     CobranzaOtrasCuentasComponent,
     CobranzaOtrasMonedasComponent,
@@ -70,7 +69,7 @@ import { CobranzaTransferenciaBancariaComponent } from 'src/app/componentes/cobr
     CobranzaChequesCarteraComponent,
     CobranzaChequesElectronicosComponent,
     CobranzaChequesPropiosComponent,
-    CobranzaDocumentosCarteraComponent,
+    CobranzaDocumentosComponent,
     CobranzaEfectivoComponent,
     CobranzaOtrasCuentasComponent,
     CobranzaOtrasMonedasComponent,

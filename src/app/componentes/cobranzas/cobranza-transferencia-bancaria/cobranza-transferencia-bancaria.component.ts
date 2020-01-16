@@ -1,7 +1,6 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { TransferenciaBancariaComponent } from '../../tesoreria/transferencia-bancaria/transferencia-bancaria.component';
 
 @Component({
   selector: 'app-cobranza-transferencia-bancaria',
@@ -19,7 +18,7 @@ export class CobranzaTransferenciaBancariaComponent implements OnInit {
   //Defiene la columnas de la tabla
   public columnas: Array<string> = ['CUENTA_BANCARIA', 'FECHA', 'IMPORTE'];
   //Define el constructor de la clase
-  constructor(public dialogRef: MatDialogRef<TransferenciaBancariaComponent>, @Inject(MAT_DIALOG_DATA) public data) { }
+  constructor(public dialogRef: MatDialogRef<CobranzaTransferenciaBancariaComponent>, @Inject(MAT_DIALOG_DATA) public data) { }
   //Al inicializarse el componente
   ngOnInit() {
     //Establece el formulario

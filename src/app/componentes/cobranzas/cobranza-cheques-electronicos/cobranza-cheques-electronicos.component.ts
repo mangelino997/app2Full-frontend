@@ -1,7 +1,6 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { ChequesElectronicosComponent } from '../../tesoreria/cheques-electronicos/cheques-electronicos.component';
 
 @Component({
   selector: 'app-cobranza-cheques-electronicos',
@@ -18,7 +17,7 @@ public show: boolean = false;
 //Defiene la columnas de la tabla
 public columnas: Array<string> = ['BANCO', 'NUMERO_CHEQUE', 'FECHA_PAGO', 'CUIT_EMISOR', 'IMPORTE'];
 //Define el constructor de la clase
-constructor(public dialogRef: MatDialogRef<ChequesElectronicosComponent>, @Inject(MAT_DIALOG_DATA) public data) { }
+constructor(public dialogRef: MatDialogRef<CobranzaChequesElectronicosComponent>, @Inject(MAT_DIALOG_DATA) public data) { }
 //Al inicializarse el componente
 ngOnInit() {
   //Establece el formulario

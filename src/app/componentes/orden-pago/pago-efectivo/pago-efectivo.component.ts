@@ -15,7 +15,12 @@ export class PagoEfectivoComponent implements OnInit {
   constructor(public dialogRef: MatDialogRef<PagoEfectivoComponent>, @Inject(MAT_DIALOG_DATA) public data,
     private appService: AppService) { }
   //Al inicializarse el componente
-  ngOnInit() { }
+  ngOnInit() { 
+    let elemento = this.data.elemento.value;
+    if(elemento) {
+      this.importe.setValue(elemento.importe);
+    }
+  }
   //Mascara un importe decimal
   public mascararImporte(limite, decimalLimite) {
     return this.appService.mascararImporte(limite, decimalLimite);
@@ -29,10 +34,14 @@ export class PagoEfectivoComponent implements OnInit {
   }
   //Cierra el dialogo
   public cerrar(importe): void {
-    let formulario = {
-      nombre: 'Efectivo',
-      importe: importe
+    let elemento = {
+      indice: this.data.elemento.value ? this.data.elemento.value.indice : -1,
+      importe: this.importe.value,
+      formulario: {
+        nombre: 'Efectivo',
+        importe: importe
+      }
     }
-    this.dialogRef.close(formulario);
+    this.dialogRef.close(elemento);
   }
 }

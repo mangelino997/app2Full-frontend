@@ -9,6 +9,8 @@ export class OrdenPago {
     public formularioIntegrar: FormGroup;
     //Define formulario de medio de pago
     public formularioMedioPago: FormGroup;
+    //Define un formulario para guardar el contenido que se establece en cada dialogo
+    public formularioDialogo: FormGroup;
     //constructor
     constructor() {
         // crear el formulario para la seccion de modulos
@@ -44,6 +46,11 @@ export class OrdenPago {
         this.formularioMedioPago = new FormGroup({
             nombre: new FormControl(),
             importe: new FormControl()
+        });
+        //Establece el formulario dialogo
+        this.formularioDialogo = new FormGroup({
+            anticipos: new FormControl(),
+            efectivo: new FormControl()
         });
     }
 }
