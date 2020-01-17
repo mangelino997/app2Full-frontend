@@ -118,6 +118,8 @@ export class OrdenPagoComponent implements OnInit {
         }
       }
     });
+    //Establece el medio de pago (Campo Integracion En) en modo deshabilitado
+    this.medioPago.disable();
   }
   //Obtiene los datos necesarios para el componente
   private inicializar(idRol, idSubopcion) {
@@ -178,6 +180,8 @@ export class OrdenPagoComponent implements OnInit {
         this.comprasComprobantes.sort = this.sort;
         this.comprasComprobantes.data.length == 0 ? this.toastr.warning("El proveedor no tiene contactos asignados.") : '';
         this.calcularTotalItemsYTotalDeuda();
+        //Habilita el campo Integracion En
+        this.medioPago.enable();
         this.loaderService.hide();
       },
       err => {
@@ -283,7 +287,7 @@ export class OrdenPagoComponent implements OnInit {
         this.formularioIntegrar.get('pendienteIntegrar').setValue(this.calcularPendienteIntegrar());
       } else {
         if(elemento.indice != null && elemento.total == 0) {
-          this.eliminarItemLista(elemento.indice);
+          this.eliminarItemLista(elemento.indice, elemento.formulario.nombre);
         }
       }
     });
@@ -302,8 +306,13 @@ export class OrdenPagoComponent implements OnInit {
     return this.establecerCeros(this.formularioTotales.get('importe').value - importeTotal);
   }
   //Elimina un item de la lista de medios de pagos
-  public eliminarItemLista(indice): void {
+  public eliminarItemLista(indice, elemento): void {
     this.mediosPagosSeleccionados.splice(indice, 1);
+    //Resetea el formulario de datos de dialogo del medio de pago eliminado
+    elemento = elemento.toLowerCase();
+    elemento = elemento.replace(new RegExp(/\s/g), "");
+    elemento = elemento.replace(new RegExp(/[òó]/g), "o");
+    this.formularioDialogo.get(elemento).reset();
     //Calcula importe Pendiente de Integrar
     this.formularioIntegrar.get('pendienteIntegrar').setValue(this.calcularPendienteIntegrar());
   }
@@ -392,6 +401,8 @@ export class OrdenPagoComponent implements OnInit {
   public verificarSeleccion(valor): void {
     if (typeof valor.value != 'object') {
       valor.setValue(null);
+      //Establece el medio de pago (Campo Integracion En) en modo deshabilitado
+      this.medioPago.disable();
     }
   }
   //Funcion para comparar y mostrar elemento de campo select

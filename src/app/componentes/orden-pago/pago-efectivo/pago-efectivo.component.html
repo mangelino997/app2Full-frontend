@@ -13,7 +13,7 @@
         </div>
     </div>
     <div class="row justify-content-center">
-        <button mat-raised-button color="primary" (click)="cerrar(importe.value)">Confirmar</button>
+        <button mat-raised-button color="primary" (click)="cerrar(importe.value)" [disabled]="obtenerEstadoBtnConfirmar()">Confirmar</button>
         <button class="margin-left-3" mat-raised-button (click)="cerrar(0)">Cancelar</button>
     </div>
 </div>

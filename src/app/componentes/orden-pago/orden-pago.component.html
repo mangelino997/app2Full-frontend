@@ -169,7 +169,8 @@
                                 <div class="form-group has-float-label">
                                     <label for="idRetenciones" class="codigo-label">Retenciones</label>
                                     <input id="idRetenciones" type="text" formControlName="retenciones" readonly
-                                        class="form-control form-control-sm number-right">
+                                        class="form-control form-control-sm number-right" [textMask]="mascararImporte(10, 2)" 
+                                        placeholder="$ 0.00">
                                 </div>
                             </div>
                             <button class="button-input" mat-raised-button color="primary">+</button>
@@ -179,10 +180,8 @@
                                 <mat-list>
                                     <h3 mat-subheader>Medios de Pago</h3>
                                     <mat-list-item *ngFor="let medioPago of mediosPagosSeleccionados ; let i = index">
-                                        <mat-icon mat-list-icon class="cursor-color-rojo"
-                                            (click)="eliminarItemLista(i)">delete_forever</mat-icon>
-                                        <h4 mat-line class="cursor-color"
-                                            (click)="determinarIntegracion(medioPago.nombre)">{{medioPago.nombre}}</h4>
+                                        <mat-icon mat-list-icon class="cursor-color-rojo" (click)="eliminarItemLista(i, medioPago.nombre)">delete_forever</mat-icon>
+                                        <h4 mat-line class="cursor-color" (click)="determinarIntegracion(medioPago.nombre)">{{medioPago.nombre}}</h4>
                                         <span><b>${{establecerCeros(medioPago.importe)}}</b></span>
                                     </mat-list-item>
                                 </mat-list>
@@ -193,7 +192,7 @@
                                 <div class="form-group has-float-label">
                                     <label for="idTotalIntegrado" class="codigo-label">Total Integrado</label>
                                     <input id="idTotalIntegrado" type="text" formControlName="totalIntegrado" readonly
-                                        class="form-control form-control-sm number-right">
+                                        class="form-control form-control-sm number-right" placeholder="0.00">
                                 </div>
                             </div>
                         </div>
