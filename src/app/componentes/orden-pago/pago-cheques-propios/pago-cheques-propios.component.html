@@ -4,13 +4,20 @@
     </div>
     <form [formGroup]="formulario">
         <div class="row">
-            <div class="col-md-4">
+            <div class="col-md-8">
                 <div class="form-group has-float-label">
-                    <label for="idCuentaBancaria" class="codigo-label">Cuenta Bancaria *</label>
-                    <input id="idCuentaBancaria" type="text" formControlName="cuentaBancaria" 
-                        class="form-control form-control-sm number-right">
+                    <label for="idCuentaBancaria" class="tamanio-label">Cuenta Bancaria *</label>
+                    <mat-select id="idCuentaBancaria" class="form-control form-control-sm"
+                        [compareWith]="compareFn" formControlName="cuentaBancaria"
+                        (selectionChange)="listarPorCuentaBancaria()">
+                        <mat-option *ngFor="let itemCuentaBancaria of cuentasBancarias" [value]="itemCuentaBancaria">
+                            {{itemCuentaBancaria.tipoCuentaBancaria.nombre}} - {{itemCuentaBancaria.cbu}}
+                        </mat-option>
+                    </mat-select>
                 </div>
             </div>
+        </div>
+        <div class="row">
             <div class="col-md-4">
                 <div class="form-group has-float-label">
                     <label for="idTipoChequera" class="codigo-label">Tipo de Chequera *</label>

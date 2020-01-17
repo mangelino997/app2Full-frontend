@@ -1,3 +1,4 @@
+<br>
 <form [formGroup]="formularioViajeEfectivo">
   <div class="row">
     <div class="col-md-3">
@@ -30,8 +31,8 @@
   <div class="row">
     <div class="col-md-7">
       <div class="form-group has-float-label">
-        <label for="idObservaciones" class="tamanio-label">Observaciones</label>
-        <textarea id="idObservaciones" class="form-control form-control-sm" formControlName="observaciones" rows="2"
+        <label for="idObservacionesE" class="tamanio-label">Observaciones</label>
+        <textarea id="idObservacionesE" class="form-control form-control-sm" formControlName="observaciones" rows="2"
           [readonly]="soloLectura"></textarea>
       </div>
     </div>
@@ -129,8 +130,8 @@
   <div class="row justify-content-end">
     <div class="col-md-2">
       <div class="form-group has-float-label">
-        <label for="idImporteAE" class="tamanio-label">Importe Total *</label>
-        <input id="idImporteAE" [textMask]="mascararImporte(8,2)" type="text" [formControl]="importeTotal"
+        <label for="idImporteTotalE" class="tamanio-label">Importe Total *</label>
+        <input id="idImporteTotalE" [textMask]="mascararImporte(8,2)" type="text" [formControl]="importeTotal"
           autocomplete="off" class="form-control form-control-sm number-right" [readonly]="true" placeholder="$ 0.00">
       </div>
     </div>

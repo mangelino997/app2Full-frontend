@@ -19,6 +19,7 @@ import { PagoOtrasCuentasComponent } from 'src/app/componentes/orden-pago/pago-o
 import { PagoOtrasMonedasComponent } from 'src/app/componentes/orden-pago/pago-otras-monedas/pago-otras-monedas.component';
 import { PagoTransferenciaBancariaComponent } from 'src/app/componentes/orden-pago/pago-transferencia-bancaria/pago-transferencia-bancaria.component';
 import { PagoAnticipoService } from 'src/app/servicios/pago-anticipo.service';
+import { CuentaBancariaService } from 'src/app/servicios/cuenta-bancaria.service';
 
 @NgModule({
   declarations: [
@@ -57,7 +58,8 @@ import { PagoAnticipoService } from 'src/app/servicios/pago-anticipo.service';
     OrdenPagoService,
     OrdenPago,
     CompraComprobanteService,
-    PagoAnticipoService
+    PagoAnticipoService,
+    CuentaBancariaService
   ],
   entryComponents: [
     PagoAnticiposComponent,
