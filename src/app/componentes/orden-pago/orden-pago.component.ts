@@ -71,7 +71,7 @@ export class OrdenPagoComponent implements OnInit {
   public comprasComprobantesSeleccionados = new SelectionModel<any>(true, []);
   //Define las columnas de la tabla
   public columnas: string[] = ['CHECK', 'FECHA_EMISION', 'FECHA_VTO_PAGO', 'TIPO', 'PUNTO_VENTA', 
-    'LETRA', 'NUMERO', 'SALDO', 'IMPORTE', 'IMPORTE_COBRO'];
+    'LETRA', 'NUMERO', 'IMPORTE', 'SALDO', 'IMPORTE_COBRO'];
   //Define la matSort
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   //Define la paginacion

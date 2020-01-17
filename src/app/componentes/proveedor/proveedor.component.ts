@@ -100,7 +100,7 @@ export class ProveedorComponent implements OnInit {
   public columnas: string[] = ['ID', 'RAZON_SOCIAL', 'TIPO_DOCUMENTO',
     'NUMERO_DOCUMENTO', 'TELEFONO', 'DOMICILIO', 'LOCALIDAD', 'EDITAR'];
   //Define las columnas de la tabla para la opcion Bancos - lista de Cuentas Bancarias
-  public columnasCuentaBancaria: string[] = ['BANCO', 'TIPO_CUENTA', 'TITULAR', 'NUMERO_CUENTA', 'CBU', 'MONEDA', 
+  public columnasCuentaBancaria: string[] = ['BANCO', 'TIPO_CUENTA', 'TITULAR', 'NUMERO_CUENTA', 'CBU', 'MONEDA',
     'ACTIVA', 'CUENTA_PPAL', 'EDITAR'];
   //Define las columnas de la tabla
   public columnasPlanCuenta: string[] = ['empresa', 'cuentaContable', 'planCuenta', 'eliminar'];
@@ -474,8 +474,8 @@ export class ProveedorComponent implements OnInit {
   //Establece valores al seleccionar una pestania
   public seleccionarPestania(id, nombre) {
     this.indiceSeleccionado = id;
-    this.seleccionarOpcion(8, 0);
     this.activeLink = nombre;
+    this.indiceSeleccionado == 5 ? this.seleccionarOpcion(null, 0) : this.seleccionarOpcion(8, 0);
     this.reestablecerFormulario(null);
     switch (id) {
       case 1:
@@ -529,6 +529,11 @@ export class ProveedorComponent implements OnInit {
       case 12:
         setTimeout(function () {
           document.getElementById('idIngresarComprobante').focus();
+        }, 20);
+        break;
+      default:
+        setTimeout(function () {
+          document.getElementById('idTipoProveedorFiltro').focus();
         }, 20);
         break;
     }

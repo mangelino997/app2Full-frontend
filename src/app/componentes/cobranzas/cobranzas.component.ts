@@ -69,7 +69,7 @@ export class CobranzasComponent implements OnInit {
   public resultadosClientes: Array<any> = [];
   //Define el importe total de la lista 'CobranzaRetenciones'
   public totalCobranzaRetenciones: FormControl = new FormControl();
-  public columnas: string[] = ['CHECK', 'FECHA_EMISION', 'FECHA_VTO_PAGO', 'TIPO', 'PUNTO_VENTA', 'LETRA', 'NUMERO', 'SALDO', 'IMPORTE', 'IMPORTE_COBRO'];
+  public columnas: string[] = ['CHECK', 'FECHA_EMISION', 'FECHA_VTO_PAGO', 'TIPO', 'PUNTO_VENTA', 'LETRA', 'NUMERO', 'IMPORTE', 'SALDO', 'IMPORTE_COBRO'];
   //Define la lista completa de registro
   public ventasComprobantes = new MatTableDataSource([]);
   //Defiene el render

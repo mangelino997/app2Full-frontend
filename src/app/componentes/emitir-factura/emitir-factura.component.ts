@@ -339,6 +339,8 @@ export class EmitirFacturaComponent implements OnInit {
     let fechaActual = new Date(this.fechaActual);
     fechaActual.setDate(fechaActual.getDate() + dias);
     let date = fechaActual.getDate() + dias;
+    //Le cambio el simbolo '-' (negativo) para formatear bien la fecha
+    date < 0 ? date = -(date) : '';
     let fechaGenerada = fechaActual.getFullYear() + '-' + (fechaActual.getMonth() + 1) + '-' + date; //Al mes se le debe sumar 1
     return fechaGenerada;
   }
@@ -361,7 +363,8 @@ export class EmitirFacturaComponent implements OnInit {
     this.puntoVentaService.obtenerNumero(this.formulario.get('puntoVenta').value.puntoVenta, codigoAfip,
       this.formulario.value.sucursal.id, this.formulario.value.empresa.id).subscribe(
         res => {
-          this.formulario.get('numero').setValue(res.text());
+          let numero = res.text();
+          this.formulario.get('numero').setValue(this.establecerCerosIzq(Number(numero), "0000000", -8));
         },
         err => {
           this.formulario.get('numero').reset();
