@@ -6,48 +6,58 @@
         <div class="row">
             <div class="col-md-4">
                 <div class="form-group has-float-label">
-                    <label for="idDocumento" class="codigo-label">Documento</label>
-                    <input id="idDocumento" type="text" formControlName="documento" 
-                        class="form-control form-control-sm">
+                    <label for="idDocumento" class="tamanio-label">Tipo de Documento *</label>
+                    <mat-select id="idDocumento" class="form-control form-control-sm"
+                        [compareWith]="compareFn" formControlName="documento">
+                        <mat-option *ngFor="let itemTipoDocumento of tiposDocumentos" [value]="itemTipoDocumento">
+                            {{itemTipoDocumento.nombre}}
+                        </mat-option>
+                    </mat-select>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="form-group has-float-label">
-                    <label for="idNumero" class="codigo-label">Número</label>
-                    <input id="idNumero" type="text" formControlName="numero" 
-                        class="form-control form-control-sm number-right">
+                    <label id="labelNumeroDocumento" for="idNumeroDocumento" class="codigo-label">N° de Documento *</label>
+                    <input id="idNumeroDocumento" type="number" formControlName="numero" autocomplete="off"
+                          class="form-control form-control-sm number-right" 
+                          (blur)="formulario.get('numero').value ? validarDocumento() : ''"
+                          (ngModelChange)="cambioCampo('idNumeroDocumento', 'labelNumeroDocumento')">
                 </div>
             </div>
         </div>
         <div class="row">
             <div class="col-md-4">
                 <div class="form-group has-float-label">
-                    <label for="idFechaPago" class="codigo-label">Fecha Pago</label>
-                    <input id="idFechaPago" type="date" formControlName="fechaPago" 
-                        class="form-control form-control-sm">
+                    <label id="labelFechaPagoD" for="idFechaPagoD" class="codigo-label">Fecha Pago *</label>
+                    <input id="idFechaPagoD" type="date" formControlName="fechaPago" 
+                        class="form-control form-control-sm" min="{{fechaActual}}"
+                        (blur)="verificarFecha(formulario.get('fechaPago').value)"
+                        (ngModelChange)="cambioCampo('idFechaPagoD', 'labelFechaPagoD')">
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="form-group has-float-label">
-                    <label for="idImporte" class="codigo-label">Importe</label>
-                    <input id="idImporte" type="text" formControlName="importe" 
-                        class="form-control form-control-sm number-right">
+                    <label id="labelImporteD" for="idImporteD" class="codigo-label">Importe *</label>
+                    <input id="idImporteD" type="text" formControlName="importe" 
+                        class="form-control form-control-sm number-right" placeholder="$ 0.00"
+                        [textMask]="mascararImporte(10, 2)" (blur)="verificarImporteMayorCero(formulario.get('importe').value, 2)"
+                        (ngModelChange)="cambioCampo('idImporteD', 'labelImporteD')">
                 </div>
             </div>
             <div class="col-md-4">
-                <button mat-raised-button color="primary">Agregar</button>
+                <button mat-raised-button color="primary" [disabled]="!formulario.valid" (click)="agregar()">Agregar</button>
             </div>
         </div>
     </form>
     <div class="row">
         <div class="tabla">
-            <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
+            <table mat-table [dataSource]="documentos" matSort class="mat-elevation-z1">
                 <ng-container matColumnDef="DOCUMENTO">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Documento</th>
-                    <td mat-cell *matCellDef="let elemento"></td>
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Tipo Documento</th>
+                    <td mat-cell *matCellDef="let elemento">{{elemento.documento.nombre}}</td>
                 </ng-container>
                 <ng-container matColumnDef="NUMERO">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Número</th>
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>N° de Documento</th>
                     <td mat-cell *matCellDef="let elemento">{{elemento.numero}}</td>
                 </ng-container>
                 <ng-container matColumnDef="FECHA_PAGO">
@@ -56,7 +66,16 @@
                 </ng-container>
                 <ng-container matColumnDef="IMPORTE">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>Importe</th>
-                    <td mat-cell *matCellDef="let elemento">{{elemento.importe}}</td>
+                    <td class="number-right" mat-cell *matCellDef="let elemento">{{establecerDecimalesTabla(elemento.importe, 2)}}</td>
+                </ng-container>
+                <ng-container matColumnDef="ELIMINAR">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
+                    <td mat-cell *matCellDef="let elemento ; let i = index">
+                        <button mat-icon-button (click)="eliminarItemTabla(i)" matTooltip="Eliminar" 
+                            matTooltipPosition="above">
+                            <mat-icon>delete</mat-icon>
+                        </button>
+                    </td>
                 </ng-container>
                 <tr mat-header-row *matHeaderRowDef="columnas"></tr>
                 <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
@@ -68,12 +87,12 @@
             <div class="form-group has-float-label">
                 <label for="idTotal" class="codigo-label">Total</label>
                 <input id="idTotal" type="text" [formControl]="total" readonly 
-                    class="form-control form-control-sm number-right">
+                    class="form-control form-control-sm number-right" placeholder="$ 0.00"
+                    [textMask]="mascararImporte(10, 2)">
             </div>
         </div>
     </div>
     <div class="row justify-content-center">
-        <button mat-raised-button color="primary">Confirmar</button>
-        <button class="margin-left-3" mat-raised-button (click)="cerrar()">Cancelar</button>
+        <button mat-raised-button color="primary" (click)="cerrar(total.value)">Confirmar y Cerrar</button>
     </div>
 </div>

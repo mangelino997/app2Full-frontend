@@ -22,6 +22,7 @@ import { PagoOtrasMonedasComponent } from './pago-otras-monedas/pago-otras-moned
 import { SelectionModel } from '@angular/cdk/collections';
 import { MensajeExcepcion } from 'src/app/modelos/mensaje-excepcion';
 import { ContactoCliente } from 'src/app/modelos/contactoCliente';
+import { DetalleRetencionesComponent } from './detalle-retenciones/detalle-retenciones.component';
 
 @Component({
   selector: 'app-orden-pago',
@@ -233,29 +234,29 @@ export class OrdenPagoComponent implements OnInit {
         this.abrirDialogo(PagoEfectivoComponent, this.formularioDialogo.get('efectivo'));
         break;
       case 'cheques':
-        this.abrirDialogo(PagoChequesCarteraComponent, 2);
+        this.abrirDialogo(PagoChequesCarteraComponent, this.formularioDialogo.get('cheques'));
         break;
       case 'chequeselectronicos':
-        this.abrirDialogo(PagoChequesElectronicosComponent, 2);
+        this.abrirDialogo(PagoChequesElectronicosComponent, this.formularioDialogo.get('chequeselectronicos'));
         break;
       case 'chequespropios':
-        this.abrirDialogo(PagoChequesPropiosComponent, 2);
+        this.abrirDialogo(PagoChequesPropiosComponent, this.formularioDialogo.get('chequespropios'));
         break;
       case 'transferenciabancaria':
-        this.abrirDialogo(PagoTransferenciaBancariaComponent, 2);
+        this.abrirDialogo(PagoTransferenciaBancariaComponent, this.formularioDialogo.get('transferenciabancaria'));
         break;
       case 'documentos':
-        this.abrirDialogo(PagoDocumentosComponent, 2);
+        this.abrirDialogo(PagoDocumentosComponent, this.formularioDialogo.get('documentos'));
         break;
       case 'otrascuentas':
         this.abrirDialogo(PagoOtrasCuentasComponent, 2);
         break;
       case 'otrasmonedas':
-        this.abrirDialogo(PagoOtrasMonedasComponent, 2);
+        this.abrirDialogo(PagoOtrasMonedasComponent, this.formularioDialogo.get('otrasmonedas'));
         break;
     }
   }
-  //Abre el dialogo para agregar un cliente eventual
+  //Abre el dialogo del medio de pago elegido
   private abrirDialogo(componente, formularioDialogo): void {
     this.medioPago.reset();
     const dialogRef = this.dialog.open(componente, {
@@ -268,7 +269,7 @@ export class OrdenPagoComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe(elemento => {
       //Si el importe establecido en el dialogo es diferente de cero, agrega el medio de pago a la lista
-      if(elemento.formulario.importe != 0 && elemento.formulario.importe != '0.00') {
+      if(elemento.formulario.importe != 0 && elemento.formulario.importe != '0.00' && elemento.formulario.importe != null) {
         //Verifica si en la lista de medios de pagos seleccionados ya esta cargado el medio de pago actual
         let objeto = elemento.indice != -1 ? this.mediosPagosSeleccionados[elemento.indice] : null;
         if(objeto) {
@@ -285,9 +286,35 @@ export class OrdenPagoComponent implements OnInit {
         }
         //Calcula importe Pendiente de Integrar
         this.formularioIntegrar.get('pendienteIntegrar').setValue(this.calcularPendienteIntegrar());
+        //Calcula total integrado
+        this.formularioIntegrar.get('totalIntegrado').setValue(this.calcularTotalIntegrado());
       } else {
         if(elemento.indice != null && elemento.total == 0) {
           this.eliminarItemLista(elemento.indice, elemento.formulario.nombre);
+        }
+      }
+    });
+  }
+  //Abre el dialogo de detalle de retenciones
+  public abrirDialogoRetenciones(): void {
+    this.medioPago.reset();
+    const dialogRef = this.dialog.open(DetalleRetencionesComponent, {
+      width: '60%',
+      maxWidth: '95%',
+      data: {
+        elemento: this.formularioDialogo.get('retenciones').value
+      }
+    });
+    dialogRef.afterClosed().subscribe(elemento => {
+      if(elemento) {
+        this.formularioIntegrar.get('retenciones').setValue(this.appService.establecerDecimales(elemento.total, 2));
+        //Calcula pendiente de integrar
+        this.formularioIntegrar.get('pendienteIntegrar').setValue(this.calcularPendienteIntegrar());
+        //Calcula total integrado
+        this.formularioIntegrar.get('totalIntegrado').setValue(this.calcularTotalIntegrado());
+        //Si el importe establecido en el dialogo es diferente de cero, guarda la lista para futuras apertura del dialogo
+        if(elemento.total != 0 && elemento.total != '0.00') {
+          this.formularioDialogo.get('retenciones').setValue(elemento);
         }
       }
     });
@@ -298,12 +325,26 @@ export class OrdenPagoComponent implements OnInit {
     this.mediosPagosSeleccionados.forEach((elemento) => {
       importe += Number(elemento.importe);
     });
-    return importe;
+    return this.establecerCeros(importe);
   }
   //Calcula importe Pendiente de Integrar
   private calcularPendienteIntegrar(): number {
     let importeTotal = this.calcularImporteMediosPagos();
-    return this.establecerCeros(this.formularioTotales.get('importe').value - importeTotal);
+    let retenciones = this.formularioIntegrar.get('retenciones').value ? 
+      this.establecerCeros(this.formularioIntegrar.get('retenciones').value) : 0;
+    let importe = this.formularioTotales.get('importe').value ?
+      this.establecerCeros(this.formularioTotales.get('importe').value) : 0;
+    let total = Number(importe) - (Number(importeTotal) + Number(retenciones));
+    return this.establecerCeros(total != 0 ? total : '0');
+  }
+  //Calcula el total integrado
+  private calcularTotalIntegrado(): number {
+    let total = 0;
+    this.mediosPagosSeleccionados.forEach((elemento) => {
+      total += Number(elemento.importe);
+    });
+    total += this.formularioIntegrar.get('retenciones').value ? parseFloat(this.formularioIntegrar.get('retenciones').value) : 0;
+    return this.appService.establecerDecimales(total != 0 ? total : '0', 2);
   }
   //Elimina un item de la lista de medios de pagos
   public eliminarItemLista(indice, elemento): void {
@@ -315,6 +356,8 @@ export class OrdenPagoComponent implements OnInit {
     this.formularioDialogo.get(elemento).reset();
     //Calcula importe Pendiente de Integrar
     this.formularioIntegrar.get('pendienteIntegrar').setValue(this.calcularPendienteIntegrar());
+    //Calcula total integrado
+    this.formularioIntegrar.get('totalIntegrado').setValue(this.calcularTotalIntegrado());
   }
   //Funcion para determina que accion se requiere (Agregar, Actualizar, Eliminar)
   public accion(indice) {
@@ -380,6 +423,12 @@ export class OrdenPagoComponent implements OnInit {
   //Elimina un registro
   public eliminar(): void {
 
+  }
+  //Obtiene el estado del boton confirmar
+  public obtenerEstadoBtnConfirmar(): boolean {
+    let importe = this.formularioTotales.get('importe').value ? this.formularioTotales.get('importe').value : 0;
+    let total =  this.formularioIntegrar.get('totalIntegrado').value ? this.formularioIntegrar.get('totalIntegrado').value : 0;
+    return importe > total || importe == 0;
   }
   //Mascara un importe decimal
   public mascararImporte(limite, decimalLimite) {

@@ -173,7 +173,8 @@
                                         placeholder="$ 0.00">
                                 </div>
                             </div>
-                            <button class="button-input" mat-raised-button color="primary">+</button>
+                            <button class="button-input" mat-raised-button color="primary" 
+                                (click)="abrirDialogoRetenciones()">+</button>
                         </div>
                         <div class="row">
                             <div class="col lista">
@@ -192,7 +193,8 @@
                                 <div class="form-group has-float-label">
                                     <label for="idTotalIntegrado" class="codigo-label">Total Integrado</label>
                                     <input id="idTotalIntegrado" type="text" formControlName="totalIntegrado" readonly
-                                        class="form-control form-control-sm number-right" placeholder="0.00">
+                                        class="form-control form-control-sm number-right" placeholder="0.00"
+                                        [textMask]="mascararImporte(10, 2)">
                                 </div>
                             </div>
                         </div>
@@ -203,7 +205,7 @@
                 <mat-progress-bar mode="indeterminate"></mat-progress-bar>
             </div>
             <div class="row justify-content-center" *ngIf="!show">
-                <button mat-raised-button color="primary">Confirmar</button>
+                <button mat-raised-button color="primary" [disabled]="obtenerEstadoBtnConfirmar()">Confirmar</button>
             </div>
         </div>
     </div>

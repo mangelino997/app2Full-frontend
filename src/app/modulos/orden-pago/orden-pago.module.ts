@@ -20,6 +20,13 @@ import { PagoOtrasMonedasComponent } from 'src/app/componentes/orden-pago/pago-o
 import { PagoTransferenciaBancariaComponent } from 'src/app/componentes/orden-pago/pago-transferencia-bancaria/pago-transferencia-bancaria.component';
 import { PagoAnticipoService } from 'src/app/servicios/pago-anticipo.service';
 import { CuentaBancariaService } from 'src/app/servicios/cuenta-bancaria.service';
+import { ChequeraService } from 'src/app/servicios/chequera.service';
+import { ChequeCarteraService } from 'src/app/servicios/cheque-cartera.service';
+import { TipoDocumentoCarteraService } from 'src/app/servicios/tipo-documento-cartera.service';
+import { DetalleRetencionesComponent } from 'src/app/componentes/orden-pago/detalle-retenciones/detalle-retenciones.component';
+import { TipoRetencionService } from 'src/app/servicios/tipo-retencion.service';
+import { MesService } from 'src/app/servicios/mes.service';
+import { ProvinciaService } from 'src/app/servicios/provincia.service';
 
 @NgModule({
   declarations: [
@@ -32,7 +39,8 @@ import { CuentaBancariaService } from 'src/app/servicios/cuenta-bancaria.service
     PagoEfectivoComponent,
     PagoOtrasCuentasComponent,
     PagoOtrasMonedasComponent,
-    PagoTransferenciaBancariaComponent
+    PagoTransferenciaBancariaComponent,
+    DetalleRetencionesComponent
   ],
   imports: [
     CommonModule,
@@ -59,7 +67,13 @@ import { CuentaBancariaService } from 'src/app/servicios/cuenta-bancaria.service
     OrdenPago,
     CompraComprobanteService,
     PagoAnticipoService,
-    CuentaBancariaService
+    CuentaBancariaService,
+    ChequeraService,
+    ChequeCarteraService,
+    TipoDocumentoCarteraService,
+    TipoRetencionService,
+    MesService,
+    ProvinciaService
   ],
   entryComponents: [
     PagoAnticiposComponent,
@@ -70,7 +84,8 @@ import { CuentaBancariaService } from 'src/app/servicios/cuenta-bancaria.service
     PagoEfectivoComponent,
     PagoOtrasCuentasComponent,
     PagoOtrasMonedasComponent,
-    PagoTransferenciaBancariaComponent
+    PagoTransferenciaBancariaComponent,
+    DetalleRetencionesComponent
   ]
 })
 export class OrdenPagoModule { }

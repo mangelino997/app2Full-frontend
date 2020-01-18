@@ -50,7 +50,14 @@ export class OrdenPago {
         //Establece el formulario dialogo
         this.formularioDialogo = new FormGroup({
             anticipos: new FormControl(),
-            efectivo: new FormControl()
+            efectivo: new FormControl(),
+            chequespropios: new FormControl(),
+            cheques: new FormControl(),
+            chequeselectronicos: new FormControl(),
+            transferenciabancaria: new FormControl(),
+            documentos: new FormControl(),
+            otrasmonedas: new FormControl(),
+            retenciones: new FormControl()
         });
     }
 }

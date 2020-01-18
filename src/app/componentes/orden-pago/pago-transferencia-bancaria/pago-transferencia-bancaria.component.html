@@ -4,11 +4,15 @@
     </div>
     <form [formGroup]="formulario">
         <div class="row">
-            <div class="col-md-4">
+            <div class="col-md-8">
                 <div class="form-group has-float-label">
-                    <label for="idCuentaBancaria" class="codigo-label">Cuenta Bancaria *</label>
-                    <input id="idCuentaBancaria" type="text" formControlName="cuentaBancaria" 
-                        class="form-control form-control-sm">
+                    <label for="idCuentaBancaria" class="tamanio-label">Cuenta Bancaria *</label>
+                    <mat-select id="idCuentaBancaria" class="form-control form-control-sm"
+                        [compareWith]="compareFn" formControlName="cuentaBancaria">
+                        <mat-option *ngFor="let itemCuentaBancaria of cuentasBancarias" [value]="itemCuentaBancaria">
+                            {{itemCuentaBancaria.tipoCuentaBancaria.nombre}} - {{itemCuentaBancaria.cbu}}
+                        </mat-option>
+                    </mat-select>
                 </div>
             </div>
         </div>
@@ -17,27 +21,29 @@
                 <div class="form-group has-float-label">
                     <label for="idFecha" class="codigo-label">Fecha</label>
                     <input id="idFecha" type="date" formControlName="fecha" 
-                        class="form-control form-control-sm">
+                        class="form-control form-control-sm" min="{{fechaActual}}">
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="form-group has-float-label">
-                    <label for="idImporte" class="codigo-label">Importe</label>
-                    <input id="idImporte" type="text" formControlName="importe" 
-                        class="form-control form-control-sm number-right">
+                    <label id="labelImporteTB" for="idImporteTB" class="codigo-label">Importe</label>
+                    <input id="idImporteTB" type="text" formControlName="importe" 
+                        class="form-control form-control-sm number-right" placeholder="$ 0.00"
+                        [textMask]="mascararImporte(10, 2)" (blur)="verificarImporteMayorCero(formulario.get('importe').value, 2)"
+                        (ngModelChange)="cambioCampo('idImporteTB', 'labelImporteTB')">
                 </div>
             </div>
             <div class="col-md-4">
-                <button mat-raised-button color="primary">Agregar</button>
+                <button mat-raised-button color="primary" [disabled]="!formulario.valid" (click)="agregar()">Agregar</button>
             </div>
         </div>
     </form>
     <div class="row">
         <div class="tabla">
-            <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
+            <table mat-table [dataSource]="transferenciasBancarias" matSort class="mat-elevation-z1">
                 <ng-container matColumnDef="CUENTA_BANCARIA">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>Cuenta Bancaria</th>
-                    <td mat-cell *matCellDef="let elemento">{{elemento.cuentaBancaria}}</td>
+                    <td mat-cell *matCellDef="let elemento">{{elemento.cuentaBancaria.tipoCuentaBancaria.nombre}} - {{elemento.cuentaBancaria.cbu}}</td>
                 </ng-container>
                 <ng-container matColumnDef="FECHA">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha</th>
@@ -45,7 +51,16 @@
                 </ng-container>
                 <ng-container matColumnDef="IMPORTE">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>Importe</th>
-                    <td mat-cell *matCellDef="let elemento">{{elemento.importe}}</td>
+                    <td class="number-right" mat-cell *matCellDef="let elemento">{{establecerDecimalesTabla(elemento.importe, 2)}}</td>
+                </ng-container>
+                <ng-container matColumnDef="ELIMINAR">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
+                    <td mat-cell *matCellDef="let elemento ; let i = index">
+                        <button mat-icon-button (click)="eliminarItemTabla(i)" matTooltip="Eliminar" 
+                            matTooltipPosition="above">
+                            <mat-icon>delete</mat-icon>
+                        </button>
+                    </td>
                 </ng-container>
                 <tr mat-header-row *matHeaderRowDef="columnas"></tr>
                 <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
@@ -57,12 +72,12 @@
             <div class="form-group has-float-label">
                 <label for="idTotal" class="codigo-label">Total</label>
                 <input id="idTotal" type="text" [formControl]="total" readonly 
-                    class="form-control form-control-sm number-right">
+                    class="form-control form-control-sm number-right" placeholder="$ 0.00"
+                    [textMask]="mascararImporte(10, 2)">
             </div>
         </div>
     </div>
     <div class="row justify-content-center">
-        <button mat-raised-button color="primary">Confirmar</button>
-        <button class="margin-left-3" mat-raised-button (click)="cerrar()">Cancelar</button>
+        <button mat-raised-button color="primary" (click)="cerrar(total.value)">Confirmar y Cerrar</button>
     </div>
 </div>

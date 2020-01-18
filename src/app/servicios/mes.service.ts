@@ -48,7 +48,7 @@ export class MesService {
   public listar() {
     return this.http.get(this.url, this.options);
   }
-  //Obtiene la lista de Años
+  //Obtiene la lista de meses
   public listarMeses() {
     return this.http.get(this.url + '/listarMeses', this.options);
   }

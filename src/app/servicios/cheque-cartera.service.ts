@@ -1,20 +1,20 @@
 import { Injectable } from '@angular/core';
-import { Http, Headers, RequestOptions } from '@angular/http';
-import { AppService } from './app.service';
-import { Observable, Subscription, Subject } from 'rxjs';
+import { Subscription, Observable, Subject } from 'rxjs';
 import { Message } from '@stomp/stompjs';
+import { Http, RequestOptions, Headers } from '@angular/http';
+import { AppService } from './app.service';
 import { StompService } from '@stomp/ng2-stompjs';
 
 @Injectable({
   providedIn: 'root'
 })
-export class MonedaService {
+export class ChequeCarteraService {
   //Define la ruta al servicio web
-  private ruta: string = "/moneda";
+  private ruta:string = "/chequecartera";
   //Define la url base
-  private url: string = null;
+  private url:string = null;
   //Define la url para subcripcion a socket
-  private topic: string = null;
+  private topic:string = null;
   //Define el headers y token de autenticacion
   private options = null;
   //Define la subcripcion
@@ -22,7 +22,7 @@ export class MonedaService {
   //Define el mensaje de respuesta a la subcripcion
   private mensaje: Observable<Message>;
   //Define la lista completa
-  public listaCompleta: Subject<any> = new Subject<any>();
+  public listaCompleta:Subject<any> = new Subject<any>();
   //Constructor
   constructor(private http: Http, private appService: AppService, private stompService: StompService) {
     //Establece la url base
@@ -33,7 +33,7 @@ export class MonedaService {
     const headers: Headers = new Headers();
     headers.append('Content-Type', 'application/json');
     headers.append('Authorization', localStorage.getItem('token'));
-    this.options = new RequestOptions({ headers: headers });
+    this.options = new RequestOptions({headers: headers});
     //Subcribe al usuario a la lista completa
     this.mensaje = this.stompService.subscribe(this.topic + this.ruta + '/lista');
     this.subcripcion = this.mensaje.subscribe(this.subscribirse);
@@ -50,21 +50,9 @@ export class MonedaService {
   public listar() {
     return this.http.get(this.url, this.options);
   }
-  //Obtiene una lista de monedas activas
-  public listarActivas() {
-    return this.http.get(this.url + '/listarActivas', this.options);
-  }
-  //Obtiene un registros por nombre
-  public listarPorNombre(nombre) {
-    return this.http.get(this.url + '/listarPorNombre/' + nombre, this.options);
-  }
-  //Obtiene por Defecto (obtiene la moneda principal)
-  public obtenerPorDefecto() {
-    return this.http.get(this.url + '/obtenerPorDefecto', this.options);
-  }
-  //Obtiene todos los listados
-  public inicializar(idRol, idSubopcion) {
-    return this.http.get(this.url + '/inicializar/' + idRol + '/' + idSubopcion, this.options);
+  //Obtiene una lista por filtros
+  public listarPorFiltros(elemento) {
+    return this.http.post(this.url + '/listarPorFiltros', elemento, this.options);
   }
   //Agrega un registro
   public agregar(elemento) {
@@ -72,10 +60,6 @@ export class MonedaService {
   }
   //Actualiza un registro
   public actualizar(elemento) {
-    return this.http.put(this.url, elemento, this.options);
-  }
-  //Setea una moneda como principal
-  public establecerMonedaPrincipal(elemento) {
     return this.http.put(this.url, elemento, this.options);
   }
   //Elimina un registro
