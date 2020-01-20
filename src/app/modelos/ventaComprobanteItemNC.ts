@@ -20,6 +20,7 @@ export class VentaComprobanteItemNC {
             importeExento: new FormControl(),
             provincia: new FormControl(),
             ventaComprobanteAplicado: new FormControl(),
+            estaRechazadaFCE: new FormControl()
         })
     }
 }

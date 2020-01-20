@@ -29,7 +29,7 @@ import { Router } from '@angular/router';
   styleUrls: ['./emitir-nota-credito.component.css']
 })
 export class EmitirNotaCreditoComponent implements OnInit {
-
+  public evt: any;
   //Define el id del registro a modificar
   public idMod: number = null;
   //Define el elemento (comprobante) a saldar
@@ -52,12 +52,10 @@ export class EmitirNotaCreditoComponent implements OnInit {
   public afipAlicuotasIva = [];
   //Define la lista de resultados para Puntos de Venta
   public resultadosPuntoVenta = [];
-  //
-  public puntosDeVenta: any;
-  public checkboxComp: boolean = null;
-  public checkboxCuenta: boolean = null;
-  public formularioComprobante: FormGroup;
-  public formularioCuenta: FormGroup;
+  /* Define el estado de los checkbox 
+  - false permite cancelar varios comprobantes 
+  - true permite cancelar solo un cpte (cuando Tipo Cpte = MiPymes ) */
+  public checkboxs: boolean = false;
   //Datos con los que se carga la tabla de Aplica a Comprobante
   public listaComprobantes = [];
   //Datos con lo que se carga la tabla de Aplica a la Cuenta
@@ -68,8 +66,6 @@ export class EmitirNotaCreditoComponent implements OnInit {
   public provincia: FormControl = new FormControl();
   //Define al campo puntoVenta (de solo lectura) como un FormControl
   public puntoVenta: FormControl = new FormControl();
-  //Define la opcion elegida como un formControl
-  // public opcionAplica: FormControl = new FormControl();
   //Define el Comprobante seleccionado de la tabla Aplica a Comprobante
   public comprobanteSeleccionado = null;
   //Define la Cuenta seleccionada de la tabla Aplica a Cuenta
@@ -152,7 +148,6 @@ export class EmitirNotaCreditoComponent implements OnInit {
     this.listarAlicuotaIva();
     //Reestablece el Formularios
     this.reestablecerFormulario(true);
-
     //Autcompletado - Buscar por Remitente
     this.formulario.get('cliente').valueChanges.subscribe(data => {
       if (typeof data == 'string') {
@@ -170,16 +165,12 @@ export class EmitirNotaCreditoComponent implements OnInit {
       }
     })
   }
-
-
-
-
-  //CODIGO A USAR ---------------------------
   //Obtiene una lista para el campo 'Motivo'
   public listarItemsTipo() {
-    console.log(this.formulario.value.tipoComprobante);
-    /* limpia la lista completa y formulario */
+    /* reestablece el Formulario y los controles de tipo boolean */
     this.formulario.get('cliente').value ? this.reestablecerFormulario(false) : '';
+    this.checkboxs = false;
+    this.idMod = null;
     /* se pasa como parámetro el 3 el cual hace referencia a las Notas de Cdto*/
     this.ventaTipoItemervice.listarItems(3).subscribe(
       res => {
@@ -546,6 +537,7 @@ export class EmitirNotaCreditoComponent implements OnInit {
       idCliente, this.appService.getEmpresa().id).subscribe(
         res => {
           this.listaCompleta.data = res.json();
+          console.log(this.listaCompleta.data);
           this.listaCompleta.data.length == 0 ?
             this.toastr.warning('El Cliente no tiene comprobantes pendientes.') : this.limpiarVtaCpteItemNC();
           this.loaderService.hide();
@@ -617,6 +609,10 @@ export class EmitirNotaCreditoComponent implements OnInit {
 
     /* llama a calcular importes totales*/
     this.calcularImportesTotales();
+
+    //Si el tipo de cpte es FCE MiPymes cambia el estado del boolean 'checkbox'
+    this.formulario.value.tipoComprobante.id == 28 ?
+      this.checkboxs = true : this.checkboxs = false;
   }
   //Vacia los array de vtaCpteItemNC de cada comprobante
   private limpiarVtaCpteItemNC() {
@@ -656,7 +652,9 @@ export class EmitirNotaCreditoComponent implements OnInit {
 
   //Cancela la modificacion del comprobante seleccionado
   public cancelarComprobante() {
+    this.evt.checked = false;
     this.reestablecerformularioVtaCpteItemNC();
+    console.log(this.evt);
   }
   //Calcula el saldo para cada registro de la tabla 
   public calcularSaldoElemento(elemento) {
@@ -672,17 +670,34 @@ export class EmitirNotaCreditoComponent implements OnInit {
   }
   //Controla el cambio los check-box
   public cambioCheck(elemento, indice, $event) {
-    //Si el check esta en 'true' crea una variable boolean para controlarlo en el front
+    this.evt = $event;
+    console.log($event);
     if ($event.checked) {
+      this.checkboxs = true;
       this.activarActualizarElemento(elemento, indice);
       this.formularioVtaCpteItemNC.get('ventaTipoItem').setValue(this.resultadosMotivos[0]);
+      this.formularioVtaCpteItemNC.get('estaRechazadaFCE').setValue(false);
       this.cambioMotivo();
     } else {
       /* elimina el formulario a saldar asignado a dicho comprobante */
       this.listaCompleta.data[indice].ventaComprobanteItemNC = [];
+
       this.reestablecerformularioVtaCpteItemNC();
       /* llama a calcular importes totales*/
+
       this.listaCompleta.data.length > 0 ? this.calcularImportesTotales() : this.limpiarImportesTotales();
+      //Llama a verificar lista para controlar el estado del boolean 'checkbox'
+      this.formulario.value.tipoComprobante.id == 28 ? this.verificarCheckbox() : '';
+    }
+  }
+  //Recorre la lista completa para verificar si algun registro tiene cancelado un cpte (atributo 'ventaComprobanteItemNC')
+  private verificarCheckbox() {
+    this.checkboxs = false;
+    for (let i = 0; i < this.listaCompleta.data.length; i++) {
+      if (this.listaCompleta.data[i].ventaComprobanteItemNC.length > 0) {
+        this.checkboxs = true;
+        this.listaCompleta.data[i].enable();
+      }
     }
   }
   //Calcula 'SubtotalNC' de cada registro de la tabla 
@@ -729,6 +744,7 @@ export class EmitirNotaCreditoComponent implements OnInit {
     this.formulario.value.ventaComprobanteItemCR = null;
     this.formulario.value.ventaComprobanteItemFAs = null;
     this.formulario.value.ventaComprobanteItemND = null;
+    this.checkboxs = false;
 
     /* guardo el punto de venta para luego reestablecerlo */
     let puntoVenta = this.formulario.value.puntoVenta;
