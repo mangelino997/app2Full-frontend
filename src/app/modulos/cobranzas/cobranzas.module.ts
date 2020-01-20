@@ -7,7 +7,7 @@ import { Cobranza } from 'src/app/modelos/cobranza';
 import { CobranzaMedioPago } from 'src/app/modelos/cobranzaMedioPago';
 import { CobranzaItem } from 'src/app/modelos/cobranzaItem';
 import { CommonModule } from '@angular/common';
-import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, MatSelectModule, MatProgressBarModule, MatCheckboxModule, MatIconModule, MatButtonModule, MatDialogModule, MatRadioModule } from '@angular/material';
+import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, MatSelectModule, MatProgressBarModule, MatCheckboxModule, MatIconModule, MatButtonModule, MatDialogModule, MatRadioModule, MatListModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TextMaskModule } from 'angular2-text-mask';
 import { CobranzaMedioPagoService } from 'src/app/servicios/cobranza-medio-pago.service';
@@ -54,6 +54,7 @@ import { CobranzaTransferenciaBancariaComponent } from 'src/app/componentes/cobr
     MatButtonModule,
     MatDialogModule,
     MatRadioModule,
+    MatListModule
   ],
   providers: [
     CobranzaService,

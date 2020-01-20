@@ -19,6 +19,15 @@ import { PagoOtrasCuentasComponent } from 'src/app/componentes/orden-pago/pago-o
 import { PagoOtrasMonedasComponent } from 'src/app/componentes/orden-pago/pago-otras-monedas/pago-otras-monedas.component';
 import { PagoTransferenciaBancariaComponent } from 'src/app/componentes/orden-pago/pago-transferencia-bancaria/pago-transferencia-bancaria.component';
 import { PagoAnticipoService } from 'src/app/servicios/pago-anticipo.service';
+import { CuentaBancariaService } from 'src/app/servicios/cuenta-bancaria.service';
+import { ChequeraService } from 'src/app/servicios/chequera.service';
+import { ChequeCarteraService } from 'src/app/servicios/cheque-cartera.service';
+import { TipoDocumentoCarteraService } from 'src/app/servicios/tipo-documento-cartera.service';
+import { DetalleRetencionesComponent } from 'src/app/componentes/orden-pago/detalle-retenciones/detalle-retenciones.component';
+import { TipoRetencionService } from 'src/app/servicios/tipo-retencion.service';
+import { MesService } from 'src/app/servicios/mes.service';
+import { ProvinciaService } from 'src/app/servicios/provincia.service';
+import { ComprobanteComponent } from 'src/app/componentes/orden-pago/comprobante/comprobante.component';
 
 @NgModule({
   declarations: [
@@ -31,7 +40,9 @@ import { PagoAnticipoService } from 'src/app/servicios/pago-anticipo.service';
     PagoEfectivoComponent,
     PagoOtrasCuentasComponent,
     PagoOtrasMonedasComponent,
-    PagoTransferenciaBancariaComponent
+    PagoTransferenciaBancariaComponent,
+    DetalleRetencionesComponent,
+    ComprobanteComponent
   ],
   imports: [
     CommonModule,
@@ -57,7 +68,14 @@ import { PagoAnticipoService } from 'src/app/servicios/pago-anticipo.service';
     OrdenPagoService,
     OrdenPago,
     CompraComprobanteService,
-    PagoAnticipoService
+    PagoAnticipoService,
+    CuentaBancariaService,
+    ChequeraService,
+    ChequeCarteraService,
+    TipoDocumentoCarteraService,
+    TipoRetencionService,
+    MesService,
+    ProvinciaService
   ],
   entryComponents: [
     PagoAnticiposComponent,
@@ -68,7 +86,9 @@ import { PagoAnticipoService } from 'src/app/servicios/pago-anticipo.service';
     PagoEfectivoComponent,
     PagoOtrasCuentasComponent,
     PagoOtrasMonedasComponent,
-    PagoTransferenciaBancariaComponent
+    PagoTransferenciaBancariaComponent,
+    DetalleRetencionesComponent,
+    ComprobanteComponent
   ]
 })
 export class OrdenPagoModule { }

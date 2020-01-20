@@ -39,8 +39,8 @@
                         </div>
                         <div class="col-md-3">
                             <div class="form-group has-float-label">
-                                <label for="idPersonal" class="tamanio-label">Chofer</label>
-                                <input id="idPersonal" class="form-control form-control-sm" type="text"
+                                <label for="idPersonalChofer" class="tamanio-label">Chofer</label>
+                                <input id="idPersonalChofer" class="form-control form-control-sm" type="text"
                                     [formControl]="formularioFiltros.get('personal')" [matAutocomplete]="autoPersonal"
                                     autocomplete="off" placeholder="Buscar por N° Legajo, Nombre, Alias o Núm. Doc.">
                                 <mat-autocomplete #autoPersonal="matAutocomplete" [displayWith]="displayFn.bind(this)">
@@ -53,8 +53,8 @@
                         </div>
                         <div class="col-md-3">
                             <div class="form-group has-float-label">
-                                <label for="idPersonal" class="tamanio-label">Fletero</label>
-                                <input id="idPersonal" class="form-control form-control-sm" type="text"
+                                <label for="idPersonalFletero" class="tamanio-label">Fletero</label>
+                                <input id="idPersonalFletero" class="form-control form-control-sm" type="text"
                                     [formControl]="formularioFiltros.get('proveedor')" [matAutocomplete]="autoProveedor"
                                     autocomplete="off"
                                     placeholder="Buscar por Id, Razón Social, Alias, Tipo Documento o Núm. Documento">
@@ -71,9 +71,6 @@
                         </div>
                     </div>
                 </form>
-            </div>
-            <div class="row" *ngIf="show">
-                <mat-progress-bar mode="indeterminate"></mat-progress-bar>
             </div>
             <hr *ngIf="mostrarAutocompletado" style="margin-top: -8px !important; margin-bottom: 18px !important;">
             <div class="row">
@@ -220,8 +217,9 @@
                 </form>
                 <br>
                 <div class="row justify-content-center">
+                    <mat-progress-bar mode="indeterminate" *ngIf="show"></mat-progress-bar>
                     <button mat-raised-button color="primary" (click)="finalizar()" [disabled]="estadoFormulario"
-                        *ngIf="indiceSeleccionado != 2">{{pestaniaActual}}</button>
+                        *ngIf="indiceSeleccionado != 2 && !show">{{pestaniaActual}}</button>
                 </div>
                 <br>
             </mat-step>

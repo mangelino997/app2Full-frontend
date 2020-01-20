@@ -9,32 +9,18 @@ import { FormGroup, FormControl } from '@angular/forms';
   styleUrls: ['./conceptos.component.css']
 })
 export class ConceptosComponent implements OnInit {
-  //Define la lista de pestanias
-  public pestanias: Array<any> = [];
-  //Define el indice seleccionado de pestania
-  public indiceSeleccionado: number = null;
-  //Define la pestania activa
-  public activeLink: any = null;
-  //Define si mostrar el autocompletado
-  public mostrarAutocompletado: boolean = null;
-  public tiposConceptos: Array <any> = [];
+  public tipoConcepto: FormControl = new FormControl();
+  public codigoAfip: FormControl = new FormControl();
   public formulario: FormGroup;
-
+  public tiposConceptos: Array<any> = [];
+  public unidadesMedidasSueldos: Array<any> = [];
+  public sonRepetibles : Array<any> = []
   //Define el constructor de la clase
-  constructor(private conceptosService: ConceptosService, private tipoConceptoSueldoService: TipoConceptoSueldoService) {
+  constructor(private conceptosService: ConceptosService, private tipoConceptoSueldoService : TipoConceptoSueldoService) { 
     this.formulario = new FormGroup({
-      conceptoSueldo: new FormControl(),
-      codigoAfip: new FormControl(),
       codigoEmpleador: new FormControl(),
-      unidadMedida: new FormControl(),
-      repetible: new FormControl(),
-      afipGrupoConcepto: new FormControl(),
-      ConceptoAfip: new FormControl(),
-      descripcion: new FormControl(),
-      cantidad: new FormControl(),
-      valorUnitario: new FormControl(),
-      importe: new FormControl(),
-      imprime: new FormControl(),
+      unidadMedidaSueldo: new FormControl(),
+      esRepetible: new FormControl(),
     })
   }
   //Al inicializarse el componente se ejecuta el codigo de OnInit
@@ -62,4 +48,11 @@ export class ConceptosComponent implements OnInit {
   public formula(){
 
   }
-}
+  //Funcion para comparar y mostrar elemento de campo select
+  public compareFn = this.compararFn.bind(this);
+  private compararFn(a, b) {
+    if (a != null && b != null) {
+      return a.id === b.id;
+    }
+  }
+}//this.formulario.el componente.disable para el readyonly

@@ -32,7 +32,8 @@
                                 </div>
                             </div>
                             <div class="col-md-2">
-                                <button mat-raised-button color="primary" (click)="listarComprasPorEmpresaYProveedor()">Buscar</button>
+                                <button mat-raised-button color="primary"
+                                    (click)="listarComprasPorEmpresaYProveedor()">Buscar</button>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group has-float-label">
@@ -53,18 +54,18 @@
                             <table mat-table [dataSource]="comprasComprobantes" matSort class="mat-elevation-z1">
                                 <ng-container matColumnDef="CHECK" sticky>
                                     <th style="padding-right: 5px;" mat-header-cell *matHeaderCellDef>
-                                      <mat-checkbox (change)="$event ? alternarSeleccion() : null"
-                                                    [checked]="comprasComprobantesSeleccionados.hasValue() && estanTodosSeleccionados()"
-                                                    [indeterminate]="comprasComprobantesSeleccionados.hasValue() && !estanTodosSeleccionados()"
-                                                    [aria-label]="checkboxLabel()">
-                                      </mat-checkbox>
+                                        <mat-checkbox (change)="$event ? alternarSeleccion() : null"
+                                            [checked]="comprasComprobantesSeleccionados.hasValue() && estanTodosSeleccionados()"
+                                            [indeterminate]="comprasComprobantesSeleccionados.hasValue() && !estanTodosSeleccionados()"
+                                            [aria-label]="checkboxLabel()">
+                                        </mat-checkbox>
                                     </th>
                                     <td style="padding-right: 5px;" mat-cell *matCellDef="let row">
-                                      <mat-checkbox (click)="$event.stopPropagation()"
-                                                    (change)="$event ? seleccionarCheckbox(row) : null"
-                                                    [checked]="comprasComprobantesSeleccionados.isSelected(row)"
-                                                    [aria-label]="checkboxLabel(row)">
-                                      </mat-checkbox>
+                                        <mat-checkbox (click)="$event.stopPropagation()"
+                                            (change)="$event ? seleccionarCheckbox(row) : null"
+                                            [checked]="comprasComprobantesSeleccionados.isSelected(row)"
+                                            [aria-label]="checkboxLabel(row)">
+                                        </mat-checkbox>
                                     </td>
                                 </ng-container>
                                 <ng-container matColumnDef="FECHA_EMISION">
@@ -82,7 +83,8 @@
                                 </ng-container>
                                 <ng-container matColumnDef="PUNTO_VENTA">
                                     <th mat-header-cell *matHeaderCellDef mat-sort-header>Punto Vta</th>
-                                    <td class="number-right" mat-cell *matCellDef="let elemento">{{completarCeros(elemento.puntoVenta, '0000', -5)}}</td>
+                                    <td class="number-right" mat-cell *matCellDef="let elemento">
+                                        {{completarCeros(elemento.puntoVenta, '0000', -5)}}</td>
                                 </ng-container>
                                 <ng-container matColumnDef="LETRA">
                                     <th mat-header-cell *matHeaderCellDef mat-sort-header>Letra</th>
@@ -90,15 +92,18 @@
                                 </ng-container>
                                 <ng-container matColumnDef="NUMERO">
                                     <th mat-header-cell *matHeaderCellDef mat-sort-header>Número</th>
-                                    <td class="number-right" mat-cell *matCellDef="let elemento">{{completarCeros(elemento.numero, '0000000', -8)}}</td>
-                                </ng-container>
-                                <ng-container matColumnDef="SALDO">
-                                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Saldo</th>
-                                    <td class="number-right" mat-cell *matCellDef="let elemento">$ {{establecerCeros(elemento.importeSaldo)}}</td>
+                                    <td class="number-right" mat-cell *matCellDef="let elemento">
+                                        {{completarCeros(elemento.numero, '0000000', -8)}}</td>
                                 </ng-container>
                                 <ng-container matColumnDef="IMPORTE">
                                     <th mat-header-cell *matHeaderCellDef mat-sort-header>Importe</th>
-                                    <td class="number-right" mat-cell *matCellDef="let elemento">$ {{establecerCeros(elemento.importeTotal)}}</td>
+                                    <td class="number-right" mat-cell *matCellDef="let elemento">$
+                                        {{establecerCeros(elemento.importeTotal)}}</td>
+                                </ng-container>
+                                <ng-container matColumnDef="SALDO">
+                                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Saldo</th>
+                                    <td class="number-right" mat-cell *matCellDef="let elemento">$
+                                        {{establecerCeros(elemento.importeSaldo)}}</td>
                                 </ng-container>
                                 <ng-container matColumnDef="IMPORTE_COBRO">
                                     <th mat-header-cell *matHeaderCellDef mat-sort-header>Imp. Cobro</th>
@@ -123,8 +128,9 @@
                             <div class="col-md-3">
                                 <div class="form-group has-float-label">
                                     <label for="idImporte" class="codigo-label">Total Importe Seleccionado</label>
-                                    <input id="idImporte" type="text" formControlName="importe" [textMask]="mascararImporte(10, 2)" 
-                                        readonly class="form-control form-control-sm number-right" placeholder="$ 0.00">
+                                    <input id="idImporte" type="text" formControlName="importe"
+                                        [textMask]="mascararImporte(10, 2)" readonly
+                                        class="form-control form-control-sm number-right" placeholder="$ 0.00">
                                 </div>
                             </div>
                             <div class="col-md-2"></div>
@@ -138,8 +144,9 @@
                             <div class="col-md-3">
                                 <div class="form-group has-float-label">
                                     <label for="idDeuda" class="codigo-label">Total Deuda</label>
-                                    <input id="idDeuda" type="text" formControlName="deuda" [textMask]="mascararImporte(10, 2)" 
-                                        readonly class="form-control form-control-sm number-right" placeholder="$ 0.00">
+                                    <input id="idDeuda" type="text" formControlName="deuda"
+                                        [textMask]="mascararImporte(10, 2)" readonly
+                                        class="form-control form-control-sm number-right" placeholder="$ 0.00">
                                 </div>
                             </div>
                         </div>
@@ -152,8 +159,8 @@
                                 <div class="form-group has-float-label">
                                     <label for="idPendienteIntegrar" class="codigo-label">Pendiente de Integrar</label>
                                     <input id="idPendienteIntegrar" type="text" formControlName="pendienteIntegrar"
-                                        readonly class="form-control form-control-sm number-right" [textMask]="mascararImporte(10, 2)"
-                                        placeholder="$ 0.00">
+                                        readonly class="form-control form-control-sm number-right"
+                                        [textMask]="mascararImporte(10, 2)" placeholder="$ 0.00">
                                 </div>
                             </div>
                         </div>
@@ -162,17 +169,19 @@
                                 <div class="form-group has-float-label">
                                     <label for="idRetenciones" class="codigo-label">Retenciones</label>
                                     <input id="idRetenciones" type="text" formControlName="retenciones" readonly
-                                        class="form-control form-control-sm number-right">
+                                        class="form-control form-control-sm number-right" [textMask]="mascararImporte(10, 2)" 
+                                        placeholder="$ 0.00">
                                 </div>
                             </div>
-                            <button class="button-input" mat-raised-button color="primary">+</button>
+                            <button class="button-input" mat-raised-button color="primary" 
+                                (click)="abrirDialogoRetenciones()">+</button>
                         </div>
                         <div class="row">
                             <div class="col lista">
                                 <mat-list>
                                     <h3 mat-subheader>Medios de Pago</h3>
                                     <mat-list-item *ngFor="let medioPago of mediosPagosSeleccionados ; let i = index">
-                                        <mat-icon mat-list-icon class="cursor-color-rojo" (click)="eliminarItemLista(i)">delete_forever</mat-icon>
+                                        <mat-icon mat-list-icon class="cursor-color-rojo" (click)="eliminarItemLista(i, medioPago.nombre)">delete_forever</mat-icon>
                                         <h4 mat-line class="cursor-color" (click)="determinarIntegracion(medioPago.nombre)">{{medioPago.nombre}}</h4>
                                         <span><b>${{establecerCeros(medioPago.importe)}}</b></span>
                                     </mat-list-item>
@@ -184,7 +193,8 @@
                                 <div class="form-group has-float-label">
                                     <label for="idTotalIntegrado" class="codigo-label">Total Integrado</label>
                                     <input id="idTotalIntegrado" type="text" formControlName="totalIntegrado" readonly
-                                        class="form-control form-control-sm number-right">
+                                        class="form-control form-control-sm number-right" placeholder="0.00"
+                                        [textMask]="mascararImporte(10, 2)">
                                 </div>
                             </div>
                         </div>
@@ -195,7 +205,7 @@
                 <mat-progress-bar mode="indeterminate"></mat-progress-bar>
             </div>
             <div class="row justify-content-center" *ngIf="!show">
-                <button mat-raised-button color="primary">Confirmar</button>
+                <button mat-raised-button color="primary" [disabled]="obtenerEstadoBtnConfirmar()" (click)="accion(1)">Confirmar</button>
             </div>
         </div>
     </div>

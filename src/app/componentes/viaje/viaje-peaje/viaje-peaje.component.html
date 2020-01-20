@@ -52,8 +52,8 @@
     </div>
     <div class="col-md-2">
       <div class="form-group has-float-label">
-        <label for="idImporteG" class="tamanio-label">Importe *</label>
-        <input id="idImporteG" [textMask]="mascararImporte(8, 2)" type="text" formControlName="importe"
+        <label for="idImporteP" class="tamanio-label">Importe *</label>
+        <input id="idImporteP" [textMask]="mascararImporte(8, 2)" type="text" formControlName="importe"
           autocomplete="off" class="form-control form-control-sm number-right" [readonly]="soloLectura"
           placeholder="$ 0.00" (blur)="establecerDecimales(formularioViajePeaje.get('importe'), 2)">
       </div>

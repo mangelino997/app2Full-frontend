@@ -54,9 +54,6 @@ hr {
   line-height:1;
   padding:0 1px
 }
-/* .btn {
-  font-size: 15px !important;
-} */
 .pagaSeleccionado {
   box-shadow: 3px 6px 14px rgba(0, 0, 0, 1);
 }
@@ -67,16 +64,14 @@ tr.planilla-no-seleccionada:hover {
 .planilla-seleccionada {
   background-color:#50A8FA !important;
 }
-button {
-  /* width: fit-content !important; */
-}
+/* table{
+  width: 100% !important;
+} */
 /* Define el estilo de la tabla */
 .tabla {
-  width: 100% !important;
-  overflow: auto !important;
-}
-.tabla-ancho {
-  width: 1890px !important;
+  width: 100%;
+  height: 300px;
+  overflow: auto;
 }
 /*Define el estilo para los radio buttons del modal Observaciones - Nota Impresion Comprobante */
 .example-radio-group {

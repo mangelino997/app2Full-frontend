@@ -1,147 +1,60 @@
-<div id="concepto" class="container-fluid" (window:keydown)="manejarEvento($event.keyCode)">
-    <form [formGroup] = "formulario">
-    <!-- <div class="row">
-      <div class="col" class="centrar">
-          <a mat-tab-link disabled>CONCEPTOS</a>
-          <a mat-tab-link *ngFor="let pestania of pestanias" [active]="activeLink == pestania.nombre"
-            (click)="seleccionarPestania(pestania.id, pestania.nombre)">{{pestania.nombre}}</a>
-      </div>
-    </div> -->
-    <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado < 5">
-        <div class="col-md-8 text-center">
-            <h5>{{pestaniaActual}} Concepto</h5>
-        </div>
-    </div>
+<div class="container-fluid">
     <div class="row">
         <div class="col-md-1"></div>
         <div class="col-md-3">
             <div class="row">
-                <div class="col">
-                    <label for="idtipoDeConcepto" class="rubro-label">Tipo de Concepto *</label>
-                    <mat-select id="idtipoDeConcepto" class="form-control form-control-sm"
-                        formControlName="conceptoSueldo">
-                        <mat-option *ngFor="let tipoConcepto of tiposConceptos" [value]="tipoConcepto">
-                            {{tipoConcepto.nombre}}
+                <div class="form-group has-float-label">
+                    <label for="idtipoConcepto" class="tamanio-label">Tipo de Concepto *</label>
+                    <mat-select id="idtipoConcepto" class="form-control form-control-sm" [formControl]="tipoConcepto"
+                      [compareWith]="compareFn">
+                      <mat-option *ngFor="let itemTipoConcepto of itemTiposConceptos" [value]="itemTipoConcepto">
+                        {{itemTipoConcepto.nombre}}
+                      </mat-option>
+                    </mat-select>
+                  </div>
+            </div>
+            <div class="row">
+                <div class="form-group has-float-label">
+                    <label for="idCodigoAfip" class="tamanio-label">Código Afip *</label>
+                    <input id="idCodigoAfip" type="text" [formControl]="codigoAfip" autocomplete="off"
+                      class="form-control form-control-sm" readonly>
+                  </div>
+            </div>
+            <form [formGroup] = "formulario">
+            <div class="row">
+                <div class="form-group has-float-label">
+                    <label for="idCodigoEmpleador" class="tamanio-label">Código Empleador *</label>
+                    <input id="idCodigoEmpleador" type="text" formControlName="codigoEmpleador" autocomplete="off"
+                    class="form-control form-control-sm" readonly>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group has-float-label">
+                    <label for="idUnidadMedida" class="tamanio-label">Unidad de medida *</label>
+                    <mat-select id="idUnidadMedida" class="form-control form-control-sm" formControlName="unidadMedidaSueldo"
+                        [compareWith]="compareFn">
+                        <mat-option *ngFor="let itemUnidadMedidaSueldo of itemUnidadesMedidasSueldos" [value]="itemUnidadMedidaSueldo">
+                        {{itemUnidadMedidaSueldo.nombre}}
                         </mat-option>
                     </mat-select>
                 </div>
             </div>
             <div class="row">
-                <div class="col">
-                    <label for="idCodigoAfip" class="rubro-label">Código Afip *</label>
-                    <input id="idCodigoAfip" type="text" formControlName="codigoAfip"
-                        class="form-control form-control-sm" autocomplete="off" readonly>
-                </div>
+                    <div class="form-group has-float-label">
+                        <label for="idEsRepetible" class="tamanio-label">Es repetible *</label>
+                        <mat-select id="idEsRepetible" class="form-control form-control-sm"  formControlName="esRepetible"
+                            [compareWith]="compareFn" >
+                            <mat-option [value]="true">Sí</mat-option>
+                            <mat-option [value]="false">No</mat-option>
+                        </mat-select>
+                    </div>
             </div>
-            <div class="row">
-                <div class="col">
-                    <label for="idCodigoEmpleador" class="rubro-label">Codigo Empleador *</label>
-                    <input id="idCodigoEmpleador" type="text" formControlName="codigoEmpleador"
-                        class="form-control form-control-sm" autocomplete="off" readonly>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col">
-                    <label for="idUnidadMedida" class="rubro-label">Unidad de Medida *</label>
-                    <mat-select id="idUnidadMedida" class="form-control form-control-sm" formControlName="unidadMedida">
-                        <mat-option *ngFor="let unidad of unidades" [value]="unidadMedida">
-                            <!-- {{itemContacto.nombre}} - {{itemContacto.tipoContacto.nombre}} -->
-                        </mat-option>
-                    </mat-select>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col">
-                    <label for="idRepetible" class="rubro-label">Es Repetible *</label>
-                    <mat-select id="idRepetible" class="form-control form-control-sm" formControlName="repetible">
-                        <mat-option *ngFor="let repetible of repetibles" [value]="repetible">
-                            <!-- {{itemContacto.nombre}} - {{itemContacto.tipoContacto.nombre}} -->
-                        </mat-option>
-                    </mat-select>
-                </div>
-            </div>
+            </form>
         </div>
         <div class="col-md-1"></div>
         <div class="col-md-6">
-            <div class="row">
-                <div class="col">
-                    <label for="idAfipGrupoConcepto" class="rubro-label">AFIP Grupo Concepto *</label>
-                    <mat-select id="idAfipGrupoConcepto" class="form-control form-control-sm"
-                        formControlName="afipGrupoConcepto">
-                        <mat-option *ngFor="let concepto of conceptos" [value]="afipGrupoConcepto">
-                            <!-- {{itemContacto.nombre}} - {{itemContacto.tipoContacto.nombre}} -->
-                        </mat-option>
-                    </mat-select>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col">
-                    <label for="idConceptoAfip" class="rubro-label">AFIP Concepto *</label>
-                    <mat-select id="idConceptoAfip" class="form-control form-control-sm" formControlName="ConceptoAfip">
-                        <mat-option *ngFor="let concepto of conceptos" [value]="ConceptoAfip">
-                            <!-- {{itemContacto.nombre}} - {{itemContacto.tipoContacto.nombre}} -->
-                        </mat-option>
-                    </mat-select>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col">
-                    <label for="idDescripcion" class="rubro-label">Descripción *</label>
-                    <input id="idDescripcion" type="text" formControlName="descripcion"
-                        class="form-control form-control-sm" autocomplete="off">
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-4">
-                    <label for="idCantidad" class="rubro-label">Ingresa Cantidad *</label>
-                    <mat-select id="idCantidad" class="form-control form-control-sm" formControlName="cantidad">
-                        <mat-option *ngFor="let cantidad of cantidades" [value]="cantidad">
-                            <!-- {{itemContacto.nombre}} - {{itemContacto.tipoContacto.nombre}} -->
-                        </mat-option>
-                    </mat-select>
-                </div>
-                <div class="col-md-4">
-                    <label for="idValorUnitario" class="rubro-label">Ingresa Valor Unitario *</label>
-                    <mat-select id="idValorUnitario" class="form-control form-control-sm"
-                        formControlName="valorUnitario">
-                        <mat-option *ngFor="let valor of valores" [value]="valorUnitario">
-                            <!-- {{itemContacto.nombre}} - {{itemContacto.tipoContacto.nombre}} -->
-                        </mat-option>
-                    </mat-select>
-                </div>
-                <div class="col-md-4">
-                    <label for="idImporte" class="rubro-label">Ingresa Importe *</label>
-                    <mat-select id="idImporte" class="form-control form-control-sm" formControlName="importe">
-                        <mat-option *ngFor="let importe of importes" [value]="importe">
-                            <!-- {{itemContacto.nombre}} - {{itemContacto.tipoContacto.nombre}} -->
-                        </mat-option>
-                    </mat-select>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-3">
-                    <label for="idImprime" class="rubro-label">Imprime Valor Unitario *</label>
-                    <mat-select id="idImprime" class="form-control form-control-sm" formControlName="imprime">
-                        <mat-option *ngFor="let impresion of impresiones" [value]="imprime">
-                            <!-- {{itemContacto.nombre}} - {{itemContacto.tipoContacto.nombre}} -->
-                        </mat-option>
-                    </mat-select>
-                </div>
-                <div class="col-md-3">
-                    <button mat-raised-button color="primary" (click)="liquidacion()">Liquidaciones Asociadas</button>
-                </div>
-                <div class="col-md-3">
-                    <button mat-raised-button color="primary" (click)="subSistemas()">SubSistemas AFIP</button>
-                </div>
-                <div class="col-md-3">
-                    <button mat-raised-button color="primary" (click)="formula()">Fórmula</button>
-                </div>
-            </div>
+
         </div>
         <div class="col-md-1"></div>
-    </div><br>
-    <div class="row justify-content-center">
-        <button mat-raised-button color="primary" (click)="agregar()">Agregar</button>
     </div>
-    </form>
 </div>

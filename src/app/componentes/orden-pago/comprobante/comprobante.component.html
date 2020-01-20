@@ -1,0 +1,68 @@
+<div class="container-fluid padd-20">
+    <div class="row">
+        <div class="col text-center">
+            <h5>Datos del Comprobante</h5>
+        </div>
+    </div>
+    <br>
+    <form [formGroup]="formulario">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group has-float-label">
+                    <label for="idFechaEmisionComp" class="codigo-label">Fecha de Caja *</label>
+                    <input id="idFechaEmisionComp" type="date" formControlName="fechaEmision"
+                        class="form-control form-control-sm">
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group has-float-label">
+                    <label for="idProveedorComp" class="codigo-label">Proveedor *</label>
+                    <input id="idProveedorComp" type="text" [formControl]="proveedorRazonSocial"
+                        class="form-control form-control-sm" readonly>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group has-float-label">
+                    <label for="idImporteComp" class="codigo-label">Total Orden de Pago *</label>
+                    <input id="idImporteComp" type="text" formControlName="importe" class="form-control form-control-sm"
+                        readonly [textMask]="mascararImporte(10, 2)" placeholder="$ 0.00">
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group has-float-label">
+                    <label for="idDestinoEgresoComp" class="codigo-label">Destino Egreso *</label>
+                    <input id="idDestinoEgresoComp" type="text" [formControl]="destinoEgreso"
+                        class="form-control form-control-sm" readonly>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group has-float-label">
+                    <label for="idUsuarioAlta" class="tamanio-label">Autoriza Orden de Pago *</label>
+                    <mat-select id="idUsuarioAlta" class="form-control form-control-sm" [compareWith]="compareFn"
+                        formControlName="usuarioAlta">
+                        <mat-option *ngFor="let itemUsuario of usuarios" [value]="itemUsuario">
+                            {{itemUsuario.nombre}}
+                        </mat-option>
+                    </mat-select>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <div class="form-group has-float-label">
+                    <label for="idObservacionesComp" class="tamanio-label">Observaciones</label>
+                    <textarea id="idObservacionesComp" class="form-control form-control-sm"
+                      formControlName="observaciones" rows="4" maxlength="150"></textarea>
+                  </div>
+            </div>
+        </div>
+        <div class="row justify-content-center">
+            <button mat-raised-button color="primary" (click)="cerrar()">Agregar</button>
+            <button class="margin-left-3" mat-raised-button (click)="cerrar()">Cancelar</button>
+        </div>
+    </form>
+</div>

@@ -21,6 +21,11 @@ export class PagoEfectivoComponent implements OnInit {
       this.importe.setValue(elemento.importe);
     }
   }
+  //Obtiene el estado del boton confirmar
+  public obtenerEstadoBtnConfirmar(): boolean {
+    let importe = this.importe.value;
+    return importe == 0 || importe == '0.00' || importe == null ? true : false;
+  }
   //Mascara un importe decimal
   public mascararImporte(limite, decimalLimite) {
     return this.appService.mascararImporte(limite, decimalLimite);
