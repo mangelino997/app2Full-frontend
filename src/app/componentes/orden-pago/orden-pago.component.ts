@@ -10,20 +10,19 @@ import { FormGroup, FormControl } from '@angular/forms';
 import { ProveedorService } from 'src/app/servicios/proveedor.service';
 import { OrdenPago } from 'src/app/modelos/orden-pago';
 import { CompraComprobanteService } from 'src/app/servicios/compra-comprobante.service';
-import { PagoAnticiposComponent } from './pago-anticipos/pago-anticipos.component';
-import { PagoEfectivoComponent } from './pago-efectivo/pago-efectivo.component';
-import { PagoChequesCarteraComponent } from './pago-cheques-cartera/pago-cheques-cartera.component';
-import { PagoChequesElectronicosComponent } from './pago-cheques-electronicos/pago-cheques-electronicos.component';
-import { PagoChequesPropiosComponent } from './pago-cheques-propios/pago-cheques-propios.component';
-import { PagoTransferenciaBancariaComponent } from './pago-transferencia-bancaria/pago-transferencia-bancaria.component';
-import { PagoDocumentosComponent } from './pago-documentos/pago-documentos.component';
-import { PagoOtrasCuentasComponent } from './pago-otras-cuentas/pago-otras-cuentas.component';
-import { PagoOtrasMonedasComponent } from './pago-otras-monedas/pago-otras-monedas.component';
+import { AnticiposComponent } from '../tesoreria/anticipos/anticipos.component';
+import { EfectivoComponent } from '../tesoreria/efectivo/efectivo.component';
+import { ChequesCarteraComponent } from '../tesoreria/cheques-cartera/cheques-cartera.component';
+import { ChequesElectronicosComponent } from '../tesoreria/cheques-electronicos/cheques-electronicos.component';
+import { ChequesPropiosComponent } from '../tesoreria/cheques-propios/cheques-propios.component';
+import { TransferenciaBancariaComponent } from '../tesoreria/transferencia-bancaria/transferencia-bancaria.component';
+import { DocumentosComponent } from '../tesoreria/documentos/documentos.component';
+import { OtrasCuentasComponent } from '../tesoreria/otras-cuentas/otras-cuentas.component';
+import { OtrasMonedasComponent } from '../tesoreria/otras-monedas/otras-monedas.component';
 import { SelectionModel } from '@angular/cdk/collections';
 import { MensajeExcepcion } from 'src/app/modelos/mensaje-excepcion';
-import { ContactoCliente } from 'src/app/modelos/contactoCliente';
-import { DetalleRetencionesComponent } from './detalle-retenciones/detalle-retenciones.component';
-import { ComprobanteComponent } from './comprobante/comprobante.component';
+import { DetalleRetencionesComponent } from '../tesoreria/detalle-retenciones/detalle-retenciones.component';
+import { ComprobanteComponent } from '../tesoreria/comprobante/comprobante.component';
 
 @Component({
   selector: 'app-orden-pago',
@@ -225,35 +224,35 @@ export class OrdenPagoComponent implements OnInit {
     switch(elemento) {
       case 'anticipos':
         if(this.formulario.get('proveedor').value) {
-          this.abrirDialogo(PagoAnticiposComponent, this.formularioDialogo.get('anticipos'));
+          this.abrirDialogo(AnticiposComponent, this.formularioDialogo.get('anticipos'));
         } else {
           this.medioPago.reset();
           this.toastr.error(MensajeExcepcion.SELECCIONAR_PROVEEDOR);
         }
         break;
       case 'efectivo':
-        this.abrirDialogo(PagoEfectivoComponent, this.formularioDialogo.get('efectivo'));
+        this.abrirDialogo(EfectivoComponent, this.formularioDialogo.get('efectivo'));
         break;
       case 'cheques':
-        this.abrirDialogo(PagoChequesCarteraComponent, this.formularioDialogo.get('cheques'));
+        this.abrirDialogo(ChequesCarteraComponent, this.formularioDialogo.get('cheques'));
         break;
       case 'chequeselectronicos':
-        this.abrirDialogo(PagoChequesElectronicosComponent, this.formularioDialogo.get('chequeselectronicos'));
+        this.abrirDialogo(ChequesElectronicosComponent, this.formularioDialogo.get('chequeselectronicos'));
         break;
       case 'chequespropios':
-        this.abrirDialogo(PagoChequesPropiosComponent, this.formularioDialogo.get('chequespropios'));
+        this.abrirDialogo(ChequesPropiosComponent, this.formularioDialogo.get('chequespropios'));
         break;
       case 'transferenciabancaria':
-        this.abrirDialogo(PagoTransferenciaBancariaComponent, this.formularioDialogo.get('transferenciabancaria'));
+        this.abrirDialogo(TransferenciaBancariaComponent, this.formularioDialogo.get('transferenciabancaria'));
         break;
       case 'documentos':
-        this.abrirDialogo(PagoDocumentosComponent, this.formularioDialogo.get('documentos'));
+        this.abrirDialogo(DocumentosComponent, this.formularioDialogo.get('documentos'));
         break;
       case 'otrascuentas':
-        this.abrirDialogo(PagoOtrasCuentasComponent, 2);
+        this.abrirDialogo(OtrasCuentasComponent, 2);
         break;
       case 'otrasmonedas':
-        this.abrirDialogo(PagoOtrasMonedasComponent, this.formularioDialogo.get('otrasmonedas'));
+        this.abrirDialogo(OtrasMonedasComponent, this.formularioDialogo.get('otrasmonedas'));
         break;
     }
   }

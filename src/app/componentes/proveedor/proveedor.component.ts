@@ -694,6 +694,9 @@ export class ProveedorComponent implements OnInit {
     this.opcionLocalidadFiltro.setValue(0);
     this.formularioFiltro.get('tipoProveedor').setValue(0);
     this.formularioFiltro.get('condicionCompra').setValue(0);
+    setTimeout(function() {
+      document.getElementById('idTipoProveedorFiltro').focus();
+    }, 20);
   }
   //Recorre la lista de Cuentas Bancarias y determina si ya fue asignado anteriormente 
   private verificarListaCB(elemento) {

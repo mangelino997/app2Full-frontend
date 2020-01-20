@@ -661,12 +661,13 @@ export class ClienteComponent implements OnInit {
   //Establece valores al seleccionar una pestania
   public seleccionarPestania(id, nombre) {
     this.indiceSeleccionado = id;
-    this.seleccionarOpcion(1, 0);
+    if(this.indiceSeleccionado != 5) {
+      this.seleccionarOpcion(1, 0);
+    }  
     this.activeLink = nombre;
     this.reestablecerFormulario(null);
     switch (id) {
       case 1:
-        // this.obtenerSiguienteId();
         this.formulario.get('id').setValue(this.ultimoId);
         this.establecerEstadoCampos(true);
         this.establecerValoresPestania(nombre, false, false, true, 'idRazonSocial');
@@ -894,6 +895,9 @@ export class ClienteComponent implements OnInit {
       this.formularioFiltro.get('condicionVenta').setValue(0);
       this.formularioFiltro.get('esSeguroPropio').setValue(2);
     }
+    setTimeout(function() {
+      document.getElementById('idLocalidadFiltro').focus();
+    }, 20);
   }
   //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
   private lanzarError(err) {
