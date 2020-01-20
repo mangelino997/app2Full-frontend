@@ -187,12 +187,13 @@
               </mat-select>
             </div>
           </div>
-          <div class="col-md-2" *ngIf="mostrarFEC">
-            <div class="form-group has-float-label" >
-              <label for="idFARechazada" class="tamanio-label">FA (FEC) Rechazada</label>
-              <mat-select id="idFARechazada" class="form-control form-control-sm" [compareWith]="compareFn">
+          <div class="col-md-2"
+            *ngIf="formulario.value.tipoComprobante? formulario.value.tipoComprobante.id == 28 : false">
+            <div class="form-group has-float-label">
+              <label for="idFARechazada" class="tamanio-label">FA (FEC) Rechazada *</label>
+              <mat-select id="idFARechazada" class="form-control form-control-sm" formControlName="estaRechazadaFCE">
                 <mat-option [value]="true">Sí</mat-option>
-                <mat-option [value]="true">No</mat-option>
+                <mat-option [value]="false">No</mat-option>
               </mat-select>
             </div>
           </div>
@@ -224,96 +225,102 @@
             </div>
           </div>
           <div class="col-md-1">
-            <button class="btn btn-primary btn-sm" type="button" (click)="aceptarComprobante()"
-              [disabled]="!formularioVtaCpteItemNC.valid || !subtotalCIVA.value" style="width: 100%;">Aceptar</button>
+            <button type="button" mat-raised-button color="primary" (click)="aceptarComprobante()"
+              [disabled]="!formularioVtaCpteItemNC.valid || !subtotalCIVA.value">Aceptar</button>
           </div>
           <div class="col-md-1">
-            <button class="btn btn-primary btn-sm" type="button" (click)="cancelarComprobante()"
-              [disabled]="!formularioVtaCpteItemNC.valid" style="width: 100%;">Cancelar</button>
+            <button type="button" (click)="cancelarComprobante()" mat-raised-button color="primary"
+              [disabled]="!formularioVtaCpteItemNC.valid">Cancelar</button>
           </div>
         </div>
       </form>
       <div class="row">
         <div class="tabla">
-            <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
-              <ng-container matColumnDef="CHECK">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
-                <td mat-cell *matCellDef="let elemento; let i=index">
-                  <mat-checkbox class="cursor-color" (change)="cambioCheck(elemento, i, $event)" [disabled]="idMod"
-                    [checked]="elemento.ventaComprobanteItemNC.length > 0" id="check-box{{i}}">
-                  </mat-checkbox>
-                </td>
-              </ng-container>
-              <ng-container matColumnDef="FECHA_EMISION">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha Emisión</th>
-                <td mat-cell *matCellDef="let elemento">
-                  {{elemento.fechaEmision | date: 'dd/MM/yyyy'}}</td>
-              </ng-container>
-              <ng-container matColumnDef="FECHA_VTO_PAGOS">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha Vto Pago</th>
-                <td mat-cell *matCellDef="let elemento">
-                  {{elemento.fechaVtoPago | date: 'dd/MM/yyyy'}}</td>
-              </ng-container>
-              <ng-container matColumnDef="TIPO">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header>Tipo</th>
-                <td mat-cell *matCellDef="let elemento">
-                  {{elemento.tipoComprobante.abreviatura}}</td>
-              </ng-container>
-              <ng-container matColumnDef="PUNTO_VENTA">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header>P. Venta</th>
-                <td mat-cell *matCellDef="let elemento">
-                  {{establecerCerosIzq(elemento.puntoVenta, "0000", -5)}}</td>
-              </ng-container>
-              <ng-container matColumnDef="LETRA">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header>Letra</th>
-                <td mat-cell *matCellDef="let elemento">
-                  {{elemento.letra}}</td>
-              </ng-container>
-              <ng-container matColumnDef="NUMERO">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header>Número</th>
-                <td mat-cell *matCellDef="let elemento">
-                  {{elemento.numero}}</td>
-              </ng-container>
-              <ng-container matColumnDef="IMPORTE">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header>Importe</th>
-                <td mat-cell *matCellDef="let elemento" class="number-right">
-                  ${{elemento.importeTotal | number: '1.2-2'}}</td>
-              </ng-container>
-              <ng-container matColumnDef="SALDO">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header>Saldo</th>
-                <td mat-cell *matCellDef="let elemento" class="number-right">
-                  ${{elemento.importeSaldo | number: '1.2-2'}}
-                </td>
-              </ng-container>
-              <ng-container matColumnDef="MOTIVO">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header>Motivo</th>
-                <td mat-cell *matCellDef="let elemento">
-                  {{elemento.ventaComprobanteItemNC.length > 0? elemento.ventaComprobanteItemNC[0].ventaTipoItem.nombre: ''}}
-                </td>
-              </ng-container>
-              <ng-container matColumnDef="SUBTOTAL_NC">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header>Subtotal N.C.</th>
-                <td mat-cell *matCellDef="let elemento" class="number-right">
-                  {{elemento.ventaComprobanteItemNC.length > 0? ('$'+ elemento.ventaComprobanteItemNC[0].importeNetoGravado): ''}}
-                </td>
-              </ng-container>
-              <ng-container matColumnDef="ALIC_IVA">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header>Alícuota IVA</th>
-                <td mat-cell *matCellDef="let elemento" class="number-right">
-                  {{elemento.ventaComprobanteItemNC.length > 0? 
+          <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
+            <ng-container matColumnDef="CHECK">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
+              <td mat-cell *matCellDef="let elemento; let i=index">
+                <mat-checkbox class="cursor-color" (change)="cambioCheck(elemento, i, $event)"
+                  *ngIf="formulario.value.tipoComprobante.id !=28" [disabled]="idMod"
+                  [attr.checked]="elemento.ventaComprobanteItemNC.length > 0 ? 'checked' : null">
+                </mat-checkbox>
+                <mat-checkbox class="cursor-color" (change)="cambioCheck(elemento, i, $event)"
+                  *ngIf="formulario.value.tipoComprobante.id ==28"
+                  [disabled]="elemento.ventaComprobanteItemNC.length == 0 && checkboxs"
+                  [attr.checked]="elemento.ventaComprobanteItemNC.length > 0 ? 'checked' : null">
+                </mat-checkbox>
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="FECHA_EMISION">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha Emisión</th>
+              <td mat-cell *matCellDef="let elemento">
+                {{elemento.fechaEmision | date: 'dd/MM/yyyy'}}</td>
+            </ng-container>
+            <ng-container matColumnDef="FECHA_VTO_PAGOS">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha Vto Pago</th>
+              <td mat-cell *matCellDef="let elemento">
+                {{elemento.fechaVtoPago | date: 'dd/MM/yyyy'}}</td>
+            </ng-container>
+            <ng-container matColumnDef="TIPO">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Tipo</th>
+              <td mat-cell *matCellDef="let elemento">
+                {{elemento.tipoComprobante.abreviatura}}</td>
+            </ng-container>
+            <ng-container matColumnDef="PUNTO_VENTA">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>P. Venta</th>
+              <td mat-cell *matCellDef="let elemento">
+                {{establecerCerosIzq(elemento.puntoVenta, "0000", -5)}}</td>
+            </ng-container>
+            <ng-container matColumnDef="LETRA">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Letra</th>
+              <td mat-cell *matCellDef="let elemento">
+                {{elemento.letra}}</td>
+            </ng-container>
+            <ng-container matColumnDef="NUMERO">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Número</th>
+              <td mat-cell *matCellDef="let elemento">
+                {{elemento.numero}}</td>
+            </ng-container>
+            <ng-container matColumnDef="IMPORTE">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Importe</th>
+              <td mat-cell *matCellDef="let elemento" class="number-right">
+                ${{elemento.importeTotal | number: '1.2-2'}}</td>
+            </ng-container>
+            <ng-container matColumnDef="SALDO">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Saldo</th>
+              <td mat-cell *matCellDef="let elemento" class="number-right">
+                ${{elemento.importeSaldo | number: '1.2-2'}}
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="MOTIVO">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Motivo</th>
+              <td mat-cell *matCellDef="let elemento">
+                {{elemento.ventaComprobanteItemNC.length > 0? elemento.ventaComprobanteItemNC[0].ventaTipoItem.nombre: ''}}
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="SUBTOTAL_NC">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Subtotal N.C.</th>
+              <td mat-cell *matCellDef="let elemento" class="number-right">
+                {{elemento.ventaComprobanteItemNC.length > 0? ('$'+ elemento.ventaComprobanteItemNC[0].importeNetoGravado): ''}}
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="ALIC_IVA">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Alícuota IVA</th>
+              <td mat-cell *matCellDef="let elemento" class="number-right">
+                {{elemento.ventaComprobanteItemNC.length > 0? 
                     ((elemento.ventaComprobanteItemNC[0].afipAlicuotaIva.alicuota | number: '1.2-2') + '%' ): ''}}
-                </td>
-              </ng-container>
-              <ng-container matColumnDef="SUBTOTAL_IVA">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header>Subtotal c/IVA</th>
-                <td mat-cell *matCellDef="let elemento" class="number-right">
-                  {{elemento.ventaComprobanteItemNC.length > 0? 
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="SUBTOTAL_IVA">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Subtotal c/IVA</th>
+              <td mat-cell *matCellDef="let elemento" class="number-right">
+                {{elemento.ventaComprobanteItemNC.length > 0? 
                     ('$' + (calcularSubtotalConIvaElemento(elemento) | number: '1.2-2')): ''}}
-                </td>
-              </ng-container>
-              <tr mat-header-row *matHeaderRowDef="columnasComprobante"></tr>
-              <tr mat-row *matRowDef="let row; columns: columnasComprobante;"></tr>
-            </table>
+              </td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="columnasComprobante"></tr>
+            <tr mat-row *matRowDef="let row; columns: columnasComprobante;"></tr>
+          </table>
         </div>
       </div>
       <br>
@@ -332,7 +339,7 @@
         <div class="col-md-2">
           <div class="form-group has-float-label">
             <label for="idImpNoGravado" class="tamanio-label"><b>Imp.No Grav/Exento($)</b></label>
-            <input id="idImpNoGravado" type="text" formControlName="importeNoGravado" [textMask]="mascararImporte(8, 2)" 
+            <input id="idImpNoGravado" type="text" formControlName="importeNoGravado" [textMask]="mascararImporte(8, 2)"
               class="form-control input-bold form-control-sm number-right" placeholder="$ 0.00" readonly>
           </div>
         </div>
@@ -362,8 +369,8 @@
         </div>
       </div>
       <div class="row justify-content-end" *ngIf="!show">
-        <button class="btn btn-primary" type="button" style="min-width: fit-content;" (click)="agregarNotaCredito()"
-          [disabled]="!formulario.valid">Grabar</button>
+        <button mat-raised-button color="primary" type="button" style="min-width: fit-content;"
+          (click)="agregarNotaCredito()" [disabled]="!formulario.valid">Grabar</button>
       </div>
       <div class="row" *ngIf="show">
         <div class="col text-center">
