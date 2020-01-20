@@ -6,6 +6,7 @@ import { ConceptosComponent } from 'src/app/componentes/conceptos/conceptos.comp
 import { ConceptosService } from 'src/app/servicios/conceptos.service';
 import { MatSelectModule, MatAutocompleteModule, MatButtonModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { TipoConceptoSueldoService } from 'src/app/servicios/tipo-concepto-sueldo.service';
 
 @NgModule({
   declarations: [
@@ -21,7 +22,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     MatButtonModule
   ],
   providers: [
-    ConceptosService
+    ConceptosService,
+    TipoConceptoSueldoService
   ]
 })
 export class ConceptosModule { }

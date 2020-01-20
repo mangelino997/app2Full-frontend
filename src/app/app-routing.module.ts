@@ -126,9 +126,9 @@ const routes: Routes = [
     { path: 'conceptosafipconceptos', loadChildren: () => import('./modulos/afip-concepto-sueldo/afip-concepto-sueldo.module').then(m => m.AfipConceptoSueldoModule), canActivate: [GuardiaService] },
     { path: 'conceptosafipgruposconceptos', loadChildren: () => import('./modulos/afip-concepto-sueldo-grupo/afip-concepto-sueldo-grupo.module').then(m => m.AfipConceptoSueldoGrupoModule), canActivate: [GuardiaService] },
     { path: 'gestiondepagosordenesdepago', loadChildren: () => import('./modulos/orden-pago/orden-pago.module').then(m => m.OrdenPagoModule), canActivate: [GuardiaService] },
-    { path: 'gestiondecobroscobranzas', loadChildren: () => import('./modulos/cobranzas/cobranzas.module').then(m => m.CobranzasModule), canActivate: [GuardiaService] },
     { path: 'conceptosadministrar', loadChildren: () => import('./modulos/conceptos/conceptos.module').then(m => m.ConceptosModule), canActivate: [GuardiaService] },
-    { path: 'facturacionconsultas', loadChildren: () => import('./modulos/facturacion-consulta/facturacion-consulta.module').then(m => m.FacturacionConsultaModule), canActivate: [GuardiaService] }
+    { path: 'facturacionconsultas', loadChildren: () => import('./modulos/facturacion-consulta/facturacion-consulta.module').then(m => m.FacturacionConsultaModule), canActivate: [GuardiaService] },
+    { path: 'conceptosadministrar', loadChildren: () => import('./modulos/conceptos/conceptos.module').then(m => m.ConceptosModule), canActivate: [GuardiaService] }
 ];
 
 @NgModule({

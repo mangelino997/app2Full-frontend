@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
 import { ConceptosService } from 'src/app/servicios/conceptos.service';
+import { TipoConceptoSueldoService } from 'src/app/servicios/tipo-concepto-sueldo.service';
+import { FormGroup, FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-conceptos',
@@ -15,7 +16,7 @@ export class ConceptosComponent implements OnInit {
   public unidadesMedidasSueldos: Array<any> = [];
   public sonRepetibles : Array<any> = []
   //Define el constructor de la clase
-  constructor(private conceptosService: ConceptosService) { 
+  constructor(private conceptosService: ConceptosService, private tipoConceptoSueldoService : TipoConceptoSueldoService) { 
     this.formulario = new FormGroup({
       codigoEmpleador: new FormControl(),
       unidadMedidaSueldo: new FormControl(),
@@ -24,6 +25,28 @@ export class ConceptosComponent implements OnInit {
   }
   //Al inicializarse el componente se ejecuta el codigo de OnInit
   ngOnInit() {
+    this.listarTipoConceptoSueldo()
+  }
+  public listarTipoConceptoSueldo(){
+    this.tipoConceptoSueldoService.listar().subscribe(
+      res=>{
+        this.tiposConceptos = res.json();
+        console.log(res.json());      
+      },
+      err=>{
+        console.log('err');
+      }
+    )
+  }
+  public liquidacion(){
+  }
+
+  public subSistema(){
+
+  }
+
+  public formula(){
+
   }
   //Funcion para comparar y mostrar elemento de campo select
   public compareFn = this.compararFn.bind(this);
