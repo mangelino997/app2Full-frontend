@@ -23,6 +23,7 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { MensajeExcepcion } from 'src/app/modelos/mensaje-excepcion';
 import { ContactoCliente } from 'src/app/modelos/contactoCliente';
 import { DetalleRetencionesComponent } from './detalle-retenciones/detalle-retenciones.component';
+import { ComprobanteComponent } from './comprobante/comprobante.component';
 
 @Component({
   selector: 'app-orden-pago',
@@ -412,9 +413,21 @@ export class OrdenPagoComponent implements OnInit {
   public listar(): void {
 
   }
-  //Agrega un registro
+  //Abre el dialogo de comprobante para posteriormente agregar los datos
   public agregar(): void {
-
+    const dialogRef = this.dialog.open(ComprobanteComponent, {
+      width: '60%',
+      maxWidth: '95%',
+      data: {
+        proveedor: this.formulario.get('proveedor').value,
+        importe: this.formularioIntegrar.get('totalIntegrado').value
+      }
+    });
+    dialogRef.afterClosed().subscribe(elemento => {
+      if(elemento) {
+        
+      }
+    });
   }
   //Actualizar un registro
   public actualizar(): void {

@@ -27,6 +27,7 @@ import { DetalleRetencionesComponent } from 'src/app/componentes/orden-pago/deta
 import { TipoRetencionService } from 'src/app/servicios/tipo-retencion.service';
 import { MesService } from 'src/app/servicios/mes.service';
 import { ProvinciaService } from 'src/app/servicios/provincia.service';
+import { ComprobanteComponent } from 'src/app/componentes/orden-pago/comprobante/comprobante.component';
 
 @NgModule({
   declarations: [
@@ -40,7 +41,8 @@ import { ProvinciaService } from 'src/app/servicios/provincia.service';
     PagoOtrasCuentasComponent,
     PagoOtrasMonedasComponent,
     PagoTransferenciaBancariaComponent,
-    DetalleRetencionesComponent
+    DetalleRetencionesComponent,
+    ComprobanteComponent
   ],
   imports: [
     CommonModule,
@@ -85,7 +87,8 @@ import { ProvinciaService } from 'src/app/servicios/provincia.service';
     PagoOtrasCuentasComponent,
     PagoOtrasMonedasComponent,
     PagoTransferenciaBancariaComponent,
-    DetalleRetencionesComponent
+    DetalleRetencionesComponent,
+    ComprobanteComponent
   ]
 })
 export class OrdenPagoModule { }

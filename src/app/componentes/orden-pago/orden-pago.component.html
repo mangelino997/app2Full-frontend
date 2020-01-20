@@ -205,7 +205,7 @@
                 <mat-progress-bar mode="indeterminate"></mat-progress-bar>
             </div>
             <div class="row justify-content-center" *ngIf="!show">
-                <button mat-raised-button color="primary" [disabled]="obtenerEstadoBtnConfirmar()">Confirmar</button>
+                <button mat-raised-button color="primary" [disabled]="obtenerEstadoBtnConfirmar()" (click)="accion(1)">Confirmar</button>
             </div>
         </div>
     </div>
