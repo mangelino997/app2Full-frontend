@@ -16,10 +16,10 @@ export class ConceptosComponent implements OnInit {
   public afipGrupoConcepto: FormControl = new FormControl();
   public codigoAfip: FormControl = new FormControl();
   public formulario: FormGroup;
-  public itemTiposConceptosSueldos: Array<any> = [];
-  public itemGruposConceptos: Array<any> = [];
-  public itemAfipConceptosSueldo: Array<any> = [];
-  public itemUnidadesMedidasSueldos: Array<any> = [];
+  public tiposConceptosSueldos: Array<any> = [];
+  public gruposConceptos: Array<any> = [];
+  public afipConceptosSueldo: Array<any> = [];
+  public unidadesMedidasSueldos: Array<any> = [];
   public sonRepetibles : Array<any> = []
   //Define el constructor de la clase
   constructor(private conceptosService: ConceptosService, private tipoConceptoSueldoService: TipoConceptoSueldoService, private afipConceptoSueldoGrupoService: AfipConceptoSueldoGrupoService, private afipConceptoSueldoService: AfipConceptoSueldoService, private unidadMedidaSueldoService: UnidadMedidaSueldoService) { 
@@ -38,11 +38,12 @@ export class ConceptosComponent implements OnInit {
   //Al inicializarse el componente se ejecuta el codigo de OnInit
   ngOnInit() {
     this.listarTipoConceptoSueldo();
+    this.listarUnidadMedidaSueldo();
   }
   public listarTipoConceptoSueldo(){
     this.tipoConceptoSueldoService.listar().subscribe(
       res=>{
-        this.itemTiposConceptosSueldos = res.json();
+        this.tiposConceptosSueldos = res.json();
       },
       err=>{
         console.log('err');
@@ -53,7 +54,7 @@ export class ConceptosComponent implements OnInit {
     let id = this.tipoConceptoSueldo.value.id;
     this.afipConceptoSueldoGrupoService.listarPorTipoConceptoSueldo(id).subscribe(
       res=>{
-        this.itemGruposConceptos = res.json();
+        this.gruposConceptos = res.json();
       },
       err=>{
         console.log('err');
@@ -64,7 +65,7 @@ export class ConceptosComponent implements OnInit {
     let id = this.afipGrupoConcepto.value.id;
     this.afipConceptoSueldoService.listarPorAfipConceptoSueldoGrupo(id).subscribe(
       res=>{
-        this.itemAfipConceptosSueldo = res.json();
+        this.afipConceptosSueldo = res.json();
       },
       err=>{
 
@@ -74,7 +75,8 @@ export class ConceptosComponent implements OnInit {
   public listarUnidadMedidaSueldo(){
     this.unidadMedidaSueldoService.listar().subscribe(
       res=>{
-        this.itemUnidadesMedidasSueldos = res.json();
+        this.unidadesMedidasSueldos = res.json();
+        console.log(res.json())
       },
       err=>{
         console.log('err');
