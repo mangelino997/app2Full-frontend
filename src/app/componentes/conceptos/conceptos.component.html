@@ -1,1 +1,60 @@
-<p>conceptos works!</p>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-1"></div>
+        <div class="col-md-3">
+            <div class="row">
+                <div class="form-group has-float-label">
+                    <label for="idtipoConcepto" class="tamanio-label">Tipo de Concepto *</label>
+                    <mat-select id="idtipoConcepto" class="form-control form-control-sm" [formControl]="tipoConcepto"
+                      [compareWith]="compareFn">
+                      <mat-option *ngFor="let itemTipoConcepto of itemTiposConceptos" [value]="itemTipoConcepto">
+                        {{itemTipoConcepto.nombre}}
+                      </mat-option>
+                    </mat-select>
+                  </div>
+            </div>
+            <div class="row">
+                <div class="form-group has-float-label">
+                    <label for="idCodigoAfip" class="tamanio-label">Código Afip *</label>
+                    <input id="idCodigoAfip" type="text" [formControl]="codigoAfip" autocomplete="off"
+                      class="form-control form-control-sm" readonly>
+                  </div>
+            </div>
+            <form [formGroup] = "formulario">
+            <div class="row">
+                <div class="form-group has-float-label">
+                    <label for="idCodigoEmpleador" class="tamanio-label">Código Empleador *</label>
+                    <input id="idCodigoEmpleador" type="text" formControlName="codigoEmpleador" autocomplete="off"
+                    class="form-control form-control-sm" readonly>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group has-float-label">
+                    <label for="idUnidadMedida" class="tamanio-label">Unidad de medida *</label>
+                    <mat-select id="idUnidadMedida" class="form-control form-control-sm" formControlName="unidadMedidaSueldo"
+                        [compareWith]="compareFn">
+                        <mat-option *ngFor="let itemUnidadMedidaSueldo of itemUnidadesMedidasSueldos" [value]="itemUnidadMedidaSueldo">
+                        {{itemUnidadMedidaSueldo.nombre}}
+                        </mat-option>
+                    </mat-select>
+                </div>
+            </div>
+            <div class="row">
+                    <div class="form-group has-float-label">
+                        <label for="idEsRepetible" class="tamanio-label">Es repetible *</label>
+                        <mat-select id="idEsRepetible" class="form-control form-control-sm"  formControlName="esRepetible"
+                            [compareWith]="compareFn" >
+                            <mat-option [value]="true">Sí</mat-option>
+                            <mat-option [value]="false">No</mat-option>
+                        </mat-select>
+                    </div>
+            </div>
+            </form>
+        </div>
+        <div class="col-md-1"></div>
+        <div class="col-md-6">
+
+        </div>
+        <div class="col-md-1"></div>
+    </div>
+</div>
