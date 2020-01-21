@@ -28,7 +28,7 @@
               </div>
             </div>
             <div class="col-md-3">
-              <div class="form-group has-float-label-icon ">
+              <div class="form-group has-float-label-icon margin-right">
                 <label for="idFechaEmision" class="tamanio-label">Fecha *</label>
                 <div class="input-group input-group-sm mb-3 ">
                   <div class="input-group-prepend margin-right">
@@ -198,7 +198,7 @@
             </div>
           </div>
           <div class="col-md-2">
-            <div class="form-group has-float-label">
+            <div class="form-group has-float-label margin-right">
               <label for="idSubtotalNC" class="tamanio-label">Subtotal N.C.</label>
               <input id="idSubtotalNC" type="text" formControlName="importeNetoGravado"
                 class="form-control form-control-sm number-right" [textMask]="mascararImporte(10, 2)"
@@ -217,7 +217,7 @@
             </div>
           </div>
           <div class="col-md-2">
-            <div class="form-group has-float-label">
+            <div class="form-group has-float-label margin-right">
               <label for="idSubtotalCIVA" class="tamanio-label">Subtotal c/IVA</label>
               <input id="idSubtotalCIVA" type="text" [formControl]="subtotalCIVA"
                 class="form-control form-control-sm number-right" (blur)="calcularSubtotalNC()"
@@ -226,11 +226,11 @@
           </div>
           <div class="col-md-1">
             <button type="button" mat-raised-button color="primary" (click)="aceptarComprobante()"
-              [disabled]="!formularioVtaCpteItemNC.valid || !subtotalCIVA.value">Aceptar</button>
+              [disabled]="!formularioVtaCpteItemNC.valid || !subtotalCIVA.value" style="width: 100%;">Aceptar</button>
           </div>
           <div class="col-md-1">
             <button type="button" (click)="cancelarComprobante()" mat-raised-button color="primary"
-              [disabled]="!formularioVtaCpteItemNC.valid">Cancelar</button>
+              [disabled]="!formularioVtaCpteItemNC.valid" style="width: 100%;">Cancelar</button>
           </div>
         </div>
       </form>
@@ -242,12 +242,12 @@
               <td mat-cell *matCellDef="let elemento; let i=index">
                 <mat-checkbox class="cursor-color" (change)="cambioCheck(elemento, i, $event)"
                   *ngIf="formulario.value.tipoComprobante.id !=28" [disabled]="idMod"
-                  [attr.checked]="elemento.ventaComprobanteItemNC.length > 0 ? 'checked' : null">
+                  [checked]="elemento.checked">
                 </mat-checkbox>
                 <mat-checkbox class="cursor-color" (change)="cambioCheck(elemento, i, $event)"
                   *ngIf="formulario.value.tipoComprobante.id ==28"
                   [disabled]="elemento.ventaComprobanteItemNC.length == 0 && checkboxs"
-                  [attr.checked]="elemento.ventaComprobanteItemNC.length > 0 ? 'checked' : null">
+                  [checked]="elemento.checked">
                 </mat-checkbox>
               </td>
             </ng-container>

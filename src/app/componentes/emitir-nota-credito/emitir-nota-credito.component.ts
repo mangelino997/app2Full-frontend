@@ -619,6 +619,7 @@ export class EmitirNotaCreditoComponent implements OnInit {
     this.listaCompleta.data.forEach(
       item => {
         item.ventaComprobanteItemNC = [];
+        item.checked = false;
       }
     )
   }
@@ -653,8 +654,9 @@ export class EmitirNotaCreditoComponent implements OnInit {
   //Cancela la modificacion del comprobante seleccionado
   public cancelarComprobante() {
     this.evt.checked = false;
+    this.listaCompleta.data[this.idMod].checked = false;
     this.reestablecerformularioVtaCpteItemNC();
-    console.log(this.evt);
+    this.verificarCheckbox();
   }
   //Calcula el saldo para cada registro de la tabla 
   public calcularSaldoElemento(elemento) {
@@ -674,6 +676,7 @@ export class EmitirNotaCreditoComponent implements OnInit {
     console.log($event);
     if ($event.checked) {
       this.checkboxs = true;
+      this.listaCompleta.data[indice].checked = true;
       this.activarActualizarElemento(elemento, indice);
       this.formularioVtaCpteItemNC.get('ventaTipoItem').setValue(this.resultadosMotivos[0]);
       this.formularioVtaCpteItemNC.get('estaRechazadaFCE').setValue(false);
@@ -681,6 +684,7 @@ export class EmitirNotaCreditoComponent implements OnInit {
     } else {
       /* elimina el formulario a saldar asignado a dicho comprobante */
       this.listaCompleta.data[indice].ventaComprobanteItemNC = [];
+      this.listaCompleta.data[indice].checked = false;
 
       this.reestablecerformularioVtaCpteItemNC();
       /* llama a calcular importes totales*/
@@ -688,6 +692,7 @@ export class EmitirNotaCreditoComponent implements OnInit {
       this.listaCompleta.data.length > 0 ? this.calcularImportesTotales() : this.limpiarImportesTotales();
       //Llama a verificar lista para controlar el estado del boolean 'checkbox'
       this.formulario.value.tipoComprobante.id == 28 ? this.verificarCheckbox() : '';
+      console.log(this.checkboxs);
     }
   }
   //Recorre la lista completa para verificar si algun registro tiene cancelado un cpte (atributo 'ventaComprobanteItemNC')
@@ -696,7 +701,6 @@ export class EmitirNotaCreditoComponent implements OnInit {
     for (let i = 0; i < this.listaCompleta.data.length; i++) {
       if (this.listaCompleta.data[i].ventaComprobanteItemNC.length > 0) {
         this.checkboxs = true;
-        this.listaCompleta.data[i].enable();
       }
     }
   }

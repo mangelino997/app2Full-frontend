@@ -3,184 +3,294 @@
     <div class="row">
         <div class="centrar">
             <nav mat-tab-nav-bar>
-                <a mat-tab-link disabled>FACTURACION CLIENTES</a>
+                <a mat-tab-link disabled>COMPROBANTES CLIENTES</a>
                 <!-- <a mat-tab-link *ngFor="let pestania of pestanias" [active]="activeLink == pestania.nombre"
             (click)="seleccionarPestania(pestania.id, pestania.nombre, true)">{{pestania.nombre}}</a> -->
             </nav>
         </div>
     </div>
-
     <div class="row justify-content-center contenedor">
         <div class="col-md-12 text-center">
             <!-- <h5>{{pestaniaActual}} Consulas</h5> -->
-            <form [formGroup]="formularioFiltro" class="contenedor">
-                <div class="row">
-                    <div class="col">
-                        <div class="form-group has-float-label">
-                            <label for="idEmpresaListar" class="rubro-label">Empresa *</label>
-                            <mat-select id="idEmpresaListar" class="form-control form-control-sm"
-                                formControlName="empresa" [compareWith]="compareFn">
-                                <mat-option [value]="0">TODOS</mat-option>
-                                <mat-option [value]="empresa.value.id">{{empresa.value.razonSocial}}</mat-option>
-                            </mat-select>
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="form-group has-float-label">
+                        <label for="idFiltroPor" class="rubro-label">Tipo de Filtro </label>
+                        <mat-select id="idFiltroPor" class="form-control form-control-sm" [formControl]="filtroPor"
+                            [compareWith]="compareFn" (selectionChange)="cambioFiltro()">
+                            <mat-option [value]="0">GENERAL</mat-option>
+                            <mat-option [value]="1">COMPROBANTE</mat-option>
+                            <mat-option [value]="2">RANGO DE CPTES. </mat-option>
+                            <mat-option [value]="3">IMPORTE</mat-option>
+                            <mat-option [value]="4">REMITO</mat-option>
+                            <mat-option [value]="5">GUÍA DE SERVICIO</mat-option>
+                        </mat-select>
+                    </div>
+                </div>
+            </div>
+            <form [formGroup]="formulario" class="contenedor">
+                <div *ngIf="filtroPor.value == 0">
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-group has-float-label">
+                                <label for="idSucursal" class="rubro-label">Sucursal *</label>
+                                <mat-select id="idSucursal" class="form-control form-control-sm"
+                                    formControlName="idSucursal" [compareWith]="compareFn">
+                                    <mat-option [value]="0">TODOS</mat-option>
+                                    <mat-option *ngFor="let item of sucursales" [value]="item.id">
+                                        {{item.nombre}}
+                                    </mat-option>
+                                </mat-select>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group has-float-label">
+                                <label for="idClienteListar" class="rubro-label">Cliente *</label>
+                                <mat-select id="idClienteListar" class="form-control form-control-sm"
+                                    formControlName="cliente" [compareWith]="compareFn"
+                                    (selectionChange)="cambioCliente()">
+                                    <mat-option [value]="0">TODOS</mat-option>
+                                    <mat-option [value]="1">SELECCIONAR</mat-option>
+                                </mat-select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group has-float-label">
+                                <label for="idNombreCliente" class="tamanio-label">Nombre *</label>
+                                <input id="idNombreCliente" class="form-control form-control-sm" type="text" matInput
+                                    [formControl]="formularioFiltroGeneral.get('idCliente')" [matAutocomplete]="auto"
+                                    autocomplete="off" [readOnly]="formularioFiltroGeneral.get('cliente').value == 0">
+                                <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)">
+                                    <mat-option *ngFor="let item of resultados" [value]="item">
+                                        {{item.alias}}
+                                    </mat-option>
+                                </mat-autocomplete>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group has-float-label">
+                                <label for="idTipoFecha" class="rubro-label">Tipo de Fecha *</label>
+                                <mat-select id="idTipoFecha" class="form-control form-control-sm"
+                                    formControlName="fechaTipo" [compareWith]="compareFn">
+                                    <mat-option [value]="1">FECHA DE EMISIÓN</mat-option>
+                                    <mat-option [value]="2">FECHA VTO. PAGO</mat-option>
+                                    <mat-option [value]="0">FECHA REGISTRACIÓN</mat-option>
+                                </mat-select>
+                            </div>
                         </div>
                     </div>
-                    <div class="col">
-                        <div class="form-group has-float-label">
-                            <label for="idClienteListar" class="rubro-label">Cliente *</label>
-                            <mat-select id="idClienteListar" class="form-control form-control-sm"
-                                formControlName="cliente" [compareWith]="compareFn">
-                                <mat-option [value]="0">TODOS</mat-option>
-                                <mat-option [value]="1">SELECCIONAR</mat-option>
-                            </mat-select>
+                    <div class="row">
+                        <div class="col-md-2">
+                            <div class="form-group has-float-label">
+                                <label for="idFechaDesde" class="tamanio-label">Fecha Desde *</label>
+                                <input id="idFechaDesde" type="date" formControlName="fechaDesde" autocomplete="off"
+                                    class="form-control form-control-sm" required>
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="form-group has-float-label">
-                            <label for="idNombreCliente" class="tamanio-label">Nombre *</label>
-                            <input id="idNombreCliente" class="form-control form-control-sm" type="text" matInput
-                                (blur)="controlAutoVacio()" [formControl]="formularioFiltro.get('nombre')"
-                                [matAutocomplete]="auto" autocomplete="off"
-                                [readOnly]="formularioFiltro.get('cliente').value == 0">
-                            <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)">
-                                <mat-option *ngFor="let item of resultados" [value]="item">
-                                    {{item.alias}}
-                                </mat-option>
-                            </mat-autocomplete>
+                        <div class="col-md-2">
+                            <div class="form-group has-float-label">
+                                <label for="idFechaHasta" class="tamanio-label">Fecha Hasta *</label>
+                                <input id="idFechaHasta" type="date" formControlName="fechaHasta" autocomplete="off"
+                                    (blur)="controlarFechaHasta()" class="form-control form-control-sm" required>
+                            </div>
                         </div>
-                    </div>
-                    <div class="col">
-                        <div class="form-group has-float-label">
-                            <label for="idTipoFecha" class="rubro-label">Tipo de Fecha *</label>
-                            <mat-select id="idTipoFecha" class="form-control form-control-sm"
-                                formControlName="fechaTipo" [compareWith]="compareFn">
-                                <mat-option [value]="1">FECHA DE EMISIÓN</mat-option>
-                                <mat-option [value]="2">FECHA CONTABLE</mat-option>
-                                <mat-option [value]="0">FECHA REGISTRACIÓN</mat-option>
-                            </mat-select>
+                        <div class="col-md-2">
+                            <div class="form-group has-float-label">
+                                <label for="idTipoComprobante" class="tamanio-label">Tipo de Comprobante *</label>
+                                <mat-select id="idTipoComprobante" class="form-control form-control-sm"
+                                    formControlName="idTipoComprobante" [compareWith]="compareFn">
+                                    <mat-option [value]="0">TODOS</mat-option>
+                                    <mat-option *ngFor="let item of tiposComprobantes" [value]="item.id">
+                                        {{item.nombre}}
+                                    </mat-option>
+                                </mat-select>
+                            </div>
+                        </div>
+                        <div class="col-1">
+                            <button id="idBoton" mat-raised-button color="primary" (click)="listar()"
+                                [disabled]="!formularioFiltroGeneral.valid">Buscar </button>
                         </div>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-md-2">
-                        <div class="form-group has-float-label">
-                            <label for="idFechaDesde" class="tamanio-label">Fecha Desde *</label>
-                            <input id="idFechaDesde" type="date" formControlName="fechaDesde" autocomplete="off"
-                                class="form-control form-control-sm" required>
+                <div *ngIf="filtroPor.value == 1 || filtroPor.value == 2">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="form-group has-float-label margin-right">
+                                <label for="idPuntoVenta" class="tamanio-label">Punto de Venta *</label>
+                                <mat-select id="idPuntoVenta" class="form-control form-control-sm"
+                                    formControlName="puntoVenta" [compareWith]="compareFn"
+                                    (selectionChange)="cambioPuntoVenta()">
+                                    <mat-option *ngFor="let item of puntosDeVenta" [value]="item">
+                                        {{establecerCerosIzq(item.puntoVenta, "0000", -5)}}
+                                    </mat-option>
+                                </mat-select>
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="form-group has-float-label">
-                            <label for="idFechaHasta" class="tamanio-label">Fecha Hasta *</label>
-                            <input id="idFechaHasta" type="date" formControlName="fechaHasta" autocomplete="off"
-                                (blur)="controlarFechaHasta()" class="form-control form-control-sm" required>
+                        <div class="col-md-2">
+                            <div class="form-group has-float-label">
+                                <label for="idFechaHasta" class="tamanio-label">Letra *</label>
+                                <input id="idFechaHasta" type="date" formControlName="fechaHasta" autocomplete="off"
+                                    (blur)="controlarFechaHasta()" class="form-control form-control-sm" required>
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="form-group has-float-label">
-                            <label for="idTipoComprobante" class="tamanio-label">Tipo de Comprobante *</label>
-                            <mat-select id="idTipoComprobante" class="form-control form-control-sm"
-                                formControlName="tipoComprobante" [compareWith]="compareFn">
-                                <mat-option [value]="0">TODOS</mat-option>
-                                <mat-option *ngFor="let item of tiposComprobantes" [value]="item.id">
-                                    {{item.nombre}}
-                                </mat-option>
-                            </mat-select>
+                        <div class="col-md-3" *ngIf="filtroPor.value == 1">
+                            <div class="form-group has-float-label">
+                                <label id="labelNumero" for="idNumero" class="descripcion-label">Número *</label>
+                                <input id="idNumero" type="text" formControlName="numero" autocomplete="off"
+                                    [readOnly]="soloLectura" [textMask]="mascararEnteros(8)"
+                                    (blur)="establecerCerosIzq(formulario.get('numero'), '0000000', -8)"
+                                    class="form-control form-control-sm number-right">
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-1">
-                        <button id="idBotonVencimientos" mat-raised-button color="primary"
-                            (click)="listar('listaCompleta')" [disabled]="!formularioFiltro.valid">Buscar </button>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="tabla">
-                        <div class="tabla-ancho">
-                            <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
-                                <ng-container matColumnDef="EMPRESA">
-                                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Empresa</th>
-                                    <td mat-cell *matCellDef="let elemento;">{{elemento.empresa.razonSocial}}</td>
-                                </ng-container>
-                                <ng-container matColumnDef="SUCURSAL">
-                                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Sucursal</th>
-                                    <td mat-cell *matCellDef="let elemento">{{elemento.sucursal.nombre}}</td>
-                                </ng-container>
-                                <ng-container matColumnDef="CLIENTE">
-                                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Cliente</th>
-                                    <td mat-cell *matCellDef="let elemento">{{elemento.cliente.razonSocial}}</td>
-                                </ng-container>
-                                <ng-container matColumnDef="TIPO_CPTE">
-                                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Tipo de Cpte.</th>
-                                    <td mat-cell *matCellDef="let elemento">{{elemento.tipoComprobante.nombre}}</td>
-                                </ng-container>
-                                <ng-container matColumnDef="PUNTO_VENTA">
-                                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Punto de Venta</th>
-                                    <td mat-cell *matCellDef="let elemento" class="number-right">
-                                        {{establecerCerosIzqEnVista(elemento.puntoVenta, '0000', -5)}}</td>
-                                </ng-container>
-                                <ng-container matColumnDef="LETRA">
-                                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Letra</th>
-                                    <td mat-cell *matCellDef="let elemento">{{elemento.letra}}
-                                    </td>
-                                </ng-container>
-                                <ng-container matColumnDef="NUMERO">
-                                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Número</th>
-                                    <td mat-cell *matCellDef="let elemento" class="number-right">{{elemento.numero}}
-                                    </td>
-                                </ng-container>
-                                <ng-container matColumnDef="FECHA_EMISION">
-                                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha Emisión</th>
-                                    <td mat-cell *matCellDef="let elemento">
-                                        {{elemento.fechaEmision | date: 'dd-MM-yyyy'}}</td>
-                                </ng-container>
-                                <ng-container matColumnDef="FECHA_VTO_PAGO">
-                                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha Vto. Pago</th>
-                                    <td mat-cell *matCellDef="let elemento">
-                                        {{elemento.fechaVtoPago | date: 'dd-MM-yyyy'}}
-                                    </td>
-                                </ng-container>
-                                <ng-container matColumnDef="FECHA_REGISTRACION">
-                                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha Registración</th>
-                                    <td mat-cell *matCellDef="let elemento">
-                                        {{elemento.fechaRegistracion | date: 'dd-MM-yyyy'}}</td>
-                                </ng-container>
-                                <ng-container matColumnDef="IMPORTE">
-                                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Importe</th>
-                                    <td mat-cell *matCellDef="let elemento" class="number-right">
-                                        $ {{elemento.importeTotal? (elemento.importeTotal | number: '1.2-2') : '0.00'}}
-                                    </td>
-                                </ng-container>
-                                <ng-container matColumnDef="SALDO">
-                                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Saldo</th>
-                                    <td mat-cell *matCellDef="let elemento" class="number-right">
-                                        $ {{elemento.importeSaldo? (elemento.importeSaldo | number: '1.2-2') : '0.00'}}
-                                    </td>
-                                </ng-container>
-                                <ng-container matColumnDef="EDITAR" stickyEnd>
-                                    <th mat-header-cell *matHeaderCellDef><button class="button-full-width"
-                                            mat-raised-button [disabled]="listaCompleta.data.length==0" color="primary"
-                                            (click)="abrirReporte()">Reporte</button></th>
-                                    <td mat-cell *matCellDef="let elemento" class="last-col-end">
-                                        <button mat-icon-button class="mat-icon-button-table"
-                                            (click)="activarConsultar(elemento)" matTooltip="Consultar"
-                                            matTooltipPosition="above">
-                                            <mat-icon>search</mat-icon>
-                                        </button>
-                                        <button mat-icon-button class="mat-icon-button-table margin-left-3"
-                                            (click)="activarActualizar(elemento)" matTooltip="Editar"
-                                            matTooltipPosition="above">
-                                            <mat-icon>edit</mat-icon>
-                                        </button>
-                                    </td>
-                                </ng-container>
-                                <tr mat-header-row *matHeaderRowDef="columnas"></tr>
-                                <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
-                            </table>
+                        <div class="col-md-3" *ngIf="filtroPor.value == 2">
+                            <div class="form-group has-float-label">
+                                <label id="labelNumero" for="NumeroDesde" class="descripcion-label">Número desde 
+                                    *</label>
+                                <input id="NumeroDesde" type="text" formControlName="numeroDesde" autocomplete="off"
+                                    [readOnly]="soloLectura" [textMask]="mascararEnteros(8)"
+                                    (blur)="establecerCerosIzq(formulario.get('numeroDesde'), '0000000', -8)"
+                                    class="form-control form-control-sm number-right">
+                            </div>
+                        </div>
+                        <div class="col-md-3" *ngIf="filtroPor.value == 2">
+                            <div class="form-group has-float-label">
+                                <label id="labelNumero" for="NumeroHasta" class="descripcion-label">Número hasta 
+                                    *</label>
+                                <input id="NumeroHasta" type="text" formControlName="numeroHasta" autocomplete="off"
+                                    [readOnly]="soloLectura" [textMask]="mascararEnteros(8)"
+                                    (blur)="establecerCerosIzq(formulario.get('numeroHasta'), '0000000', -8)"
+                                    class="form-control form-control-sm number-right">
+                            </div>
                         </div>
                     </div>
                 </div>
-                <!-- <mat-paginator [pageSizeOptions]="[10]" showFirstLastButtons></mat-paginator> -->
+                <div *ngIf="filtroPor.value == 3">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="form-group has-float-label">
+                                <label id="labelImporte" for="idImporteDesde" class="descripcion-label">Importe desde
+                                    *</label>
+                                <input id="idImporteDesde" type="text" formControlName="importeDesde" autocomplete="off"
+                                    (blur)="setDecimales(formulario.get('importeDesde'), 2)" [textMask]="mascararImporte(10)"
+                                    class="form-control form-control-sm number-right" placeholder="$0.00"
+                                    [readOnly]="!topeMax.value">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group has-float-label">
+                                <label id="labelImporte" for="idImporteHasta" class="descripcion-label">Importe hasta
+                                    *</label>
+                                <input id="idImporteHasta" type="text" formControlName="importeHasta" autocomplete="off"
+                                    (blur)="setDecimales(formulario.get('importeHasta'), 2)" [textMask]="mascararImporte(10)"
+                                    class="form-control form-control-sm number-right" placeholder="$0.00"
+                                    [readOnly]="!topeMax.value">
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group has-float-label">
+                                <label for="idFechaDesde" class="tamanio-label">Fecha Desde *</label>
+                                <input id="idFechaDesde" type="date" formControlName="fechaDesde" autocomplete="off"
+                                    class="form-control form-control-sm" required>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group has-float-label">
+                                <label for="idFechaHasta" class="tamanio-label">Fecha Hasta *</label>
+                                <input id="idFechaHasta" type="date" formControlName="fechaHasta" autocomplete="off"
+                                    (blur)="controlarFechaHasta()" class="form-control form-control-sm" required>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </form>
+
+            <div class="row">
+                <div class="tabla">
+                    <div class="tabla-ancho">
+                        <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
+                            <ng-container matColumnDef="EMPRESA">
+                                <th mat-header-cell *matHeaderCellDef mat-sort-header>Empresa</th>
+                                <td mat-cell *matCellDef="let elemento;">{{elemento.empresa.razonSocial}}</td>
+                            </ng-container>
+                            <ng-container matColumnDef="SUCURSAL">
+                                <th mat-header-cell *matHeaderCellDef mat-sort-header>Sucursal</th>
+                                <td mat-cell *matCellDef="let elemento">{{elemento.sucursal.nombre}}</td>
+                            </ng-container>
+                            <ng-container matColumnDef="CLIENTE">
+                                <th mat-header-cell *matHeaderCellDef mat-sort-header>Cliente</th>
+                                <td mat-cell *matCellDef="let elemento">{{elemento.cliente.razonSocial}}</td>
+                            </ng-container>
+                            <ng-container matColumnDef="TIPO_CPTE">
+                                <th mat-header-cell *matHeaderCellDef mat-sort-header>Tipo de Cpte.</th>
+                                <td mat-cell *matCellDef="let elemento">{{elemento.tipoComprobante.nombre}}</td>
+                            </ng-container>
+                            <ng-container matColumnDef="PUNTO_VENTA">
+                                <th mat-header-cell *matHeaderCellDef mat-sort-header>Punto de Venta</th>
+                                <td mat-cell *matCellDef="let elemento">
+                                    {{establecerCerosIzqEnVista(elemento.puntoVenta, '0000', -5)}}</td>
+                            </ng-container>
+                            <ng-container matColumnDef="LETRA">
+                                <th mat-header-cell *matHeaderCellDef mat-sort-header>Letra</th>
+                                <td mat-cell *matCellDef="let elemento">{{elemento.letra}}
+                                </td>
+                            </ng-container>
+                            <ng-container matColumnDef="NUMERO">
+                                <th mat-header-cell *matHeaderCellDef mat-sort-header>Número</th>
+                                <td mat-cell *matCellDef="let elemento">{{elemento.numero}}
+                                </td>
+                            </ng-container>
+                            <ng-container matColumnDef="FECHA_EMISION">
+                                <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha Emisión</th>
+                                <td mat-cell *matCellDef="let elemento">
+                                    {{elemento.fechaEmision | date: 'dd-MM-yyyy'}}</td>
+                            </ng-container>
+                            <ng-container matColumnDef="FECHA_VTO_PAGO">
+                                <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha Vto. Pago</th>
+                                <td mat-cell *matCellDef="let elemento">
+                                    {{elemento.fechaVtoPago | date: 'dd-MM-yyyy'}}
+                                </td>
+                            </ng-container>
+                            <ng-container matColumnDef="FECHA_REGISTRACION">
+                                <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha Registración</th>
+                                <td mat-cell *matCellDef="let elemento">
+                                    {{elemento.fechaRegistracion | date: 'dd-MM-yyyy'}}</td>
+                            </ng-container>
+                            <ng-container matColumnDef="IMPORTE">
+                                <th mat-header-cell *matHeaderCellDef mat-sort-header>Importe</th>
+                                <td mat-cell *matCellDef="let elemento" class="number-right">
+                                    $ {{elemento.importeTotal? (elemento.importeTotal | number: '1.2-2') : '0.00'}}
+                                </td>
+                            </ng-container>
+                            <ng-container matColumnDef="SALDO">
+                                <th mat-header-cell *matHeaderCellDef mat-sort-header>Saldo</th>
+                                <td mat-cell *matCellDef="let elemento" class="number-right">
+                                    $ {{elemento.importeSaldo? (elemento.importeSaldo | number: '1.2-2') : '0.00'}}
+                                </td>
+                            </ng-container>
+                            <ng-container matColumnDef="EDITAR" stickyEnd>
+                                <th mat-header-cell *matHeaderCellDef><button class="button-full-width"
+                                        mat-raised-button [disabled]="listaCompleta.data.length==0" color="primary"
+                                        (click)="abrirReporte()">Reporte</button></th>
+                                <td mat-cell *matCellDef="let elemento" class="last-col-end">
+                                    <button mat-icon-button class="mat-icon-button-table"
+                                        (click)="activarConsultar(elemento)" matTooltip="Consultar"
+                                        matTooltipPosition="above">
+                                        <mat-icon>search</mat-icon>
+                                    </button>
+                                    <button mat-icon-button class="mat-icon-button-table margin-left-3"
+                                        (click)="activarActualizar(elemento)" matTooltip="Editar"
+                                        matTooltipPosition="above">
+                                        <mat-icon>edit</mat-icon>
+                                    </button>
+                                </td>
+                            </ng-container>
+                            <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+                            <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <mat-paginator [pageSizeOptions]="[10]" showFirstLastButtons></mat-paginator>
         </div>
 
         <div class="col-md-12">

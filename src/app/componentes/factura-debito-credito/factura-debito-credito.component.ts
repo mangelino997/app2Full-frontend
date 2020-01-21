@@ -434,7 +434,7 @@ export class FacturaDebitoCreditoComponent implements OnInit {
   }
   //Controla el campo proveedor
   public controlAutoVacio() {
-    let elemento = this.formulario.value.proveedor;
+    let elemento = this.formularioFiltro.value.idCliente;
     elemento == null || elemento == undefined || elemento == '' ? this.formularioDatosProveedor.reset() : '';
   }
   //Establece los valores segun el proveedor seleccionado

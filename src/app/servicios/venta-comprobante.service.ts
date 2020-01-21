@@ -58,6 +58,10 @@ export class VentaComprobanteService {
   public listarLetras() {
     return this.http.get(this.url + '/listarLetras', this.options);
   }
+  //Obtiene una lista de registros por filtros
+  public listarPorFiltros(elemento) {
+    return this.http.post(this.url + '/listarPorFiltros', elemento, this.options);
+  }
   //Obtiene la lista de registros
   public listarPorClienteYEmpresa(idCliente, idEmpresa) {
     return this.http.get(this.url + '/listarPorClienteYEmpresa/'+ idCliente + '/' + idEmpresa, this.options);

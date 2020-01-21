@@ -4,11 +4,12 @@ import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModul
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TextMaskModule } from 'angular2-text-mask';
 import { ClienteService } from 'src/app/servicios/cliente.service';
-import { CondicionCompraService } from 'src/app/servicios/condicion-compra.service';
 import { TipoComprobanteService } from 'src/app/servicios/tipo-comprobante.service';
-import { CompraComprobanteService } from 'src/app/servicios/compra-comprobante.service';
 import { FacturacionConsultaComponent } from 'src/app/componentes/facturacion-consulta/facturacion-consulta.component';
 import { FacturacionConsultaRoutingModule } from './facturacion-consulta-routing.module';
+import { VentaComprobanteService } from 'src/app/servicios/venta-comprobante.service';
+import { SucursalService } from 'src/app/servicios/sucursal.service';
+import { PuntoVentaService } from 'src/app/servicios/punto-venta.service';
 
 
 
@@ -36,10 +37,11 @@ import { FacturacionConsultaRoutingModule } from './facturacion-consulta-routing
     MatTooltipModule
   ],
   providers: [
-    CondicionCompraService,
     TipoComprobanteService,
     ClienteService,
-    CompraComprobanteService,
+    VentaComprobanteService,
+    SucursalService,
+    PuntoVentaService
   ],
   entryComponents: [
   ]
