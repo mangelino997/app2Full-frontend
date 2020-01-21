@@ -1,10 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { VehiculoService } from '../../servicios/vehiculo.service';
-import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
-import { TipoVehiculoService } from '../../servicios/tipo-vehiculo.service';
-import { MarcaVehiculoService } from '../../servicios/marca-vehiculo.service';
 import { LocalidadService } from '../../servicios/localidad.service';
-import { EmpresaService } from '../../servicios/empresa.service';
 import { CompaniaSeguroPolizaService } from '../../servicios/compania-seguro-poliza.service';
 import { ConfiguracionVehiculoService } from '../../servicios/configuracion-vehiculo.service';
 import { PersonalService } from '../../servicios/personal.service';
@@ -20,6 +16,26 @@ import { CompaniaSeguroService } from 'src/app/servicios/compania-seguro.service
 import { PdfService } from 'src/app/servicios/pdf.service';
 import { PdfDialogoComponent } from '../pdf-dialogo/pdf-dialogo.component';
 import { ReporteService } from 'src/app/servicios/reporte.service';
+
+export interface IPdf {
+  id: null,
+  version: null,
+  nombre: null,
+  tipo: null,
+  tamanio: null,
+  datos: null,
+  tabla: null
+}
+
+const PDF: IPdf = {
+  id: null,
+  version: null,
+  nombre: null,
+  tipo: null,
+  tamanio: null,
+  datos: null,
+  tabla: null
+};
 
 @Component({
   selector: 'app-vehiculo',
@@ -66,13 +82,11 @@ export class VehiculoComponent implements OnInit {
   //Define un campo control para marca vehiculo
   public marcaVehiculo: FormControl = new FormControl();
   //Define la lista de resultados de busqueda
-  public resultados = [];
+  public resultados:Array<any> = [];
   //Define la lista de resultados de busqueda vehiculo remolque
   public resultadosVehiculosRemolques = [];
   //Define la lista de resultados de busqueda localidad
   public resultadosLocalidades = [];
-  //Define la lista de resultados de busqueda compania seguro
-  public resultadosCompaniasSegurosPolizas = [];
   //Define la lista de resultados de busqueda personal
   public resultadosPersonales = [];
   //Define el campo de control configuracion
@@ -104,9 +118,9 @@ export class VehiculoComponent implements OnInit {
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Constructor
   constructor(private servicio: VehiculoService, private toastr: ToastrService, private loaderService: LoaderService,
-    private localidadServicio: LocalidadService, private companiaSeguroPolizaServicio: CompaniaSeguroPolizaService, 
-    private companiaSeguroService: CompaniaSeguroService, private configuracionVehiculoServicio: ConfiguracionVehiculoService, 
-    private pdfServicio: PdfService, public dialog: MatDialog, private personalServicio: PersonalService, 
+    private localidadServicio: LocalidadService, private companiaSeguroPolizaServicio: CompaniaSeguroPolizaService,
+    private companiaSeguroService: CompaniaSeguroService, private configuracionVehiculoServicio: ConfiguracionVehiculoService,
+    private pdfServicio: PdfService, public dialog: MatDialog, private personalServicio: PersonalService,
     private vehiculoModelo: Vehiculo, private appService: AppService, private reporteServicio: ReporteService) {
     //Autocompletado - Buscar por alias
     this.autocompletado.valueChanges.subscribe(data => {
@@ -209,7 +223,6 @@ export class VehiculoComponent implements OnInit {
         this.tiposVehiculos = respuesta.tipoVehiculos;
         this.marcasVehiculos = respuesta.marcaVehiculos;
         this.formulario.get('id').setValue(this.ultimoId);
-        this.companiasSeguros = respuesta.companiasSeguros;
         this.render = false;
       },
       err => {
@@ -217,66 +230,6 @@ export class VehiculoComponent implements OnInit {
         this.render = false;
       }
     )
-  }
-  //Obtiene un registro por id (trae los pdfs)
-  private obtenerPorId(elemento) {
-    this.loaderService.show();
-    this.servicio.obtenerPorId(elemento.id).subscribe(
-      res => {
-        this.loaderService.hide();
-        /* el primer parámetro le envía los pdfs y el segundo el resto de datos*/
-        this.establecerElementoYFotoYPdfs(res.json());
-      },
-      err => {
-        this.loaderService.hide();
-      }
-    );
-  }
-  /* 
-  * Establece el elemento,foto y pdfs. Recibe como primer parametro un objeto con los datos de 
-  * los pdfs y como segundo parametro el elemento con los datos completos (menos los pdfs) 
-  */
-  private establecerElementoYFotoYPdfs(elemento): void {
-    this.formulario.setValue(elemento);
-    //Establece los formControls
-    this.tipoVehiculo.setValue(elemento.configuracionVehiculo.tipoVehiculo);
-    this.marcaVehiculo.setValue(elemento.configuracionVehiculo.marcaVehiculo);
-    //Realiza el control de los pdfs
-    this.controlarPdf(elemento);
-    //Llama a métodos para completar las listas
-    this.listarCompaniasSeguroPorEmpresa(elemento.empresa, elemento.companiaSeguroPoliza);
-    this.establecerConfiguracion();
-    this.listarConfiguracionesPorTipoVehiculoMarcaVehiculo();
-    //Establece compañia de seguro
-    this.companiaSeguro.patchValue(elemento.companiaSeguroPoliza.companiaSeguro);
-  }
-  //Controla la carga de los pdfs del elemento seleccionado 
-  private controlarPdf(elemento) {
-    /* establece los pdfs */
-    if (elemento.pdfTitulo) {
-      this.formulario.get('pdfTitulo').patchValue(elemento.pdfTitulo);
-      this.formulario.get('pdfTitulo.datos').setValue(atob(elemento.pdfTitulo.datos));
-    }
-    if (elemento.pdfCedulaIdent) {
-      this.formulario.get('pdfCedulaIdent').patchValue(elemento.pdfCedulaIdent);
-      this.formulario.get('pdfCedulaIdent.datos').setValue(atob(elemento.pdfCedulaIdent.datos));
-    }
-    if (elemento.pdfVtoRuta) {
-      this.formulario.get('pdfVtoRuta').patchValue(elemento.pdfVtoRuta);
-      this.formulario.get('pdfVtoRuta.datos').setValue(atob(elemento.pdfVtoRuta.datos));
-    }
-    if (elemento.pdfVtoInspTecnica) {
-      this.formulario.get('pdfVtoInspTecnica').patchValue(elemento.pdfVtoInspTecnica);
-      this.formulario.get('pdfVtoInspTecnica.datos').setValue(atob(elemento.pdfVtoInspTecnica.datos));
-    }
-    if (elemento.pdfVtoSenasa) {
-      this.formulario.get('pdfVtoSenasa').patchValue(elemento.pdfVtoSenasa);
-      this.formulario.get('pdfVtoSenasa.datos').setValue(atob(elemento.pdfVtoSenasa.datos));
-    }
-    if (elemento.pdfHabBromat) {
-      this.formulario.get('pdfHabBromat').patchValue(elemento.pdfHabBromat);
-      this.formulario.get('pdfHabBromat.datos').setValue(atob(elemento.pdfHabBromat.datos));
-    }
   }
   //Obtiene la lista de compania de seguros poliza por empresa
   public listarCompaniasSeguroPorEmpresa(empresa, companiaSeguroPoliza): void {
@@ -303,7 +256,7 @@ export class VehiculoComponent implements OnInit {
     this.companiaSeguroPolizaServicio.listarPorCompaniaSeguro(companiaSeguro.id).subscribe(
       res => {
         this.companiasSegurosPolizas = res.json();
-        if(companiaSeguroPoliza) {
+        if (companiaSeguroPoliza) {
           this.formulario.get('companiaSeguroPoliza').setValue(companiaSeguroPoliza);
         }
         this.loaderService.hide();
@@ -317,7 +270,26 @@ export class VehiculoComponent implements OnInit {
   public establecerElemento() {
     this.limpiarCampos();
     let elemento = this.autocompletado.value;
-    this.obtenerPorId(elemento);
+    this.formulario.patchValue(this.esteblecerPDFs(elemento));
+    //Establece los formControls
+    this.tipoVehiculo.setValue(elemento.configuracionVehiculo.tipoVehiculo);
+    this.marcaVehiculo.setValue(elemento.configuracionVehiculo.marcaVehiculo);
+    //Llama a métodos para completar las listas
+    this.listarCompaniasSeguroPorEmpresa(elemento.empresa, elemento.companiaSeguroPoliza);
+    this.establecerConfiguracion();
+    this.listarConfiguracionesPorTipoVehiculoMarcaVehiculo();
+    //Establece compañia de seguro
+    this.companiaSeguro.patchValue(elemento.companiaSeguroPoliza.companiaSeguro);
+  }
+  //Establece el formulario
+  private esteblecerPDFs(elemento): any {
+    elemento.pdfTitulo = elemento.pdfTitulo ? elemento.pdfTitulo : PDF;
+    elemento.pdfCedulaIdent = elemento.pdfCedulaIdent ? elemento.pdfCedulaIdent : PDF;
+    elemento.pdfVtoRuta = elemento.pdfVtoRuta ? elemento.pdfVtoRuta : PDF;
+    elemento.pdfVtoInspTecnica = elemento.pdfVtoInspTecnica ? elemento.pdfVtoInspTecnica : PDF;
+    elemento.pdfVtoSenasa = elemento.pdfVtoSenasa ? elemento.pdfVtoSenasa : PDF;
+    elemento.pdfHabBromat = elemento.pdfHabBromat ? elemento.pdfHabBromat : PDF;
+    return elemento;
   }
   //Limpia los campos en cada seleccion de vehiculo (campo buscar)
   private limpiarCampos() {
@@ -333,7 +305,6 @@ export class VehiculoComponent implements OnInit {
     this.resultadosLocalidades = [];
     this.companiasSegurosPolizas = [];
     this.resultadosVehiculosRemolques = [];
-    this.resultadosCompaniasSegurosPolizas = [];
     this.listaCompleta = new MatTableDataSource([]);
   }
   //Establece selects solo lectura
@@ -417,20 +388,6 @@ export class VehiculoComponent implements OnInit {
       default:
         break;
     }
-  }
-  //Obtiene el listado de registros
-  public listarTodos() {
-    this.loaderService.show();
-    this.formularioListar.reset();
-    this.servicio.listar().subscribe(
-      res => {
-        this.listaCompleta = new MatTableDataSource(res.json());
-        this.listaCompleta.sort = this.sort;
-        this.loaderService.hide();
-      },
-      err => {
-        this.loaderService.hide();
-      });
   }
   //Obtiene el listado de registros por filtro
   public listarVehiculosFiltro() {
@@ -548,6 +505,7 @@ export class VehiculoComponent implements OnInit {
   private actualizar() {
     this.loaderService.show();
     this.formulario.get('usuarioMod').setValue(this.appService.getUsuario());
+    console.log(this.formulario.value);
     this.servicio.actualizar(this.formulario.value).then(
       res => {
         let respuesta = res.json();
@@ -675,7 +633,6 @@ export class VehiculoComponent implements OnInit {
   }
   //Carga el archivo PDF 
   public readURL(event, campo): void {
-    // let extension = this.formulario.get(campo).value.tipo; /* no funciona ésta línea */
     let extension = event.target.files[0].type;
     if (extension == 'application/pdf') {
       const file = event.target.files[0];
@@ -710,8 +667,9 @@ export class VehiculoComponent implements OnInit {
       maxWidth: '95%',
       maxHeight: '95%',
       data: {
+        id: this.formulario.get(campo + '.id').value,
+        datos: this.formulario.get(campo + '.datos').value,
         nombre: this.formulario.get(campo + '.nombre').value,
-        datos: this.formulario.get(campo + '.datos').value
       }
     });
     dialogRef.afterClosed().subscribe(resultado => { });
