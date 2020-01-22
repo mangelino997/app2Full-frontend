@@ -49,6 +49,7 @@ export class UnidadMedidaSueldoComponent implements OnInit {
     private loaderService: LoaderService, private reporteServicio: ReporteService, private toastr: ToastrService) {
     this.formulario = new FormGroup({
       id: new FormControl(),
+      version: new FormControl(),
       nombre: new FormControl(),
       codigoAfip: new FormControl(),
     })
@@ -66,6 +67,7 @@ export class UnidadMedidaSueldoComponent implements OnInit {
           this.loaderService.show();
           this.unidadMedidaSueldoService.listarPorNombre(data).subscribe(res => {
             this.resultados = res;
+            console.log(this.resultados)
             this.loaderService.hide();
           },
             err => {
@@ -122,7 +124,7 @@ export class UnidadMedidaSueldoComponent implements OnInit {
 }
   //Establece el formulario al seleccionar elemento del autocompletado
   public cambioAutocompletado(elemento) {
-  this.formulario.patchValue(elemento);
+  this.formulario.setValue(elemento);
 }
   //Formatea el valor del autocompletado
   public displayFn(elemento) {
@@ -172,19 +174,92 @@ export class UnidadMedidaSueldoComponent implements OnInit {
 }
   //Reestablece los campos formularios
   private reestablecerFormulario() {
+  this.resultados = [];
   this.formulario.reset();
   this.autocompletado.reset();
   this.formulario.get('id').setValue(this.ultimoId);
 }
   public agregar(){
-
-}
+    this.loaderService.show();
+    this.unidadMedidaSueldoService.agregar(this.formulario.value).subscribe(
+      res => {
+        let respuesta = res.json();
+        if (respuesta.codigo == 201) {
+          this.ultimoId = respuesta.id;
+          this.reestablecerFormulario();
+          document.getElementById('idNombre').focus();
+          this.toastr.success(respuesta.mensaje);
+          this.loaderService.hide();
+        }
+      },
+      err => {
+        let respuesta = err.json();
+        if (respuesta.codigo == 11002) {
+          document.getElementById("labelNombre").classList.add('label-error');
+          document.getElementById("idNombre").classList.add('is-invalid');
+          document.getElementById("idNombre").focus();
+          this.toastr.error(respuesta.mensaje);
+        } else {
+          this.toastr.error(respuesta.mensaje);
+        }
+        this.loaderService.hide();
+      }
+    );
+  }
   public actualizar(){
-
-}
+  this.loaderService.show();
+  console.log(this.formulario.value);
+  this.unidadMedidaSueldoService.actualizar(this.formulario.value).subscribe(
+    res => {
+      let respuesta = res.json();
+      if (respuesta.codigo == 200) {
+        this.reestablecerFormulario();
+        document.getElementById('idAutocompletado').focus();
+        this.toastr.success(respuesta.mensaje);
+        this.loaderService.hide();
+      }
+    },
+    err => {
+      let respuesta = err.json();
+      if (respuesta.codigo == 11002) {
+        document.getElementById("labelNombre").classList.add('label-error');
+        document.getElementById("idNombre").classList.add('is-invalid');
+        document.getElementById("idNombre").focus();
+        this.toastr.error(respuesta.mensaje);
+      } else {
+        this.toastr.error(respuesta.mensaje);
+      }
+      this.loaderService.hide();
+    }
+  );
+ }
   public eliminar(){
-
-}
+    this.loaderService.show();
+    let formulario = this.formulario.value;
+    this.unidadMedidaSueldoService.eliminar(formulario.id).subscribe(
+      res => {
+        let respuesta = res.json();
+        if (respuesta.codigo == 200) {
+          this.reestablecerFormulario();
+          document.getElementById('idNombre').focus();
+          this.toastr.success(respuesta.mensaje);
+        }
+        this.loaderService.hide();
+      },
+      err => {
+        let respuesta = err.json();
+        if (respuesta.codigo == 500) {
+          document.getElementById("labelNombre").classList.add('label-error');
+          document.getElementById("idNombre").classList.add('is-invalid');
+          document.getElementById("idNombre").focus();
+          this.toastr.error(respuesta.mensaje);
+        } else {
+          this.toastr.error(respuesta.mensaje);
+        }
+        this.loaderService.hide();
+      }
+    );
+ }
 //Obtiene el listado de registros
 private listar() {
   this.loaderService.show();
