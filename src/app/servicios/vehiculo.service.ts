@@ -173,71 +173,33 @@ export class VehiculoService {
   }
   //Actualiza un registro
   public actualizar(elemento) {
-    let obj = Object.assign({}, elemento);
-    let tituloFile = obj.pdfTitulo;
-    let cedulaIdentFile = obj.pdfCedulaIdent;
-    let vtoRutaFile = obj.pdfVtoRuta;
-    let vtoInspTecnicaFile = obj.pdfVtoInspTecnica;
-    let vtoSenasaFile = obj.pdfVtoSenasa;
-    let habBromatFile = obj.pdfHabBromat;
-    let blob = new Blob([], { type: 'application/pdf' });
+    elemento.pdfTitulo = null;
+    elemento.pdfCedulaIdent = null;
+    elemento.pdfVtoRuta = null;
+    elemento.pdfVtoInspTecnica = null;
+    elemento.pdfVtoSenasa = null;
+    elemento.pdfHabBromat = null;
+    return this.http.put(this.url, elemento, this.options);
+  }
+  //Actualiza un pdf
+  public actualizarPDF(idVehiculo, tipoPdf, elemento) {
     const formData = new FormData();
-    if (tituloFile.nombre != null) {
-      blob = new Blob([tituloFile.datos], { type: 'application/pdf' });
-      formData.append('titulo', blob, tituloFile.nombre);
-    } else {
-      blob = new Blob([null], { type: 'application/pdf' });
-      formData.append('titulo', blob, 'null');
-    }
-    if (cedulaIdentFile.nombre != null) {
-      blob = new Blob([cedulaIdentFile.datos], { type: 'application/pdf' });
-      formData.append('cedulaIdent', blob, cedulaIdentFile.nombre);
-    } else {
-      blob = new Blob([null], { type: 'application/pdf' });
-      formData.append('cedulaIdent', blob, 'null');
-    }
-    if (vtoRutaFile.nombre != null) {
-      blob = new Blob([vtoRutaFile.datos], { type: 'application/pdf' });
-      formData.append('vtoRuta', blob, vtoRutaFile.nombre);
-    } else {
-      blob = new Blob([null], { type: 'application/pdf' });
-      formData.append('vtoRuta', blob, 'null');
-    }
-    if (vtoInspTecnicaFile.nombre != null) {
-      blob = new Blob([vtoInspTecnicaFile.datos], { type: 'application/pdf' });
-      formData.append('vtoInspTecnica', blob, vtoInspTecnicaFile.nombre);
-    } else {
-      blob = new Blob([null], { type: 'application/pdf' });
-      formData.append('vtoInspTecnica', blob, 'null');
-    }
-    if (vtoSenasaFile.nombre != null) {
-      blob = new Blob([vtoSenasaFile.datos], { type: 'application/pdf' });
-      formData.append('vtoSenasa', blob, vtoSenasaFile.nombre);
-    } else {
-      blob = new Blob([null], { type: 'application/pdf' });
-      formData.append('vtoSenasa', blob, 'null');
-    }
-    if (habBromatFile.nombre != null) {
-      blob = new Blob([habBromatFile.datos], { type: 'application/pdf' });
-      formData.append('habBromat', blob, habBromatFile.nombre);
-    } else {
-      blob = new Blob([null], { type: 'application/pdf' });
-      formData.append('habBromat', blob, 'null');
-    }
-    obj.pdfTitulo = null;
-    obj.pdfCedulaIdent = null;
-    obj.pdfVtoRuta = null;
-    obj.pdfVtoInspTecnica = null;
-    obj.pdfVtoSenasa = null;
-    obj.pdfHabBromat = null;
-    formData.append('vehiculo', JSON.stringify(obj));
-    return fetch(this.url, {
+    let blob = new Blob([elemento.datos], { type: 'application/pdf' });
+    formData.append('idVehiculo', JSON.stringify(idVehiculo));
+    formData.append('idPdf', JSON.stringify(elemento.id));
+    formData.append('tipoPdf', tipoPdf);
+    formData.append('archivo', blob, elemento.nombre);
+    return fetch(this.url + '/actualizarPdf', {
       method: "PUT",
       headers: {
         'Authorization': localStorage.getItem('token')
       },
       body: formData
     });
+  }
+  //Elimina un pdf
+  public eliminarPdf(idVehiculo, idPdf, tipoPdf) {
+    return this.http.delete(this.url + '/eliminarPdf/' + idVehiculo + '/' + idPdf + '/' + tipoPdf, this.options);
   }
   //Elimina un registro
   public eliminar(id) {

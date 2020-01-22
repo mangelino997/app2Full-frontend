@@ -51,4 +51,19 @@ public listaCompleta:Subject<any> = new Subject<any>();
   public obtenerPorId(id) {
     return this.http.get(this.url + '/obtenerPorId/'+ id, this.options);
   }
+  //Actualiza un registro
+  public actualizar(elemento) {
+    const formData = new FormData();
+    let blob = new Blob([elemento.datos], { type: 'application/pdf' });
+    formData.append('idPdf', JSON.stringify(elemento.id));
+    formData.append('tabla', JSON.stringify(elemento.tabla));
+    formData.append('pdf', blob, elemento.nombre);
+    return fetch(this.url, {
+      method: "PUT",
+      headers: {
+        'Authorization': localStorage.getItem('token')
+      },
+      body: formData
+    });
+  }
 }
