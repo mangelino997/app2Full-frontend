@@ -194,9 +194,9 @@ export class EmitirNotaCreditoComponent implements OnInit {
     })
   }
   //Obtiene la lista de Puntos de Venta
-  private listarPuntosVenta() {
+  public listarPuntosVenta() {
     this.puntoVentaService.listarPorEmpresaYSucursalYTipoComprobante(
-      this.appComponent.getEmpresa().id, this.appComponent.getUsuario().sucursal.id, 3).subscribe(
+      this.appComponent.getEmpresa().id, this.appComponent.getUsuario().sucursal.id, this.formulario.value.tipoComprobante.id).subscribe(
         res => {
           this.resultadosPuntoVenta = res.json();
           this.formulario.get('puntoVenta').setValue(this.resultadosPuntoVenta[0]);
@@ -248,6 +248,10 @@ export class EmitirNotaCreditoComponent implements OnInit {
       this.formulario.get('fechaVtoPago').setValue(this.fechaActual);
 
     })
+  }
+  //Controla el cambio en Tipo de cpte
+  public cambioTipoComprobante(){
+    this.listarPuntosVenta();
   }
   //Controla el cambio en el campo Fecha
   public cambioFecha() {

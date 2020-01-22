@@ -9,7 +9,7 @@
               <div class="form-group has-float-label margin-right">
                 <label for="idTipoComprobante" class="tamanio-label">Tipo de Comprobante *</label>
                 <mat-select id="idTipoComprobante" class="form-control form-control-sm"
-                  formControlName="tipoComprobante" [compareWith]="compareFn" (selectionChange)="listarItemsTipo()">
+                  formControlName="tipoComprobante" [compareWith]="compareFn" (selectionChange)="cambioTipoComprobante()">
                   <mat-option *ngFor="let item of tiposComprobante" [value]="item">
                     {{item.nombre}}
                   </mat-option>

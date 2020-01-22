@@ -60,7 +60,7 @@ export class PuntoVentaComponent implements OnInit {
   public tipoComprobante: FormControl = new FormControl('', Validators.required);
   //Define las columnas de la tabla
   public columnas: string[] = ['SUCURSAL', 'EMPRESA', 'PUNTO_VENTA', 'FE', 'FE_LINEA',
-    'CAE', 'CUENTA_ORDEN', 'NUMERO', 'COPIA', 'IMPRIME', 'HABILITADA', 'DEFECTO', 'EDITAR'];
+    'CAE', 'NUMERO', 'COPIA', 'IMPRIME', 'HABILITADA', 'DEFECTO', 'EDITAR'];
   //Define la matSort
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   //Define la paginacion
@@ -282,6 +282,9 @@ export class PuntoVentaComponent implements OnInit {
     this.loaderService.show();
     this.formulario.enable();
     this.formulario.get('id').setValue(null);
+
+    //guarda la sucursal seleccionada para reestablecerla
+    let sucursal = this.formulario.value.sucursal;
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         let respuesta = res.json();
@@ -289,7 +292,8 @@ export class PuntoVentaComponent implements OnInit {
           this.ultimoId = respuesta.id;
           this.reestablecerFormulario(respuesta.id);
           this.establecerEstadoCampos(true);
-          document.getElementById('idSucursal').focus();
+          this.formulario.get('sucursal').setValue(sucursal);
+          document.getElementById('idPuntoVenta').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
         }
@@ -347,19 +351,12 @@ export class PuntoVentaComponent implements OnInit {
   }
   //Reestablece el formulario
   private reestablecerFormulario(id) {
-    this.vaciarListas();
-    this.empresa.reset();
-    this.sucursal.reset();
     this.formulario.reset();
     this.autocompletado.reset();
     this.tipoComprobante.reset();
     this.establecerValoresPorDefecto();
-    id ? this.formulario.get('id').setValue(id) : this.formulario.get('id').setValue(this.ultimoId);
-  }
-  //Vacía las listas
-  private vaciarListas() {
     this.afipComprobantes = [];
-    this.listaCompleta = new MatTableDataSource([]);
+    id ? this.formulario.get('id').setValue(id) : this.formulario.get('id').setValue(this.ultimoId);
   }
   //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
   private lanzarError(err) {
@@ -370,6 +367,10 @@ export class PuntoVentaComponent implements OnInit {
       document.getElementById("idTelefonoFijo").focus();
     }
     this.toastr.error(respuesta.mensaje);
+  }
+  //Maneja el cambio en el formControl de la pestaña listar
+  public cambioSucursal() {
+    this.listaCompleta.data = [];
   }
   //Manejo de colores de campos y labels
   public cambioCampo(id, label) {
@@ -458,7 +459,7 @@ export class PuntoVentaComponent implements OnInit {
         fe: elemento.fe ? 'Si' : 'No',
         fe_linea: elemento.feEnLinea ? 'Si' : 'No',
         cae: elemento.feCAEA ? 'Si' : 'No',
-        cuenta_orden: elemento.esCuentaOrden ? 'Si' : 'No',
+        // cuenta_orden: elemento.esCuentaOrden ? 'Si' : 'No',
         numero: elemento.ultimoNumero,
         copia: elemento.copias,
         imprime: elemento.imprime ? 'Si' : 'No',
