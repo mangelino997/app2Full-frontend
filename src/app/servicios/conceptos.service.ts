@@ -77,4 +77,8 @@ export class ConceptosService {
   public eliminar(id) {
     return this.http.delete(this.url + '/' + id, this.options);
   }
+  //Obtiene el último Código Empleador
+  public obtenerUltimoCodigoEmpleador(){
+    return this.http.get(this.url + '/obtenerUltimoCodigoEmpleador', this.options);
+  }
 }

@@ -41,7 +41,7 @@ const routes: Routes = [
     { path: 'ejerciciosadministrar', loadChildren: () => import('./modulos/ejercicio/ejercicio.module').then(m => m.EjercicioModule), canActivate: [GuardiaService] },
     { path: 'logisticatiposdevehiculos', loadChildren: () => import('./modulos/tipo-vehiculo/tipo-vehiculo.module').then(m => m.TipoVehiculoModule), canActivate: [GuardiaService] },
     { path: 'origenesdestinostramos', loadChildren: () => import('./modulos/tramo/tramo.module').then(m => m.TramoModule), canActivate: [GuardiaService] },
-    { path: 'configuraciontiposdemedida', loadChildren: () => import('./modulos/unidad-medida/unidad-medida.module').then(m => m.UnidadMedidaModule), canActivate: [GuardiaService] },
+    { path: 'configuracionunidadesdemedida', loadChildren: () => import('./modulos/unidad-medida/unidad-medida.module').then(m => m.UnidadMedidaModule), canActivate: [GuardiaService] },
     { path: 'usuariosadministrar', loadChildren: () => import('./modulos/usuario/usuario.module').then(m => m.UsuarioModule), canActivate: [GuardiaService] },
     { path: 'vendedor', loadChildren: () => import('./modulos/vendedor/vendedor.module').then(m => m.VendedorModule), canActivate: [GuardiaService] },
     { path: 'generaleszonas', loadChildren: () => import('./modulos/zona/zona.module').then(m => m.ZonaModule), canActivate: [GuardiaService] },
@@ -128,7 +128,8 @@ const routes: Routes = [
     { path: 'gestiondepagosordenesdepago', loadChildren: () => import('./modulos/orden-pago/orden-pago.module').then(m => m.OrdenPagoModule), canActivate: [GuardiaService] },
     { path: 'conceptosadministrar', loadChildren: () => import('./modulos/conceptos/conceptos.module').then(m => m.ConceptosModule), canActivate: [GuardiaService] },
     { path: 'facturacionconsultas', loadChildren: () => import('./modulos/facturacion-consulta/facturacion-consulta.module').then(m => m.FacturacionConsultaModule), canActivate: [GuardiaService] },
-    { path: 'conceptosadministrar', loadChildren: () => import('./modulos/conceptos/conceptos.module').then(m => m.ConceptosModule), canActivate: [GuardiaService] }
+    { path: 'conceptosadministrar', loadChildren: () => import('./modulos/conceptos/conceptos.module').then(m => m.ConceptosModule), canActivate: [GuardiaService] },
+    { path: 'configuracionunidadesdemedidasueldos', loadChildren: () => import('./modulos/unidad-medida-sueldo/unidad-medida-sueldo.module').then(m => m.UnidadMedidaSueldoModule), canActivate: [GuardiaService] }
 ];
 
 @NgModule({

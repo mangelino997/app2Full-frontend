@@ -45,17 +45,15 @@ export class ConceptosComponent implements OnInit {
   public mostrarBoton: boolean = null;
   //Define la lista de tipos de docs
   public resultadosDocumentos: Array<any> = [];
-  //Define la lista de resultados de busqueda
-  public resultados: Array<any> = [];
   //Define el indice seleccionado de pestania
   public indiceSeleccionado: number = null;
   //Define la pestania activa
   public activeLink: any = null;
   //Defiene el render
   public render: boolean = false;
-  
+
   //Define el constructor de la clase
-  constructor(private conceptosService: ConceptosService, private tipoConceptoSueldoService: TipoConceptoSueldoService, 
+  constructor(private conceptosService: ConceptosService, private tipoConceptoSueldoService: TipoConceptoSueldoService,
     private afipConceptoSueldoGrupoService: AfipConceptoSueldoGrupoService, private afipConceptoSueldoService: AfipConceptoSueldoService, private unidadMedidaSueldoService: UnidadMedidaSueldoService, private appService: AppService) {
     this.formulario = new FormGroup({
       //Se definen los FormControl del Formulario
@@ -72,10 +70,10 @@ export class ConceptosComponent implements OnInit {
   }
   //Al inicializarse el componente se ejecuta el codigo de OnInit
   ngOnInit() {
- /* Obtiene todos los listados */
- this.inicializar(this.appService.getRol().id, this.appService.getSubopcion());
- //Establece los valores de la primera pestania activa
- this.seleccionarPestania(1, 'Agregar');
+    /* Obtiene todos los listados */
+    this.inicializar(this.appService.getRol().id, this.appService.getSubopcion());
+    //Establece los valores de la primera pestania activa
+    this.seleccionarPestania(1, 'Agregar');
   }
   //Obtiene los datos necesarios para el componente
   private inicializar(idRol, idSubopcion) {
@@ -95,6 +93,11 @@ export class ConceptosComponent implements OnInit {
       }
     )
   }
+  //LLama a la funcion de listar Afip Concepto Sueldo Grupo y a funcion Obtener el ultimo código Empleador 
+  public listarACSGyobtenerUCE(){
+    this.listarAfipConceptoSueldoGrupo();
+    this.obtieneUltimoCodigoEmpleador();
+  }
   //Lista el selec de Afip Grupo Concepto
   public listarAfipConceptoSueldoGrupo() {
     let id = this.tipoConceptoSueldo.value.id;
@@ -104,6 +107,18 @@ export class ConceptosComponent implements OnInit {
       },
       err => {
         console.log('err');
+      }
+    )
+  }
+  //Obtiene el ultimo codigo empleador
+  public obtieneUltimoCodigoEmpleador(){
+    this.conceptosService.obtenerUltimoCodigoEmpleador().subscribe(
+      res=>{
+        console.log(res.text())
+        this.formulario.get('codigoEmpleador').setValue(res.text());
+      },
+      err=>{
+        console.log('NO');
       }
     )
   }
@@ -146,11 +161,11 @@ export class ConceptosComponent implements OnInit {
   }
   public formula() {
   }
-  public agregar(){
+  public agregar() {
   }
-  public actualizar(){
+  public actualizar() {
   }
-  public eliminar(){
+  public eliminar() {
   }
   //Establece el formulario al seleccionar elemento del autocompletado
   public cambioAutocompletado(elemento) {
@@ -180,8 +195,6 @@ export class ConceptosComponent implements OnInit {
     this.mostrarAutocompletado = autocompletado;
     this.soloLectura = soloLectura;
     this.mostrarBoton = boton;
-    this.soloLectura ?
-      this.formulario.get('tipoDocumento').disable() : this.formulario.get('tipoDocumento').enable();
     setTimeout(function () {
       document.getElementById(componente).focus();
     }, 20);
@@ -190,14 +203,31 @@ export class ConceptosComponent implements OnInit {
   public seleccionarPestania(id, nombre) {
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    this.reestablecerFormulario(null);
+    this.reestablecerFormulario();
+    switch (id) {
+      case 1:
+        this.establecerValoresPestania(nombre, false, false, true, 'idTipoConceptoSueldo');
+        break;
+      case 2:
+        this.establecerValoresPestania(nombre, true, true, false, 'idAutocompletado');
+        break;
+      case 3:
+        this.establecerValoresPestania(nombre, true, false, true, 'idAutocompletado');
+        break;
+      case 4:
+        this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
+        break;
+      case 5:
+        // this.listar();
+        break;
+      default:
+        break;
+    }
   }
   //Reestablece los campos formularios
-  private reestablecerFormulario(id) {
-    this.resultados = [];
+  private reestablecerFormulario() {
     this.formulario.reset();
     this.autocompletado.reset();
-    id ? this.formulario.get('id').setValue(id) : this.formulario.get('id').setValue(this.ultimoId);
   }
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {

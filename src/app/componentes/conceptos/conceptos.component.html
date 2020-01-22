@@ -27,10 +27,10 @@
                 <div class="row">
                     <div class="col-md-4">
                         <div class="form-group has-float-label">
-                            <label for="idtipoConceptoSueldo" class="tamanio-label">Tipo de Concepto *</label>
-                            <mat-select id="idtipoConceptoSueldo" class="form-control form-control-sm"
+                            <label for="idTipoConceptoSueldo" class="tamanio-label">Tipo de Concepto *</label>
+                            <mat-select id="idTipoConceptoSueldo" class="form-control form-control-sm"
                                 [formControl]="tipoConceptoSueldo" [compareWith]="compareFn"
-                                (selectionChange)="listarAfipConceptoSueldoGrupo()">
+                                (selectionChange)="listarACSGyobtenerUCE()">
                                 <mat-option *ngFor="let itemTipoConceptoSueldo of tiposConceptosSueldos"
                                     [value]="itemTipoConceptoSueldo">
                                     {{itemTipoConceptoSueldo.nombre}}
@@ -173,8 +173,12 @@
                     <button id="idBoton" *ngIf="mostrarBoton && !show" mat-raised-button color="primary" formnovalidate
                         (click)="accion(indiceSeleccionado)" [disabled]="!formulario.valid">
                         {{pestaniaActual}}
-                    </button> </div>
+                    </button> 
+                </div>
             </form>
         </div>
+    </div>
+    <div class="row justify-content-center contenedor" [hidden]="indiceSeleccionado != 5">
+        <div class="col-md-4 text-center"><h1>lista</h1></div>
     </div>
 </div>
