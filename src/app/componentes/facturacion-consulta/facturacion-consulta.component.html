@@ -108,7 +108,7 @@
                         </div>
                         <div class="col-1">
                             <button id="idBoton" mat-raised-button color="primary" (click)="listar()"
-                                [disabled]="!formularioFiltroGeneral.valid">Buscar </button>
+                                [disabled]="!formulario.valid">Buscar </button>
                         </div>
                     </div>
                 </div>
@@ -130,10 +130,9 @@
                             <div class="form-group has-float-label margin-right">
                                 <label for="idPuntoVenta" class="tamanio-label">Punto de Venta *</label>
                                 <mat-select id="idPuntoVenta" class="form-control form-control-sm"
-                                    formControlName="puntoVenta" [compareWith]="compareFn"
-                                    (selectionChange)="cambioPuntoVenta()">
-                                    <mat-option *ngFor="let item of puntosDeVenta" [value]="item">
-                                        {{establecerCerosIzq(item.puntoVenta, "0000", -5)}}
+                                    formControlName="puntoVenta" [compareWith]="compareFn">
+                                    <mat-option *ngFor="let item of puntosVenta" [value]="item">
+                                        {{establecerCerosIzqEnVista(item.puntoVenta, "0000", -5)}}
                                     </mat-option>
                                 </mat-select>
                             </div>
@@ -142,7 +141,7 @@
                             <div class="form-group has-float-label">
                                 <label for="idLetra" class="tamanio-label">Letra *</label>
                                 <input id="idLetra" type="text" formControlName="letra" autocomplete="off"
-                                     class="form-control form-control-sm" >
+                                    class="form-control form-control-sm upper-case" (blur)="cambioLetra()">
                             </div>
                         </div>
                         <div class="col-md-2" *ngIf="filtroPor.value == 1">
@@ -174,6 +173,10 @@
                                     class="form-control form-control-sm number-right">
                             </div>
                         </div>
+                        <div class="col-1">
+                            <button id="idBoton" mat-raised-button color="primary" (click)="listar()"
+                                [disabled]="!formulario.valid">Buscar </button>
+                        </div>
                     </div>
                 </div>
                 <div *ngIf="filtroPor.value == 3">
@@ -185,7 +188,7 @@
                                 <input id="idImporteDesde" type="text" formControlName="importeDesde" autocomplete="off"
                                     (blur)="setDecimales(formulario.get('importeDesde'), 2)"
                                     [textMask]="mascararImporte(10)" class="form-control form-control-sm number-right"
-                                    placeholder="$0.00" [readOnly]="!topeMax.value">
+                                    placeholder="$0.00">
                             </div>
                         </div>
                         <div class="col-md-2">
@@ -193,9 +196,9 @@
                                 <label id="labelImporte" for="idImporteHasta" class="descripcion-label">Importe hasta
                                     *</label>
                                 <input id="idImporteHasta" type="text" formControlName="importeHasta" autocomplete="off"
-                                    (blur)="setDecimales(formulario.get('importeHasta'), 2)"
+                                    (blur)="cambioImporteHasta()"
                                     [textMask]="mascararImporte(10)" class="form-control form-control-sm number-right"
-                                    placeholder="$0.00" [readOnly]="!topeMax.value">
+                                    placeholder="$0.00">
                             </div>
                         </div>
                         <div class="col-md-2">
@@ -212,60 +215,54 @@
                                     (blur)="controlarFechaHasta()" class="form-control form-control-sm">
                             </div>
                         </div>
+                        <div class="col-1">
+                            <button id="idBoton" mat-raised-button color="primary" (click)="listar()"
+                                [disabled]="!formulario.valid">Buscar </button>
+                        </div>
                     </div>
                 </div>
             </form>
 
             <div class="row">
-                <div class="tabla">
-                    <div class="tabla-ancho">
+                <div class="col-md-12">
+                    <!-- <div class="tabla-ancho"> -->
                         <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
                             <ng-container matColumnDef="EMPRESA">
                                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Empresa</th>
-                                <td mat-cell *matCellDef="let elemento;">{{elemento.empresa.razonSocial}}</td>
+                                <td mat-cell class="text-left" *matCellDef="let elemento;">{{elemento.empresa.razonSocial}}</td>
                             </ng-container>
                             <ng-container matColumnDef="SUCURSAL">
                                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Sucursal</th>
-                                <td mat-cell *matCellDef="let elemento">{{elemento.sucursal.nombre}}</td>
+                                <td mat-cell class="text-left" *matCellDef="let elemento">{{elemento.sucursal.nombre}}</td>
                             </ng-container>
                             <ng-container matColumnDef="CLIENTE">
                                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Cliente</th>
-                                <td mat-cell *matCellDef="let elemento">{{elemento.cliente.razonSocial}}</td>
+                                <td mat-cell class="text-left" *matCellDef="let elemento">{{elemento.cliente.razonSocial}}</td>
                             </ng-container>
                             <ng-container matColumnDef="TIPO_CPTE">
-                                <th mat-header-cell *matHeaderCellDef mat-sort-header>Tipo de Cpte.</th>
-                                <td mat-cell *matCellDef="let elemento">{{elemento.tipoComprobante.nombre}}</td>
+                                <th mat-header-cell *matHeaderCellDef mat-sort-header>Tipo Cpte.</th>
+                                <td mat-cell class="text-left" *matCellDef="let elemento">{{elemento.tipoComprobante.abreviatura}}</td>
                             </ng-container>
                             <ng-container matColumnDef="PUNTO_VENTA">
-                                <th mat-header-cell *matHeaderCellDef mat-sort-header>Punto de Venta</th>
-                                <td mat-cell *matCellDef="let elemento">
+                                <th mat-header-cell *matHeaderCellDef mat-sort-header>P. Venta</th>
+                                <td mat-cell class="text-left" *matCellDef="let elemento">
                                     {{establecerCerosIzqEnVista(elemento.puntoVenta, '0000', -5)}}</td>
                             </ng-container>
                             <ng-container matColumnDef="LETRA">
                                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Letra</th>
-                                <td mat-cell *matCellDef="let elemento">{{elemento.letra}}
+                                <td mat-cell class="text-left" *matCellDef="let elemento">{{elemento.letra}}
                                 </td>
                             </ng-container>
                             <ng-container matColumnDef="NUMERO">
                                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Número</th>
-                                <td mat-cell *matCellDef="let elemento">{{elemento.numero}}
+                                <td mat-cell class="text-left" *matCellDef="let elemento">
+                                    {{establecerCerosIzqEnVista(elemento.numero, '0000000', -8)}}
                                 </td>
                             </ng-container>
                             <ng-container matColumnDef="FECHA_EMISION">
                                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha Emisión</th>
-                                <td mat-cell *matCellDef="let elemento">
+                                <td mat-cell class="text-left" *matCellDef="let elemento">
                                     {{elemento.fechaEmision | date: 'dd-MM-yyyy'}}</td>
-                            </ng-container>
-                            <ng-container matColumnDef="FECHA_VTO_PAGO">
-                                <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha Vto. Pago</th>
-                                <td mat-cell *matCellDef="let elemento">
-                                    {{elemento.fechaVtoPago | date: 'dd-MM-yyyy'}}
-                                </td>
-                            </ng-container>
-                            <ng-container matColumnDef="FECHA_REGISTRACION">
-                                <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha Registración</th>
-                                <td mat-cell *matCellDef="let elemento">
-                                    {{elemento.fechaRegistracion | date: 'dd-MM-yyyy'}}</td>
                             </ng-container>
                             <ng-container matColumnDef="IMPORTE">
                                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Importe</th>
@@ -299,7 +296,7 @@
                             <tr mat-header-row *matHeaderRowDef="columnas"></tr>
                             <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
                         </table>
-                    </div>
+                    <!-- </div> -->
                 </div>
             </div>
             <mat-paginator [pageSizeOptions]="[10]" showFirstLastButtons></mat-paginator>
