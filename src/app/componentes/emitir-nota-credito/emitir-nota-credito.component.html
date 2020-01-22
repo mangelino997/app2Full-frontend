@@ -9,7 +9,7 @@
               <div class="form-group has-float-label margin-right">
                 <label for="idTipoComprobante" class="tamanio-label">Tipo de Comprobante *</label>
                 <mat-select id="idTipoComprobante" class="form-control form-control-sm"
-                  formControlName="tipoComprobante" [compareWith]="compareFn" (selectionChange)="listarItemsTipo()">
+                  formControlName="tipoComprobante" [compareWith]="compareFn" (selectionChange)="cambioTipoComprobante()">
                   <mat-option *ngFor="let item of tiposComprobante" [value]="item">
                     {{item.nombre}}
                   </mat-option>
@@ -241,11 +241,11 @@
               <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
               <td mat-cell *matCellDef="let elemento; let i=index">
                 <mat-checkbox class="cursor-color" (change)="cambioCheck(elemento, i, $event)"
-                  *ngIf="formulario.value.tipoComprobante.id !=28" [disabled]="idMod"
+                  *ngIf="formulario.value.tipoComprobante.id != 28" [disabled]="idMod"
                   [checked]="elemento.checked">
                 </mat-checkbox>
                 <mat-checkbox class="cursor-color" (change)="cambioCheck(elemento, i, $event)"
-                  *ngIf="formulario.value.tipoComprobante.id ==28"
+                  *ngIf="formulario.value.tipoComprobante.id == 28"
                   [disabled]="elemento.ventaComprobanteItemNC.length == 0 && checkboxs"
                   [checked]="elemento.checked">
                 </mat-checkbox>

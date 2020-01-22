@@ -59,13 +59,15 @@ export class FacturacionConsultaComponent implements OnInit {
   public listaCompleta = new MatTableDataSource([]);
   //Define las columnas de la tabla para la pestaña Listar
   public columnas: string[] = ['EMPRESA', 'SUCURSAL', 'CLIENTE', 'TIPO_CPTE', 'PUNTO_VENTA', 'LETRA', 'NUMERO', 'FECHA_EMISION',
-    'FECHA_VTO_PAGO', 'FECHA_REGISTRACION', 'IMPORTE', 'SALDO', 'EDITAR'];
+    'IMPORTE', 'SALDO', 'EDITAR'];
   //Define la matSort
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   //Define la paginacion
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Define el mostrar del circulo de progreso
   public show = false;
+  //Defiene el render
+  public render: boolean = false;
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   constructor(private fechaService: FechaService, private appService: AppService,
@@ -101,27 +103,27 @@ export class FacturacionConsultaComponent implements OnInit {
     //Define el formularioFiltroComprobante
     this.formularioFiltroRangoCptes = new FormGroup({
       idTipoComprobante: new FormControl('', Validators.required),
-      puntoVentaDesde: new FormControl('', Validators.required),
-      letra: new FormControl('', Validators.required),
-      numero: new FormControl('', Validators.required),
-    })
-    //Define el formularioFiltroComprobante
-    this.formularioFiltroImportes = new FormGroup({
       puntoVenta: new FormControl('', Validators.required),
       letra: new FormControl('', Validators.required),
       numeroDesde: new FormControl('', Validators.required),
       numeroHasta: new FormControl('', Validators.required),
     })
+    //Define el formularioFiltroComprobante
+    this.formularioFiltroImportes = new FormGroup({
+      fechaDesde: new FormControl('', Validators.required),
+      fechaHasta: new FormControl('', Validators.required),
+      importeDesde: new FormControl('', Validators.required),
+      importeHasta: new FormControl('', Validators.required),
+    })
+    this.formulario = this.formularioFiltroGeneral;
+    /* Obtiene todos los listados */
+    this.inicializar(this.appService.getRol().id, this.appService.getSubopcion());
     //Establece los valores de la primera pestania activa
     // this.seleccionarPestania(1, 'Agregar', true);
-    //Obtiene la lista de tipos de comprobantes
-    this.listarTipoComprobante();
-    //Obtiene la lista de sucursales
-    this.listarSucursales();
-    //Obtiene la lista de puntos de venta
-    this.listarPuntosVenta();
-    //Establece valores por defecto
-    this.incializarFormulario();
+    //Establece la empresa 
+    this.empresa.setValue(this.appService.getEmpresa());
+    //Establece el formControl 
+    this.filtroPor.setValue(0);
     //Autocompletado Proveedor- Buscar por alias
     this.formularioFiltroGeneral.get('idCliente').valueChanges.subscribe(data => {
       if (typeof data == 'string') {
@@ -139,86 +141,80 @@ export class FacturacionConsultaComponent implements OnInit {
       }
     })
   }
-  //Establece valores por defecto
-  public incializarFormulario() {
-    //Establece el formControl 
-    this.filtroPor.setValue(0);
-    //Establece las validaciones del formulario
-    this.formulario = this.formularioFiltroGeneral;
-    //Establece el tipo de fecha
-    this.formularioFiltroGeneral.get('fechaTipo').setValue(1);
-    //Establece el campos de selección Cliente
-    this.formularioFiltroGeneral.get('cliente').setValue(0);
-    //Establece el tipo de comprobante
-    this.formularioFiltroGeneral.get('idTipoComprobante').setValue(0);
-    //Obtiene la Fecha Actual
-    this.obtenerFecha();
-    //Establece la empresa y sucursal
-    this.empresa.setValue(this.appService.getEmpresa());
-    this.formularioFiltroGeneral.get('idSucursal').setValue(this.sucursales[0].id);
-  }
-  //Carga la Fecha Actual en el campo "Fecha Contable"
-  private obtenerFecha() {
-    this.fechaService.obtenerFecha().subscribe(
+  //Obtiene los datos necesarios para el componente
+  private inicializar(idRol, idSubopcion) {
+    this.render = true;
+    this.ventaComprobanteService.inicializarFacturacionConsulta(idRol, idSubopcion).subscribe(
       res => {
-        this.FECHA_ACTUAL.setValue(res.json());
-        this.formularioFiltroGeneral.get('fechaDesde').setValue(this.FECHA_ACTUAL);
-        this.formularioFiltroGeneral.get('fechaHasta').setValue(this.FECHA_ACTUAL);
-      },
-      err => {
-        this.toastr.error("Error al obtener la Fecha Actual.");
-      }
-    )
-  }
-  //Carga la lista de sucursales
-  private listarSucursales() {
-    this.sucursalService.listar().subscribe(
-      res => {
-        console.log(res.json());
-        this.sucursales = res.json();
+        let respuesta = res.json();
+        //Establece las pestanias
+        this.pestanias = respuesta.pestanias;
+        //Establece demas datos necesarios
+        this.tiposComprobantes = respuesta.tipoComprobantes;
+        this.puntosVenta = respuesta.puntoVentas;
+        this.sucursales = respuesta.sucursales;
+        this.FECHA_ACTUAL.setValue(respuesta.fechaActual);
+        this.render = false;
+        this.cambioFiltro();
       },
       err => {
         this.toastr.error(err.json().mensaje);
+        this.render = false;
       }
     )
   }
-  //Carga la lista de puntos de venta
-  private listarPuntosVenta() {
-    this.puntoVentaService.listarPorEmpresa(this.appService.getEmpresa().id).subscribe(
-      res => {
-        console.log(res.json());
-        this.puntosVenta = res.json();
-      },
-      err => {
-        this.toastr.error(err.json().mensaje);
+  //Controla el cambio en el campo 'Importe Hasta'
+  public cambioImporteHasta() {
+    if (this.formulario.value.importeDesde) {
+      this.setDecimales(this.formulario.get('importeHasta'), 2);
+      let importeDesde = Number(this.formulario.value.importeDesde);
+      let importeHasta = Number(this.formulario.value.importeHasta);
+      if (importeHasta < importeDesde) {
+        this.formulario.get('importeHasta').reset();
+        this.toastr.warning("Importe hasta debe ser mayor a importe desde.");
+        document.getElementById('idImporteHasta').focus();
       }
-    )
+    } else {
+      this.formulario.get('importeHasta').reset();
+      this.toastr.warning("Complete el campo importe desde.");
+      document.getElementById('idImporteDesde').focus();
+    }
   }
-  //Carga la lista de tipos de comprobantes
-  private listarTipoComprobante() {
-    this.tipoComprobanteService.listarEstaActivoVentaCargaTrue().subscribe(
-      res => {
-        this.tiposComprobantes = res.json();
-      },
-      err => {
-        this.toastr.error("Error al obtener la lista de Tipos de Comprobantes.");
-      }
-    )
+  //Controla el cambio en el campo 'Letra'
+  public cambioLetra() {
+    let letra = this.formulario.get('letra').value;
+    this.formulario.get('letra').setValue(letra.toUpperCase());
   }
   //Controla el cambio en el campo de seleccion Tipo de Filtro
   public cambioFiltro() {
+    this.listaCompleta.data = [];
+    this.formulario.reset();
     switch (this.filtroPor.value) {
       case 0:
         this.formulario = this.formularioFiltroGeneral;
+        this.formulario.get('fechaTipo').setValue(1);
+        this.formulario.get('cliente').setValue(0);
+        this.formulario.get('idTipoComprobante').setValue(0);
+        this.formulario.get('idSucursal').setValue(this.sucursales[0].id);
+        this.formulario.get('fechaDesde').setValue(this.FECHA_ACTUAL.value);
+        this.formulario.get('fechaHasta').setValue(this.FECHA_ACTUAL.value);
         break;
       case 1:
         this.formulario = this.formularioFiltroCpte;
+        this.formulario.get('idTipoComprobante').setValue(0);
+        this.formulario.get('puntoVenta').setValue(this.puntosVenta[0]);
+        this.establecerCerosIzq(this.puntosVenta[0], '0000', -5);
         break;
       case 2:
         this.formulario = this.formularioFiltroRangoCptes;
+        this.formulario.get('idTipoComprobante').setValue(0);
+        this.formulario.get('puntoVenta').setValue(this.puntosVenta[0]);
+        this.establecerCerosIzq(this.puntosVenta[0], '0000', -5);
         break;
       case 3:
         this.formulario = this.formularioFiltroImportes;
+        this.formulario.get('fechaDesde').setValue(this.FECHA_ACTUAL.value);
+        this.formulario.get('fechaHasta').setValue(this.FECHA_ACTUAL.value);
         break;
       default:
         this.formulario = this.formularioFiltroGeneral;
@@ -228,10 +224,14 @@ export class FacturacionConsultaComponent implements OnInit {
   //Carga la tabla de la pestaña listar con registros de acuerdo a la lista que tiene que cargar --> listaCompleta / listaCompletaModal
   public listar() {
     this.loaderService.show();
-    //Establezco los parametros
-    this.formularioFiltroGeneral.value.cliente != 0 ?
-      this.formularioFiltroGeneral.value.idCliente = this.formularioFiltroGeneral.value.idCliente.id : this.formularioFiltroGeneral.value.idCliente = 0;
-    this.ventaComprobanteService.listarPorFiltros(this.formularioFiltroGeneral.value).subscribe(
+    //Establezco los parametros faltantes
+    if (this.filtroPor.value == 0) {
+      this.formulario.value.cliente != 0 ?
+        this.formulario.value.idCliente = this.formulario.value.idCliente.id : this.formulario.value.idCliente = 0;
+    }
+    //establezco el tipo de filtro para determinar la query en el backend
+    this.formulario.value.tipoFiltro = this.filtroPor.value;
+    this.ventaComprobanteService.listarPorFiltros(this.formulario.value).subscribe(
       res => {
         let resultado = res.json();
         this.listaCompleta = new MatTableDataSource(resultado);
@@ -250,24 +250,24 @@ export class FacturacionConsultaComponent implements OnInit {
 
   //Controla el cambio en el campo de selección 'Cliente'
   public cambioCliente() {
-    if (this.formularioFiltroGeneral.value.cliente != 0) {
-      this.formularioFiltroGeneral.get('idCliente').setValidators(Validators.required);
-      this.formularioFiltroGeneral.get('idCliente').updateValueAndValidity();//Actualiza la validacion
+    if (this.formulario.value.cliente != 0) {
+      this.formulario.get('idCliente').setValidators(Validators.required);
+      this.formulario.get('idCliente').updateValueAndValidity();//Actualiza la validacion
     } else {
-      this.formularioFiltroGeneral.get('idCliente').setValidators([]);
-      this.formularioFiltroGeneral.get('idCliente').updateValueAndValidity();//Actualiza la validacion
-      this.formularioFiltroGeneral.value.idCliente = null;
+      this.formulario.get('idCliente').setValidators([]);
+      this.formulario.get('idCliente').updateValueAndValidity();//Actualiza la validacion
+      this.formulario.value.idCliente = null;
     }
   }
   //Controla el campo 'Fecha Hasta' en pestaña Listar
   public controlarFechaHasta() {
-    if (this.formularioFiltroGeneral.value.fechaHasta == null || this.formularioFiltroGeneral.value.fechaHasta == undefined) {
+    if (this.formulario.value.fechaHasta == null || this.formulario.value.fechaHasta == undefined) {
       this.toastr.error("Debe ingresar una fecha desde.");
       document.getElementById('idFechaDesde').focus();
-    } else if (this.formularioFiltroGeneral.value.fechaHasta < this.formularioFiltroGeneral.value.fechaDesde) {
+    } else if (this.formulario.value.fechaHasta < this.formulario.value.fechaDesde) {
       this.toastr.error("Fecha hasta debe ser igual o mayor a fecha desde.");
-      this.formularioFiltroGeneral.get('fechaDesde').setValue(null);
-      this.formularioFiltroGeneral.get('fechaHasta').setValue(this.FECHA_ACTUAL.value);
+      this.formulario.get('fechaDesde').setValue(null);
+      this.formulario.get('fechaHasta').setValue(this.FECHA_ACTUAL.value);
       document.getElementById('idFechaDesde').focus();
     }
   }
@@ -285,6 +285,12 @@ export class FacturacionConsultaComponent implements OnInit {
   //Obtiene la mascara de enteros
   public mascararEnteros(intLimite) {
     return this.appService.mascararEnteros(intLimite);
+  }
+  //Establece la cantidad de ceros correspondientes a la izquierda del numero
+  public establecerCerosIzq(elemento, string, cantidad) {
+    if (elemento.value) {
+      elemento.setValue((string + elemento.value).slice(cantidad));
+    }
   }
   //Imprime la cantidad de ceros correspondientes a la izquierda del numero 
   public establecerCerosIzqEnVista(elemento, string, cantidad) {
@@ -321,8 +327,6 @@ export class FacturacionConsultaComponent implements OnInit {
         letra: elemento.letra,
         numero: this.establecerCerosIzqEnVista(elemento.numero, '0000000', -8),
         fecha_emision: elemento.fechaEmision,
-        fecha_vto_pago: elemento.fechaVtoPago,
-        fecha_registracion: elemento.fechaRegistracion,
         importe: '$' + elemento.importeTotal,
         saldo: '$' + elemento.importeSaldo
       }

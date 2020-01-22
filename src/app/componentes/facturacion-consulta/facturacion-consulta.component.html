@@ -45,8 +45,8 @@
                         </div>
                         <div class="col">
                             <div class="form-group has-float-label">
-                                <label for="idClienteListar" class="rubro-label">Cliente *</label>
-                                <mat-select id="idClienteListar" class="form-control form-control-sm"
+                                <label for="idCliente" class="rubro-label">Cliente *</label>
+                                <mat-select id="idCliente" class="form-control form-control-sm"
                                     formControlName="cliente" [compareWith]="compareFn"
                                     (selectionChange)="cambioCliente()">
                                     <mat-option [value]="0">TODOS</mat-option>
@@ -84,14 +84,14 @@
                             <div class="form-group has-float-label">
                                 <label for="idFechaDesde" class="tamanio-label">Fecha Desde *</label>
                                 <input id="idFechaDesde" type="date" formControlName="fechaDesde" autocomplete="off"
-                                    class="form-control form-control-sm" required>
+                                    class="form-control form-control-sm">
                             </div>
                         </div>
                         <div class="col-md-2">
                             <div class="form-group has-float-label">
                                 <label for="idFechaHasta" class="tamanio-label">Fecha Hasta *</label>
                                 <input id="idFechaHasta" type="date" formControlName="fechaHasta" autocomplete="off"
-                                    (blur)="controlarFechaHasta()" class="form-control form-control-sm" required>
+                                    (blur)="controlarFechaHasta()" class="form-control form-control-sm">
                             </div>
                         </div>
                         <div class="col-md-2">
@@ -108,32 +108,43 @@
                         </div>
                         <div class="col-1">
                             <button id="idBoton" mat-raised-button color="primary" (click)="listar()"
-                                [disabled]="!formularioFiltroGeneral.valid">Buscar </button>
+                                [disabled]="!formulario.valid">Buscar </button>
                         </div>
                     </div>
                 </div>
                 <div *ngIf="filtroPor.value == 1 || filtroPor.value == 2">
                     <div class="row">
-                        <div class="col-md-3">
+                        <div class="col-md-2">
+                            <div class="form-group has-float-label">
+                                <label for="idTipoComprobante" class="tamanio-label">Tipo de Comprobante *</label>
+                                <mat-select id="idTipoComprobante" class="form-control form-control-sm"
+                                    formControlName="idTipoComprobante" [compareWith]="compareFn">
+                                    <mat-option [value]="0">TODOS</mat-option>
+                                    <mat-option *ngFor="let item of tiposComprobantes" [value]="item.id">
+                                        {{item.nombre}}
+                                    </mat-option>
+                                </mat-select>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
                             <div class="form-group has-float-label margin-right">
                                 <label for="idPuntoVenta" class="tamanio-label">Punto de Venta *</label>
                                 <mat-select id="idPuntoVenta" class="form-control form-control-sm"
-                                    formControlName="puntoVenta" [compareWith]="compareFn"
-                                    (selectionChange)="cambioPuntoVenta()">
-                                    <mat-option *ngFor="let item of puntosDeVenta" [value]="item">
-                                        {{establecerCerosIzq(item.puntoVenta, "0000", -5)}}
+                                    formControlName="puntoVenta" [compareWith]="compareFn">
+                                    <mat-option *ngFor="let item of puntosVenta" [value]="item">
+                                        {{establecerCerosIzqEnVista(item.puntoVenta, "0000", -5)}}
                                     </mat-option>
                                 </mat-select>
                             </div>
                         </div>
                         <div class="col-md-2">
                             <div class="form-group has-float-label">
-                                <label for="idFechaHasta" class="tamanio-label">Letra *</label>
-                                <input id="idFechaHasta" type="date" formControlName="fechaHasta" autocomplete="off"
-                                    (blur)="controlarFechaHasta()" class="form-control form-control-sm" required>
+                                <label for="idLetra" class="tamanio-label">Letra *</label>
+                                <input id="idLetra" type="text" formControlName="letra" autocomplete="off"
+                                    class="form-control form-control-sm upper-case" (blur)="cambioLetra()">
                             </div>
                         </div>
-                        <div class="col-md-3" *ngIf="filtroPor.value == 1">
+                        <div class="col-md-2" *ngIf="filtroPor.value == 1">
                             <div class="form-group has-float-label">
                                 <label id="labelNumero" for="idNumero" class="descripcion-label">Número *</label>
                                 <input id="idNumero" type="text" formControlName="numero" autocomplete="off"
@@ -142,118 +153,116 @@
                                     class="form-control form-control-sm number-right">
                             </div>
                         </div>
-                        <div class="col-md-3" *ngIf="filtroPor.value == 2">
+                        <div class="col-md-2" *ngIf="filtroPor.value == 2">
                             <div class="form-group has-float-label">
-                                <label id="labelNumero" for="NumeroDesde" class="descripcion-label">Número desde 
+                                <label id="labelNumeroDesde" for="NumeroDesde" class="descripcion-label">Número desde
                                     *</label>
-                                <input id="NumeroDesde" type="text" formControlName="numeroDesde" autocomplete="off"
+                                <input id="numeroDesde" type="text" formControlName="numeroDesde" autocomplete="off"
                                     [readOnly]="soloLectura" [textMask]="mascararEnteros(8)"
                                     (blur)="establecerCerosIzq(formulario.get('numeroDesde'), '0000000', -8)"
                                     class="form-control form-control-sm number-right">
                             </div>
                         </div>
-                        <div class="col-md-3" *ngIf="filtroPor.value == 2">
+                        <div class="col-md-2" *ngIf="filtroPor.value == 2">
                             <div class="form-group has-float-label">
-                                <label id="labelNumero" for="NumeroHasta" class="descripcion-label">Número hasta 
+                                <label id="labelNumeroHasta" for="NumeroHasta" class="descripcion-label">Número hasta
                                     *</label>
-                                <input id="NumeroHasta" type="text" formControlName="numeroHasta" autocomplete="off"
+                                <input id="numeroHasta" type="text" formControlName="numeroHasta" autocomplete="off"
                                     [readOnly]="soloLectura" [textMask]="mascararEnteros(8)"
                                     (blur)="establecerCerosIzq(formulario.get('numeroHasta'), '0000000', -8)"
                                     class="form-control form-control-sm number-right">
                             </div>
                         </div>
+                        <div class="col-1">
+                            <button id="idBoton" mat-raised-button color="primary" (click)="listar()"
+                                [disabled]="!formulario.valid">Buscar </button>
+                        </div>
                     </div>
                 </div>
                 <div *ngIf="filtroPor.value == 3">
                     <div class="row">
-                        <div class="col-md-3">
+                        <div class="col-md-2">
                             <div class="form-group has-float-label">
                                 <label id="labelImporte" for="idImporteDesde" class="descripcion-label">Importe desde
                                     *</label>
                                 <input id="idImporteDesde" type="text" formControlName="importeDesde" autocomplete="off"
-                                    (blur)="setDecimales(formulario.get('importeDesde'), 2)" [textMask]="mascararImporte(10)"
-                                    class="form-control form-control-sm number-right" placeholder="$0.00"
-                                    [readOnly]="!topeMax.value">
+                                    (blur)="setDecimales(formulario.get('importeDesde'), 2)"
+                                    [textMask]="mascararImporte(10)" class="form-control form-control-sm number-right"
+                                    placeholder="$0.00">
                             </div>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-2">
                             <div class="form-group has-float-label">
                                 <label id="labelImporte" for="idImporteHasta" class="descripcion-label">Importe hasta
                                     *</label>
                                 <input id="idImporteHasta" type="text" formControlName="importeHasta" autocomplete="off"
-                                    (blur)="setDecimales(formulario.get('importeHasta'), 2)" [textMask]="mascararImporte(10)"
-                                    class="form-control form-control-sm number-right" placeholder="$0.00"
-                                    [readOnly]="!topeMax.value">
+                                    (blur)="cambioImporteHasta()"
+                                    [textMask]="mascararImporte(10)" class="form-control form-control-sm number-right"
+                                    placeholder="$0.00">
                             </div>
                         </div>
                         <div class="col-md-2">
                             <div class="form-group has-float-label">
                                 <label for="idFechaDesde" class="tamanio-label">Fecha Desde *</label>
                                 <input id="idFechaDesde" type="date" formControlName="fechaDesde" autocomplete="off"
-                                    class="form-control form-control-sm" required>
+                                    class="form-control form-control-sm">
                             </div>
                         </div>
                         <div class="col-md-2">
                             <div class="form-group has-float-label">
                                 <label for="idFechaHasta" class="tamanio-label">Fecha Hasta *</label>
                                 <input id="idFechaHasta" type="date" formControlName="fechaHasta" autocomplete="off"
-                                    (blur)="controlarFechaHasta()" class="form-control form-control-sm" required>
+                                    (blur)="controlarFechaHasta()" class="form-control form-control-sm">
                             </div>
+                        </div>
+                        <div class="col-1">
+                            <button id="idBoton" mat-raised-button color="primary" (click)="listar()"
+                                [disabled]="!formulario.valid">Buscar </button>
                         </div>
                     </div>
                 </div>
             </form>
 
             <div class="row">
-                <div class="tabla">
-                    <div class="tabla-ancho">
+                <div class="col-md-12">
+                    <!-- <div class="tabla-ancho"> -->
                         <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
                             <ng-container matColumnDef="EMPRESA">
                                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Empresa</th>
-                                <td mat-cell *matCellDef="let elemento;">{{elemento.empresa.razonSocial}}</td>
+                                <td mat-cell class="text-left" *matCellDef="let elemento;">{{elemento.empresa.razonSocial}}</td>
                             </ng-container>
                             <ng-container matColumnDef="SUCURSAL">
                                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Sucursal</th>
-                                <td mat-cell *matCellDef="let elemento">{{elemento.sucursal.nombre}}</td>
+                                <td mat-cell class="text-left" *matCellDef="let elemento">{{elemento.sucursal.nombre}}</td>
                             </ng-container>
                             <ng-container matColumnDef="CLIENTE">
                                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Cliente</th>
-                                <td mat-cell *matCellDef="let elemento">{{elemento.cliente.razonSocial}}</td>
+                                <td mat-cell class="text-left" *matCellDef="let elemento">{{elemento.cliente.razonSocial}}</td>
                             </ng-container>
                             <ng-container matColumnDef="TIPO_CPTE">
-                                <th mat-header-cell *matHeaderCellDef mat-sort-header>Tipo de Cpte.</th>
-                                <td mat-cell *matCellDef="let elemento">{{elemento.tipoComprobante.nombre}}</td>
+                                <th mat-header-cell *matHeaderCellDef mat-sort-header>Tipo Cpte.</th>
+                                <td mat-cell class="text-left" *matCellDef="let elemento">{{elemento.tipoComprobante.abreviatura}}</td>
                             </ng-container>
                             <ng-container matColumnDef="PUNTO_VENTA">
-                                <th mat-header-cell *matHeaderCellDef mat-sort-header>Punto de Venta</th>
-                                <td mat-cell *matCellDef="let elemento">
+                                <th mat-header-cell *matHeaderCellDef mat-sort-header>P. Venta</th>
+                                <td mat-cell class="text-left" *matCellDef="let elemento">
                                     {{establecerCerosIzqEnVista(elemento.puntoVenta, '0000', -5)}}</td>
                             </ng-container>
                             <ng-container matColumnDef="LETRA">
                                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Letra</th>
-                                <td mat-cell *matCellDef="let elemento">{{elemento.letra}}
+                                <td mat-cell class="text-left" *matCellDef="let elemento">{{elemento.letra}}
                                 </td>
                             </ng-container>
                             <ng-container matColumnDef="NUMERO">
                                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Número</th>
-                                <td mat-cell *matCellDef="let elemento">{{elemento.numero}}
+                                <td mat-cell class="text-left" *matCellDef="let elemento">
+                                    {{establecerCerosIzqEnVista(elemento.numero, '0000000', -8)}}
                                 </td>
                             </ng-container>
                             <ng-container matColumnDef="FECHA_EMISION">
                                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha Emisión</th>
-                                <td mat-cell *matCellDef="let elemento">
+                                <td mat-cell class="text-left" *matCellDef="let elemento">
                                     {{elemento.fechaEmision | date: 'dd-MM-yyyy'}}</td>
-                            </ng-container>
-                            <ng-container matColumnDef="FECHA_VTO_PAGO">
-                                <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha Vto. Pago</th>
-                                <td mat-cell *matCellDef="let elemento">
-                                    {{elemento.fechaVtoPago | date: 'dd-MM-yyyy'}}
-                                </td>
-                            </ng-container>
-                            <ng-container matColumnDef="FECHA_REGISTRACION">
-                                <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha Registración</th>
-                                <td mat-cell *matCellDef="let elemento">
-                                    {{elemento.fechaRegistracion | date: 'dd-MM-yyyy'}}</td>
                             </ng-container>
                             <ng-container matColumnDef="IMPORTE">
                                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Importe</th>
@@ -287,7 +296,7 @@
                             <tr mat-header-row *matHeaderRowDef="columnas"></tr>
                             <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
                         </table>
-                    </div>
+                    <!-- </div> -->
                 </div>
             </div>
             <mat-paginator [pageSizeOptions]="[10]" showFirstLastButtons></mat-paginator>
