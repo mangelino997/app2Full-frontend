@@ -29,7 +29,6 @@ import { Router } from '@angular/router';
   styleUrls: ['./emitir-nota-credito.component.css']
 })
 export class EmitirNotaCreditoComponent implements OnInit {
-  public evt: any;
   //Define el id del registro a modificar
   public idMod: number = null;
   //Define el elemento (comprobante) a saldar
@@ -195,9 +194,9 @@ export class EmitirNotaCreditoComponent implements OnInit {
     })
   }
   //Obtiene la lista de Puntos de Venta
-  private listarPuntosVenta() {
+  public listarPuntosVenta() {
     this.puntoVentaService.listarPorEmpresaYSucursalYTipoComprobante(
-      this.appComponent.getEmpresa().id, this.appComponent.getUsuario().sucursal.id, 3).subscribe(
+      this.appComponent.getEmpresa().id, this.appComponent.getUsuario().sucursal.id, this.formulario.value.tipoComprobante.id).subscribe(
         res => {
           this.resultadosPuntoVenta = res.json();
           this.formulario.get('puntoVenta').setValue(this.resultadosPuntoVenta[0]);
@@ -249,6 +248,10 @@ export class EmitirNotaCreditoComponent implements OnInit {
       this.formulario.get('fechaVtoPago').setValue(this.fechaActual);
 
     })
+  }
+  //Controla el cambio en Tipo de cpte
+  public cambioTipoComprobante(){
+    this.listarPuntosVenta();
   }
   //Controla el cambio en el campo Fecha
   public cambioFecha() {
@@ -601,7 +604,7 @@ export class EmitirNotaCreditoComponent implements OnInit {
     this.formularioVtaCpteItemNC.get('provincia').setValue(this.provincia.value);
 
     /* controla que si tipo de cpte es FCE MiPymes solo permite saldar un comprobante */
-    this.formulario.value.tipoComprobante.id == 28 ? this.limpiarVtaCpteItemNC() : '';
+    // this.formulario.value.tipoComprobante.id == 28 ? this.limpiarVtaCpteItemNC() : '';
 
     /* agrega el formulario vta cpte item NC al comprobante seleccionado */
     this.listaCompleta.data[this.idMod].ventaComprobanteItemNC.push(this.formularioVtaCpteItemNC.value);
@@ -653,7 +656,6 @@ export class EmitirNotaCreditoComponent implements OnInit {
 
   //Cancela la modificacion del comprobante seleccionado
   public cancelarComprobante() {
-    this.evt.checked = false;
     this.listaCompleta.data[this.idMod].checked = false;
     this.reestablecerformularioVtaCpteItemNC();
     this.verificarCheckbox();
@@ -672,7 +674,6 @@ export class EmitirNotaCreditoComponent implements OnInit {
   }
   //Controla el cambio los check-box
   public cambioCheck(elemento, indice, $event) {
-    this.evt = $event;
     console.log($event);
     if ($event.checked) {
       this.checkboxs = true;

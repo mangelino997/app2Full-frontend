@@ -16,6 +16,7 @@ import { CompaniaSeguroService } from 'src/app/servicios/compania-seguro.service
 import { PdfService } from 'src/app/servicios/pdf.service';
 import { PdfDialogoComponent } from '../pdf-dialogo/pdf-dialogo.component';
 import { ReporteService } from 'src/app/servicios/reporte.service';
+import { MensajeExcepcion } from 'src/app/modelos/mensaje-excepcion';
 
 export interface IPdf {
   id: null,
@@ -505,18 +506,15 @@ export class VehiculoComponent implements OnInit {
   private actualizar() {
     this.loaderService.show();
     this.formulario.get('usuarioMod').setValue(this.appService.getUsuario());
-    console.log(this.formulario.value);
-    this.servicio.actualizar(this.formulario.value).then(
+    this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
         let respuesta = res.json();
-        if (res.status == 200) {
+        if (respuesta.codigo == 200) {
           this.reestablecerFormulario(null);
           document.getElementById('idAutocompletado').focus();
-          this.toastr.success('Registro actualizado con éxito');
-        } else if (res.status == 500) {
-          respuesta.then(data => {
-            this.toastr.error(data.mensaje);
-          });
+          this.toastr.success(MensajeExcepcion.ACTUALIZADO);
+        } else {
+          this.toastr.error(respuesta.mensaje);
         }
         this.loaderService.hide();
       },
@@ -639,25 +637,82 @@ export class VehiculoComponent implements OnInit {
       const reader = new FileReader();
       reader.onload = e => {
         let pdf = {
-          id: this.formulario.get(campo + '.id').value ? this.formulario.get(campo + '.id').value : null,
+          id: this.formulario.get(campo + '.id').value ? this.formulario.get(campo + '.id').value : 0,
           nombre: file.name,
           datos: reader.result
         }
         this.formulario.get(campo).patchValue(pdf);
         event.target.value = null;
+        if(this.indiceSeleccionado == 3) {
+          this.actualizarPDF(campo, pdf);
+        }
       }
       reader.readAsDataURL(file);
     } else {
       this.toastr.error("Debe adjuntar un archivo con extensión .pdf");
     }
   }
+  //Actualiza un pdf de un vehiculo
+  private actualizarPDF(campo, pdf): void {
+    this.loaderService.show();
+    let idVehiculo = this.formulario.get('id').value;
+    this.servicio.actualizarPDF(idVehiculo, campo, pdf).then(
+      res => {
+        if(res.status == 200) {
+          res.json().then(
+            data => {
+              this.formulario.get('version').setValue(data);
+            }
+          );
+          this.toastr.success(MensajeExcepcion.ACTUALIZADO);
+        } else {
+          this.toastr.error(MensajeExcepcion.NO_ACTUALIZADO);
+        }
+        this.loaderService.hide();
+      },
+      err => {
+        this.toastr.error(MensajeExcepcion.NO_ACTUALIZADO);
+        this.loaderService.hide();
+      }
+    );
+  }
   //Elimina un pdf ya cargado, se pasa el campo como parametro
-  public eliminarPdf(campo) {
-    if (!this.formulario.get(campo).value) {
-      this.toastr.success("Sin archivo adjunto");
+  public eliminarPdf(campoNombre, campo) {
+    if(this.indiceSeleccionado == 3) {
+      this.eliminarPdfVehiculo(campoNombre, campo);
     } else {
-      this.formulario.get(campo).setValue('');
+      if (!this.formulario.get(campoNombre).value) {
+        this.toastr.success("Sin archivo adjunto");
+      } else {
+        this.formulario.get(campoNombre).setValue('');
+      }
     }
+  }
+  //Elimina un pdf
+  private eliminarPdfVehiculo(campoNombre, campo): void {
+    this.loaderService.show();
+    let idVehiculo = this.formulario.get('id').value;
+    let idPdf = this.formulario.get(campo).value.id;
+    this.servicio.eliminarPdf(idVehiculo, idPdf, campo).subscribe(
+      res => {
+        if(res.status == 200) {
+          this.formulario.get('version').setValue(res.json());
+          if (!this.formulario.get(campoNombre).value) {
+            this.toastr.success("Sin archivo adjunto");
+          } else {
+            this.formulario.get(campoNombre).setValue('');
+          }
+          this.toastr.success(MensajeExcepcion.ELIMINADO);
+        } else {
+          this.toastr.error(MensajeExcepcion.NO_ELIMINADO);
+        }
+        this.loaderService.hide();
+      },
+      err => {
+        this.toastr.error(MensajeExcepcion.NO_ELIMINADO);
+        this.loaderService.hide();
+      }
+    );
   }
   //Muestra el pdf en una pestana nueva
   public verPDF(campo) {
