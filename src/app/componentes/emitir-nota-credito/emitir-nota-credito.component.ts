@@ -29,7 +29,6 @@ import { Router } from '@angular/router';
   styleUrls: ['./emitir-nota-credito.component.css']
 })
 export class EmitirNotaCreditoComponent implements OnInit {
-  public evt: any;
   //Define el id del registro a modificar
   public idMod: number = null;
   //Define el elemento (comprobante) a saldar
@@ -601,7 +600,7 @@ export class EmitirNotaCreditoComponent implements OnInit {
     this.formularioVtaCpteItemNC.get('provincia').setValue(this.provincia.value);
 
     /* controla que si tipo de cpte es FCE MiPymes solo permite saldar un comprobante */
-    this.formulario.value.tipoComprobante.id == 28 ? this.limpiarVtaCpteItemNC() : '';
+    // this.formulario.value.tipoComprobante.id == 28 ? this.limpiarVtaCpteItemNC() : '';
 
     /* agrega el formulario vta cpte item NC al comprobante seleccionado */
     this.listaCompleta.data[this.idMod].ventaComprobanteItemNC.push(this.formularioVtaCpteItemNC.value);
@@ -653,7 +652,6 @@ export class EmitirNotaCreditoComponent implements OnInit {
 
   //Cancela la modificacion del comprobante seleccionado
   public cancelarComprobante() {
-    this.evt.checked = false;
     this.listaCompleta.data[this.idMod].checked = false;
     this.reestablecerformularioVtaCpteItemNC();
     this.verificarCheckbox();
@@ -672,7 +670,6 @@ export class EmitirNotaCreditoComponent implements OnInit {
   }
   //Controla el cambio los check-box
   public cambioCheck(elemento, indice, $event) {
-    this.evt = $event;
     console.log($event);
     if ($event.checked) {
       this.checkboxs = true;

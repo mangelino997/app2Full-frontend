@@ -101,16 +101,17 @@ export class FacturacionConsultaComponent implements OnInit {
     //Define el formularioFiltroComprobante
     this.formularioFiltroRangoCptes = new FormGroup({
       idTipoComprobante: new FormControl('', Validators.required),
-      puntoVentaDesde: new FormControl('', Validators.required),
-      letra: new FormControl('', Validators.required),
-      numero: new FormControl('', Validators.required),
-    })
-    //Define el formularioFiltroComprobante
-    this.formularioFiltroImportes = new FormGroup({
       puntoVenta: new FormControl('', Validators.required),
       letra: new FormControl('', Validators.required),
       numeroDesde: new FormControl('', Validators.required),
       numeroHasta: new FormControl('', Validators.required),
+    })
+    //Define el formularioFiltroComprobante
+    this.formularioFiltroImportes = new FormGroup({
+      fechaDesde: new FormControl('', Validators.required),
+      fechaHasta: new FormControl('', Validators.required),
+      importeDesde: new FormControl('', Validators.required),
+      importeHasta: new FormControl('', Validators.required),
     })
     //Establece los valores de la primera pestania activa
     // this.seleccionarPestania(1, 'Agregar', true);
@@ -146,24 +147,23 @@ export class FacturacionConsultaComponent implements OnInit {
     //Establece las validaciones del formulario
     this.formulario = this.formularioFiltroGeneral;
     //Establece el tipo de fecha
-    this.formularioFiltroGeneral.get('fechaTipo').setValue(1);
+    this.formulario.get('fechaTipo').setValue(1);
     //Establece el campos de selección Cliente
-    this.formularioFiltroGeneral.get('cliente').setValue(0);
+    this.formulario.get('cliente').setValue(0);
     //Establece el tipo de comprobante
-    this.formularioFiltroGeneral.get('idTipoComprobante').setValue(0);
+    this.formulario.get('idTipoComprobante').setValue(0);
     //Obtiene la Fecha Actual
     this.obtenerFecha();
-    //Establece la empresa y sucursal
+    //Establece la empresa 
     this.empresa.setValue(this.appService.getEmpresa());
-    this.formularioFiltroGeneral.get('idSucursal').setValue(this.sucursales[0].id);
   }
   //Carga la Fecha Actual en el campo "Fecha Contable"
   private obtenerFecha() {
     this.fechaService.obtenerFecha().subscribe(
       res => {
         this.FECHA_ACTUAL.setValue(res.json());
-        this.formularioFiltroGeneral.get('fechaDesde').setValue(this.FECHA_ACTUAL);
-        this.formularioFiltroGeneral.get('fechaHasta').setValue(this.FECHA_ACTUAL);
+        this.formulario.get('fechaDesde').setValue(this.FECHA_ACTUAL.value);
+        this.formulario.get('fechaHasta').setValue(this.FECHA_ACTUAL.value);
       },
       err => {
         this.toastr.error("Error al obtener la Fecha Actual.");
@@ -176,6 +176,7 @@ export class FacturacionConsultaComponent implements OnInit {
       res => {
         console.log(res.json());
         this.sucursales = res.json();
+        this.formulario.get('idSucursal').setValue(this.sucursales[0].id);
       },
       err => {
         this.toastr.error(err.json().mensaje);
@@ -210,6 +211,8 @@ export class FacturacionConsultaComponent implements OnInit {
     switch (this.filtroPor.value) {
       case 0:
         this.formulario = this.formularioFiltroGeneral;
+        this.formulario.get('fechaDesde').setValue(this.FECHA_ACTUAL.value);
+        this.formulario.get('fechaHasta').setValue(this.FECHA_ACTUAL.value);
         break;
       case 1:
         this.formulario = this.formularioFiltroCpte;
@@ -219,6 +222,8 @@ export class FacturacionConsultaComponent implements OnInit {
         break;
       case 3:
         this.formulario = this.formularioFiltroImportes;
+        this.formulario.get('fechaDesde').setValue(this.FECHA_ACTUAL.value);
+        this.formulario.get('fechaHasta').setValue(this.FECHA_ACTUAL.value);
         break;
       default:
         this.formulario = this.formularioFiltroGeneral;
