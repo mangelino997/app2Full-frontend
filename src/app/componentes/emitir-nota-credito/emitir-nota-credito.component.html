@@ -9,7 +9,8 @@
               <div class="form-group has-float-label margin-right">
                 <label for="idTipoComprobante" class="tamanio-label">Tipo de Comprobante *</label>
                 <mat-select id="idTipoComprobante" class="form-control form-control-sm"
-                  formControlName="tipoComprobante" [compareWith]="compareFn" (selectionChange)="cambioTipoComprobante()">
+                  formControlName="tipoComprobante" [compareWith]="compareFn"
+                  (selectionChange)="cambioTipoComprobante()">
                   <mat-option *ngFor="let item of tiposComprobante" [value]="item">
                     {{item.nombre}}
                   </mat-option>
@@ -240,45 +241,42 @@
             <ng-container matColumnDef="CHECK">
               <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
               <td mat-cell *matCellDef="let elemento; let i=index">
-                <mat-checkbox class="cursor-color" (change)="cambioCheck(elemento, i, $event)"
-                  *ngIf="formulario.value.tipoComprobante.id != 28" [disabled]="idMod"
-                  [checked]="elemento.checked">
+                <mat-checkbox class="cursor-color" (change)="cambioCheck(elemento, i, $event)" *ngIf="idTipoCpte != 28"
+                  [disabled]="idMod" [checked]="elemento.checked">
                 </mat-checkbox>
-                <mat-checkbox class="cursor-color" (change)="cambioCheck(elemento, i, $event)"
-                  *ngIf="formulario.value.tipoComprobante.id == 28"
-                  [disabled]="elemento.ventaComprobanteItemNC.length == 0 && checkboxs"
-                  [checked]="elemento.checked">
+                <mat-checkbox class="cursor-color" (change)="cambioCheck(elemento, i, $event)" *ngIf="idTipoCpte == 28"
+                  [disabled]="elemento.ventaComprobanteItemNC.length == 0 && checkboxs" [checked]="elemento.checked">
                 </mat-checkbox>
               </td>
             </ng-container>
             <ng-container matColumnDef="FECHA_EMISION">
               <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha Emisión</th>
-              <td mat-cell *matCellDef="let elemento">
+              <td mat-cell class="text-left" *matCellDef="let elemento">
                 {{elemento.fechaEmision | date: 'dd/MM/yyyy'}}</td>
             </ng-container>
             <ng-container matColumnDef="FECHA_VTO_PAGOS">
               <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha Vto Pago</th>
-              <td mat-cell *matCellDef="let elemento">
+              <td mat-cell class="text-left" *matCellDef="let elemento">
                 {{elemento.fechaVtoPago | date: 'dd/MM/yyyy'}}</td>
             </ng-container>
             <ng-container matColumnDef="TIPO">
               <th mat-header-cell *matHeaderCellDef mat-sort-header>Tipo</th>
-              <td mat-cell *matCellDef="let elemento">
+              <td mat-cell class="text-left" *matCellDef="let elemento">
                 {{elemento.tipoComprobante.abreviatura}}</td>
             </ng-container>
             <ng-container matColumnDef="PUNTO_VENTA">
               <th mat-header-cell *matHeaderCellDef mat-sort-header>P. Venta</th>
-              <td mat-cell *matCellDef="let elemento">
+              <td mat-cell class="text-left" *matCellDef="let elemento">
                 {{establecerCerosIzq(elemento.puntoVenta, "0000", -5)}}</td>
             </ng-container>
             <ng-container matColumnDef="LETRA">
               <th mat-header-cell *matHeaderCellDef mat-sort-header>Letra</th>
-              <td mat-cell *matCellDef="let elemento">
+              <td mat-cell class="text-left" *matCellDef="let elemento">
                 {{elemento.letra}}</td>
             </ng-container>
             <ng-container matColumnDef="NUMERO">
               <th mat-header-cell *matHeaderCellDef mat-sort-header>Número</th>
-              <td mat-cell *matCellDef="let elemento">
+              <td mat-cell class="text-left" *matCellDef="let elemento">
                 {{elemento.numero}}</td>
             </ng-container>
             <ng-container matColumnDef="IMPORTE">
@@ -294,7 +292,7 @@
             </ng-container>
             <ng-container matColumnDef="MOTIVO">
               <th mat-header-cell *matHeaderCellDef mat-sort-header>Motivo</th>
-              <td mat-cell *matCellDef="let elemento">
+              <td mat-cell class="text-left" *matCellDef="let elemento">
                 {{elemento.ventaComprobanteItemNC.length > 0? elemento.ventaComprobanteItemNC[0].ventaTipoItem.nombre: ''}}
               </td>
             </ng-container>
@@ -335,6 +333,10 @@
       </div>
       <br>
       <div class="row">
+        <div class="col-md-2 text-left">
+          <button mat-raised-button color="primary" type="button" style="min-width: fit-content;"
+            (click)="reiniciarNotaCredito()">Reiniciar</button>
+        </div>
         <div class="col"></div>
         <div class="col-md-2">
           <div class="form-group has-float-label">
@@ -370,7 +372,8 @@
       </div>
       <div class="row justify-content-end" *ngIf="!show">
         <button mat-raised-button color="primary" type="button" style="min-width: fit-content;"
-          (click)="agregarNotaCredito()" [disabled]="!formulario.valid">Grabar</button>
+          (click)="agregarNotaCredito()"
+          [disabled]="!formulario.valid">Grabar</button>
       </div>
       <div class="row" *ngIf="show">
         <div class="col text-center">

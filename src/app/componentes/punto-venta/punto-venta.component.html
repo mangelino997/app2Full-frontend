@@ -130,8 +130,9 @@
           <div class="col-md-3">
             <div class="form-group has-float-label">
               <label for="idCopias" class="tamanio-label">Copias *</label>
-              <input id="idCopias" type="text" formControlName="copias" autocomplete="off" [textMask]="mascararEnteros(1)"
-                class="form-control form-control-sm number-right" [readonly]="soloLectura">
+              <input id="idCopias" type="text" formControlName="copias" autocomplete="off"
+                [textMask]="mascararEnteros(1)" class="form-control form-control-sm number-right"
+                [readonly]="soloLectura">
             </div>
           </div>
           <div class="col-md-3">
@@ -203,30 +204,30 @@
           </button>
         </div>
       </div>
-    <br>
+      <br>
       <div class="tabla">
         <div class="tabla-ancho">
           <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
-            <ng-container matColumnDef="SUCURSAL">
+            <ng-container matColumnDef="SUCURSAL" sticky>
               <th mat-header-cell *matHeaderCellDef mat-sort-header>Sucursal</th>
               <td mat-cell class="text-left" *matCellDef="let elemento">{{elemento.sucursal.nombre}}</td>
             </ng-container>
-            <ng-container matColumnDef="EMPRESA">
+            <ng-container matColumnDef="EMPRESA" sticky>
               <th mat-header-cell *matHeaderCellDef mat-sort-header>Empresa</th>
               <td mat-cell class="text-left" *matCellDef="let elemento">{{elemento.empresa.razonSocial}}</td>
             </ng-container>
-            <ng-container matColumnDef="PUNTO_VENTA">
+            <ng-container matColumnDef="PUNTO_VENTA" sticky>
               <th mat-header-cell *matHeaderCellDef mat-sort-header>Punto de Venta</th>
               <td mat-cell class="text-left" *matCellDef="let elemento">{{displayFb(elemento)}}</td>
             </ng-container>
             <ng-container matColumnDef="FE">
               <th mat-header-cell *matHeaderCellDef mat-sort-header>Es FE</th>
-              <td mat-cell class="text-left" *matCellDef="let elemento" >
+              <td mat-cell class="text-left" *matCellDef="let elemento">
                 {{elemento.fe ? 'Si' : 'No'}}</td>
             </ng-container>
             <ng-container matColumnDef="FE_LINEA">
               <th mat-header-cell *matHeaderCellDef mat-sort-header>Es FE en Línea</th>
-              <td mat-cell class="text-left" *matCellDef="let elemento" >{{elemento.feEnLinea ? 'Si' : 'No'}}</td>
+              <td mat-cell class="text-left" *matCellDef="let elemento">{{elemento.feEnLinea ? 'Si' : 'No'}}</td>
             </ng-container>
             <ng-container matColumnDef="CAE">
               <th mat-header-cell *matHeaderCellDef mat-sort-header>Es CAEA</th>
@@ -237,7 +238,7 @@
               <td mat-cell *matCellDef="let elemento">{{elemento.esCuentaOrden ? 'Si' : 'No'}}</td>
             </ng-container> -->
             <ng-container matColumnDef="NUMERO">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header >Último Número</th>
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Último Número</th>
               <td mat-cell *matCellDef="let elemento" class="number-right">{{elemento.ultimoNumero}}</td>
             </ng-container>
             <ng-container matColumnDef="COPIA">
@@ -258,7 +259,7 @@
             </ng-container>
             <ng-container matColumnDef="EDITAR" stickyEnd>
               <th mat-header-cell *matHeaderCellDef><button class="button-full-width" mat-raised-button color="primary"
-                [disabled]="listaCompleta.data.length==0" (click)="abrirReporte()">Reporte</button></th>
+                  [disabled]="listaCompleta.data.length==0" (click)="abrirReporte()">Reporte</button></th>
               <td mat-cell *matCellDef="let elemento">
                 <button mat-icon-button class="mat-icon-button-table" (click)="activarConsultar(elemento)"
                   matTooltip="Consultar" matTooltipPosition="above">

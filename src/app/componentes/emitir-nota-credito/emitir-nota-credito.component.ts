@@ -31,6 +31,8 @@ import { Router } from '@angular/router';
 export class EmitirNotaCreditoComponent implements OnInit {
   //Define el id del registro a modificar
   public idMod: number = null;
+  //Define el id del tipoComprobante
+  public idTipoCpte: number = null;
   //Define el elemento (comprobante) a saldar
   public elemento: FormControl = new FormControl();
   //Define el campo subtotalCIVA como un FormControl
@@ -95,6 +97,8 @@ export class EmitirNotaCreditoComponent implements OnInit {
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   //Define el mostrar del circulo de progreso
   public show = false;
+  //Defiene el render
+  public render: boolean = false;
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Constructor
@@ -103,16 +107,14 @@ export class EmitirNotaCreditoComponent implements OnInit {
     private ventaComprobante: VentaComprobante,
     private ventaCpteItemNC: VentaComprobanteItemNC,
     private fechaService: FechaService,
-    private tipoComprobanteService: TipoComprobanteService,
     private appComponent: AppComponent,
     private afipComprobanteService: AfipComprobanteService,
     private puntoVentaService: PuntoVentaService,
     private clienteService: ClienteService,
     private appService: AppService, private route: Router,
-    private provinciaService: ProvinciaService, private toastr: ToastrService,
+    private toastr: ToastrService,
     private ventaComprobanteService: VentaComprobanteService,
     private ventaTipoItemervice: VentaTipoItemService,
-    private alicuotasIvaService: AfipAlicuotaIvaService,
     public dialog: MatDialog, private loaderService: LoaderService,
   ) { }
   //Al inicializarse el componente
@@ -121,7 +123,7 @@ export class EmitirNotaCreditoComponent implements OnInit {
     this.subscription = this.loaderService.loaderState
       .subscribe((state: LoaderState) => {
         this.show = state.show;
-      });
+      })
     //inicializa el formulario de Nota de Cdto. y sus elementos
     this.formulario = this.ventaComprobante.formulario;
     //inicializa el formulario de Nota de Cdto. y sus elementos
@@ -135,16 +137,8 @@ export class EmitirNotaCreditoComponent implements OnInit {
       tipoDocumento: new FormControl(),
       numeroDocumento: new FormControl()
     })
-    //Obtiene la lista de tipos de comprobante
-    this.listarTiposComprobante();
-    //Obtiene la lista de puntos de venta 
-    this.listarPuntosVenta();
-    //Obtiene las Provincias - origen de la carga 
-    this.listarProvincias();
-    //Obtiene los Motivos por el cual se desea modificar el comprobante
-    this.listarItemsTipo();
-    //Lista las alicuotas afip iva
-    this.listarAlicuotaIva();
+    /* Obtiene todos los listados */
+    this.inicializar(this.appService.getRol().id, this.appService.getUsuario().sucursal.id);
     //Reestablece el Formularios
     this.reestablecerFormulario(true);
     //Autcompletado - Buscar por Remitente
@@ -164,6 +158,28 @@ export class EmitirNotaCreditoComponent implements OnInit {
       }
     })
   }
+  //Obtiene los datos necesarios para el componente
+  private inicializar(idRol, idSubopcion) {
+    this.render = true;
+    this.ventaComprobanteService.inicializarNotaCredito(idRol, idSubopcion).subscribe(
+      res => {
+        let respuesta = res.json();
+
+        //Establece demas datos necesarios
+        this.tiposComprobante = respuesta.tipoComprobantes;
+        this.resultadosProvincias = respuesta.provincias;
+        this.resultadosMotivos = respuesta.ventaTipoItems;
+        this.afipAlicuotasIva = respuesta.afipAlicuotaIvas;
+        this.formulario.get('tipoComprobante').setValue(this.tiposComprobante[0]);
+        this.cambioTipoComprobante();
+        this.render = false;
+      },
+      err => {
+        this.toastr.error(err.json().mensaje);
+        this.render = false;
+      }
+    )
+  }
   //Obtiene una lista para el campo 'Motivo'
   public listarItemsTipo() {
     /* reestablece el Formulario y los controles de tipo boolean */
@@ -175,15 +191,7 @@ export class EmitirNotaCreditoComponent implements OnInit {
       res => {
         this.resultadosMotivos = res.json();
       }
-    );
-  }
-  //Obtiene una lista con las Alicuotas Iva
-  public listarAlicuotaIva() {
-    this.alicuotasIvaService.listarActivas().subscribe(
-      res => {
-        this.afipAlicuotasIva = res.json();
-      }
-    );
+    )
   }
   //Establece alicuota iva por defecto
   private establecerAlicuotaIva() {
@@ -196,48 +204,23 @@ export class EmitirNotaCreditoComponent implements OnInit {
   //Obtiene la lista de Puntos de Venta
   public listarPuntosVenta() {
     this.puntoVentaService.listarPorEmpresaYSucursalYTipoComprobante(
-      this.appComponent.getEmpresa().id, this.appComponent.getUsuario().sucursal.id, this.formulario.value.tipoComprobante.id).subscribe(
+      this.appComponent.getEmpresa().id, this.appComponent.getUsuario().sucursal.id, this.idTipoCpte).subscribe(
         res => {
           this.resultadosPuntoVenta = res.json();
-          this.formulario.get('puntoVenta').setValue(this.resultadosPuntoVenta[0]);
-          this.cambioPuntoVenta();
-          if (this.resultadosPuntoVenta.length == 0) {
-            const dialogRef = this.dialog.open(ErrorPuntoVentaComponent, {
-              width: '700px'
-            });
-            dialogRef.afterClosed().subscribe(resultado => {
-              this.route.navigate(['/home']);
-            });
+          if (this.resultadosPuntoVenta.length > 0) {
+            this.formulario.get('puntoVenta').setValue(this.resultadosPuntoVenta[0]);
+            this.cambioPuntoVenta();
+          } else {
+            this.toastr.error("Punto de venta inexistente para el Tipo de comprobante.");
+            // const dialogRef = this.dialog.open(ErrorPuntoVentaComponent, {
+            //   width: '700px'
+            // });
+            // dialogRef.afterClosed().subscribe(resultado => {
+            //   this.route.navigate(['/home']);
+            // });
           }
         }
-      );
-    // this.puntoVentaService.listarHabilitadosPorSucursalEmpresaYFe(
-    //   this.appService.getEmpresa().id, this.appService.getUsuario().sucursal.id).subscribe(
-    //     res => {
-    //       this.resultadosPuntoVenta = res.json();
-    //       this.formulario.get('puntoVenta').setValue(this.resultadosPuntoVenta[0]);
-    //     }, err => { this.toastr.error("Empresa no registra puntos de venta."); }
-    //   )
-  }
-  //Obtiene la lista de tipos de comprobante
-  private listarTiposComprobante() {
-    this.tipoComprobanteService.listarParaNotaCredito().subscribe(
-      res => {
-        this.tiposComprobante = res.json();
-        this.formulario.get('tipoComprobante').setValue(this.tiposComprobante[0]);
-      }, err => { this.toastr.error(err.json().mensaje); }
-    )
-  }
-  //Obtiene una lista de las Provincias 
-  public listarProvincias() {
-    this.provinciaService.listar().subscribe(
-      res => {
-        this.resultadosProvincias = res.json();
-      },
-      err => {
-        this.toastr.error("Error al obtener las Provincias");
-      }
-    );
+      )
   }
   //Establece la fecha emision y registracion
   private establecerFecha() {
@@ -250,7 +233,8 @@ export class EmitirNotaCreditoComponent implements OnInit {
     })
   }
   //Controla el cambio en Tipo de cpte
-  public cambioTipoComprobante(){
+  public cambioTipoComprobante() {
+    this.idTipoCpte = this.formulario.value.tipoComprobante.id;
     this.listarPuntosVenta();
   }
   //Controla el cambio en el campo Fecha
@@ -364,6 +348,10 @@ export class EmitirNotaCreditoComponent implements OnInit {
     this.formularioVtaCpteItemNC.reset();
     this.formularioVtaCpteItemNC.disable();
 
+    /* habilita los campos de seleccion bloqueados */
+    this.formulario.get('tipoComprobante').enable();
+    this.formulario.get('puntoVenta').enable();
+
     //Reestablezco valores por defecto en el formulario
     this.establecerValoresPorDefecto(fechaEmision, puntoVenta, tipoComprobante);
 
@@ -399,19 +387,15 @@ export class EmitirNotaCreditoComponent implements OnInit {
     if (puntoVenta) {
       this.formulario.get('puntoVenta').setValue(puntoVenta);
       this.cambioPuntoVenta();
-    } else {
-      this.formulario.get('puntoVenta').setValue(
-        this.resultadosPuntoVenta.length > 0 ? this.resultadosPuntoVenta[0] : null);
     }
     if (tipoComprobante) {
       this.formulario.get('tipoComprobante').setValue(tipoComprobante);
+      this.cambioTipoComprobante();
       this.cambioFecha();
-    } else {
-      this.formulario.get('tipoComprobante').setValue(
-        this.tiposComprobante.length > 0 ? this.tiposComprobante[0] : null);
     }
     //Define el valor de los campos en el formulario
     this.formulario.get('pagoEnOrigen').setValue(false);
+    this.provincia.setValue(this.resultadosProvincias[0]);
     this.formulario.get('ventaComprobanteItemCR').setValue([]);
     this.formulario.get('ventaComprobanteItemND').setValue([]);
     this.formulario.get('ventaComprobanteItemNC').setValue([]);
@@ -495,8 +479,8 @@ export class EmitirNotaCreditoComponent implements OnInit {
   }
   //Controla campos segun datos del Cliente  
   private controlCamposPorCliente() {
-    // Controla el campo 'Letra' 
-    this.formulario.value.cliente.condicionVenta.id == 1 ?
+    // Controla el campo 'Letra' - Es A cuando el cliente es responsable inscripto (afipCondicionIva == 1) sino es B consumidor final
+    this.formulario.value.cliente.afipCondicionIva.id == 1 ?
       this.formulario.get('letra').setValue('A') : this.formulario.get('letra').setValue('B');
     // Obtiene el codigo afip y el número
     this.cargarCodigoAfip(this.formulario.value.letra);
@@ -524,11 +508,15 @@ export class EmitirNotaCreditoComponent implements OnInit {
         res => {
           let numero = res.text();
           this.formulario.get('numero').setValue(this.establecerCerosIzq(Number(numero), "0000000", -8));
+
+          //se bloquean los campos de seleccion para tipo cpte y p. venta
+          this.formulario.get('tipoComprobante').disable();
+          this.formulario.get('puntoVenta').disable();
           this.loaderService.hide();
         },
         err => {
           this.formulario.get('numero').reset();
-          this.toastr.error("Error al obtener el número para el P. Venta.");
+          this.toastr.error("Punto de venta inexistente para la condición de iva.");
           this.loaderService.hide();
         }
       );
@@ -540,7 +528,6 @@ export class EmitirNotaCreditoComponent implements OnInit {
       idCliente, this.appService.getEmpresa().id).subscribe(
         res => {
           this.listaCompleta.data = res.json();
-          console.log(this.listaCompleta.data);
           this.listaCompleta.data.length == 0 ?
             this.toastr.warning('El Cliente no tiene comprobantes pendientes.') : this.limpiarVtaCpteItemNC();
           this.loaderService.hide();
@@ -603,9 +590,6 @@ export class EmitirNotaCreditoComponent implements OnInit {
     this.formularioVtaCpteItemNC.enable();
     this.formularioVtaCpteItemNC.get('provincia').setValue(this.provincia.value);
 
-    /* controla que si tipo de cpte es FCE MiPymes solo permite saldar un comprobante */
-    // this.formulario.value.tipoComprobante.id == 28 ? this.limpiarVtaCpteItemNC() : '';
-
     /* agrega el formulario vta cpte item NC al comprobante seleccionado */
     this.listaCompleta.data[this.idMod].ventaComprobanteItemNC.push(this.formularioVtaCpteItemNC.value);
     this.reestablecerformularioVtaCpteItemNC();
@@ -614,7 +598,7 @@ export class EmitirNotaCreditoComponent implements OnInit {
     this.calcularImportesTotales();
 
     //Si el tipo de cpte es FCE MiPymes cambia el estado del boolean 'checkbox'
-    this.formulario.value.tipoComprobante.id == 28 ?
+    this.idTipoCpte == 28 ?
       this.checkboxs = true : this.checkboxs = false;
   }
   //Vacia los array de vtaCpteItemNC de cada comprobante
@@ -632,6 +616,7 @@ export class EmitirNotaCreditoComponent implements OnInit {
     let importeIvaTotal = 0;
     this.listaCompleta.data.forEach(
       elemento => {
+
         /* si el comprobante tiene vtaCpteItemNC que sume sus totales */
         if (elemento.ventaComprobanteItemNC.length > 0) {
           impNetoGravadoTotal += Number(elemento.ventaComprobanteItemNC[0].importeNetoGravado);
@@ -674,7 +659,6 @@ export class EmitirNotaCreditoComponent implements OnInit {
   }
   //Controla el cambio los check-box
   public cambioCheck(elemento, indice, $event) {
-    console.log($event);
     if ($event.checked) {
       this.checkboxs = true;
       this.listaCompleta.data[indice].checked = true;
@@ -683,6 +667,7 @@ export class EmitirNotaCreditoComponent implements OnInit {
       this.formularioVtaCpteItemNC.get('estaRechazadaFCE').setValue(false);
       this.cambioMotivo();
     } else {
+
       /* elimina el formulario a saldar asignado a dicho comprobante */
       this.listaCompleta.data[indice].ventaComprobanteItemNC = [];
       this.listaCompleta.data[indice].checked = false;
@@ -692,8 +677,7 @@ export class EmitirNotaCreditoComponent implements OnInit {
 
       this.listaCompleta.data.length > 0 ? this.calcularImportesTotales() : this.limpiarImportesTotales();
       //Llama a verificar lista para controlar el estado del boolean 'checkbox'
-      this.formulario.value.tipoComprobante.id == 28 ? this.verificarCheckbox() : '';
-      console.log(this.checkboxs);
+      this.idTipoCpte == 28 ? this.verificarCheckbox() : '';
     }
   }
   //Recorre la lista completa para verificar si algun registro tiene cancelado un cpte (atributo 'ventaComprobanteItemNC')
@@ -707,6 +691,7 @@ export class EmitirNotaCreditoComponent implements OnInit {
   }
   //Calcula 'SubtotalNC' de cada registro de la tabla 
   public calcularSubtotalNC() {
+
     /* subtotal = total del comprobante que se quiere saldar */
     this.subtotalCIVA.setValue(this.appService.establecerDecimales(this.subtotalCIVA.value, 2));
     let subtotalCIVA = Number(this.subtotalCIVA.value);
@@ -734,9 +719,11 @@ export class EmitirNotaCreditoComponent implements OnInit {
   private establecerformularioVtaCpteItemNC() {
     for (let i = 0; i < this.listaCompleta.data.length; i++) {
       if (this.listaCompleta.data[i].ventaComprobanteItemNC.length > 0) {
+
         /* setea el campo afipConceptoVenta */
         !this.formulario.value.afipConceptoVenta ?
           this.formulario.value.afipConceptoVenta = this.listaCompleta.data[i].afipConceptoVenta : '';
+
         /* agrego las ventaComprobanteItemNC de la tabla, las cuales tienen un registro cargado a saldar */
         this.formulario.value.ventaComprobanteItemNC.push(this.listaCompleta.data[i].ventaComprobanteItemNC[0]);
       }
@@ -745,6 +732,10 @@ export class EmitirNotaCreditoComponent implements OnInit {
   //Emite la Nota de Crédito
   public agregarNotaCredito() {
     this.loaderService.show();
+    /* habilita los campos de seleccion bloqueados */
+    this.formulario.get('tipoComprobante').enable();
+    this.formulario.get('puntoVenta').enable();
+
     /* limpia arrays de items */
     this.formulario.value.ventaComprobanteItemCR = null;
     this.formulario.value.ventaComprobanteItemFAs = null;
@@ -757,7 +748,6 @@ export class EmitirNotaCreditoComponent implements OnInit {
     /* establece el array de items NC, el valor de puntoVenta */
     this.establecerformularioVtaCpteItemNC();
     this.formulario.value.puntoVenta = this.formulario.value.puntoVenta.puntoVenta;
-    console.log(this.formulario.value);
 
     /* agrega el comprobante solo si existen notas de creditos agregadas*/
     if (this.formulario.value.ventaComprobanteItemNC.length > 0) {
@@ -780,22 +770,10 @@ export class EmitirNotaCreditoComponent implements OnInit {
       this.loaderService.hide();
     }
   }
-  //Abre dialogo para agregar un cliente eventual
-  // public agregarClienteEventual(): void {
-  //   const dialogRef = this.dialog.open(ClienteEventualComponent, {
-  //     width: '1200px',
-  //     data: {
-  //       formulario: null,
-  //       usuario: this.appComponent.getUsuario()
-  //     }
-  //   });
-  //   dialogRef.afterClosed().subscribe(resultado => {
-  //     if (resultado) {
-  //       this.formulario.get('clienteRemitente').setValue(resultado);
-  //       this.cambioCliente();
-  //     }
-  //   });
-  // }
+  //Reinicia la Nota de Crédito
+  public reiniciarNotaCredito() {
+    this.ngOnInit();
+  }
   //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
   private lanzarError(err, idCampo, labelCampo) {
     this.formulario.get('numeroDocumento').setErrors({ 'incorrect': true });
