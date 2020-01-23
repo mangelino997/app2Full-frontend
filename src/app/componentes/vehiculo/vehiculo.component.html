@@ -116,7 +116,7 @@
             <div class="form-group has-float-label">
               <label for="idEmpresa" class="tamanio-label">Titular *</label>
               <mat-select id="idEmpresa" class="form-control form-control-sm" formControlName="empresa"
-                [compareWith]="compareFn" (selectionChange)="listarCompaniasSeguroPorEmpresa(null, null)">
+                [compareWith]="compareFn" (selectionChange)="listarCompaniasSeguroPorEmpresa(formulario.get('empresa').value, null)">
                 <mat-option *ngFor="let itemEmpresa of empresas" [value]="itemEmpresa">
                   {{itemEmpresa.razonSocial}}
                 </mat-option>
@@ -229,7 +229,7 @@
             <div class="form-group has-float-label">
               <label for="idCompaniaSeguro" class="tamanio-label">Compañía de Seguro *</label>
               <mat-select id="idCompaniaSeguro" class="form-control form-control-sm" [formControl]="companiaSeguro"
-                [compareWith]="compareFn" (selectionChange)="listarPolizas()">
+                [compareWith]="compareFn" (selectionChange)="listarPolizas(null)">
                 <mat-option *ngFor="let itemCompaniaSeguro of companiasSeguros" [value]="itemCompaniaSeguro">
                   {{itemCompaniaSeguro.nombre}}
                 </mat-option>
