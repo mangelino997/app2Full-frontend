@@ -371,9 +371,10 @@
         </div>
       </div>
       <div class="row justify-content-end" *ngIf="!show">
-        <button mat-raised-button color="primary" type="button" style="min-width: fit-content;"
-          (click)="agregarNotaCredito()"
-          [disabled]="!formulario.valid">Grabar</button>
+        <div class="col-md-1">
+          <button mat-raised-button color="primary" type="button" style="width: 100%;" (click)="agregarNotaCredito()"
+            [disabled]="!formulario.valid">Grabar</button>
+        </div>
       </div>
       <div class="row" *ngIf="show">
         <div class="col text-center">

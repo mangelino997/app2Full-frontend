@@ -47,6 +47,8 @@ export class EmitirFacturaComponent implements OnInit {
   indeterminate = false;
   labelPosition = 'after';
   disabled = false;
+  //Define el id del tipoComprobante
+  public idTipoCpte: number = null;
   //Define un formulario para validaciones de campos
   public formulario: FormGroup;
   //Define un formulario para la tabla de ventas comprobantes items FA 
@@ -56,8 +58,8 @@ export class EmitirFacturaComponent implements OnInit {
   public formularioDestinatario: FormGroup;
   //Define la lista de Tipos de Comprobante
   public tiposComprobante = [];
-  //Define la lista para Puntos de Venta
-  public puntosDeVenta = [];
+  //Define la lista de resultados para Puntos de Venta
+  public resultadosPuntoVenta = [];
   //Define la lista de items a facturar
   public itemsAFacturar = [];
   //Define la lista de resultados de busqueda para Reminentes y Destinatarios
@@ -112,6 +114,8 @@ export class EmitirFacturaComponent implements OnInit {
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   //Define el mostrar del circulo de progreso
   public show = false;
+  //Defiene el render
+  public render: boolean = false;
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   constructor(
@@ -145,17 +149,11 @@ export class EmitirFacturaComponent implements OnInit {
       afipCondicionIva: new FormControl(),
       condicionVenta: new FormControl(),
       tipoYNumeroDocumento: new FormControl()
-    });
+    })
+    /* Obtiene todos los listados */
+    this.inicializar(this.appService.getRol().id, this.appService.getUsuario().sucursal.id);
     //Reestablece el formulario ('true' para limpiar todo, 'false' para mantener campos generales)
     this.reestablecerFormulario(true);
-    //Obtiene la lista de tipos de comprobante
-    this.listarTiposComprobante();
-    //Obtiene la lista de puntos de venta 
-    this.listarPuntosVenta();
-    //Obtiene la lista de items
-    this.listarItems();
-    //Obtiene la lista de las alicuotas afip iva
-    this.listarAlicuotaIva();
     //Autcompletado - Buscar por Remitente
     this.formulario.get('clienteRemitente').valueChanges.subscribe(data => {
       if (typeof data == 'string') {
@@ -189,29 +187,51 @@ export class EmitirFacturaComponent implements OnInit {
       }
     });
   }
-  //Obtiene la lista de tipos de comprobante
-  private listarTiposComprobante() {
-    this.tipoComprobanteService.listarParaEmisionFactura().subscribe(
+  //Obtiene los datos necesarios para el componente
+  private inicializar(idRol, idSubopcion) {
+    this.render = true;
+    this.ventaComprobanteService.inicializarFactura(idRol, idSubopcion).subscribe(
       res => {
-        this.tiposComprobante = res.json();
-      }, err => { this.toastr.error(err.json().mensaje); }
+        let respuesta = res.json();
+        //Establece demas datos necesarios
+        this.tiposComprobante = respuesta.tipoComprobantes;
+        this.itemsAFacturar = respuesta.ventaTipoItems;
+        this.afipAlicuotasIva = respuesta.afipAlicuotaIvas;
+        this.formulario.get('tipoComprobante').setValue(this.tiposComprobante[0]);
+        this.cambioTipoComprobante();
+        this.render = false;
+      },
+      err => {
+        this.toastr.error(err.json().mensaje);
+        this.render = false;
+      }
     )
+  }
+  //Controla el cambio en Tipo de cpte
+  public cambioTipoComprobante() {
+    this.idTipoCpte = this.formulario.value.tipoComprobante.id;
+    this.listarPuntosVenta();
   }
   //Obtiene la lista de Puntos de Venta
-  private listarPuntosVenta() {
-    this.puntoVentaService.listarHabilitadosPorSucursalEmpresaYFe(this.formulario.value.empresa.id, this.formulario.value.sucursal.id).subscribe(
-      res => {
-        this.puntosDeVenta = res.json();
-      }, err => { this.toastr.error(err.json().mensaje); }
-    )
-  }
-  //Obtiene la lista de Items
-  private listarItems() {
-    this.ventaTipoItemService.listarItems(1).subscribe(
-      res => {
-        this.itemsAFacturar = res.json();
-      }, err => { this.toastr.error(err.json().mensaje); }
-    );
+  public listarPuntosVenta() {
+    this.puntoVentaService.listarPorEmpresaYSucursalYTipoComprobante(
+      this.appComponent.getEmpresa().id, this.appComponent.getUsuario().sucursal.id, this.idTipoCpte).subscribe(
+        res => {
+          this.resultadosPuntoVenta = res.json();
+          if (this.resultadosPuntoVenta.length > 0) {
+            this.formulario.get('puntoVenta').setValue(this.resultadosPuntoVenta[0]);
+            this.cambioPuntoVenta();
+          } else {
+            this.toastr.error("Punto de venta inexistente para el Tipo de comprobante.");
+            // const dialogRef = this.dialog.open(ErrorPuntoVentaComponent, {
+            //   width: '700px'
+            // });
+            // dialogRef.afterClosed().subscribe(resultado => {
+            //   this.route.navigate(['/home']);
+            // });
+          }
+        }
+      )
   }
   //Obtiene la lista de Ordenes de Venta de empresaOrdenVentaService
   private listarOrdenVentaEmpresa() {
@@ -220,15 +240,6 @@ export class EmitirFacturaComponent implements OnInit {
         this.ordenesVenta = res.json();
       }, err => { this.toastr.error(err.json().message); }
     )
-  }
-  //Obtiene una lista con las Alicuotas Iva
-  public listarAlicuotaIva() {
-    this.alicuotasIvaService.listarActivas().subscribe(
-      res => {
-        this.afipAlicuotasIva = res.json();
-        this.resultadosAlicuotasIvaCR = res.json();
-      }
-    );
   }
   //Establece alicuota iva por defecto
   private establecerAlicuotaIva() {
@@ -365,6 +376,10 @@ export class EmitirFacturaComponent implements OnInit {
         res => {
           let numero = res.text();
           this.formulario.get('numero').setValue(this.establecerCerosIzq(Number(numero), "0000000", -8));
+
+          //se bloquean los campos de seleccion para tipo cpte y p. venta
+          this.formulario.get('tipoComprobante').disable();
+          this.formulario.get('puntoVenta').disable();
         },
         err => {
           this.formulario.get('numero').reset();
@@ -919,9 +934,16 @@ export class EmitirFacturaComponent implements OnInit {
     let puntoVenta;
     let fechaEmision;
     let tipoComprobante;
+
     //Guardo por si existen datos ya cargados
-    !limpiarTodo ? [puntoVenta = this.formulario.value.puntoVenta, fechaEmision = this.formulario.value.fechaEmision,
-    tipoComprobante = this.formulario.value.tipoComprobante] : this.itemFactura.reset();
+    if (!limpiarTodo) {
+      puntoVenta = this.formulario.value.puntoVenta;
+      fechaEmision = this.formulario.value.fechaEmision;
+      tipoComprobante = this.formulario.value.tipoComprobante;
+    } else {
+      this.itemFactura.reset();
+    }
+
     //Vacio formularios y listas
     this.vaciarListas();
     this.contador.reset();
@@ -931,13 +953,20 @@ export class EmitirFacturaComponent implements OnInit {
     this.formularioRemitente.reset();
     this.formularioDestinatario.reset();
     this.formularioVtaCpteItemFA.reset();
+
+    /* habilita los campos de seleccion bloqueados */
+    this.formulario.get('tipoComprobante').enable();
+    this.formulario.get('puntoVenta').enable();
+
     //Reestablezco valores y controlo campos precargados
     this.configuracionModalRemitos = new FormControl({
       formularioFiltro: null,
       listaCompletaRemitos: null
-    });
+    })
+
     this.establecerValoresPorDefecto(fechaEmision, puntoVenta, tipoComprobante);
     this.reestablecerformularioVtaCpteItemFA();
+
     //Establezco el foco
     puntoVenta && fechaEmision && tipoComprobante ? document.getElementById('idRemitente').focus() :
       setTimeout(function () {
@@ -946,12 +975,33 @@ export class EmitirFacturaComponent implements OnInit {
   }
   //Establece valores por defecto
   private establecerValoresPorDefecto(fechaEmision, puntoVenta, tipoComprobante) {
+    // tipoComprobante ?
+    //   [this.formulario.get('tipoComprobante').setValue(tipoComprobante), this.cambioFecha()] : '';
+    //Contorla los parametros
+    if (fechaEmision) {
+      this.formulario.get('fechaEmision').setValue(fechaEmision);
+      this.formulario.get('fechaRegistracion').setValue(fechaEmision);
+    } else {
+      this.establecerFecha();
+    }
+    if (puntoVenta) {
+      this.formulario.get('puntoVenta').setValue(puntoVenta);
+      this.cambioPuntoVenta();
+    }
+    if (tipoComprobante) {
+      this.formulario.get('tipoComprobante').setValue(tipoComprobante);
+      this.cambioTipoComprobante();
+      this.cambioFecha();
+    }
+
+    //Define el valor de los campos en el formulario
     this.btnFCE = true; //deshabilita
     this.btnRemito = false;
     this.btnGS = false;
     this.formulario.get('pagoEnOrigen').setValue(false);
-    this.formulario.get('importeNoGravado').setValue(0);
-    this.formulario.get('importeOtrosTributos').setValue(0);
+    this.formulario.get('importeSaldo').setValue(this.appService.establecerDecimales('0.00', 2));
+    this.formulario.get('importeNoGravado').setValue(this.appService.establecerDecimales('0.00', 2));
+    this.formulario.get('importeOtrosTributos').setValue(this.appService.establecerDecimales('0.00', 2));
     this.formulario.get('ventaComprobanteItemCR').setValue([]);
     this.formulario.get('ventaComprobanteItemND').setValue([]);
     this.formulario.get('ventaComprobanteItemNC').setValue([]);
@@ -960,12 +1010,7 @@ export class EmitirFacturaComponent implements OnInit {
     this.formulario.get('tipoComprobante').setValue(this.tiposComprobante[0]);
     this.formulario.get('usuarioAlta').setValue({ id: this.appService.getUsuario().id });
     this.formulario.get('sucursal').setValue(this.appService.getUsuario().sucursal);
-    fechaEmision ?
-      [this.formulario.get('fechaEmision').setValue(fechaEmision), this.formulario.get('fechaRegistracion').setValue(fechaEmision)] : this.establecerFecha();
-    puntoVenta ?
-      [this.formulario.get('puntoVenta').setValue(puntoVenta), this.cambioPuntoVenta()] : this.formulario.get('puntoVenta').setValue(this.puntosDeVenta[0]);;
-    tipoComprobante ?
-      [this.formulario.get('tipoComprobante').setValue(tipoComprobante), this.cambioFecha()] : '';
+
     //Obtiene - establece moneda y  monedaCotizacion
     this.obtenerMoneda();
     //Establece/limpia las clases de ClienteRemitente y ClienteDestinatario
@@ -1109,6 +1154,9 @@ export class EmitirFacturaComponent implements OnInit {
   public agregarVentaComprobante() {
     this.loaderService.show();
     if (this.controlarFactura()) {
+      /* habilita los campos de seleccion bloqueados */
+      this.formulario.get('tipoComprobante').enable();
+      this.formulario.get('puntoVenta').enable();
       this.formulario.get('cliente').setValue({ id: this.formulario.value.cliente.id });
       this.formulario.get('clienteDestinatario').setValue({ id: this.formulario.value.clienteDestinatario.id });
       this.formulario.get('clienteRemitente').setValue({ id: this.formulario.value.clienteRemitente.id });
@@ -1136,6 +1184,18 @@ export class EmitirFacturaComponent implements OnInit {
     } else {
       this.loaderService.hide();
     }
+  }
+  //Reinicia la Venta Comprobante
+  public reiniciarVtaCpte() {
+    const dialogRef = this.dialog.open(ConfirmarDialogoComponent, {
+      width: '500px',
+      data: {
+        mensaje: "¿Está seguro de reiniciar la factura?"
+      },
+    });
+    dialogRef.afterClosed().subscribe(resultado => {
+      resultado ? this.ngOnInit() : '';
+    })
   }
   /* Elimina los id de cada item del array de ventaComprobanteItemFAs. Los id los usaba para controlar los remitos ya asignados
        en el dialogo de seleccion de Remitos*/

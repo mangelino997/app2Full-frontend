@@ -645,7 +645,7 @@ export class OrdenVentaComponent implements OnInit {
           }
         );
       }
-    });
+    })
   }
   //Finaliza la orden de venta
   public finalizar(): void {

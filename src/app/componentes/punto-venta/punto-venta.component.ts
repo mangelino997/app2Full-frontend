@@ -104,6 +104,7 @@ export class PuntoVentaComponent implements OnInit {
         this.empresas = respuesta.empresas;
         this.tipoComprobantes = respuesta.tipoComprobantes;
         this.formulario.get('id').setValue(this.ultimoId);
+        this.sucursal.setValue(this.sucursales[0]);
         this.render = false;
       },
       err => {
@@ -414,8 +415,8 @@ export class PuntoVentaComponent implements OnInit {
   public displayFb(elemento) {
     if (elemento != undefined) {
       return elemento.puntoVenta ? ('00000' + elemento.puntoVenta).slice(-5)
-        + ' | ' + elemento.afipComprobante.codigoAfip + ' | ' + elemento.afipComprobante.letra
-        + ' | ' + elemento.afipComprobante.tipoComprobante.abreviatura : elemento;
+        + ' | ' + elemento.afipComprobante.tipoComprobante.abreviatura + ' | ' + elemento.afipComprobante.letra
+        + ' | ' + elemento.afipComprobante.codigoAfip : elemento;
     } else {
       return elemento;
     }

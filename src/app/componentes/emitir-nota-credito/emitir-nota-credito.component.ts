@@ -393,6 +393,7 @@ export class EmitirNotaCreditoComponent implements OnInit {
       this.cambioTipoComprobante();
       this.cambioFecha();
     }
+    
     //Define el valor de los campos en el formulario
     this.formulario.get('pagoEnOrigen').setValue(false);
     this.provincia.setValue(this.resultadosProvincias[0]);
@@ -519,7 +520,7 @@ export class EmitirNotaCreditoComponent implements OnInit {
           this.toastr.error("Punto de venta inexistente para la condición de iva.");
           this.loaderService.hide();
         }
-      );
+      )
   }
   //Obtiene la lista de Venta Comprobante NC (para Nota de Credito)
   private listarVentaComprobanteParaNotaCredito() {
