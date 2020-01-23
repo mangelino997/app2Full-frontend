@@ -11,8 +11,8 @@ export class AgendaTelefonica {
             version: new FormControl(),
             nombre: new FormControl('', [Validators.required, Validators.maxLength(45)]),
             domicilio: new FormControl('', Validators.maxLength(45)),
-            telefonoFijo: new FormControl('', Validators.maxLength(11)),
-            telefonoMovil: new FormControl('', Validators.maxLength(13)),
+            telefonoFijo: new FormControl('', Validators.maxLength(45)),
+            telefonoMovil: new FormControl('', Validators.maxLength(45)),
             correoelectronico: new FormControl('', Validators.maxLength(30)),
             localidad: new FormControl('', Validators.required)
         })

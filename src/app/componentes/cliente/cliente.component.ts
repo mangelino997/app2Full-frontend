@@ -6,14 +6,8 @@ import { CobradorService } from '../../servicios/cobrador.service';
 import { VendedorService } from '../../servicios/vendedor.service';
 import { ZonaService } from '../../servicios/zona.service';
 import { RubroService } from '../../servicios/rubro.service';
-import { AfipCondicionIvaService } from '../../servicios/afip-condicion-iva.service';
-import { TipoDocumentoService } from '../../servicios/tipo-documento.service';
-import { ResumenClienteService } from '../../servicios/resumen-cliente.service';
-import { SucursalService } from '../../servicios/sucursal.service';
-import { SituacionClienteService } from '../../servicios/situacion-cliente.service';
 import { CompaniaSeguroService } from '../../servicios/compania-seguro.service';
 import { OrdenVentaService } from '../../servicios/orden-venta.service';
-import { CondicionVentaService } from '../../servicios/condicion-venta.service';
 import { AppService } from '../../servicios/app.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
@@ -24,7 +18,6 @@ import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
 import { ClienteOrdenVentaService } from 'src/app/servicios/cliente-orden-venta.service';
 import { OrdenVentaTarifaService } from 'src/app/servicios/orden-venta-tarifa.service';
-import { UsuarioEmpresaService } from 'src/app/servicios/usuario-empresa.service';
 import { CuentaBancariaDialogoComponent } from '../cuenta-bancaria-dialogo/cuenta-bancaria-dialogo.component';
 import { ReporteService } from 'src/app/servicios/reporte.service';
 import { MensajeExcepcion } from 'src/app/modelos/mensaje-excepcion';
@@ -76,7 +69,6 @@ export class ClienteComponent implements OnInit {
   public resumenesClientes: Array<any> = [];
   //Define la lista de situaciones de clientes
   public situacionesClientes: Array<any> = [];
-
   //Define la opcion activa
   public botonOpcionActivo: boolean = null;
   //Define el form control para las busquedas
@@ -124,13 +116,10 @@ export class ClienteComponent implements OnInit {
     private toastr: ToastrService, private barrioServicio: BarrioService,
     private localidadServicio: LocalidadService, private cobradorServicio: CobradorService,
     private vendedorServicio: VendedorService, private zonaServicio: ZonaService,
-    private rubroServicio: RubroService, private afipCondicionIvaServicio: AfipCondicionIvaService,
-    private tipoDocumentoServicio: TipoDocumentoService, private resumenClienteServicio: ResumenClienteService,
-    private sucursalServicio: SucursalService, private situacionClienteServicio: SituacionClienteService,
-    private companiaSeguroServicio: CompaniaSeguroService, public dialog: MatDialog,
-    private condicionVentaServicio: CondicionVentaService, private clienteModelo: Cliente,
-    private loaderService: LoaderService, private usuarioEmpresaService: UsuarioEmpresaService,
-    private reporteServicio: ReporteService, private clienteCuentaBancariaService: ClienteCuentaBancariaService,
+    private rubroServicio: RubroService, private companiaSeguroServicio: CompaniaSeguroService, 
+    public dialog: MatDialog, private clienteModelo: Cliente,
+    private loaderService: LoaderService, private reporteServicio: ReporteService, 
+    private clienteCuentaBancariaService: ClienteCuentaBancariaService,
     private clienteVtoPagoService: ClienteVtoPagoService) {
     /* Obtiene todos los listados */
     this.inicializar(this.appService.getUsuario().id, this.appService.getRol().id, this.appService.getSubopcion());
@@ -248,26 +237,6 @@ export class ClienteComponent implements OnInit {
         }
       }
     })
-    //Obtiene la lista de condiciones de iva
-    // this.listarCondicionesIva();
-    // //Obtiene la lista de tipos de documentos
-    // this.listarTiposDocumentos();
-    // //Obtiene la lista de resumenes de clientes
-    // this.listarResumenesClientes();
-    // //Obtiene la lista de situaciones de clientes
-    // this.listarSituacionesClientes();
-    // //Obtiene la lista de condiciones de venta
-    // this.listarCondicionesVentas();
-    // //Obtiene la lista de sucursales
-    // this.listarSucursales();
-    // //Obtiene la lista de cobradores
-    // this.listarCobradores();
-    // //Obtiene la lista de vendedores
-    // this.listarVendedores();
-    // //Obtiene la lista de zonas
-    // this.listarZonas();
-    // //Obtiene la lista de rubros
-    // this.listarRubros();
   }
   //Obtiene los datos necesarios para el componente
   private inicializar(idUsuario, idRol, idSubopcion) {
@@ -323,31 +292,6 @@ export class ClienteComponent implements OnInit {
     this.cuentasBancarias = new MatTableDataSource(cuentasBancarias);
     this.loaderService.hide();
   }
-  // public crearCuentasBancarias(): void {
-  //   this.loaderService.show();
-  //   let usuario = this.appService.getUsuario();
-  //   let token = localStorage.getItem('token');
-  //   this.usuarioEmpresaService.listarEmpresasActivasDeUsuario(usuario.id, token).subscribe(
-  //     res => {
-  //       let cuentasBancarias = [];
-  //       let empresas = res.json();
-  //       let formulario = null;
-  //       for (let i = 0; i < empresas.length; i++) {
-  //         formulario = {
-  //           empresa: empresas[i],
-  //           cliente: null,
-  //           cuentaBancaria: null
-  //         }
-  //         cuentasBancarias.push(formulario);
-  //       }
-  //       this.cuentasBancarias = new MatTableDataSource(cuentasBancarias);
-  //       this.loaderService.hide();
-  //     },
-  //     err => {
-  //       this.loaderService.hide();
-  //     }
-  //   );
-  // }
   //Abre el dialogo Cuenta Bancarias
   public seleccionarCuentaBancaria(elemento) {
     const dialogRef = this.dialog.open(CuentaBancariaDialogoComponent, {
@@ -496,61 +440,17 @@ export class ClienteComponent implements OnInit {
     }
     lista[indice] = null;
   }
-  //Obtiene el listado de cobradores
-  private listarCobradores() {
-    this.cobradorServicio.listar().subscribe(
-      res => {
-        this.cobradores = res.json();
-        this.establecerCobrador();
-      },
-      err => {
-      }
-    );
-  }
   //Establece cobrador por defecto
   private establecerCobrador(): void {
     this.formulario.get('cobrador').setValue(this.cobradores[0]);
-  }
-  //Obtiene el listado de vendedores
-  private listarVendedores() {
-    this.vendedorServicio.listar().subscribe(
-      res => {
-        this.vendedores = res.json();
-        this.establecerVendedor();
-      },
-      err => {
-      }
-    );
   }
   //Establece vendedor por defecto
   private establecerVendedor(): void {
     this.formulario.get('vendedor').setValue(this.vendedores[0]);
   }
-  //Obtiene el listado de Zonas
-  private listarZonas() {
-    this.zonaServicio.listar().subscribe(
-      res => {
-        this.zonas = res.json();
-        this.establecerZona();
-      },
-      err => {
-      }
-    );
-  }
   //Establece zona por defecto
   private establecerZona(): void {
     this.formulario.get('zona').setValue(this.zonas[0]);
-  }
-  //Obtiene el listado de Rubros
-  private listarRubros() {
-    this.rubroServicio.listar().subscribe(
-      res => {
-        this.rubros = res.json();
-        this.establecerRubro();
-      },
-      err => {
-      }
-    );
   }
   //Establece rubro por defecto
   private establecerRubro(): void {
@@ -595,7 +495,6 @@ export class ClienteComponent implements OnInit {
     this.formulario.get('descuentoFlete').setValue(this.appService.establecerDecimales('0.00', 2));
     this.formulario.get('descuentoSubtotal').setValue(this.appService.establecerDecimales('0.00', 2));
     this.formulario.get('esReceptorFCE').setValue(false);
-    // this.crearCuentasBancarias();
   }
   //Vacia la lista de resultados de autocompletados
   private vaciarListas() {
@@ -631,7 +530,6 @@ export class ClienteComponent implements OnInit {
       this.formulario.get('afipCondicionIva').enable();
       this.formulario.get('tipoDocumento').enable();
       this.formulario.get('condicionVenta').enable();
-      this.formulario.get('resumenCliente').enable();
       this.formulario.get('situacionCliente').enable();
       this.formulario.get('esSeguroPropio').enable();
       this.formulario.get('cobrador').enable();
@@ -646,7 +544,6 @@ export class ClienteComponent implements OnInit {
       this.formulario.get('afipCondicionIva').disable();
       this.formulario.get('tipoDocumento').disable();
       this.formulario.get('condicionVenta').disable();
-      this.formulario.get('resumenCliente').disable();
       this.formulario.get('situacionCliente').disable();
       this.formulario.get('esSeguroPropio').disable();
       this.formulario.get('cobrador').disable();
@@ -821,40 +718,6 @@ export class ClienteComponent implements OnInit {
       }
     )
   }
-  //Elimina un registro
-  // private eliminar() {
-  //   const dialogRef = this.dialog.open(ConfirmarDialogoComponent, {
-  //     width: '50%',
-  //     maxWidth: '50%',
-  //     data: {
-  //       mensaje: '¿Está seguro de eliminar el registro?'
-  //     }
-  //   });
-  //   dialogRef.afterClosed().subscribe(resultado => {
-  //     if(resultado) {
-  //       this.loaderService.show();
-  //       let id = this.formulario.get('id').value;
-  //       this.servicio.eliminar(id).subscribe(
-  //         res => {
-  //           let respuesta = res.json();
-  //           if(respuesta.codigo == 200) {
-  //             this.reestablecerFormulario(respuesta.id);
-  //             this.establecerValoresPorDefecto();
-  //             this.establecerSituacionCliente();
-  //             this.establecerCondicionVenta();
-  //             document.getElementById('idAutocompletado').focus();
-  //             this.toastr.success(MensajeExcepcion.ELIMINADO);
-  //           }
-  //           this.loaderService.hide();
-  //         },
-  //         err => {
-  //           this.toastr.error(MensajeExcepcion.NO_ELIMINADO);
-  //           this.loaderService.hide();
-  //         }
-  //       );
-  //     }
-  //   });
-  // }
   //Reestablece el formulario
   private reestablecerFormulario(id) {
     this.formulario.reset();
@@ -998,7 +861,6 @@ export class ClienteComponent implements OnInit {
       this.formulario.get('resumenCliente').disable();
       this.formulario.get('resumenCliente').clearValidators();
     } else {
-      // this.formulario.controls['resumenCliente'].setValidators(Validators.required);
       this.formulario.get('resumenCliente').setValidators(Validators.required);
       this.formulario.get('resumenCliente').enable();
     }

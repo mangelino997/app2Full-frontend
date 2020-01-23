@@ -128,8 +128,8 @@
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label id="labelTelefono" for="idTelefonoFijo" class="tamanio-label">Teléfono</label>
-                        <input id="idTelefono" type="number" formControlName="telefono" autocomplete="off"
-                          class="form-control form-control-sm number-right" [readonly]="soloLectura" maxlength="13">
+                        <input id="idTelefono" type="text" formControlName="telefono" autocomplete="off"
+                          class="form-control form-control-sm number-right" [readonly]="soloLectura" maxlength="45">
                       </div>
                     </div>
                   </div>
@@ -254,7 +254,9 @@
                   <div class="row">
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
-                        <label for="idResumenCliente" class="tamanio-label">Resumen Cta.Cte.</label>
+                        <label for="idResumenCliente" class="tamanio-label">Resumen Cta.Cte.
+                          <span *ngIf="formulario.get('condicionVenta').value.nombre != 'CONTADO'"> *</span>
+                        </label>
                         <mat-select id="idResumenCliente" class="form-control form-control-sm"
                           formControlName="resumenCliente" [compareWith]="compareFn">
                           <mat-option *ngFor="let itemResumenCliente of resumenesClientes" [value]="itemResumenCliente">
@@ -361,7 +363,7 @@
                           Vencimiento {{formulario.get('esSeguroPropio').value ? '*' : ''}}
                         </label>
                         <input id="idVencimiento" type="date" formControlName="vencimientoPolizaSeguro"
-                          autocomplete="off" class="form-control form-control-sm"
+                          autocomplete="off" class="form-control form-control-sm" min="1500-12-31" max="4000-12-31"
                           [required]="formulario.get('esSeguroPropio') ? true : false" [readonly]="soloLectura">
                       </div>
                     </div>
@@ -443,33 +445,33 @@
                           class="table-width-cb mat-elevation-z1">
                           <ng-container matColumnDef="empresa" sticky>
                             <th mat-header-cell *matHeaderCellDef mat-sort-header>Empresa</th>
-                            <td mat-cell class="text-left" *matCellDef="let elemento">
+                            <td mat-cell *matCellDef="let elemento">
                               {{elemento.empresa ? elemento.empresa.razonSocial : null}}</td>
                           </ng-container>
                           <ng-container matColumnDef="banco">
                             <th mat-header-cell *matHeaderCellDef mat-sort-header>Banco</th>
-                            <td mat-cell class="text-left" *matCellDef="let elemento">
+                            <td mat-cell *matCellDef="let elemento">
                               {{elemento.cuentaBancaria ? elemento.cuentaBancaria.sucursalBanco.banco.nombre : null}}
                             </td>
                           </ng-container>
                           <ng-container matColumnDef="sucursal">
                             <th mat-header-cell *matHeaderCellDef mat-sort-header>Sucursal</th>
-                            <td mat-cell class="text-left" *matCellDef="let elemento">
+                            <td mat-cell *matCellDef="let elemento">
                               {{elemento.cuentaBancaria ? elemento.cuentaBancaria.sucursalBanco.nombre : null}}</td>
                           </ng-container>
                           <ng-container matColumnDef="numCuenta">
                             <th mat-header-cell *matHeaderCellDef mat-sort-header>N° de Cuenta</th>
-                            <td mat-cell class="text-left" *matCellDef="let elemento">
+                            <td mat-cell *matCellDef="let elemento">
                               {{elemento.cuentaBancaria ? elemento.cuentaBancaria.numeroCuenta : null}}</td>
                           </ng-container>
                           <ng-container matColumnDef="cbu">
                             <th mat-header-cell *matHeaderCellDef mat-sort-header>CBU</th>
-                            <td mat-cell class="text-left" *matCellDef="let elemento">
+                            <td mat-cell *matCellDef="let elemento">
                               {{elemento.cuentaBancaria ? elemento.cuentaBancaria.cbu : null}}</td>
                           </ng-container>
                           <ng-container matColumnDef="aliasCbu">
                             <th mat-header-cell *matHeaderCellDef mat-sort-header>Alias CBU</th>
-                            <td mat-cell class="text-left" *matCellDef="let elemento">
+                            <td mat-cell *matCellDef="let elemento">
                               {{elemento.cuentaBancaria ? elemento.cuentaBancaria.aliasCBU : null}}</td>
                           </ng-container>
                           <ng-container matColumnDef="cuentaBancaria" stickyEnd>
@@ -622,37 +624,37 @@
       </div>
       <div class="row">
         <div class="tabla">
-          <table mat-table [dataSource]="listaCompleta" matSort class=" mat-elevation-z1">
+          <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
             <ng-container matColumnDef="RAZON_SOCIAL" sticky>
               <th mat-header-cell *matHeaderCellDef mat-sort-header>Razón Social</th>
-              <td mat-cell class="text-left" *matCellDef="let elemento">{{elemento.razonSocial? elemento.razonSocial : '--'}}</td>
+              <td mat-cell *matCellDef="let elemento">{{elemento.razonSocial? elemento.razonSocial : ''}}</td>
             </ng-container>
             <ng-container matColumnDef="ID">
               <th mat-header-cell *matHeaderCellDef mat-sort-header class="col-id-width">#</th>
-              <td mat-cell class="text-left" *matCellDef="let elemento">{{elemento.id}}</td>
+              <td mat-cell *matCellDef="let elemento">{{elemento.id}}</td>
             </ng-container>
             <ng-container matColumnDef="TIPO_DOC">
               <th mat-header-cell *matHeaderCellDef mat-sort-header>Tipo Documento</th>
-              <td mat-cell class="text-left" *matCellDef="let elemento">
-                {{elemento.tipoDocumento.nombre? elemento.tipoDocumento.nombre : '--'}}</td>
+              <td mat-cell *matCellDef="let elemento">
+                {{elemento.tipoDocumento.nombre ? elemento.tipoDocumento.nombre : ''}}</td>
             </ng-container>
             <ng-container matColumnDef="NUM_DOC">
               <th mat-header-cell *matHeaderCellDef mat-sort-header>N° Documento</th>
-              <td mat-cell class="text-left" *matCellDef="let elemento">
-                {{elemento.numeroDocumento? elemento.numeroDocumento : '--'}}</td>
+              <td mat-cell *matCellDef="let elemento">
+                {{elemento.numeroDocumento ? elemento.numeroDocumento : ''}}</td>
             </ng-container>
             <ng-container matColumnDef="TELEFONO">
               <th mat-header-cell *matHeaderCellDef mat-sort-header>Teléfono</th>
-              <td mat-cell class="text-left" *matCellDef="let elemento">
-                {{elemento.telefono? elemento.telefono : '--'}}</td>
+              <td mat-cell *matCellDef="let elemento">
+                {{elemento.telefono ? elemento.telefono : ''}}</td>
             </ng-container>
             <ng-container matColumnDef="DOMICILIO">
               <th mat-header-cell *matHeaderCellDef mat-sort-header>Domicilio</th>
-              <td mat-cell class="text-left" *matCellDef="let elemento">{{elemento.domicilio? elemento.domicilio: '--'}}</td>
+              <td mat-cell *matCellDef="let elemento">{{elemento.domicilio ? elemento.domicilio : ''}}</td>
             </ng-container>
             <ng-container matColumnDef="LOCALIDAD">
               <th mat-header-cell *matHeaderCellDef mat-sort-header>Localidad</th>
-              <td mat-cell class="text-left" *matCellDef="let elemento">{{elemento.localidad.nombre}},
+              <td mat-cell *matCellDef="let elemento">{{elemento.localidad.nombre}},
                 {{elemento.localidad.provincia.nombre}}
               </td>
             </ng-container>

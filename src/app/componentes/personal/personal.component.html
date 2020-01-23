@@ -126,7 +126,7 @@
                             <label for="idFechaNacimiento" class="tamanio-label">Fecha de Nacimiento *</label>
                             <input id="idFechaNacimiento" type="date" formControlName="fechaNacimiento"
                               autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura"
-                              (blur)="verificarFecha(1)">
+                              (blur)="verificarFecha(1)" min="1500-12-31" max="4000-12-31">
                           </div>
                         </div>
                         <div class="col-md-4">
@@ -303,14 +303,16 @@
                       <div class="form-group has-float-label">
                         <label for="idFechaInicio" class="tamanio-label">Fecha de Inicio *</label>
                         <input id="idFechaInicio" type="date" formControlName="fechaInicio" autocomplete="off"
-                          class="form-control form-control-sm" [readonly]="soloLectura" (blur)="verificarFecha(2)">
+                          class="form-control form-control-sm" [readonly]="soloLectura" (blur)="verificarFecha(2)"
+                          min="1500-12-31" max="4000-12-31">
                       </div>
                     </div>
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label for="idFechaFin" class="tamanio-label">Fecha de Fin</label>
                         <input id="idFechaFin" type="date" formControlName="fechaFin" autocomplete="off"
-                          class="form-control form-control-sm" [readonly]="soloLectura" (blur)="verificarFecha(3)">
+                          class="form-control form-control-sm" [readonly]="soloLectura" (blur)="verificarFecha(3)"
+                          min="1500-12-31" max="4000-12-31">
                       </div>
                     </div>
                   </div>
@@ -863,21 +865,23 @@
                       <div class="form-group has-float-label">
                         <label for="idVtoPsicoFísico" class="tamanio-label">Vto. PsicoFísico *</label>
                         <input id="idVtoPsicoFísico" type="date" formControlName="vtoPsicoFisico" autocomplete="off"
-                          class="form-control form-control-sm" [readonly]="soloLectura" required>
+                          class="form-control form-control-sm" [readonly]="soloLectura" required
+                          min="1500-12-31" max="4000-12-31">
                       </div>
                     </div>
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label for="idVtoCurso" class="tamanio-label">Vto. Curso *</label>
                         <input id="idVtoCurso" type="date" formControlName="vtoCurso" autocomplete="off"
-                          class="form-control form-control-sm" [readonly]="soloLectura" required>
+                          class="form-control form-control-sm" [readonly]="soloLectura" required
+                          min="1500-12-31" max="4000-12-31">
                       </div>
                     </div>
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label for="idVtoCursoCP" class="tamanio-label">Vto. Curso Carga Peligrosa</label>
                         <input id="idVtoCursoCP" type="date" formControlName="vtoCursoCargaPeligrosa" autocomplete="off"
-                          class="form-control form-control-sm" [readonly]="soloLectura">
+                          class="form-control form-control-sm" [readonly]="soloLectura" min="1500-12-31" max="4000-12-31">
                       </div>
                     </div>
                   </div>
@@ -886,7 +890,8 @@
                       <div class="form-group has-float-label">
                         <label for="idVtoLicenciaConducir" class="tamanio-label">Vto. Licencia de Conducir *</label>
                         <input id="idVtoLicenciaConducir" type="date" formControlName="vtoLicenciaConducir"
-                          autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura" required>
+                          autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura" required
+                          min="1500-12-31" max="4000-12-31">
                       </div>
                     </div>
                     <div class="col-md-5">
@@ -919,7 +924,7 @@
                       <div class="form-group has-float-label">
                         <label for="idVtoLINTI" class="tamanio-label">Vto. LINTI *</label>
                         <input id="idVtoLINTI" type="date" formControlName="vtoLINTI" autocomplete="off"
-                          class="form-control form-control-sm" [readonly]="soloLectura" required>
+                          class="form-control form-control-sm" [readonly]="soloLectura" required min="1500-12-31" max="4000-12-31">
                       </div>
                     </div>
                     <div class="col-md-5">
@@ -950,7 +955,8 @@
                       <div class="form-group has-float-label">
                         <label for="idVtoLibretaSanidad" class="tamanio-label">Vto. Lib. Sanidad</label>
                         <input id="idVtoLibretaSanidad" type="date" formControlName="vtoLibretaSanidad"
-                          autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura">
+                          autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura"
+                          min="1500-12-31" max="4000-12-31">
                       </div>
                     </div>
                     <div class="col-md-5">
@@ -1016,13 +1022,14 @@
                       <div class="form-group has-float-label">
                         <label for="idTelefonoMovilFechaEntrega" class="tamanio-label">Fecha de Entrega</label>
                         <input id="idTelefonoMovilFechaEntrega" type="date" formControlName="telefonoMovilFechaEntrega"
-                          autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura">
+                          autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura"
+                          min="1500-12-31" max="4000-12-31">
                       </div>
                     </div>
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label for="idTelefonoMovilFechaDevolucion" class="tamanio-label">Fecha de Devolución</label>
-                        <input id="idTelefonoMovilFechaDevolucion" type="date"
+                        <input id="idTelefonoMovilFechaDevolucion" type="date" min="1500-12-31" max="4000-12-31"
                           formControlName="telefonoMovilFechaDevolucion" autocomplete="off"
                           class="form-control form-control-sm" [readonly]="soloLectura" (blur)="verificarFecha(4)">
                       </div>
