@@ -33,6 +33,8 @@ export class MensajeExcepcion {
 
     public static SELECCIONAR_PROVEEDOR = "Seleccione un proveedor";
 
+    public static ANIO_MENOR_ACTUAL = "El año debe ser menor al actual"
+
     /*
     * FIN ERRORES GENERALES
     */

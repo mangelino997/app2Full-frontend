@@ -175,10 +175,11 @@
         <div class="row">
           <div class="col-md-3">
             <div class="form-group has-float-label">
-              <label for="idAnioFabricacion" class="tamanio-label">Año de Fabricación *</label>
+              <label id="labelAnioFabricacion" for="idAnioFabricacion" class="tamanio-label">Año de Fabricación *</label>
               <input id="idAnioFabricacion" type="text" formControlName="anioFabricacion" autocomplete="off"
                 class="form-control form-control-sm number-right" [readonly]="soloLectura"
-                [textMask]="mascararNumero(4)" (blur)="verificarAnioFabricacion()">
+                [textMask]="mascararNumero(4)" (blur)="verificarAnioFabricacion()" 
+                (ngModelChange)="cambioCampo('idAnioFabricacion', 'labelAnioFabricacion')">
             </div>
           </div>
           <div class="col-md-3">

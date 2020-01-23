@@ -3,7 +3,6 @@ import { Router } from '@angular/router';
 import { FormGroup, FormControl } from '@angular/forms';
 import { LoginService } from '../../servicios/login.service';
 import { UsuarioService } from '../../servicios/usuario.service';
-import { UsuarioEmpresaService } from '../../servicios/usuario-empresa.service';
 import { AppComponent } from '../../app.component';
 import { LoaderService } from 'src/app/servicios/loader.service';
 import { Subscription } from 'rxjs';
@@ -67,6 +66,7 @@ export class LoginComponent implements OnInit {
           //Establece logueado en true
           this.loginService.setLogueado(true);
           this.estaAutenticado = true;
+          this.loaderService.hide();
           //Obtiene el usuario y sus datos
           this.obtenerUsuario(username, this.token);
         } else {
@@ -114,6 +114,7 @@ export class LoginComponent implements OnInit {
   //Define un metodo para ingreso una vez logueado el usuario y seleccionado una empresa
   public ingresar() {
     if (this.estaAutenticado === true) {
+      this.loaderService.show();
       //Obtiene el rol seleccionado
       let rol = this.formulario.get('rol').value;
       if (rol) {
@@ -127,6 +128,7 @@ export class LoginComponent implements OnInit {
       this.appComponent.setEmpresa(empresa);
       //Establece el tema
       this.appComponent.setTema(this.establecerTema(empresa));
+      this.loaderService.hide();
       //Navega a la pagina principal (home)
       this.router.navigate(['/home'], { replaceUrl: true });
     }
