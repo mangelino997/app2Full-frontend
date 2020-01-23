@@ -234,6 +234,8 @@ export class VehiculoComponent implements OnInit {
   }
   //Obtiene la lista de compania de seguros poliza por empresa
   public listarCompaniasSeguroPorEmpresa(empresa, companiaSeguroPoliza): void {
+    this.companiaSeguro.reset();
+    this.companiasSeguros = [];
     this.formulario.get('companiaSeguroPoliza').reset();
     if (empresa) {
       this.loaderService.show();
@@ -256,7 +258,8 @@ export class VehiculoComponent implements OnInit {
   public listarPolizas(companiaSeguroPoliza): void {
     this.loaderService.show();
     let companiaSeguro = this.companiaSeguro.value;
-    this.companiaSeguroPolizaServicio.listarPorCompaniaSeguro(companiaSeguro.id).subscribe(
+    let empresa = this.formulario.get('empresa').value;
+    this.companiaSeguroPolizaServicio.listarPorCompaniaSeguroYEmpresa(companiaSeguro.id, empresa.id).subscribe(
       res => {
         this.companiasSegurosPolizas = res.json();
         if (companiaSeguroPoliza) {
@@ -560,11 +563,16 @@ export class VehiculoComponent implements OnInit {
       }
     );
   }
-  //Verifica que el año de fabricación tenga como minimo 4 caracteres
+  //Verifica que el año de fabricación sea menor al año actual
   public verificarAnioFabricacion() {
-    if (this.formulario.value.anioFabricacion) {
-      this.formulario.value.anioFabricacion.length != 4 ?
-        [this.toastr.error("El año de fabricación debe ser de 4 carácteres."), this.formulario.get('anioFabricacion').reset()] : '';
+    let anio = this.formulario.get('anioFabricacion').value;
+    if (anio) {
+      if(Number(anio) > 2020) {
+        document.getElementById("labelAnioFabricacion").classList.add('label-error');
+        document.getElementById("idAnioFabricacion").classList.add('is-invalid');
+        document.getElementById("idAnioFabricacion").focus();
+        this.toastr.error(MensajeExcepcion.ANIO_MENOR_ACTUAL);
+      }
     }
   }
   //Verifica si se selecciono un elemento del autocompletado

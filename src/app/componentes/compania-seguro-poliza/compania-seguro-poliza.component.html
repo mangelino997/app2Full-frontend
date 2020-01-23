@@ -58,9 +58,10 @@
         <div class="row justify-content-center">
           <div class="col-md-12">
             <div class="form-group has-float-label">
-              <label for="idNumeroPoliza" class="tamanio-label">Número de Póliza *</label>
+              <label id="labelNumeroPoliza" for="idNumeroPoliza" class="tamanio-label">Número de Póliza *</label>
               <input id="idNumeroPoliza" type="text" formControlName="numeroPoliza" autocomplete="off"
-                class="form-control form-control-sm number-right" [readonly]="soloLectura" maxlength="15">
+                class="form-control form-control-sm number-right" [readonly]="soloLectura" maxlength="15"
+                (ngModelChange)="cambioCampo('idNumeroPoliza', 'labelNumeroPoliza')">
             </div>
           </div>
         </div>
@@ -69,7 +70,7 @@
             <div class="form-group has-float-label">
               <label for="idVtoPoliza" class="tamanio-label">Vencimiento de Póliza *</label>
               <input id="idVtoPoliza" type="date" formControlName="vtoPoliza" [min]="fechaActual" autocomplete="off"
-                class="form-control form-control-sm" [readonly]="soloLectura">
+                class="form-control form-control-sm" [readonly]="soloLectura" min="1500-12-31" max="4000-12-31">
             </div>
           </div>
           <div class="col-md-5">

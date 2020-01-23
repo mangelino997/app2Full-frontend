@@ -196,14 +196,19 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
     this.servicio.agregar(this.formulario.value).then(
       res => {
         var respuesta = res.json();
-        if (res.status == 201) {
-          respuesta.then(data => {
+        respuesta.then(data => {
+          if(res.status == 201) {
             this.ultimoId = data.id;
             this.reestablecerFormulario(data.id);
             document.getElementById('idCompaniaSeguro').focus();
             this.toastr.success('Registro agregado con éxito');
-          })
-        }
+          } else {
+            document.getElementById("labelNumeroPoliza").classList.add('label-error');
+            document.getElementById("idNumeroPoliza").classList.add('is-invalid');
+            document.getElementById("idNumeroPoliza").focus();
+            this.toastr.error(data.mensaje);
+          }
+        })
         this.loaderService.hide();
       },
       err => {

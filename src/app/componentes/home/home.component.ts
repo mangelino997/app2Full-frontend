@@ -10,6 +10,8 @@ import { AppComponent } from '../../app.component';
 export class HomeComponent {
   //Define la fecha actual
   public fecha: any = null;
+  //Define el circulo de progreso
+  public show: boolean = true;
   //Define el usuario
   public usuario: any = null;
   constructor(private appComponent: AppComponent, private appService: AppService, private fechaService: FechaService) {
@@ -18,8 +20,12 @@ export class HomeComponent {
   //Al iniciarse el componente
   ngOnInit() {
     this.fechaService.obtenerFecha().subscribe(
-      res=>{
+      res => {
         this.fecha = res.json();
+        this.show = false;
+      },
+      err => {
+        this.show = false;
       }
     )
     this.usuario = this.appService.getUsuario();
