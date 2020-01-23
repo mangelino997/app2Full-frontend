@@ -88,14 +88,6 @@ export class AppService {
   public setUsuario(usuario) {
     this.usuario = usuario;
   }
-  //Obtiene el viaje cabecera
-  // public getViajeCabecera() {
-  //   return this.viajeCabecera;
-  // }
-  // //Establece el viaje cabecera
-  // public setViajeCabecera(viajeCabecera) {
-  //   this.viajeCabecera = viajeCabecera;
-  // }
   //Establece el rol del usuario actual
   public setRol(rol): void {
     this.rol = rol;

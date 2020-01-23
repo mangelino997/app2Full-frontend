@@ -9,6 +9,7 @@ import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
 import { configuracionVehiculo } from 'src/app/modelos/configuracionVehiculo';
 import { ReporteService } from 'src/app/servicios/reporte.service';
+import { MensajeExcepcion } from 'src/app/modelos/mensaje-excepcion';
 
 @Component({
   selector: 'app-configuracion-vehiculo',
@@ -64,7 +65,6 @@ export class ConfiguracionVehiculoComponent implements OnInit {
   constructor(private servicio: ConfiguracionVehiculoService,
     private toastr: ToastrService, private appService: AppService,
     private loaderService: LoaderService, private configuracionVehiculo: configuracionVehiculo, private reporteServicio: ReporteService) {
-
   }
   //Al iniciarse el componente
   ngOnInit() {
@@ -189,14 +189,21 @@ export class ConfiguracionVehiculoComponent implements OnInit {
   }
   //Obtiene la lista de configuracion de vehiculos por tipo y marca
   public listarPorTipoVehiculoMarcaVehiculo() {
+    this.reestablecerCamposFormulario();
     let tipoVehiculo = this.formulario.get('tipoVehiculo').value;
     let marcaVehiculo = this.formulario.get('marcaVehiculo').value;
     if (tipoVehiculo && marcaVehiculo && this.mostrarAutocompletado) {
+      this.loaderService.show();
       this.servicio.listarPorTipoVehiculoMarcaVehiculo(tipoVehiculo.id, marcaVehiculo.id).subscribe(
         res => {
           this.configuraciones = res.json();
+          if(this.configuraciones.length == 0) {
+            this.lanzarError(1001);
+          }
+          this.loaderService.hide();
         },
         err => {
+          this.loaderService.hide();
         }
       )
     }
@@ -280,6 +287,27 @@ export class ConfiguracionVehiculoComponent implements OnInit {
         this.loaderService.hide();
       }
     );
+  }
+  //Lanza un mensaje de error
+  private lanzarError(codigo): void {
+    switch(codigo) {
+      case 1001:
+        this.toastr.warning(MensajeExcepcion.SIN_REGISTROS);
+        break;
+    }
+  }
+  //Reestablece ciertos campos del formulario
+  private reestablecerCamposFormulario(): void {
+    this.formulario.get('modelo').reset();
+    this.formulario.get('descripcion').reset();
+    this.formulario.get('cantidadEjes').reset();
+    this.formulario.get('capacidadCarga').reset();
+    this.formulario.get('tara').reset();
+    this.formulario.get('altura').reset();
+    this.formulario.get('largo').reset();
+    this.formulario.get('ancho').reset();
+    this.formulario.get('m3').reset();
+    this.autocompletado.reset();
   }
   //Reestablece el formulario
   private reestablecerFormulario(id) {
