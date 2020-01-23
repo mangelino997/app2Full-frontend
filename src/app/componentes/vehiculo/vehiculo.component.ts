@@ -242,7 +242,9 @@ export class VehiculoComponent implements OnInit {
           this.companiasSeguros = res.json();
           this.companiasSeguros.length == 0 ? this.toastr.warning("El Titular no tiene Compañía de Seguro asigandas.") : '';
           this.loaderService.hide();
-          this.listarPolizas(companiaSeguroPoliza);
+          if(companiaSeguroPoliza) {
+            this.listarPolizas(companiaSeguroPoliza);
+          }
         },
         err => {
           this.loaderService.hide();
@@ -346,7 +348,7 @@ export class VehiculoComponent implements OnInit {
   public seleccionarPestania(id, nombre) {
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    this.reestablecerFormulario(null);
+    this.reestablecerFormulario();
     switch (id) {
       case 1:
         this.establecerCamposSoloLectura(false);
@@ -473,7 +475,7 @@ export class VehiculoComponent implements OnInit {
         if (res.status == 201) {
           respuesta.then(data => {
             this.ultimoId = data.id;
-            this.reestablecerFormulario(data.id);
+            this.reestablecerFormulario();
             document.getElementById('idTipoVehiculo').focus();
             this.toastr.success(data.mensaje);
           }, err => { })
@@ -510,7 +512,7 @@ export class VehiculoComponent implements OnInit {
       res => {
         let respuesta = res.json();
         if (respuesta.codigo == 200) {
-          this.reestablecerFormulario(null);
+          this.reestablecerFormulario();
           document.getElementById('idAutocompletado').focus();
           this.toastr.success(MensajeExcepcion.ACTUALIZADO);
         } else {
@@ -542,7 +544,7 @@ export class VehiculoComponent implements OnInit {
       res => {
         let respuesta = res.json();
         if (respuesta.codigo == 200) {
-          this.reestablecerFormulario(null);
+          this.reestablecerFormulario();
           document.getElementById('idAutocompletado').focus();
           this.toastr.success(respuesta.mensaje);
         }
@@ -569,16 +571,16 @@ export class VehiculoComponent implements OnInit {
     }
   }
   //Reestablece el formulario
-  private reestablecerFormulario(id) {
+  private reestablecerFormulario() {
     this.vaciarLista();
     this.formulario.reset();
     this.autocompletado.reset();
-    this.tipoVehiculo.setValue(undefined);
-    this.marcaVehiculo.setValue(undefined);
-    this.configuracion.setValue(undefined);
-    /* deshabilita el control'Lista de Configuraciones' */
+    this.tipoVehiculo.reset();
+    this.marcaVehiculo.reset();
+    this.configuracion.reset();
+    this.companiaSeguro.reset();
+    /*Deshabilita el control'Lista de Configuraciones'*/
     this.formulario.get('configuracionVehiculo').disable();
-    id ? this.formulario.get('id').setValue(id) : this.formulario.get('id').setValue(this.ultimoId);
   }
   /*
   * Establece la configuracion de vehiculo al seleccionar un item de la lista
@@ -661,7 +663,9 @@ export class VehiculoComponent implements OnInit {
         if(res.status == 200) {
           res.json().then(
             data => {
-              this.formulario.get('version').setValue(data);
+              this.formulario.get('version').setValue(data.version);
+              this.formulario.get(campo + '.id').setValue(data.pdfTitulo.id);
+              this.formulario.get(campo + '.version').setValue(data.pdfTitulo.version);
             }
           );
           this.toastr.success(MensajeExcepcion.ACTUALIZADO);
@@ -684,7 +688,7 @@ export class VehiculoComponent implements OnInit {
       if (!this.formulario.get(campoNombre).value) {
         this.toastr.success("Sin archivo adjunto");
       } else {
-        this.formulario.get(campoNombre).setValue('');
+        this.formulario.get(campo).reset();
       }
     }
   }
@@ -700,7 +704,7 @@ export class VehiculoComponent implements OnInit {
           if (!this.formulario.get(campoNombre).value) {
             this.toastr.success("Sin archivo adjunto");
           } else {
-            this.formulario.get(campoNombre).setValue('');
+            this.formulario.get(campo).reset();
           }
           this.toastr.success(MensajeExcepcion.ELIMINADO);
         } else {
