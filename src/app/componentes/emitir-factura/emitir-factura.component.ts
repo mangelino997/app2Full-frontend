@@ -612,8 +612,10 @@ export class EmitirFacturaComponent implements OnInit {
   }
   //Controla campos segun datos del Cliente que paga - Sale del metodo 'cambioPagoEnOrigen'
   private controlCamposPorCliente() {
-    //Controla el campo 'Letra' y obtiene el codigo afip
-    this.formulario.value.condicionVenta.id == 1 ? this.formulario.get('letra').setValue('A') : this.formulario.get('letra').setValue('B');
+    // Controla el campo 'Letra' - Es A cuando el cliente es responsable inscripto (afipCondicionIva == 1) sino es B consumidor final
+    this.formulario.value.cliente.afipCondicionIva.id == 1 ?
+      this.formulario.get('letra').setValue('A') : this.formulario.get('letra').setValue('B');
+    // Obtiene el codigo afip y el número
     this.cargarCodigoAfip(this.formulario.value.letra);
     //Controla la lista para el campo 'Orden Venta'
     this.formulario.value.cliente.clienteOrdenesVentas ?
@@ -626,7 +628,7 @@ export class EmitirFacturaComponent implements OnInit {
         this.formulario.value.cliente.vencimientoPolizaSeguro < this.formulario.value.fechaEmision : '') ?
       this.formularioVtaCpteItemFA.get('importeSeguro').enable() : this.formularioVtaCpteItemFA.get('importeSeguro').disable();
     //Controla si habilita el boton FCE MiPyMEs para abrir modal
-    this.formulario.value.tipoComprobante.id == 26 && this.formulario.value.cliente.esReceptorFCE ? this.btnFCE = false : this.btnFCE = true;
+    this.idTipoCpte == 26 && this.formulario.value.cliente.esReceptorFCE ? this.btnFCE = false : this.btnFCE = true;
   }
   //Abre dialogo para agregar un cliente eventual
   public agregarClienteEventual(tipoCliente): void {

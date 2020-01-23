@@ -532,14 +532,16 @@
       <br>
       <div class="row">
         <div class="col-md-1">
+          <button mat-raised-button color="primary" (click)="reiniciarVtaCpte()" style="width: 100%;">Reiniciar</button>
+        </div>
+        <div class="col-md-1">
           <div class="form-group has-float-label">
             <label for="idTotalItems" class="tamanio-label">Items</label>
             <input id="idTotalItems" type="text" [formControl]="contador"
               class="form-control form-control-sm number-right " readonly placeholder="00">
           </div>
         </div>
-        <div class="col-md-5 inline">
-          <button class="btn btn-info btn-custom margin-left-button" (click)="reiniciarVtaCpte()">Reiniciar</button>
+        <div class="col-md-4 inline">
           <button class="btn btn-info btn-custom margin-left-button" style="min-width: fit-content;"
             (click)="abrirCRDialogo()">Contrareembolso</button>
           <button class="btn btn-info btn-custom margin-left-button" style="min-width: fit-content;"
@@ -562,7 +564,7 @@
           </div>
           <div style="width: 240px;">
             <div class="form-group has-float-label">
-              <label for="idImpNetoGravado" class="tamanio-label"><b>Imp. Nto. Gravado($)</b></label>
+              <label for="idImpNetoGravado" class="tamanio-label"><b>Imp.Neto Gravado($)</b></label>
               <input id="idImpNetoGravado" type="text" formControlName="importeNetoGravado" placeholder="$ 0.00"
                 [textMask]="mascararImporte(8, 2)" (blur)="setDecimales(formulario.get('importeNetoGravado'), 2)"
                 class="form-control input-bold form-control-sm number-right" readonly>
@@ -588,8 +590,8 @@
       </div>
       <div class="row justify-content-end" *ngIf="!show">
         <div class="col-md-1">
-          <button mat-raised-button color="primary" type="button"
-            style="width: 100%;" (click)="agregarVentaComprobante()" [disabled]="!formulario.valid">Grabar</button>
+          <button mat-raised-button color="primary" type="button" style="width: 100%;"
+            (click)="agregarVentaComprobante()" [disabled]="!formulario.valid">Grabar</button>
         </div>
       </div>
       <div class="row" *ngIf="show">
