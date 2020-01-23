@@ -586,8 +586,10 @@ export class EmitirFacturaComponent implements OnInit {
   //Establece el punto de venta, letra, numero, codigoAfip
   public cambioPagoEnOrigen() {
     if (this.formulario.value.pagoEnOrigen == true) {
-      document.getElementById('Remitente').className = "border has-float-label pagaSeleccionado";
-      document.getElementById('Destinatario').className = "border has-float-label";
+      // document.getElementById('Remitente').className = "border has-float-label pagaSeleccionado";
+      // document.getElementById('Destinatario').className = "border has-float-label";
+      document.getElementById('idRemitente').className = "form-control form-control-sm input-pagaSeleccionado";
+      document.getElementById('idDestinatario').className = "form-control form-control-sm";
       this.formulario.get('cliente').setValue(this.formulario.get('clienteRemitente').value);
       this.formulario.get('condicionVenta').setValue({ id: this.formulario.get('clienteRemitente').value.condicionVenta.id });
       this.formulario.get('tipoDocumento').setValue(this.formulario.get('clienteRemitente').value.tipoDocumento);
@@ -596,8 +598,8 @@ export class EmitirFacturaComponent implements OnInit {
       this.formulario.get('cobrador').setValue(this.formulario.get('clienteRemitente').value.cobrador);
     }
     else {
-      document.getElementById('Remitente').className = "border has-float-label";
-      document.getElementById('Destinatario').className = "border has-float-label pagaSeleccionado";
+      document.getElementById('idRemitente').className = "form-control form-control-sm";
+      document.getElementById('idDestinatario').className = "form-control form-control-sm input-pagaSeleccionado";
       this.formulario.get('cliente').setValue(this.formulario.get('clienteDestinatario').value);
       this.formulario.get('condicionVenta').setValue({ id: this.formulario.get('clienteDestinatario').value.condicionVenta.id });
       this.formulario.get('afipCondicionIva').setValue(this.formulario.get('clienteDestinatario').value.afipCondicionIva);

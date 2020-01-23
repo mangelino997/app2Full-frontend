@@ -60,6 +60,10 @@ hr {
 .pagaSeleccionado {
     box-shadow: 3px 6px 14px rgba(0, 0, 0, 1);
 }
+.input-pagaSeleccionado{
+    background-color: #50A8FA;
+    color: white;
+}
 tr.planilla-no-seleccionada:hover {
     background-color:#50A8FA !important;
     cursor: pointer;

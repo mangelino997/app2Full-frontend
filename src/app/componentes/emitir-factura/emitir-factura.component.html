@@ -278,8 +278,8 @@
           <div class="col">
             <div class="form-group has-float-label">
               <label for="idViaje" class="tamanio-label">N° Viaje GS</label>
-              <input id="idViaje" type="text" [formControl]="viajeRemito" placeholder="00"
-                [textMask]="mascararEnteroSinDecimales(11)" class="form-control form-control-sm number-right"
+              <input id="idViaje" type="text" [formControl]="viajeRemito" placeholder="0"
+                [textMask]="mascararEnteros(11)" class="form-control form-control-sm number-right"
                 [readOnly]="soloLectura">
               <!-- [readOnly]="soloLectura || itemFactura.id != 1 || itemFactura.id == 2"> -->
               <!--[readOnly]="listaCompletaItems.data.length > 0" -->
@@ -288,8 +288,8 @@
           <div class="col">
             <div class="form-group has-float-label ">
               <label for="idRemito" class="tamanio-label">N° Remito</label>
-              <input id="idRemito" type="text" formControlName="numeroRemito" placeholder="00"
-                [textMask]="mascararEnteroSinDecimales(8)" class="form-control form-control-sm number-right"
+              <input id="idRemito" type="text" formControlName="numeroRemito" placeholder="0"
+                [textMask]="mascararEnteros(8)" class="form-control form-control-sm number-right"
                 [readOnly]="soloLectura">
               <!--(blur)="cambioRemito()" [readOnly]="soloLectura"-->
             </div>
@@ -298,8 +298,8 @@
             <div class="form-group has-float-label">
               <label for="idBultos" class="tamanio-label">Bultos</label>
               <input id="idBultos" type="text" formControlName="bultos"
-                class="form-control form-control-sm number-right" placeholder="00"
-                [textMask]="mascararEnteroSinDecimales(6)" autocomplete="off" [readOnly]="soloLectura">
+                class="form-control form-control-sm number-right" placeholder="0"
+                [textMask]="mascararEnteros(6)" autocomplete="off" [readOnly]="soloLectura">
             </div>
           </div>
           <div class="col">
@@ -378,7 +378,7 @@
               <!--(blur)="calcularSubtotal($event)" setDecimales(formularioVtaCpteItemFA.get('valorDeclarado'), 2)-->
             </div>
           </div>
-          <div class="col">
+          <div class="col" style="max-width: 100px;">
             <div class="form-group has-float-label">
               <label for="idSeguro" class="tamanio-label">% Seguro</label>
               <input id="idSeguro" type="text" formControlName="pSeguro" [textMask]="mascararPorcentaje()"
@@ -388,7 +388,7 @@
             </div>
             <!--(blur)="calcularSubtotal($event)"-->
           </div>
-          <div class="col" style="max-width: 70px;">
+          <div class="col">
             <div class="form-group has-float-label">
               <label for="idFlete" class="tamanio-label">Flete</label>
               <input id="idFlete" type="text" formControlName="flete" class="form-control form-control-sm number-right"
@@ -397,7 +397,7 @@
               <!--(blur)="calcularSubtotal($event)"-->
             </div>
           </div>
-          <div class="col" style="max-width: 70px;">
+          <div class="col" style="max-width: 100px;">
             <div class="form-group has-float-label">
               <label for="idDescuento" class="tamanio-label">% dto.</label>
               <input id="idDescuento" type="text" formControlName="descuentoFlete"
@@ -407,7 +407,7 @@
               <!--(blur)="calcularSubtotal($event)"-->
             </div>
           </div>
-          <div class="col">
+          <div class="col" style="max-width: 100px;">
             <div class="form-group has-float-label">
               <label for="idRetiro" class="tamanio-label">Retiro</label>
               <input id="idRetiro" type="text" formControlName="importeRetiro"
@@ -417,7 +417,7 @@
               <!--(blur)="calcularSubtotal($event)"-->
             </div>
           </div>
-          <div class="col">
+          <div class="col" style="max-width: 100px;">
             <div class="form-group has-float-label">
               <label for="idEntrega" class="tamanio-label">Entrega</label>
               <input id="idEntrega" type="text" formControlName="importeEntrega"
@@ -433,7 +433,7 @@
                 (click)="abrirConceptosVarios()">Varios</button>
             </div>
           </div>
-          <div class="col" style="max-width: 90px;">
+          <div class="col">
             <div class="form-group has-float-label">
               <label for="idSubtotal" class="tamanio-label">Subtotal</label>
               <input id="idSubtotal" type="text" formControlName="importeNetoGravado"
@@ -538,7 +538,7 @@
           <div class="form-group has-float-label">
             <label for="idTotalItems" class="tamanio-label">Items</label>
             <input id="idTotalItems" type="text" [formControl]="contador"
-              class="form-control form-control-sm number-right " readonly placeholder="00">
+              class="form-control form-control-sm number-right " readonly placeholder="0">
           </div>
         </div>
         <div class="col-md-4 inline">
