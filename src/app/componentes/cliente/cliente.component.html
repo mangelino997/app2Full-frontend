@@ -363,7 +363,7 @@
                           Vencimiento {{formulario.get('esSeguroPropio').value ? '*' : ''}}
                         </label>
                         <input id="idVencimiento" type="date" formControlName="vencimientoPolizaSeguro"
-                          autocomplete="off" class="form-control form-control-sm"
+                          autocomplete="off" class="form-control form-control-sm" min="1500-12-31" max="4000-12-31"
                           [required]="formulario.get('esSeguroPropio') ? true : false" [readonly]="soloLectura">
                       </div>
                     </div>

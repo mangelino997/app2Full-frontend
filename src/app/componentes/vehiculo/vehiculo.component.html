@@ -34,7 +34,7 @@
               <label for="idTipoVehiculo" class="tamanio-label">Tipo de Vehículo *</label>
               <mat-select id="idTipoVehiculo" class="form-control form-control-sm" [formControl]="tipoVehiculo"
                 [compareWith]="compareFn"
-                (selectionChange)="tipoVehiculo.value? listarConfiguracionesPorTipoVehiculoMarcaVehiculo(): ''">
+                (selectionChange)="tipoVehiculo.value? listarConfiguracionesPorTipoVehiculoMarcaVehiculo(true): ''">
                 <mat-option *ngFor="let itemTipoVehiculo of tiposVehiculos" [value]="itemTipoVehiculo">
                   {{itemTipoVehiculo.nombre}}
                 </mat-option>
@@ -46,7 +46,7 @@
               <label for="idMarcaVehiculo" class="tamanio-label">Marca de Vehículo *</label>
               <mat-select id="idMarcaVehiculo" class="form-control form-control-sm" [formControl]="marcaVehiculo"
                 [compareWith]="compareFn"
-                (selectionChange)="marcaVehiculo.value? listarConfiguracionesPorTipoVehiculoMarcaVehiculo() : ''">
+                (selectionChange)="marcaVehiculo.value? listarConfiguracionesPorTipoVehiculoMarcaVehiculo(true) : ''">
                 <mat-option *ngFor="let itemMarcaVehiculo of marcasVehiculos" [value]="itemMarcaVehiculo">
                   {{itemMarcaVehiculo.nombre}}
                 </mat-option>
@@ -264,7 +264,7 @@
                 <div class="form-group has-float-label">
                   <label for="idVtoRuta" class="tamanio-label">Vto. Ruta *</label>
                   <input id="idVtoRuta" type="date" formControlName="vtoRuta" autocomplete="off"
-                    class="form-control form-control-sm" [readonly]="soloLectura">
+                    class="form-control form-control-sm" [readonly]="soloLectura" min="1500-12-31" max="4000-12-31">
                 </div>
               </div>
             </div>
@@ -296,7 +296,7 @@
                 <div class="form-group has-float-label">
                   <label for="idVtoRTO" class="tamanio-label">Vto. Inspección Técnica *</label>
                   <input id="idVtoRTO" type="date" formControlName="vtoRTO" autocomplete="off"
-                    class="form-control form-control-sm" [readonly]="soloLectura">
+                    class="form-control form-control-sm" [readonly]="soloLectura" min="1500-12-31" max="4000-12-31">
                 </div>
               </div>
             </div>
@@ -330,7 +330,7 @@
                   <label for="idVtoSenasa" class="tamanio-label">Vto. Senasa
                     <span *ngIf="!esVtoSanidadAlimenticia"> *</span></label>
                   <input id="idVtoSenasa" type="date" formControlName="vtoSenasa" autocomplete="off"
-                    class="form-control form-control-sm" [readonly]="soloLectura">
+                    class="form-control form-control-sm" [readonly]="soloLectura" min="1500-12-31" max="4000-12-31">
                 </div>
               </div>
             </div>
@@ -363,7 +363,7 @@
                   <label for="idVtoHabBromatologica" class="tamanio-label">Vto. Hab. Bromatológica
                     <span *ngIf="!esVtoSanidadAlimenticia"> *</span></label>
                   <input id="idVtoHabBromatologica" type="date" formControlName="vtoHabBromatologica" autocomplete="off"
-                    class="form-control form-control-sm" [readonly]="soloLectura">
+                    class="form-control form-control-sm" [readonly]="soloLectura" min="1500-12-31" max="4000-12-31">
                 </div>
               </div>
             </div>

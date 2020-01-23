@@ -280,7 +280,7 @@ export class VehiculoComponent implements OnInit {
     //Llama a métodos para completar las listas
     this.listarCompaniasSeguroPorEmpresa(elemento.empresa, elemento.companiaSeguroPoliza);
     this.establecerConfiguracion();
-    this.listarConfiguracionesPorTipoVehiculoMarcaVehiculo();
+    this.listarConfiguracionesPorTipoVehiculoMarcaVehiculo(false);
     //Establece compañia de seguro
     this.companiaSeguro.patchValue(elemento.companiaSeguroPoliza.companiaSeguro);
   }
@@ -415,8 +415,11 @@ export class VehiculoComponent implements OnInit {
       });
   }
   //Obtiene la lista de configuraciones de vehiculos por tipoVehiculo y marcaVehiculo
-  public listarConfiguracionesPorTipoVehiculoMarcaVehiculo() {
+  public listarConfiguracionesPorTipoVehiculoMarcaVehiculo(reestablecer) {
     this.loaderService.show();
+    if(reestablecer) {
+      this.reestablecerCamposFormulario();
+    }
     let tipoVehiculo = this.tipoVehiculo.value;
     let marcaVehiculo = this.marcaVehiculo.value;
     this.configuracionesVehiculos = [];
@@ -454,7 +457,7 @@ export class VehiculoComponent implements OnInit {
             if (this.configuracionesVehiculos.length == 0) {
               this.configuracion.reset();
               this.formulario.get('configuracionVehiculo').reset();
-              this.toastr.error("Sin registros en Lista de Configuraciones para el Tipo y Marca de Vehículo.");
+              this.toastr.warning(MensajeExcepcion.SIN_REGISTROS);
             } else {
               this.formulario.get('configuracionVehiculo').enable();
             }
@@ -581,6 +584,14 @@ export class VehiculoComponent implements OnInit {
     this.companiaSeguro.reset();
     /*Deshabilita el control'Lista de Configuraciones'*/
     this.formulario.get('configuracionVehiculo').disable();
+  }
+  //Reestablece ciertos campos del formulario
+  private reestablecerCamposFormulario(): void {
+    this.vaciarLista();
+    this.formulario.reset();
+    this.autocompletado.reset();
+    this.configuracion.reset();
+    this.companiaSeguro.reset();
   }
   /*
   * Establece la configuracion de vehiculo al seleccionar un item de la lista
