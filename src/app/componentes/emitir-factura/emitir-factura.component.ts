@@ -11,7 +11,7 @@ import { PuntoVentaService } from 'src/app/servicios/punto-venta.service';
 import { TipoComprobanteService } from 'src/app/servicios/tipo-comprobante.service';
 import { AfipComprobanteService } from 'src/app/servicios/afip-comprobante.service';
 import { VentaTipoItemService } from 'src/app/servicios/venta-tipo-item.service';
-import { MatDialogRef, MAT_DIALOG_DATA, MatDialog, MatSort, MatTableDataSource } from '@angular/material';
+import { MatDialogRef, MAT_DIALOG_DATA, MatDialog, MatSort, MatTableDataSource, MatPaginator } from '@angular/material';
 import { ViajeTerceroTramoService } from 'src/app/servicios/viaje-tercero-tramo.service';
 import { OrdenVentaEscalaService } from 'src/app/servicios/orden-venta-escala.service';
 import { TipoConceptoVentaService } from 'src/app/servicios/tipo-concepto-venta.service';
@@ -112,6 +112,8 @@ export class EmitirFacturaComponent implements OnInit {
     'SUBTOTAL_IVA', 'QUITAR'];
   //Define la matSort
   @ViewChild(MatSort, { static: false }) sort: MatSort;
+  //Define la paginacion
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Define el mostrar del circulo de progreso
   public show = false;
   //Defiene el render
@@ -884,6 +886,7 @@ export class EmitirFacturaComponent implements OnInit {
   private actualizarTabla() {
     this.listaCompletaItems.data.push(this.formularioVtaCpteItemFA.value);
     this.listaCompletaItems.sort = this.sort;
+    this.listaCompletaItems.paginator = this.paginator;
     this.calcularImportesTotales();
     this.reestablecerformularioVtaCpteItemFA();
     this.contador.setValue(this.contador.value + 1);
@@ -1010,7 +1013,6 @@ export class EmitirFacturaComponent implements OnInit {
     this.formularioRemitente.reset();
     this.formularioDestinatario.reset();
     this.formularioVtaCpteItemFA.reset();
-
 
     //Reestablece las clases de Remitente y Destinatario
     document.getElementById('idRemitente').className = "form-control form-control-sm";
