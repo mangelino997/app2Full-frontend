@@ -35,7 +35,7 @@
                 <div class="form-group has-float-label">
                     <label for="idNumeroDR" class="tamanio-label">Número *</label>
                     <input id="idNumeroDR" [textMask]="mascararEnteros(8)" type="text" formControlName="numero"
-                      autocomplete="off" class="form-control form-control-sm number-right" [readonly]="soloLectura"
+                      autocomplete="off" class="form-control form-control-sm number-right" 
                       (blur)="establecerCerosIzq(formulario.get('numero'), '0000000', -8)">
                   </div>
             </div>

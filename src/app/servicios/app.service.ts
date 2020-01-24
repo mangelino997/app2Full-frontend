@@ -12,7 +12,7 @@ export class AppService {
   private URL_ORIGEN = 'http://localhost:4200'; //LOCAL
   // private URL_ORIGEN = 'http://rigar.neurojit.com'; //RIGAR
   // private URL_ORIGEN = 'https://ute-draimo.appspot.com'; //UTE
-  // private URL_ORIGEN = 'http://200.58.102.22:4200'; //DONWEB
+  // private URL_ORIGEN = 'http://rigar.neurojit.com'; //DONWEB
   //Define la IP
   private IP = 'http://localhost:8080'; //LOCAL
   // private IP = 'https://rigarws-draimo.appspot.com'; //RIGAR
