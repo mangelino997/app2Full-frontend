@@ -16,10 +16,10 @@
                     <label for="idAutocompletado" class="tamanio-label">Buscar</label>
                     <input id="idAutocompletado" class="form-control form-control-sm color-busqueda" type="text"
                         matInput [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off"
-                        (blur)="verificarSeleccion(autocompletado)" placeholder="Por Nombre">
-                    <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)">
-                        <mat-option *ngFor="let item of resultados" [value]="item"
-                            (onSelectionChange)="cambioAutocompletado(item)">
+                        (blur)="verificarSeleccion(autocompletado)" placeholder="Por Descripción">
+                    <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)"
+                            (optionSelected)="establecerElemento()">
+                        <mat-option *ngFor="let item of resultados" [value]="item">
                             {{item.nombre}}
                         </mat-option>
                     </mat-autocomplete>
@@ -43,7 +43,7 @@
                             <label for="idAfipGrupoConcepto" class="tamanio-label">Afip Grupo Concepto *</label>
                             <mat-select id="idAfipGrupoConcepto" class="form-control form-control-sm"
                                 [formControl]="afipGrupoConcepto" [compareWith]="compareFn"
-                                (selectionChange)="listarAfipConceptoSueldo()">
+                                (selectionChange)="listarAfipConceptoSueldo(afipConceptoSueldo)">
                                 <mat-option *ngFor="let itemGrupoConcepto of gruposConceptos"
                                     [value]="itemGrupoConcepto">
                                     {{itemGrupoConcepto.nombre}}
@@ -173,12 +173,74 @@
                     <button id="idBoton" *ngIf="mostrarBoton && !show" mat-raised-button color="primary" formnovalidate
                         (click)="accion(indiceSeleccionado)" [disabled]="!formulario.valid">
                         {{pestaniaActual}}
-                    </button> 
+                    </button>
                 </div>
             </form>
         </div>
     </div>
     <div class="row justify-content-center contenedor" [hidden]="indiceSeleccionado != 5">
-        <div class="col-md-4 text-center"><h1>lista</h1></div>
+        <div class="col-md-12 text-center">
+            <br>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group has-float-label">
+                        <label for="idTipoConceptoSueldo" class="tamanio-label">Tipo de Concepto *</label>
+                        <mat-select id="idTipoConceptoSueldo" class="form-control form-control-sm"
+                            [formControl]="tipoConceptoSueldo" [compareWith]="compareFn">
+                            <mat-option [value]="1">TODOS</mat-option>
+                            <mat-option *ngFor="let itemTipoConceptoSueldo of tiposConceptosSueldos"
+                                [value]="itemTipoConceptoSueldo">
+                                {{itemTipoConceptoSueldo.nombre}}
+                            </mat-option>
+                        </mat-select>
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <button mat-raised-button color="primary" (click)="listarPorTipoConcepto()">Buscar</button>
+                </div>
+            </div>
+            <div class="row" *ngIf="show">
+                <div class="col text-center">
+                    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                </div>
+            </div>
+            <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
+                <ng-container matColumnDef="ID">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
+                    <td mat-cell *matCellDef="let elemento">
+                        {{elemento.id}}</td>
+                </ng-container>
+                <ng-container matColumnDef="CODIGOEMPLEADOR">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Código Empleador</th>
+                    <td mat-cell *matCellDef="let elemento">{{elemento.codigoEmpleador}}</td>
+                </ng-container>
+                <ng-container matColumnDef="NOMBRE">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Descripción</th>
+                    <td mat-cell *matCellDef="let elemento">{{elemento.nombre}}</td>
+                </ng-container>
+                <ng-container matColumnDef="TIPOCONCEPTO">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Tipo de Concepto</th>
+                    <td mat-cell *matCellDef="let elemento">{{elemento.tipoConceptoSueldo}}</td>
+                </ng-container>
+                <ng-container matColumnDef="EDITAR" stickyEnd>
+                    <th mat-header-cell *matHeaderCellDef><button class="button-full-width" mat-raised-button
+                            color="primary" [disabled]="listaCompleta.data.length==0"
+                            (click)="abrirReporte()">Reporte</button></th>
+                    <td mat-cell *matCellDef="let elemento">
+                        <button mat-icon-button class="mat-icon-button-table" (click)="activarConsultar(elemento)"
+                            matTooltip="Consultar" matTooltipPosition="above">
+                            <mat-icon>search</mat-icon>
+                        </button>
+                        <button mat-icon-button class="mat-icon-button-table margin-left-3"
+                            (click)="activarActualizar(elemento)" matTooltip="Editar" matTooltipPosition="above">
+                            <mat-icon>edit</mat-icon>
+                        </button>
+                    </td>
+                </ng-container>
+                <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+                <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
+            </table>
+            <mat-paginator [pageSizeOptions]="[10]" showFirstLastButtons></mat-paginator>
+        </div>
     </div>
 </div>

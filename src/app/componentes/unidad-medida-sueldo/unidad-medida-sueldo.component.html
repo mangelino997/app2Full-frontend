@@ -43,11 +43,22 @@
                     (click)="accion(indiceSeleccionado)" [disabled]="!formulario.valid">
                     {{pestaniaActual}}
                 </button>
+                <div class="row" *ngIf="show">
+                    <div class="col text-center">
+                      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                    </div>
+                </div>
             </form>
         </div>
     </div><br>
     <div class="row justify-content-center contenedor" [hidden]="indiceSeleccionado != 5">
         <div class="col-md-6">
+                <div class="row" *ngIf="show">
+                    <div class="col text-center">
+                        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                    </div>
+                </div>
+            <br>
             <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
                 <ng-container matColumnDef= "ID">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
@@ -79,6 +90,7 @@
                 <tr mat-header-row *matHeaderRowDef="columnas"></tr>
                 <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
             </table>
+            <mat-paginator [pageSizeOptions]="[10]" showFirstLastButtons></mat-paginator>
         </div>
     </div>
 </div>

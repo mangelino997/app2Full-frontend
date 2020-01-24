@@ -8,7 +8,7 @@ import {
   MatSelectModule, MatProgressBarModule, MatIconModule, MatButtonModule, MatDialogModule, MatRadioModule, MatCheckboxModule
 } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { EmitirFacturaComponent, ConceptosVariosDialogo, QuitarItemDialogo, ObservacionDialogo, ViajeDialogo } from 'src/app/componentes/emitir-factura/emitir-factura.component';
+import { ConceptosVariosDialogo, QuitarItemDialogo, ObservacionDialogo, ViajeDialogo, EmitirFacturaComponent } from 'src/app/componentes/emitir-factura/emitir-factura.component';
 import { TextMaskModule } from 'angular2-text-mask';
 import { VentaComprobanteService } from 'src/app/servicios/venta-comprobante.service';
 import { ClienteService } from 'src/app/servicios/cliente.service';
@@ -30,6 +30,7 @@ import { AfipCaeService } from 'src/app/servicios/afip-cae.service';
 import { ViajeTramoRemitoService } from 'src/app/servicios/viaje-tramo-remito.service';
 import { VentaComprobanteItemCR } from 'src/app/modelos/ventaComprobanteItemCR';
 import { ViajeTramoClienteRemitoService } from 'src/app/servicios/viaje-tramo-cliente-remito.service';
+import { AforoComponent } from 'src/app/componentes/aforo/aforo.component';
 
 @NgModule({
   declarations: [
@@ -37,7 +38,8 @@ import { ViajeTramoClienteRemitoService } from 'src/app/servicios/viaje-tramo-cl
     ConceptosVariosDialogo,
     QuitarItemDialogo,
     ObservacionDialogo,
-    ViajeDialogo
+    ViajeDialogo,
+    
   ],
   imports: [
     CommonModule,
@@ -84,7 +86,7 @@ import { ViajeTramoClienteRemitoService } from 'src/app/servicios/viaje-tramo-cl
     ConceptosVariosDialogo,
     QuitarItemDialogo,
     ObservacionDialogo,
-    ViajeDialogo
+    ViajeDialogo,
   ]
 })
 export class EmitirFacturaModule { }

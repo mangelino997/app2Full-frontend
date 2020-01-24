@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ConceptosService } from 'src/app/servicios/conceptos.service';
 import { TipoConceptoSueldoService } from 'src/app/servicios/tipo-concepto-sueldo.service';
 import { FormGroup, FormControl } from '@angular/forms';
@@ -6,6 +6,11 @@ import { AfipConceptoSueldoGrupoService } from 'src/app/servicios/afip-concepto-
 import { AfipConceptoSueldoService } from 'src/app/servicios/afip-concepto-sueldo.service';
 import { UnidadMedidaSueldoService } from 'src/app/servicios/unidad-medida-sueldo.service';
 import { AppService } from 'src/app/servicios/app.service';
+import { LoaderService } from 'src/app/servicios/loader.service';
+import { LoaderState } from 'src/app/modelos/loader';
+import { ToastrService } from 'ngx-toastr';
+import { Subscription } from 'rxjs';
+import { MatTableDataSource, MatSort, MatPaginator } from '@angular/material';
 
 @Component({
   selector: 'app-conceptos',
@@ -27,6 +32,8 @@ export class ConceptosComponent implements OnInit {
   public codigoAfip: FormControl = new FormControl();
   //Define el Formulario
   public formulario: FormGroup;
+  //Define la lista completa de registros
+  public listaCompleta = new MatTableDataSource([]);
   //Define la lista de Tipos de Conceptos
   public tiposConceptosSueldos: Array<any> = [];
   //Define la lista de Afip Grupo Concepto
@@ -51,15 +58,28 @@ export class ConceptosComponent implements OnInit {
   public activeLink: any = null;
   //Defiene el render
   public render: boolean = false;
-
+  //Define la lista de resultados de busqueda
+  public resultados: Array<any> = [];
+  //Define el mostrar del circulo de progreso
+  public show = false;
+  //Define la subscripcion a loader.service
+  private subscription: Subscription;
+  //Define las columnas de la tabla
+  public columnas: string[] = ['ID', 'CODIGOEMPLEADOR', 'NOMBRE','TIPOCONCEPTO','EDITAR'];
+  //Define la matSort
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
+  //Define la paginacion
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Define el constructor de la clase
-  constructor(private conceptosService: ConceptosService, private tipoConceptoSueldoService: TipoConceptoSueldoService,
+  constructor(private conceptosService: ConceptosService, private tipoConceptoSueldoService: TipoConceptoSueldoService, private loaderService: LoaderService, private toastrService: ToastrService,
     private afipConceptoSueldoGrupoService: AfipConceptoSueldoGrupoService, private afipConceptoSueldoService: AfipConceptoSueldoService, private unidadMedidaSueldoService: UnidadMedidaSueldoService, private appService: AppService) {
     this.formulario = new FormGroup({
       //Se definen los FormControl del Formulario
+      id: new FormControl(),
+      version: new FormControl(),
+      nombre: new FormControl(),
       afipConceptoSueldo: new FormControl(),
       codigoEmpleador: new FormControl(),
-      nombre: new FormControl(),
       unidadMedidaSueldo: new FormControl(),
       ingresaCantidad: new FormControl(),
       ingresaValorUnitario: new FormControl(),
@@ -67,13 +87,35 @@ export class ConceptosComponent implements OnInit {
       esRepetible: new FormControl(),
       imprimeValorUnitario: new FormControl(),
     })
+    //Autocompletado - Buscar por nombre
+    this.autocompletado.valueChanges.subscribe(nombre => {
+      if (typeof nombre == 'string') {
+        nombre = nombre.trim();
+        if (nombre == '*' || nombre.length > 0) {
+          this.loaderService.show();
+          this.conceptosService.listarPorNombre(nombre).subscribe(response => {
+            this.resultados = response.json();
+            this.loaderService.hide();
+          },
+            err => {
+              this.loaderService.hide();
+            })
+        }
+      }
+    })
   }
   //Al inicializarse el componente se ejecuta el codigo de OnInit
   ngOnInit() {
+    //Establece la subscripcion a loader
+    this.subscription = this.loaderService.loaderState
+      .subscribe((state: LoaderState) => {
+        this.show = state.show;
+      });
     /* Obtiene todos los listados */
     this.inicializar(this.appService.getRol().id, this.appService.getSubopcion());
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar');
+    this.esRepetible();
   }
   //Obtiene los datos necesarios para el componente
   private inicializar(idRol, idSubopcion) {
@@ -93,20 +135,28 @@ export class ConceptosComponent implements OnInit {
       }
     )
   }
+  //Pone al campo en ready Only y con valor "true" 
+  public esRepetible(){
+    this.formulario.get('esRepetible').setValue(true);
+    this.formulario.get('esRepetible').disable();
+  }
+
   //LLama a la funcion de listar Afip Concepto Sueldo Grupo y a funcion Obtener el ultimo código Empleador 
   public listarACSGyobtenerUCE(){
-    this.listarAfipConceptoSueldoGrupo();
+    this.listarAfipConceptoSueldoGrupo(null);
     this.obtieneUltimoCodigoEmpleador();
   }
   //Lista el selec de Afip Grupo Concepto
-  public listarAfipConceptoSueldoGrupo() {
+  private listarAfipConceptoSueldoGrupo(afipConceptoSueldoGrupo) {
     let id = this.tipoConceptoSueldo.value.id;
     this.afipConceptoSueldoGrupoService.listarPorTipoConceptoSueldo(id).subscribe(
       res => {
         this.gruposConceptos = res.json();
+        if (afipConceptoSueldoGrupo != null) {
+          this.afipGrupoConcepto.setValue(afipConceptoSueldoGrupo);
+        }
       },
       err => {
-        console.log('err');
       }
     )
   }
@@ -118,19 +168,20 @@ export class ConceptosComponent implements OnInit {
         this.formulario.get('codigoEmpleador').setValue(res.text());
       },
       err=>{
-        console.log('NO');
       }
     )
   }
   //Lista el select de Afip Concepto
-  public listarAfipConceptoSueldo() {
+  public listarAfipConceptoSueldo(afipConceptoSueldo) {
     let id = this.afipGrupoConcepto.value.id;
     this.afipConceptoSueldoService.listarPorAfipConceptoSueldoGrupo(id).subscribe(
       res => {
         this.afipConceptosSueldo = res.json();
+        if (afipConceptoSueldo != null) {
+          this.formulario.get('afipConceptoSueldo').setValue(afipConceptoSueldo);
+        }
       },
       err => {
-
       }
     )
   }
@@ -155,21 +206,72 @@ export class ConceptosComponent implements OnInit {
         break;
     }
   }
+  //Obtiene el listado de registros por filtro
+  public listarPorTipoConcepto() {
+    this.loaderService.show();
+    let tipoConcepto = this.tipoConceptoSueldo.value;
+    tipoConcepto = tipoConcepto == '1' ? 0 : tipoConcepto.id;
+    this.conceptosService.listarPorTipoConcepto(tipoConcepto).subscribe(
+      res => {
+        this.listaCompleta = new MatTableDataSource(res.json());
+        this.listaCompleta.sort = this.sort;
+        this.listaCompleta.paginator = this.paginator;
+        this.loaderService.hide();
+        this.listaCompleta.data.length == 0 ? this.toastrService.warning("Sin registros para mostrar") : '';
+      },
+      err => {
+        this.toastrService.error(err.json().message);
+        this.loaderService.hide();
+      });
+  }
   public liquidacion() {
   }
   public subSistema() {
   }
   public formula() {
   }
+  //Agrega un registro
   public agregar() {
+    console.log(this.formulario.value);
+    this.loaderService.show();
+    this.conceptosService.agregar(this.formulario.value).subscribe(
+      res => {
+        let respuesta = res.json();
+        if (respuesta.codigo == 201) {
+          this.ultimoId = respuesta.id;
+          this.reestablecerFormulario();
+          document.getElementById('idTipoConceptoSueldo').focus();
+          this.toastrService.success(respuesta.mensaje);
+          this.loaderService.hide();
+        }
+      },
+      err => {
+        let respuesta = err.json();
+        if (respuesta.codigo == 11002) {
+          document.getElementById("labelNombre").classList.add('label-error');
+          document.getElementById("idTipoConceptoSueldo").classList.add('is-invalid');
+          document.getElementById("idTipoConceptoSueldo").focus();
+          this.toastrService.error(respuesta.mensaje);
+        } else {
+          this.toastrService.error(respuesta.mensaje);
+        }
+        this.loaderService.hide();
+      }
+    );
   }
   public actualizar() {
   }
   public eliminar() {
   }
-  //Establece el formulario al seleccionar elemento del autocompletado
-  public cambioAutocompletado(elemento) {
-    this.formulario.patchValue(elemento);
+  //Establece el formulario al seleccionar elemento de autocompletado
+  public establecerElemento() {
+    let elemento = this.autocompletado.value;
+    console.log(elemento);
+    this.formulario.setValue(this.autocompletado.value);
+    this.tipoConceptoSueldo.setValue(elemento.afipConceptoSueldo.afipConceptoSueldoGrupo.tipoConceptoSueldo);
+    this.listarAfipConceptoSueldoGrupo(elemento.afipConceptoSueldo.afipConceptoSueldoGrupo);
+    
+    this.codigoAfip.setValue(elemento.afipConceptoSueldo.codigoAfip);
   }
   //Formatea el valor del autocompletado
   public displayFn(elemento) {
@@ -188,9 +290,6 @@ export class ConceptosComponent implements OnInit {
   }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
-    /* Limpia el formulario para no mostrar valores en campos cuando 
-      la pestaña es != 1 */
-    this.indiceSeleccionado != 1 ? this.formulario.reset() : '';
     this.pestaniaActual = nombrePestania;
     this.mostrarAutocompletado = autocompletado;
     this.soloLectura = soloLectura;
@@ -206,19 +305,25 @@ export class ConceptosComponent implements OnInit {
     this.reestablecerFormulario();
     switch (id) {
       case 1:
+        this.camposSoloLectura(false);
         this.establecerValoresPestania(nombre, false, false, true, 'idTipoConceptoSueldo');
         break;
       case 2:
+        this.camposSoloLectura(true);
         this.establecerValoresPestania(nombre, true, true, false, 'idAutocompletado');
         break;
       case 3:
+        this.camposSoloLectura(false);
         this.establecerValoresPestania(nombre, true, false, true, 'idAutocompletado');
         break;
       case 4:
+        this.camposSoloLectura(true);
         this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
         break;
       case 5:
-        // this.listar();
+        setTimeout(function () {
+          document.getElementById('idTipoConceptoSueldo').focus();
+        }, 20);
         break;
       default:
         break;
@@ -226,8 +331,13 @@ export class ConceptosComponent implements OnInit {
   }
   //Reestablece los campos formularios
   private reestablecerFormulario() {
+    this.resultados = [];
     this.formulario.reset();
     this.autocompletado.reset();
+    this.tipoConceptoSueldo.reset();
+    this.afipGrupoConcepto.reset();
+    this.codigoAfip.reset();
+    this.esRepetible();
   }
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
@@ -250,6 +360,36 @@ export class ConceptosComponent implements OnInit {
       } else {
         this.seleccionarPestania(1, this.pestanias[0].nombre);
       }
+    }
+  }
+  //Establecer los campos de solo lectura
+  public camposSoloLectura(opcion): void {
+    if (opcion){
+      this.formulario.get('afipConceptoSueldo').disable();
+      this.formulario.get('nombre').disable()
+      this.formulario.get('codigoEmpleador').disable();
+      this.formulario.get('unidadMedidaSueldo').disable();
+      this.formulario.get('ingresaCantidad').disable();
+      this.formulario.get('ingresaValorUnitario').disable();
+      this.formulario.get('ingresaImporte').disable();
+      this.formulario.get('esRepetible').disable();
+      this.formulario.get('imprimeValorUnitario').disable();
+      this.tipoConceptoSueldo.disable();
+      this.afipGrupoConcepto.disable();
+      this.codigoAfip.disable();
+    } else {
+      this.formulario.get('afipConceptoSueldo').enable();
+      this.formulario.get('nombre').enable()
+      this.formulario.get('codigoEmpleador').enable();
+      this.formulario.get('unidadMedidaSueldo').enable();
+      this.formulario.get('ingresaCantidad').enable();
+      this.formulario.get('ingresaValorUnitario').enable();
+      this.formulario.get('ingresaImporte').enable();
+      this.formulario.get('esRepetible').enable();
+      this.formulario.get('imprimeValorUnitario').enable();
+      this.tipoConceptoSueldo.enable();
+      this.afipGrupoConcepto.enable();
+      this.codigoAfip.enable();
     }
   }
   //Verifica si se selecciono un elemento del autocompletado

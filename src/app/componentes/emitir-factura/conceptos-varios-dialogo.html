@@ -10,7 +10,7 @@
                 <div class="form-group has-float-label">
                     <label for="idConcepto" class="tamanio-label">Concepto</label>
                     <mat-select id="idConcepto" type="number" formControlName="concepto"
-                        class="form-control form-control-sm number-right">
+                        class="form-control form-control-sm number-right" [compareWith]="compareFn">
                         <mat-option *ngFor="let item of conceptos" [value]="item">
                             {{item.nombre}}
                         </mat-option>
@@ -28,7 +28,7 @@
         </div>
         <div class="row justify-content-center">
             <button mat-raised-button color="primary" [mat-dialog-close]="formulario.value">Aceptar</button>
-            <button class="margin-left-3" mat-raised-button [mat-dialog-close]="">Cancelar</button>
+            <button class="margin-left-3" mat-raised-button [mat-dialog-close]="formulario.value">Cancelar</button>
         </div>
     </form>
 </div>
