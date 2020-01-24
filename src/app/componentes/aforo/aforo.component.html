@@ -9,8 +9,8 @@
       <form [formGroup]="formulario" class="contenedor">
         <div class="row">
           <div class="form-group has-float-label col-md-2">
-            <label for="idCodigo" class="tamanio-label">Aforo kg/m3 *</label>
-            <input id="idCodigo" type="text" formControlName="aforo" class="form-control form-control-sm number-right"
+            <label for="idKg" class="tamanio-label">Aforo kg/m3 *</label>
+            <input id="idKg" type="text" formControlName="aforo" class="form-control form-control-sm number-right"
               [textMask]="obtenerMascaraEnteroConDecimales(10)" (blur)="setDecimales(formulario.get('aforo'), 2)"
               readonly>
           </div>
@@ -18,31 +18,31 @@
         <div class="row">
           <div class="col-md-2">
             <div class="form-group has-float-label">
-              <label for="idCodigo" class="tamanio-label">Cantidad *</label>
-              <input id="idCodigo" type="text" formControlName="cantidad" placeholder="0"
+              <label for="idCantidad" class="tamanio-label">Cantidad *</label>
+              <input id="idCantidad" type="text" formControlName="cantidad" placeholder="0"
                 class="form-control form-control-sm number-right" [textMask]="obtenerMascaraEnteroSinDecimales(10)">
             </div>
           </div>
           <div class="col-md-3">
             <div class="form-group has-float-label">
-              <label for="idCodigo" class="tamanio-label">Alto (m) *</label>
-              <input id="idCodigo" type="text" formControlName="alto" placeholder="0.00"
+              <label for="idAlto" class="tamanio-label">Alto (m) *</label>
+              <input id="idAlto" type="text" formControlName="alto" placeholder="0.00"
                 class="form-control form-control-sm number-right" [textMask]="obtenerMascaraEnteroConDecimales(10)"
                 (blur)="setDecimales(formulario.get('alto'), 2)">
             </div>
           </div>
           <div class="col-md-3">
             <div class="form-group has-float-label">
-              <label for="idCodigo" class="tamanio-label">Ancho (m) *</label>
-              <input id="idCodigo" type="text" formControlName="ancho" placeholder="0.00"
+              <label for="idAncho" class="tamanio-label">Ancho (m) *</label>
+              <input id="idAncho" type="text" formControlName="ancho" placeholder="0.00"
                 class="form-control form-control-sm number-right" [textMask]="obtenerMascaraEnteroConDecimales(10)"
                 (blur)="setDecimales(formulario.get('ancho'), 2)">
             </div>
           </div>
           <div class="col-md-3">
             <div class="form-group has-float-label">
-              <label for="idCodigo" class="tamanio-label">Largo (m) *</label>
-              <input id="idCodigo" type="text" formControlName="largo" placeholder="0.00"
+              <label for="idlargo" class="tamanio-label">Largo (m) *</label>
+              <input id="idlargo" type="text" formControlName="largo" placeholder="0.00"
                 class="form-control form-control-sm number-right" [textMask]="obtenerMascaraEnteroConDecimales(10)"
                 (blur)="setDecimales(formulario.get('largo'), 2)">
             </div>
@@ -56,8 +56,8 @@
         <div class="row">
           <div class="col-md-2">
             <div class="form-group has-float-label">
-              <label for="idCodigo" class="tamanio-label">Total kg Aforado *</label>
-              <input id="idCodigo" type="text" formControlName="kiloAforadoTotal"
+              <label for="idTotal" class="tamanio-label">Total kg Aforado *</label>
+              <input id="idTotal" type="text" formControlName="kiloAforadoTotal"
                 class="form-control form-control-sm number-right" placeholder="0.00" readonly>
             </div>
           </div>

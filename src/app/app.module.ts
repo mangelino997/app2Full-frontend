@@ -94,6 +94,7 @@ import { AfipConceptoSueldo } from './modelos/afipConceptoSueldo';
 import { AfipConceptoSueldoGrupoService } from './servicios/afip-concepto-sueldo-grupo.service';
 import { AfipConceptoSueldoGrupo } from './modelos/afipConceptoSueldoGrupo';
 import { TipoConceptoVentaService } from './servicios/tipo-concepto-venta.service';
+import { Aforo } from './modelos/aforo';
 
 const stompConfig: StompConfig = {
   url: 'ws://localhost:8080/jitws/socket',
@@ -132,7 +133,8 @@ const stompConfig: StompConfig = {
     TotalesConceptoDialogoComponent,
     UsuariosActivosDialogoComponent,
     BugImagenDialogoComponent,
-    CuentaBancariaDialogoComponent
+    CuentaBancariaDialogoComponent,
+
   ],
   imports: [
     FormsModule,
@@ -210,6 +212,7 @@ const stompConfig: StompConfig = {
     SucursalService,
     ClienteService,
     ClienteEventual,
+    Aforo,
     ClienteCuentaBancariaService,
     ClienteVtoPagoService,
     TipoLiquidacionSueldoService,
