@@ -55,12 +55,13 @@ export class ConceptosService {
   }
   //Obtiene un listado por nombre
   public listarPorNombre(nombre) {
-    return this.http.get(this.url + '/listarPorNombre/' + nombre, this.options).map(res => {
-      return res.json().map(data => {
-        return data;
-      })
-    })
+    return this.http.get(this.url + '/listarPorNombre/' + nombre, this.options);
   }
+  //Obtiene el listado filtrado por Tipo Concepto
+  public listarPorTipoConcepto(idTipoConceptoSueldo){
+    return this.http.get(this.url + '/listarPorTipoConcepto/'+ idTipoConceptoSueldo, this.options);
+  }
+  
   //Obtiene todos los listados
   public inicializar(idRol, idSubopcion) {
     return this.http.get(this.url + '/inicializar/' + idRol + '/' + idSubopcion, this.options);

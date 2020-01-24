@@ -1,11 +1,13 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { UnidadMedidaSueldoService } from 'src/app/servicios/unidad-medida-sueldo.service';
-import { FormGroup, FormControl } from '@angular/forms';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { AppService } from 'src/app/servicios/app.service';
 import { LoaderService } from 'src/app/servicios/loader.service';
+import { LoaderState } from 'src/app/modelos/loader';
 import { MatTableDataSource, MatSort, MatPaginator } from '@angular/material';
 import { ReporteService } from 'src/app/servicios/reporte.service';
 import { ToastrService } from 'ngx-toastr';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-unidad-medida-sueldo',
@@ -39,6 +41,10 @@ export class UnidadMedidaSueldoComponent implements OnInit {
   public pestanias: Array<any> = [];
   //Define la lista de resultados de busqueda
   public resultados: Array<any> = [];
+  //Define el mostrar del circulo de progreso
+  public show = false;
+  //Define la subscripcion a loader.service
+  private subscription: Subscription;
   //Define las columnas de la tabla
   public columnas: string[] = ['ID', 'NOMBRE', 'CODIGOAFIP','EDITAR'];
   //Define la matSort
@@ -51,10 +57,15 @@ export class UnidadMedidaSueldoComponent implements OnInit {
       id: new FormControl(),
       version: new FormControl(),
       nombre: new FormControl(),
-      codigoAfip: new FormControl(),
+      codigoAfip: new FormControl('', [Validators.required, Validators.maxLength(3)]),
     })
   }
   ngOnInit() {
+    //Establece la subscripcion a loader
+    this.subscription = this.loaderService.loaderState
+      .subscribe((state: LoaderState) => {
+        this.show = state.show;
+      });
     //Obtiene los datos principales para el componente
     this.inicializar(this.appService.getRol().id, this.appService.getSubopcion());
     //Establece los valores de la primera pestania activa
