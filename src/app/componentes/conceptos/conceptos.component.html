@@ -186,8 +186,8 @@
                     <div class="form-group has-float-label">
                         <label for="idTipoConceptoSueldo" class="tamanio-label">Tipo de Concepto *</label>
                         <mat-select id="idTipoConceptoSueldo" class="form-control form-control-sm"
-                            [formControl]="tipoConceptoSueldo" [compareWith]="compareFn">
-                            <mat-option [value]="1">TODOS</mat-option>
+                            [formControl]="tipoConceptoSueldo" [compareWith]="compareFn" (selectionChange)="vaciarLista()">
+                            <mat-option [value]="0">TODOS</mat-option>
                             <mat-option *ngFor="let itemTipoConceptoSueldo of tiposConceptosSueldos"
                                 [value]="itemTipoConceptoSueldo">
                                 {{itemTipoConceptoSueldo.nombre}}

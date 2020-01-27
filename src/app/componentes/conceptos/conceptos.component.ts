@@ -52,6 +52,7 @@ export class ConceptosComponent implements OnInit {
   public mostrarBoton: boolean = null;
   //Define la lista de tipos de docs
   public resultadosDocumentos: Array<any> = [];
+  public resultadosTiposConceptos: Array <any> = [];
   //Define el indice seleccionado de pestania
   public indiceSeleccionado: number = null;
   //Define la pestania activa
@@ -210,14 +211,16 @@ export class ConceptosComponent implements OnInit {
   public listarPorTipoConcepto() {
     this.loaderService.show();
     let tipoConcepto = this.tipoConceptoSueldo.value;
-    tipoConcepto = tipoConcepto == '1' ? 0 : tipoConcepto.id;
-    this.conceptosService.listarPorTipoConcepto(tipoConcepto).subscribe(
+    let id = tipoConcepto != '0' ? tipoConcepto.id:0;
+    this.conceptosService.listarPorTipoConcepto(id).subscribe(
       res => {
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
         this.listaCompleta.paginator = this.paginator;
         this.loaderService.hide();
-        this.listaCompleta.data.length == 0 ? this.toastrService.warning("Sin registros para mostrar") : '';
+        if(this.listaCompleta.data.length == 0) {
+          this.toastrService.warning("Sin registros para mostrar");
+        }
       },
       err => {
         this.toastrService.error(err.json().message);
@@ -260,8 +263,51 @@ export class ConceptosComponent implements OnInit {
     );
   }
   public actualizar() {
+    this.loaderService.show();
+    this.conceptosService.actualizar(this.formulario.value).subscribe(
+      res => {
+        let respuesta = res.json();
+        if (respuesta.codigo == 200) {
+          this.reestablecerFormulario();
+          document.getElementById('idAutocompletado').focus();
+          this.toastrService.success(respuesta.mensaje);
+          this.loaderService.hide();
+        }
+      },
+      err => {
+        let respuesta = err.json();
+        if (respuesta.codigo == 11002) {
+          document.getElementById("labelNombre").classList.add('label-error');
+          document.getElementById("idNombre").classList.add('is-invalid');
+          document.getElementById("idNombre").focus();
+          this.toastrService.error(respuesta.mensaje);
+        }
+        this.loaderService.hide();
+      }
+    )
   }
   public eliminar() {
+    this.conceptosService.eliminar(this.formulario.value.id).subscribe(
+      res => {
+        let respuesta = res.json();
+        if (respuesta.codigo == 200) {
+          this.reestablecerFormulario();
+          document.getElementById('idAutocompletado').focus();
+          this.toastrService.success(respuesta.mensaje);
+          this.loaderService.hide();
+        }
+      },
+      err => {
+        let respuesta = err.json();
+        if (respuesta.codigo == 11002) {
+          document.getElementById("labelNombre").classList.add('label-error');
+          document.getElementById("idNombre").classList.add('is-invalid');
+          document.getElementById("idNombre").focus();
+          this.toastrService.error(respuesta.mensaje);
+        }
+        this.loaderService.hide();
+      }
+    )
   }
   //Establece el formulario al seleccionar elemento de autocompletado
   public establecerElemento() {
@@ -329,6 +375,16 @@ export class ConceptosComponent implements OnInit {
         break;
     }
   }
+  //Vacia la lista de localidades
+  public vaciarLista(): void {
+    this.listaCompleta = new MatTableDataSource([]);
+  }
+  //Vacia la lista de resultados de autocompletados
+  public vaciarListas() {
+    this.resultados = [];
+    this.resultadosTiposConceptos = [];
+    this.listaCompleta = new MatTableDataSource([]);
+  }
   //Reestablece los campos formularios
   private reestablecerFormulario() {
     this.resultados = [];
@@ -385,7 +441,6 @@ export class ConceptosComponent implements OnInit {
       this.formulario.get('ingresaCantidad').enable();
       this.formulario.get('ingresaValorUnitario').enable();
       this.formulario.get('ingresaImporte').enable();
-      this.formulario.get('esRepetible').enable();
       this.formulario.get('imprimeValorUnitario').enable();
       this.tipoConceptoSueldo.enable();
       this.afipGrupoConcepto.enable();
