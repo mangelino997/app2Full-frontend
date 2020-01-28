@@ -13,11 +13,13 @@ export class AppService {
   // private URL_ORIGEN = 'http://rigar.neurojit.com'; //RIGAR
   // private URL_ORIGEN = 'https://ute-draimo.appspot.com'; //UTE
   // private URL_ORIGEN = 'http://rigar.neurojit.com'; //DONWEB
+  // private URL_ORIGEN = 'http://test-draimo.appspot.com'; //TESTING
   //Define la IP
   private IP = 'http://localhost:8080'; //LOCAL
   // private IP = 'https://rigarws-draimo.appspot.com'; //RIGAR
   // private IP = 'https://utews-draimo.appspot.com'; //UTE
   // private IP = 'http://200.58.102.22:8080'; //DONWEB
+  // private IP = 'http://66.97.42.126:8080'; //TESTING
   //Define la url base
   private URL_BASE = this.IP + '/jitws/auth';
   //Define la url de subcripcion a socket

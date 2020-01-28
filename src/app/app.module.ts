@@ -102,6 +102,7 @@ const stompConfig: StompConfig = {
   // url: 'ws://rigarws-draimo.appspot.com:8080/jitws/socket', //RIGAR
   // url: 'ws://utews-draimo.appspot.com:8080/jitws/socket', //UTE
   // url: 'ws://200.58.102.22:8080/jitws/socket',
+  // url: 'ws://66.97.42.126:8080/jitws/socket',
   headers: {},
   heartbeat_in: 0,
   heartbeat_out: 20000,
