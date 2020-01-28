@@ -500,6 +500,7 @@ export class OrdenVentaComponent implements OnInit {
     this.listaTarifasDeOrdVta = null;
     this.tipoTarifaServicio.listarPorOrdenVenta(this.ORDEN_VTA_CABECERA).subscribe(
       res => {
+        console.log(res.json());
         this.listaTarifasDeOrdVta = new MatTableDataSource(res.json());
         this.listaTarifasDeOrdVta.sort = this.sort;
         this.tipoTarifa.setValue(this.listaTarifasDeOrdVta.data[0].porEscala ? 'porEscala' : 'porTramo');
@@ -683,6 +684,7 @@ export class OrdenVentaComponent implements OnInit {
   }
   //Abre el modal de ver Orden Venta Tarifa
   public eliminarTarifaOrdenVenta(elemento) {
+    console.log(elemento);
     if (this.listaTarifasDeOrdVta.data.length == 1) {
       this.toastr.warning("No se pueden eliminar todas las tarifas");
       document.getElementById('idTipoTarifa').focus();

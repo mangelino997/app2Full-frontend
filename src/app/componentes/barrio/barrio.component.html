@@ -34,6 +34,15 @@
             class="form-control form-control-sm" [readonly]="soloLectura"
             (ngModelChange)="cambioCampo('idNombre', 'labelNombre')" maxlength="45">
         </div>
+        <div class="form-group has-float-label">
+          <label id="labelZona" for="idZona" class="descripcion-label">Zona</label>
+          <mat-select id="idZona" class="form-control form-control-sm" formControlName="zona"
+            [compareWith]="compareFn">
+            <mat-option *ngFor="let item of zonas" [value]="item">
+              {{item.nombre}}
+            </mat-option>
+          </mat-select>
+        </div>
         <button id="idBoton" *ngIf="mostrarBoton && !show" mat-raised-button color="primary" formnovalidate
           (click)="accion(indiceSeleccionado)" [disabled]="!formulario.valid">
           {{pestaniaActual}}
@@ -62,6 +71,11 @@
         <ng-container matColumnDef="NOMBRE">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.nombre}}</td>
+        </ng-container>
+        <ng-container matColumnDef="ZONA">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Zona</th>
+          <td mat-cell *matCellDef="let elemento">
+            {{elemento.zona? elemento.zona.nombre : ''}}</td>
         </ng-container>
         <ng-container matColumnDef="EDITAR" stickyEnd>
           <th mat-header-cell *matHeaderCellDef><button [disabled]="listaCompleta.data.length==0"

@@ -29,6 +29,8 @@ export class BarrioComponent implements OnInit {
   public soloLectura: boolean = false;
   //Define si mostrar el boton
   public mostrarBoton: boolean = null;
+  //Define la lista de zonas
+  public zonas: Array<any> = [];
   //Define una lista
   public lista: Array<any> = [];
   //Define la lista de pestanias
@@ -48,7 +50,7 @@ export class BarrioComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define las columnas de la tabla
-  public columnas: string[] = ['ID', 'NOMBRE', 'EDITAR'];
+  public columnas: string[] = ['ID', 'NOMBRE', 'ZONA', 'EDITAR'];
   //Define la matSort
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   //Define la paginacion
@@ -84,8 +86,9 @@ export class BarrioComponent implements OnInit {
     this.formulario = new FormGroup({
       id: new FormControl(),
       version: new FormControl(),
-      nombre: new FormControl('', [Validators.required, Validators.maxLength(45)])
-    });
+      nombre: new FormControl('', [Validators.required, Validators.maxLength(45)]),
+      zona: new FormControl(),
+    })
     /* Obtiene todos los listados */
     this.inicializar(this.appService.getRol().id, this.appService.getSubopcion());
     //Establece los valores de la primera pestania activa
@@ -101,6 +104,7 @@ export class BarrioComponent implements OnInit {
         this.pestanias = respuesta.pestanias;
         //Establece demas datos necesarios
         this.ultimoId = respuesta.ultimoId;
+        this.zonas = respuesta.zonas;
         this.formulario.get('id').setValue(this.ultimoId);
         this.render = false;
       },
@@ -302,6 +306,13 @@ export class BarrioComponent implements OnInit {
     this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
     this.autocompletado.setValue(elemento);
     this.formulario.patchValue(elemento);
+  }
+  //Define el mostrado de datos y comparacion en campo select
+  public compareFn = this.compararFn.bind(this);
+  private compararFn(a, b) {
+    if (a != null && b != null) {
+      return a.id === b.id;
+    }
   }
   //Formatea el valor del autocompletado
   public displayFn(elemento) {
