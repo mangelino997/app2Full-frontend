@@ -165,15 +165,19 @@ export class UnidadMedidaSueldoComponent implements OnInit {
   this.reestablecerFormulario();
   switch (id) {
     case 1:
+      this.camposSloLectura(false)
       this.establecerValoresPestania(nombre, false, false, true, 'idNombre');
       break;
     case 2:
+      this.camposSloLectura(true)
       this.establecerValoresPestania(nombre, true, true, false, 'idAutocompletado');
       break;
     case 3:
+      this.camposSloLectura(false)
       this.establecerValoresPestania(nombre, true, false, true, 'idAutocompletado');
       break;
     case 4:
+      this.camposSloLectura(true)
       this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
       break;
     case 5:
@@ -190,6 +194,16 @@ export class UnidadMedidaSueldoComponent implements OnInit {
   this.autocompletado.reset();
   this.formulario.get('id').setValue(this.ultimoId);
 }
+//Establece los campos de solo lectura
+  public camposSloLectura(opcion):void {
+    if(opcion){
+      this.formulario.get('nombre').disable();
+      this.formulario.get('codigoAfip').disable();
+    } else {
+      this.formulario.get('nombre').enable();
+      this.formulario.get('codigoAfip').enable();
+    }
+  }
   public agregar(){
     this.loaderService.show();
     this.unidadMedidaSueldoService.agregar(this.formulario.value).subscribe(
@@ -324,6 +338,7 @@ public verificarSeleccion(valor): void {
       let f = {
         id: elemento.id,
         nombre: elemento.nombre,
+        codigoafip: elemento.codigoAfip,
       }
       datos.push(f);
     });
