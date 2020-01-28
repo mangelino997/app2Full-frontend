@@ -150,7 +150,7 @@ export class ViajeRemitoComponent implements OnInit {
     this.subscription = this.loaderService.loaderState
       .subscribe((state: LoaderState) => {
         this.show = state.show;
-      });
+      })
     //Define los campos para validaciones
     this.formulario = this.modelo.formulario;
     //Define los campos para validaciones del Aforo
@@ -160,16 +160,15 @@ export class ViajeRemitoComponent implements OnInit {
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar');
     //Obtiene la fecha actual
-    this.fechaServicio.obtenerFecha().subscribe(res => {
-      this.fechaActual = res.json();
-      this.formulario.get('fecha').setValue(this.fechaActual);
-    });
+    this.obtenerFecha();
     //Obtiene la lista de condiciones de iva
     this.listarSucursales();
     //Obtiene la lista de tipos de comprobantes
     this.listarTiposComprobantes();
     //Crea la lista de letras
     this.letras = ['A', 'B', 'C'];
+    //Establece campos por defecto en el formularioListar
+    this.establecerCamposDefectoListar();
     //Autocompletado ClienteRemitente - Buscar por nombre
     this.formulario.get('clienteRemitente').valueChanges.subscribe(data => {
       if (typeof data == 'string') {
@@ -180,9 +179,9 @@ export class ViajeRemitoComponent implements OnInit {
             this.resultadosClienteRemitente = response.json();
             this.loaderService.hide();
           },
-          err=>{
-            this.loaderService.hide();
-          })
+            err => {
+              this.loaderService.hide();
+            })
         }
       }
     })
@@ -196,12 +195,21 @@ export class ViajeRemitoComponent implements OnInit {
             this.resultadosClienteDestinatario = response.json();
             this.loaderService.hide();
           },
-          err=>{
-            this.loaderService.hide();
-          })
+            err => {
+              this.loaderService.hide();
+            })
         }
       }
     });
+  }
+  //Obtiene la fecha actual
+  private obtenerFecha() {
+    this.fechaServicio.obtenerFecha().subscribe(res => {
+      this.fechaActual = res.json();
+      this.formulario.get('fecha').setValue(this.fechaActual);
+      this.formularioFiltro.get('fechaDesde').setValue(this.fechaActual);
+      this.formularioFiltro.get('fechaHasta').setValue(this.fechaActual);
+    })
   }
   //Maneja el cambio en el campo Destinatario - obtiene las sucursales del cliente
   public cambioClienteDestinatario() {
@@ -275,7 +283,6 @@ export class ViajeRemitoComponent implements OnInit {
     this.resultadosClienteRemitente = [];
     this.resultadosClienteDestinatario = [];
     this.sucursalesDestinatario = [];
-    this.listaCompleta = new MatTableDataSource([]);
   }
   //Obtiene el listado de sucursales
   private listarSucursales() {
@@ -353,7 +360,7 @@ export class ViajeRemitoComponent implements OnInit {
         this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
         break;
       case 5:
-        this.establecerCamposDefectoListar();
+        this.listaCompleta.data.length > 0? this.listar() : '';
         break;
       default:
         break;
@@ -361,10 +368,10 @@ export class ViajeRemitoComponent implements OnInit {
   }
   //Establece campos por defecto en pestaña listar
   private establecerCamposDefectoListar(): void {
-    this.formularioFiltro.get('idSucursalIngreso').setValue('0');
-    this.formularioFiltro.get('idSucursalDestino').setValue('0');
     this.formularioFiltro.get('estaPendiente').setValue('2');
     this.formularioFiltro.get('estaFacturado').setValue('2');
+    this.formularioFiltro.get('idSucursalIngreso').setValue('0');
+    this.formularioFiltro.get('idSucursalDestino').setValue('0');
   }
   //Funcion para determina que accion se requiere (Agregar, Actualizar, Eliminar)
   public accion(indice) {
@@ -502,7 +509,6 @@ export class ViajeRemitoComponent implements OnInit {
   private reestablecerFormulario(id) {
     this.formulario.reset();
     this.autocompletado.reset();
-    this.formularioFiltro.reset();
     this.formularioAforar.reset();
     this.formulario.get('id').setValue(id);
     this.vaciarListas();

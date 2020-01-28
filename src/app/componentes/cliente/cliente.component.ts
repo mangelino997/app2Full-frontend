@@ -116,9 +116,9 @@ export class ClienteComponent implements OnInit {
     private toastr: ToastrService, private barrioServicio: BarrioService,
     private localidadServicio: LocalidadService, private cobradorServicio: CobradorService,
     private vendedorServicio: VendedorService, private zonaServicio: ZonaService,
-    private rubroServicio: RubroService, private companiaSeguroServicio: CompaniaSeguroService, 
+    private rubroServicio: RubroService, private companiaSeguroServicio: CompaniaSeguroService,
     public dialog: MatDialog, private clienteModelo: Cliente,
-    private loaderService: LoaderService, private reporteServicio: ReporteService, 
+    private loaderService: LoaderService, private reporteServicio: ReporteService,
     private clienteCuentaBancariaService: ClienteCuentaBancariaService,
     private clienteVtoPagoService: ClienteVtoPagoService) {
     /* Obtiene todos los listados */
@@ -459,10 +459,14 @@ export class ClienteComponent implements OnInit {
   //Establece el formulario
   public establecerFormulario(): void {
     let elemento = this.autocompletado.value;
+    console.log(elemento);
     this.formulario.patchValue(elemento);
     this.formulario.get('creditoLimite').setValue(elemento.creditoLimite ? this.appService.establecerDecimales(elemento.creditoLimite, 2) : null);
     this.formulario.get('descuentoFlete').setValue(elemento.descuentoFlete ? this.appService.desenmascararPorcentaje(elemento.descuentoFlete.toString(), 2) : null);
     this.formulario.get('descuentoSubtotal').setValue(elemento.descuentoSubtotal ? this.appService.establecerDecimales(elemento.descuentoSubtotal, 2) : null);
+    elemento.barrio ? [this.formulario.get('zona').setValue({ id: elemento.barrio.zona.id }), this.formulario.get('zona').disable()] :
+      [this.formulario.get('zona').enable()];
+
     /* Si no tiene seguro propio que compañia/poliza/vencimiento no sean readOnly */
     this.cambioTipoSeguro();
     /* Establece las cuentas bancarias del Cliente */
@@ -558,9 +562,6 @@ export class ClienteComponent implements OnInit {
   //Establece valores al seleccionar una pestania
   public seleccionarPestania(id, nombre) {
     this.indiceSeleccionado = id;
-    if(this.indiceSeleccionado != 5) {
-      this.seleccionarOpcion(1, 0);
-    }  
     this.activeLink = nombre;
     this.reestablecerFormulario(null);
     switch (id) {
@@ -642,6 +643,7 @@ export class ClienteComponent implements OnInit {
   //Agrega un registro
   private agregar() {
     this.loaderService.show();
+    this.formulario.get('zona').enable();
     this.formulario.get('id').setValue(null);
     this.formulario.get('esCuentaCorriente').setValue(true);
     this.formulario.get('usuarioAlta').setValue(this.appService.getUsuario());
@@ -669,6 +671,7 @@ export class ClienteComponent implements OnInit {
   //Actualiza un registro
   private actualizar() {
     this.loaderService.show();
+    this.formulario.get('zona').enable();
     this.formulario.get('esCuentaCorriente').setValue(true);
     this.formulario.get('usuarioMod').setValue(this.appService.getUsuario());
     this.formulario.get('clienteCuentasBancarias').setValue(null);
@@ -731,9 +734,11 @@ export class ClienteComponent implements OnInit {
     this.establecerZona();
     this.establecerRubro();
     this.establecerValoresPorDefecto();
-
     /* Limpia la tabla de Cuentas Bancarias */
     this.limpiarCuentasBancarias();
+    /* Establece la primera opcion del sidenav */
+    if (this.indiceSeleccionado != 5)
+      this.seleccionarOpcion(1, 0);
   }
   //Limpia la tabla de Cuentas Bancarias
   private limpiarCuentasBancarias() {
@@ -758,7 +763,7 @@ export class ClienteComponent implements OnInit {
       this.formularioFiltro.get('condicionVenta').setValue(0);
       this.formularioFiltro.get('esSeguroPropio').setValue(2);
     }
-    setTimeout(function() {
+    setTimeout(function () {
       document.getElementById('idLocalidadFiltro').focus();
     }, 20);
   }
@@ -841,6 +846,16 @@ export class ClienteComponent implements OnInit {
   public verificarSeleccion(valor): void {
     if (typeof valor.value != 'object') {
       valor.setValue(null);
+    }
+  }
+  //Controla el cambio en el campo barrio
+  public cambioBarrio() {
+    this.verificarSeleccion(this.formulario.get('barrio'));
+    if (this.formulario.value.barrio) {
+      this.formulario.value.barrio.zona ? [this.formulario.get('zona').setValue({ id: this.formulario.value.barrio.zona.id }),
+      this.formulario.get('zona').disable()] : [this.formulario.get('zona').enable()];
+    } else {
+      this.formulario.get('zona').enable();
     }
   }
   //Muestra en la pestania buscar el elemento seleccionado de listar

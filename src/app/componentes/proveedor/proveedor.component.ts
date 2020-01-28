@@ -475,7 +475,6 @@ export class ProveedorComponent implements OnInit {
   public seleccionarPestania(id, nombre) {
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    this.indiceSeleccionado == 5 ? this.seleccionarOpcion(null, 0) : this.seleccionarOpcion(8, 0);
     this.reestablecerFormulario(null);
     switch (id) {
       case 1:
@@ -658,6 +657,12 @@ export class ProveedorComponent implements OnInit {
 
     /* Limpia la tabla de Cuentas Contables */
     this.limpiarCuentasContables();
+    /* Establece la primera opcion del sidenav */
+    if (this.indiceSeleccionado != 5)
+      this.seleccionarOpcion(8, 0);
+    else
+      this.seleccionarOpcion(null, 0);
+
   }
   //Limpia la tabla de Cuentas Contables
   private limpiarCuentasContables() {
@@ -694,7 +699,7 @@ export class ProveedorComponent implements OnInit {
     this.opcionLocalidadFiltro.setValue(0);
     this.formularioFiltro.get('tipoProveedor').setValue(0);
     this.formularioFiltro.get('condicionCompra').setValue(0);
-    setTimeout(function() {
+    setTimeout(function () {
       document.getElementById('idTipoProveedorFiltro').focus();
     }, 20);
   }

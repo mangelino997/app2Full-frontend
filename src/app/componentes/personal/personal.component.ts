@@ -651,7 +651,6 @@ export class PersonalComponent implements OnInit {
   public seleccionarPestania(id, nombre) {
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    this.indiceSeleccionado == 5 ? this.seleccionarOpcion(null, 0) : this.seleccionarOpcion(15, 0);
     this.reestablecerFormulario(null);
     switch (id) {
       case 1:
@@ -872,6 +871,11 @@ export class PersonalComponent implements OnInit {
     this.nacionalidadNacimiento.reset();
     this.listaCuentaBancaria = new MatTableDataSource([]);
     id ? this.formulario.get('id').setValue(id) : this.formulario.get('id').setValue(this.ultimoId);
+    /* Establece la primera opcion del sidenav */
+    if (this.indiceSeleccionado != 5)
+      this.seleccionarOpcion(15, 0);
+    else
+      this.seleccionarOpcion(null, 0);
   }
   //Reestablece el formulario de Cuenta Bancaria
   private reestablecerFormularioCB() {

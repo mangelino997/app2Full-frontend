@@ -6,7 +6,7 @@
                 <div class="col-md-2">
                     <div class="form-group has-float-label">
                         <label for="idViaje" class="tamanio-label">N° Viaje</label>
-                        <input id="idViaje" type="text" formControlName="idViaje" placeholder="00"
+                        <input id="idViaje" type="text" formControlName="idViaje" 
                             [textMask]="mascararEnteroSinDecimales(11)" (blur)="cambioNumeroViaje()"
                             class="form-control form-control-sm number-right" [disabled]="">
                     </div>
@@ -14,7 +14,7 @@
                 <div class="col-md-2" *ngIf="data.esRemitoGeneral">
                     <div class="form-group has-float-label ">
                         <label for="idRemito" class="tamanio-label">N° Remito*</label>
-                        <input id="idRemito" type="text" formControlName="idRemito" placeholder="00"
+                        <input id="idRemito" type="text" formControlName="idRemito" 
                             [textMask]="mascararEnteroSinDecimales(8)" [disabled]=""
                             class="form-control form-control-sm number-right">
                     </div>

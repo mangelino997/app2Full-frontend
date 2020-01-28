@@ -8,6 +8,7 @@ import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
 import { ReporteService } from 'src/app/servicios/reporte.service';
+import { ClienteService } from 'src/app/servicios/cliente.service';
 
 @Component({
   selector: 'app-barrio',
@@ -29,6 +30,8 @@ export class BarrioComponent implements OnInit {
   public soloLectura: boolean = false;
   //Define si mostrar el boton
   public mostrarBoton: boolean = null;
+  //Define la lista de zonas
+  public zonas: Array<any> = [];
   //Define una lista
   public lista: Array<any> = [];
   //Define la lista de pestanias
@@ -48,14 +51,14 @@ export class BarrioComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define las columnas de la tabla
-  public columnas: string[] = ['ID', 'NOMBRE', 'EDITAR'];
+  public columnas: string[] = ['ID', 'NOMBRE', 'ZONA', 'EDITAR'];
   //Define la matSort
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   //Define la paginacion
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Constructor
-  constructor(private servicio: BarrioService, private toastr: ToastrService, private loaderService: LoaderService, private appService: AppService,
-    private reporteServicio: ReporteService) {
+  constructor(private servicio: BarrioService, private toastr: ToastrService, private loaderService: LoaderService,
+    private appService: AppService, private reporteServicio: ReporteService, private clienteService: ClienteService) {
     //Autocompletado - Buscar por nombre
     this.autocompletado.valueChanges.subscribe(data => {
       if (typeof data == 'string') {
@@ -84,12 +87,13 @@ export class BarrioComponent implements OnInit {
     this.formulario = new FormGroup({
       id: new FormControl(),
       version: new FormControl(),
-      nombre: new FormControl('', [Validators.required, Validators.maxLength(45)])
-    });
+      nombre: new FormControl('', [Validators.required, Validators.maxLength(45)]),
+      zona: new FormControl(),
+    })
     /* Obtiene todos los listados */
     this.inicializar(this.appService.getRol().id, this.appService.getSubopcion());
     //Establece los valores de la primera pestania activa
-    this.seleccionarPestania(1, 'Agregar', 0);
+    this.seleccionarPestania(1, 'Agregar');
   }
   //Obtiene los datos necesarios para el componente
   private inicializar(idRol, idSubopcion) {
@@ -101,6 +105,7 @@ export class BarrioComponent implements OnInit {
         this.pestanias = respuesta.pestanias;
         //Establece demas datos necesarios
         this.ultimoId = respuesta.ultimoId;
+        this.zonas = respuesta.zonas;
         this.formulario.get('id').setValue(this.ultimoId);
         this.render = false;
       },
@@ -114,6 +119,19 @@ export class BarrioComponent implements OnInit {
   public cambioAutocompletado() {
     let elemento = this.autocompletado.value;
     this.formulario.patchValue(elemento);
+    /* verifica si existen clientes cargados con el barrio a modificar */
+    this.indiceSeleccionado == 3? this.verificarBarrioCliente(elemento.id) :'';
+  }
+  // Obtiene la lista de Clientes por Barrio
+  private verificarBarrioCliente(idBarrio){
+    this.clienteService.listarPorBarrio(idBarrio).subscribe(
+      res=>{
+        res.json().length > 0? this.formulario.get('zona').disable() : this.formulario.get('zona').enable();
+      },
+      err=>{
+        this.toastr.error(err.json().mensaje);
+      }
+    )
   }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
@@ -127,7 +145,7 @@ export class BarrioComponent implements OnInit {
     }, 20);
   };
   //Establece valores al seleccionar una pestania
-  public seleccionarPestania(id, nombre, opcion) {
+  public seleccionarPestania(id, nombre) {
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
     this.reestablecerFormulario(null);
@@ -227,6 +245,8 @@ export class BarrioComponent implements OnInit {
   //Actualiza un registro
   private actualizar() {
     this.loaderService.show();
+    // habilita el campo 'zona' por si está bloqiueado
+    this.formulario.get('zona').enable();
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
         let respuesta = res.json();
@@ -293,15 +313,26 @@ export class BarrioComponent implements OnInit {
   };
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
-    this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
+    this.seleccionarPestania(2, this.pestanias[1].nombre);
     this.autocompletado.setValue(elemento);
     this.formulario.patchValue(elemento);
+    /* verifica si existen clientes cargados con el barrio a modificar */
+    this.indiceSeleccionado == 3? this.verificarBarrioCliente(elemento.id) :'';
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
-    this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
+    this.seleccionarPestania(3, this.pestanias[2].nombre);
     this.autocompletado.setValue(elemento);
     this.formulario.patchValue(elemento);
+    /* verifica si existen clientes cargados con el barrio a modificar */
+    this.indiceSeleccionado == 3? this.verificarBarrioCliente(elemento.id) :'';
+  }
+  //Define el mostrado de datos y comparacion en campo select
+  public compareFn = this.compararFn.bind(this);
+  private compararFn(a, b) {
+    if (a != null && b != null) {
+      return a.id === b.id;
+    }
   }
   //Formatea el valor del autocompletado
   public displayFn(elemento) {
@@ -316,9 +347,9 @@ export class BarrioComponent implements OnInit {
     let indice = this.indiceSeleccionado;
     if (keycode == 113) {
       if (indice < this.pestanias.length) {
-        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre, 0);
+        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre);
       } else {
-        this.seleccionarPestania(1, this.pestanias[0].nombre, 0);
+        this.seleccionarPestania(1, this.pestanias[0].nombre);
       }
     }
   }

@@ -231,6 +231,7 @@ export class FacturacionConsultaComponent implements OnInit {
     }
     //establezco el tipo de filtro para determinar la query en el backend
     this.formulario.value.tipoFiltro = this.filtroPor.value;
+    console.log(this.formulario.value);
     this.ventaComprobanteService.listarPorFiltros(this.formulario.value).subscribe(
       res => {
         let resultado = res.json();
