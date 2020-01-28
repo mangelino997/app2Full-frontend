@@ -562,9 +562,6 @@ export class ClienteComponent implements OnInit {
   //Establece valores al seleccionar una pestania
   public seleccionarPestania(id, nombre) {
     this.indiceSeleccionado = id;
-    if (this.indiceSeleccionado != 5) {
-      this.seleccionarOpcion(1, 0);
-    }
     this.activeLink = nombre;
     this.reestablecerFormulario(null);
     switch (id) {
@@ -737,9 +734,11 @@ export class ClienteComponent implements OnInit {
     this.establecerZona();
     this.establecerRubro();
     this.establecerValoresPorDefecto();
-
     /* Limpia la tabla de Cuentas Bancarias */
     this.limpiarCuentasBancarias();
+    /* Establece la primera opcion del sidenav */
+    if (this.indiceSeleccionado != 5)
+      this.seleccionarOpcion(1, 0);
   }
   //Limpia la tabla de Cuentas Bancarias
   private limpiarCuentasBancarias() {
@@ -853,7 +852,7 @@ export class ClienteComponent implements OnInit {
   public cambioBarrio() {
     this.verificarSeleccion(this.formulario.get('barrio'));
     if (this.formulario.value.barrio) {
-      this.formulario.value.barrio.zona ? [this.formulario.get('zona').setValue({ id: this.formulario.value.barrio.zona.id }), 
+      this.formulario.value.barrio.zona ? [this.formulario.get('zona').setValue({ id: this.formulario.value.barrio.zona.id }),
       this.formulario.get('zona').disable()] : [this.formulario.get('zona').enable()];
     } else {
       this.formulario.get('zona').enable();

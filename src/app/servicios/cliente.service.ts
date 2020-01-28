@@ -50,6 +50,10 @@ export class ClienteService {
   public obtenerPorId(id) {
     return this.http.get(this.url + '/obtenerPorId/' + id, this.options);
   }
+  //Obtiene una lista de clientes por barrio
+  public listarPorBarrio(idBarrio) {
+    return this.http.get(this.url + '/listarPorBarrio/' + idBarrio, this.options);
+  }
   //Obtiene la lista de registros
   public listar() {
     return this.http.get(this.url, this.options);

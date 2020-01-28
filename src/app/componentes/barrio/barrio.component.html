@@ -4,7 +4,7 @@
       <nav mat-tab-nav-bar>
         <a mat-tab-link disabled>BARRIO</a>
         <a mat-tab-link *ngFor="let pestania of pestanias" [active]="activeLink == pestania.nombre"
-          (click)="seleccionarPestania(pestania.id, pestania.nombre, 0)">{{pestania.nombre}}</a>
+          (click)="seleccionarPestania(pestania.id, pestania.nombre)">{{pestania.nombre}}</a>
       </nav>
     </div>
   </div>
@@ -38,6 +38,7 @@
           <label id="labelZona" for="idZona" class="descripcion-label">Zona</label>
           <mat-select id="idZona" class="form-control form-control-sm" formControlName="zona"
             [compareWith]="compareFn">
+            <mat-option>Vacío</mat-option>
             <mat-option *ngFor="let item of zonas" [value]="item">
               {{item.nombre}}
             </mat-option>

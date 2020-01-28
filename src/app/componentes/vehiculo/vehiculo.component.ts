@@ -311,7 +311,6 @@ export class VehiculoComponent implements OnInit {
     this.resultadosLocalidades = [];
     this.companiasSegurosPolizas = [];
     this.resultadosVehiculosRemolques = [];
-    this.listaCompleta = new MatTableDataSource([]);
   }
   //Establece selects solo lectura
   private establecerCamposSoloLectura(opcion): void {
@@ -370,7 +369,7 @@ export class VehiculoComponent implements OnInit {
         this.establecerValoresPestania(nombre, true, true, true, false, 'idAutocompletado');
         break;
       case 5:
-        this.formularioListar.reset();
+        this.listaCompleta.data.length > 0? this.listarVehiculosFiltro() : '';
         setTimeout(function () {
           document.getElementById('idTipoVehiculo').focus();
         }, 20);
