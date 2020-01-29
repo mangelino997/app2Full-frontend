@@ -86,7 +86,7 @@
               <ng-container matColumnDef="CHECK">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Check</th>
                 <td mat-cell *matCellDef="let elemento; let i = index">
-                  <mat-checkbox class="cursor-color" (change)="seleccionOrdenVta(i, elemento.id, $event)">
+                  <mat-checkbox class="cursor-color" color="primary" (change)="seleccionOrdenVta(i, elemento.id, $event)">
                   </mat-checkbox>
                 </td>
               </ng-container>

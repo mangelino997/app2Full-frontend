@@ -392,7 +392,7 @@
             <div class="form-group has-float-label">
               <label for="idFlete" class="tamanio-label">Flete</label>
               <input id="idFlete" type="text" formControlName="flete" class="form-control form-control-sm number-right"
-                autocomplete="off" (blur)="calcularSubtotal()" placeholder="0.00"
+                autocomplete="off" placeholder="0.00"
                 [textMask]="mascararEnteroConDecimales(8)" (blur)="calcularSubtotal()">
               <!--(blur)="calcularSubtotal($event)"-->
             </div>
@@ -478,32 +478,32 @@
             <ng-container matColumnDef="KG_EFECTIVO">
               <th mat-header-cell *matHeaderCellDef mat-sort-header>Kg. Efectivo</th>
               <td mat-cell *matCellDef="let elemento">
-                {{elemento.kilosEfectivo ? (elemento.kilosEfectivo | number: '1.2-2') + ' Kg.' : '-'}}</td>
+                {{elemento.kilosEfectivo ? (elemento.kilosEfectivo | number: '1.2-2') : '-'}}</td>
             </ng-container>
             <ng-container matColumnDef="VALOR_DECLARADO">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header>Valor Declarado</th>
-              <td mat-cell *matCellDef="let elemento">
-                ${{elemento.valorDeclarado | number: '1.2-2'}}</td>
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Valor Declarado ($)</th>
+              <td mat-cell *matCellDef="let elemento" class="number-right">
+                {{elemento.valorDeclarado | number: '1.2-2'}}</td>
             </ng-container>
             <ng-container matColumnDef="FLETE">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header>Flete</th>
-              <td mat-cell *matCellDef="let elemento">
-                {{elemento.flete? '$' + (elemento.flete | number: '1.2-2') : '-' }}</td>
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Flete ($)</th>
+              <td mat-cell *matCellDef="let elemento" class="number-right">
+                {{elemento.flete? (elemento.flete | number: '1.2-2') : '-' }}</td>
             </ng-container>
             <ng-container matColumnDef="SUBTOTAL">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header>Subtotal</th>
-              <td mat-cell *matCellDef="let elemento">$
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Subtotal ($)</th>
+              <td mat-cell *matCellDef="let elemento" class="number-right">
                 {{elemento.importeNetoGravado | number: '1.2-2'}}</td>
             </ng-container>
             <ng-container matColumnDef="ALIC_IVA">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header>Alíc. IVA</th>
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Alíc. IVA (%)</th>
               <td mat-cell *matCellDef="let elemento">
-                {{elemento.afipAlicuotaIva.alicuota | number: '1.2-2'}}%</td>
+                {{elemento.afipAlicuotaIva.alicuota | number: '1.2-2'}}</td>
             </ng-container>
             <ng-container matColumnDef="SUBTOTAL_IVA">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header>Subtotal c/IVA</th>
-              <td mat-cell *matCellDef="let elemento">
-                ${{calcularSubtotalConIvaElemento(elemento) | number: '1.2-2'}}
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Subtotal c/IVA ($)</th>
+              <td mat-cell *matCellDef="let elemento" class="number-right">
+                {{calcularSubtotalConIvaElemento(elemento) | number: '1.2-2'}}
               </td>
             </ng-container>
             <ng-container matColumnDef="QUITAR">

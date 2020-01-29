@@ -5,4 +5,8 @@
 }
 .tabla-ancho {
     width: 1920px !important;
+} 
+.header-align-right {
+  text-align: right !important;
+  justify-content: flex-end !important;
 }

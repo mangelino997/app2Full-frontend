@@ -447,6 +447,7 @@ export class EmitirFacturaComponent implements OnInit {
   //Valida el tipo y numero documento, luego setea datos para mostrar y obtiene el listado de sucursales por Remitente
   public cambioRemitente() {
     let clienteRemitente = this.formulario.value.clienteRemitente;
+    console.log(clienteRemitente);
     let res = this.validarDocumento(clienteRemitente.tipoDocumento, clienteRemitente.numeroDocumento, 'Remitente');
     if (res) {
       this.formularioRemitente.get('domicilio').setValue(clienteRemitente.domicilio);
@@ -690,14 +691,15 @@ export class EmitirFacturaComponent implements OnInit {
       }
     });
     dialogRef.afterClosed().subscribe(resultado => {
+      console.log(resultado);
       resultado ? this.controlarRemitoSeleccionado(resultado) : '';
     });
   }
   //Controla los campos cuando se selecciona un Remito del modal abrirListaRemitoDialogo
   private controlarRemitoSeleccionado(resultado) {
     if (resultado.configuracionModalRemitos.formularioFiltro) {
-      let idViaje = resultado.configuracionModalRemitos.formularioFiltro.idViaje;
-      let idRemito = resultado.configuracionModalRemitos.formularioFiltro.idRemito;
+      let idViaje = resultado.remitoSeleccionado.viajeTramo.id;
+      let idRemito = resultado.remitoSeleccionado.viajeRemito.id;
       this.establecerValoresRemitoSeleccionado(resultado.remitoSeleccionado, idViaje, idRemito);
       this.configuracionModalRemitos.setValue(resultado.configuracionModalRemitos);
     }
@@ -726,6 +728,9 @@ export class EmitirFacturaComponent implements OnInit {
       remitoSeleccionado.viajeRemito.importeRetiro ? remitoSeleccionado.viajeRemito.importeRetiro.toString() : '0.00', 2));
     this.formularioVtaCpteItemFA.get('importeEntrega').setValue(this.appService.establecerDecimales(
       remitoSeleccionado.viajeRemito.importeEntrega ? remitoSeleccionado.viajeRemito.importeEntrega.toString() : '0.00', 2));
+
+    /* calcula el subtotal*/
+    this.calcularSubtotal();
 
     /* Pregunta si el item es Remito Carga Gral. y si no hay items cargados en la lista de items */
     if (this.itemFactura.value.id == 1 && this.listaCompletaItems.data.length == 0) {
@@ -809,7 +814,6 @@ export class EmitirFacturaComponent implements OnInit {
   }
   //Calcular el Subtotal del item agregado
   public calcularSubtotal() {
-
     /* establece el campo 'valorDeclarado' en decimales */
     this.setDecimales(this.formularioVtaCpteItemFA.get('valorDeclarado'), 2);
     this.setDecimales(this.formularioVtaCpteItemFA.get('pSeguro'), 2);

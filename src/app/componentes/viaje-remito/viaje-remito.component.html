@@ -250,22 +250,22 @@
         <div class="row">
           <div class="col-md-2">
             <div class="form-group has-float-label">
-              <label for="idFecha" class="tamanio-label">Fecha Desde *</label>
-              <input id="idFecha" type="date" formControlName="fechaDesde" autocomplete="off"
+              <label for="idFechaDesde" class="tamanio-label">Fecha Desde *</label>
+              <input id="idFechaDesde" type="date" formControlName="fechaDesde" autocomplete="off"
                 class="form-control form-control-sm" required>
             </div>
           </div>
           <div class="col-md-2">
             <div class="form-group has-float-label">
-              <label for="idFecha" class="tamanio-label">Fecha Hasta *</label>
-              <input id="idFecha" type="date" formControlName="fechaHasta" autocomplete="off"
+              <label for="idFechaHasta" class="tamanio-label">Fecha Hasta *</label>
+              <input id="idFechaHasta" type="date" formControlName="fechaHasta" autocomplete="off"
                 class="form-control form-control-sm" required>
             </div>
           </div>
           <div class="col-md-3">
             <div class="form-group has-float-label">
-              <label for="idAutocompletado" class="tamanio-label">Remitente</label>
-              <input id="idAutocompletado" class="form-control form-control-sm" autocomplete="off" type="text" matInput
+              <label for="idAutocompletadoRemitente" class="tamanio-label">Remitente</label>
+              <input id="idAutocompletadoRemitente" class="form-control form-control-sm" autocomplete="off" type="text" matInput
                 [formControl]="autocompletadoRemitente" [matAutocomplete]="autoRem"
                 (blur)="verificarSeleccion(autocompletado)" placeholder="Buscar por alias">
               <mat-autocomplete #autoRem="matAutocomplete" [displayWith]="displayFn.bind(this)">
@@ -277,8 +277,8 @@
           </div>
           <div class="col-md-3">
             <div class="form-group has-float-label">
-              <label for="idAutocompletado" class="tamanio-label">Destinatario</label>
-              <input id="idAutocompletado" class="form-control form-control-sm" autocomplete="off" type="text" matInput
+              <label for="idAutocompletadoDestinatario" class="tamanio-label">Destinatario</label>
+              <input id="idAutocompletadoDestinatario" class="form-control form-control-sm" autocomplete="off" type="text" matInput
                 [formControl]="autocompletadoDestinatario" [matAutocomplete]="autoDest"
                 (blur)="verificarSeleccion(autocompletado)" placeholder="Buscar por alias">
               <mat-autocomplete #autoDest="matAutocomplete" [displayWith]="displayFn.bind(this)">

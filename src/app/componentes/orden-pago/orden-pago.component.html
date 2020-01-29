@@ -57,14 +57,14 @@
                                         <mat-checkbox (change)="$event ? alternarSeleccion() : null"
                                             [checked]="comprasComprobantesSeleccionados.hasValue() && estanTodosSeleccionados()"
                                             [indeterminate]="comprasComprobantesSeleccionados.hasValue() && !estanTodosSeleccionados()"
-                                            [aria-label]="checkboxLabel()">
+                                            [aria-label]="checkboxLabel()" color="primary">
                                         </mat-checkbox>
                                     </th>
                                     <td style="padding-right: 5px;" mat-cell *matCellDef="let row">
                                         <mat-checkbox (click)="$event.stopPropagation()"
                                             (change)="$event ? seleccionarCheckbox(row) : null"
                                             [checked]="comprasComprobantesSeleccionados.isSelected(row)"
-                                            [aria-label]="checkboxLabel(row)">
+                                            [aria-label]="checkboxLabel(row)" color="primary">
                                         </mat-checkbox>
                                     </td>
                                 </ng-container>
