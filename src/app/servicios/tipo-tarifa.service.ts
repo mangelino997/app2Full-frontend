@@ -8,11 +8,11 @@ import { StompService } from '@stomp/ng2-stompjs';
 @Injectable()
 export class TipoTarifaService {
   //Define la ruta al servicio web
-  private ruta:string = "/tipotarifa";
+  private ruta: string = "/tipotarifa";
   //Define la url base
-  private url:string = null;
+  private url: string = null;
   //Define la url para subcripcion a socket
-  private topic:string = null;
+  private topic: string = null;
   //Define el headers y token de autenticacion
   private options = null;
   //Define la lista obtenida por nombre
@@ -22,7 +22,7 @@ export class TipoTarifaService {
   //Define el mensaje de respuesta a la subcripcion
   private mensaje: Observable<Message>;
   //Define la lista completa
-  public listaCompleta:Subject<any> = new Subject<any>();
+  public listaCompleta: Subject<any> = new Subject<any>();
   //Constructor
   constructor(private http: Http, private appService: AppService, private stompService: StompService) {
     //Establece la url base
@@ -33,7 +33,7 @@ export class TipoTarifaService {
     const headers: Headers = new Headers();
     headers.append('Content-Type', 'application/json');
     headers.append('Authorization', localStorage.getItem('token'));
-    this.options = new RequestOptions({headers: headers});
+    this.options = new RequestOptions({ headers: headers });
     //Subcribe al usuario a la lista completa
     this.mensaje = this.stompService.subscribe(this.topic + this.ruta + '/lista');
     this.subcripcion = this.mensaje.subscribe(this.subscribirse);
@@ -61,6 +61,10 @@ export class TipoTarifaService {
   //Obtiene la lista de registros para Tramo
   public listarPorOrdenVenta(id) {
     return this.http.get(this.url + '/listarPorOrdenVenta/' + id, this.options);
+  }
+  //Obtiene la lista de tarifas para Orden Venta
+  public listarTarifasPorOrdenVenta(id) {
+    return this.http.get(this.url + '/listarTarifasPorOrdenVenta/' + id, this.options);
   }
   //Obtiene un listado por nombre
   public listarPorNombre(nombre) {

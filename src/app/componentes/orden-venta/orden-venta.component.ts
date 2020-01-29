@@ -498,7 +498,9 @@ export class OrdenVentaComponent implements OnInit {
   private listarTarifasOrdenVenta() {
     this.loaderService.show();
     this.listaTarifasDeOrdVta = null;
-    this.tipoTarifaServicio.listarPorOrdenVenta(this.ORDEN_VTA_CABECERA).subscribe(
+    console.log(this.ORDEN_VTA_CABECERA);
+
+    this.tipoTarifaServicio.listarTarifasPorOrdenVenta(this.ORDEN_VTA_CABECERA).subscribe(
       res => {
         console.log(res.json());
         this.listaTarifasDeOrdVta = new MatTableDataSource(res.json());
@@ -701,7 +703,7 @@ export class OrdenVentaComponent implements OnInit {
       dialogRef.afterClosed().subscribe(result => {
         if (result) {
           this.loaderService.show();
-          this.ordenVentaTarifaService.eliminar(elemento.id).subscribe(
+          this.ordenVentaTarifaService.eliminar(elemento.idOrdenVentaTarifa).subscribe(
             res => {
               let respuesta = res.json();
               this.toastr.success(respuesta.mensaje);
