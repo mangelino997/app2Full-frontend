@@ -32,6 +32,7 @@ import { MonedaCotizacionService } from 'src/app/servicios/moneda-cotizacion.ser
 import { LoaderService } from 'src/app/servicios/loader.service';
 import { Subscription } from 'rxjs';
 import { LoaderState } from 'src/app/modelos/loader';
+import { TipoTarifaService } from 'src/app/servicios/tipo-tarifa.service';
 
 @Component({
   selector: 'app-emitir-factura',
@@ -118,7 +119,7 @@ export class EmitirFacturaComponent implements OnInit {
   private subscription: Subscription;
   constructor(
     private appComponent: AppComponent, public dialog: MatDialog, private fechaService: FechaService,
-    private ventaComprobanteService: VentaComprobanteService,
+    private ventaComprobanteService: VentaComprobanteService, private tipoTarifaService: TipoTarifaService,
     public clienteService: ClienteService, private toastr: ToastrService,
     private ventaComprobante: VentaComprobante, private appService: AppService,
     private empresaOrdenVtaService: EmpresaOrdenVentaService,
@@ -491,6 +492,7 @@ export class EmitirFacturaComponent implements OnInit {
     //Con cada cambio limpia los campos 'Tarifa' - 'pSeguro'
     this.formularioVtaCpteItemFA.get('pSeguro').reset();
     this.tarifaOrdenVenta.reset();
+    console.log(this.ordenVenta.value);
     //Controla el campo 'Seguro'. El ordenVenta == false corresponde a 'Libre'
     if (this.ordenVenta.value == 'false') {
       this.tarifaOrdenVenta.disable();
@@ -498,19 +500,33 @@ export class EmitirFacturaComponent implements OnInit {
         this.formularioVtaCpteItemFA.get('importeSeguro').enable();
     } else {
       this.tarifaOrdenVenta.enable();
+      this.listarTarifasPorOrdenVenta(this.ordenVenta.value.ordenVenta.id);
       this.formulario.value.cliente.esSeguroPropio ? this.formularioVtaCpteItemFA.get('pSeguro').disable() :
-        this.formularioVtaCpteItemFA.get('pSeguro').setValue(this.appService.establecerDecimales(this.ordenVenta.value.ordenVenta.seguro, 2));
-
-      /* Setea las tarifas */
-      this.tiposTarifa = this.ordenVenta.value.ordenVenta.tipoTarifas;
-      this.tarifaOrdenVenta.setValue(this.tiposTarifa[0]);
-      this.cambioTipoTarifa();
+        [this.formularioVtaCpteItemFA.get('pSeguro').setValue(this.appService.establecerDecimales(this.ordenVenta.value.ordenVenta.seguro, 2)),
+        this.calcularSubtotal()
+        ];
     }
+  }
+  //Obtiene el listado de tarifas para una orden de venta
+  private listarTarifasPorOrdenVenta(idOrdenVenta) {
+    this.tipoTarifaService.listarPorOrdenVenta(idOrdenVenta).subscribe(
+      res => {
+        this.tiposTarifa = res.json();
+        this.tarifaOrdenVenta.setValue(this.tiposTarifa[0]);
+        this.cambioTipoTarifa();
+      },
+      err => {
+        this.toastr.error(err.json().mensaje);
+      }
+    )
   }
   //Maneja el cambio en el campo 'Tarifa de Orden Vta.' y obtiene el precio del Flete
   public cambioTipoTarifa() {
+    /* habilita el formulario para poder obtener bultos, kg, m3 */
+    this.formularioVtaCpteItemFA.enable();
     let kgMayor;
     let tipoTarifa = this.tarifaOrdenVenta.value.id;
+    console.log(tipoTarifa, this.formularioVtaCpteItemFA.get('bultos').value);
     let idOrdenVta = this.ordenVenta.value.ordenVenta.id;
     this.formularioVtaCpteItemFA.get('kilosEfectivo').value > this.formularioVtaCpteItemFA.get('kilosAforado').value ?
       kgMayor = this.formularioVtaCpteItemFA.get('kilosEfectivo').value : kgMayor = this.formularioVtaCpteItemFA.get('kilosAforado').value;
@@ -534,9 +550,11 @@ export class EmitirFacturaComponent implements OnInit {
   private obtenerPrecioFlete(idOrdenVenta, valor) {
     this.ordenVentaEscalaServicio.obtenerPrecioFlete(idOrdenVenta, valor).subscribe(
       res => {
+        console.log(res.json());
         let respuesta = res.json();
         this.formularioVtaCpteItemFA.get('flete').setValue(respuesta);
         this.setDecimales(this.formularioVtaCpteItemFA.get('flete'), 2);
+        this.calcularSubtotal();
       }, err => { this.toastr.warning("No existe escala tarifa para obtener el precio flete."); }
     );
   }
@@ -632,6 +650,7 @@ export class EmitirFacturaComponent implements OnInit {
       this.formulario.get('letra').setValue('A') : this.formulario.get('letra').setValue('B');
     // Obtiene el codigo afip y el número
     this.cargarCodigoAfip(this.formulario.value.letra);
+    console.log(this.formulario.value.cliente);
     //Controla la lista para el campo 'Orden Venta'
     this.formulario.value.cliente.clienteOrdenesVentas ?
       [this.ordenesVenta = this.formulario.value.cliente.clienteOrdenesVentas,

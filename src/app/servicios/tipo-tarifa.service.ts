@@ -62,10 +62,6 @@ export class TipoTarifaService {
   public listarPorOrdenVenta(id) {
     return this.http.get(this.url + '/listarPorOrdenVenta/' + id, this.options);
   }
-  //Obtiene la lista de tarifas para Orden Venta
-  public listarTarifasPorOrdenVenta(id) {
-    return this.http.get(this.url + '/listarTarifasPorOrdenVenta/' + id, this.options);
-  }
   //Obtiene un listado por nombre
   public listarPorNombre(nombre) {
     return this.http.get(this.url + '/listarPorNombre/' + nombre, this.options).map(res => {

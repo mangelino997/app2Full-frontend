@@ -31,6 +31,7 @@ import { ViajeTramoRemitoService } from 'src/app/servicios/viaje-tramo-remito.se
 import { VentaComprobanteItemCR } from 'src/app/modelos/ventaComprobanteItemCR';
 import { ViajeTramoClienteRemitoService } from 'src/app/servicios/viaje-tramo-cliente-remito.service';
 import { AforoComponent } from 'src/app/componentes/aforo/aforo.component';
+import { TipoTarifaService } from 'src/app/servicios/tipo-tarifa.service';
 
 @NgModule({
   declarations: [
@@ -80,7 +81,8 @@ import { AforoComponent } from 'src/app/componentes/aforo/aforo.component';
     VentaConfigService,
     AfipCaeService,
     ViajeTramoRemitoService,
-    ViajeTramoClienteRemitoService
+    ViajeTramoClienteRemitoService,
+    TipoTarifaService
   ],
   entryComponents: [
     ConceptosVariosDialogo,
