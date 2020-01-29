@@ -497,12 +497,8 @@ export class OrdenVentaComponent implements OnInit {
   //Obtiene la lista de Orden Venta Tarifas por el id de la Orden Venta creada
   private listarTarifasOrdenVenta() {
     this.loaderService.show();
-    this.listaTarifasDeOrdVta = null;
-    console.log(this.ORDEN_VTA_CABECERA);
-
-    this.tipoTarifaServicio.listarTarifasPorOrdenVenta(this.ORDEN_VTA_CABECERA).subscribe(
+    this.tipoTarifaServicio.listarPorOrdenVenta(this.ORDEN_VTA_CABECERA).subscribe(
       res => {
-        console.log(res.json());
         this.listaTarifasDeOrdVta = new MatTableDataSource(res.json());
         this.listaTarifasDeOrdVta.sort = this.sort;
         this.tipoTarifa.setValue(this.listaTarifasDeOrdVta.data[0].porEscala ? 'porEscala' : 'porTramo');
@@ -656,13 +652,11 @@ export class OrdenVentaComponent implements OnInit {
   }
   //Abre el modal de ver Orden Venta Tarifa
   public verTarifaOrdenVenta(tarifa) {
-    console.log(tarifa, this.ORDEN_VTA_CABECERA, this.indiceSeleccionado, this.preciosDesde.value, this.formulario.get('estaActiva').value);
     const dialogRef = this.dialog.open(VerTarifaDialogo, {
       width: '95%',
       maxWidth: '95%',
       data: {
         tarifa: tarifa,
-        // ordenVenta: this.ordenventa.value,
         ordenVenta: {id: this.ORDEN_VTA_CABECERA},
         indiceSeleccionado: this.indiceSeleccionado,
         fechaActual: this.preciosDesde.value,
@@ -686,7 +680,6 @@ export class OrdenVentaComponent implements OnInit {
   }
   //Abre el modal de ver Orden Venta Tarifa
   public eliminarTarifaOrdenVenta(elemento) {
-    console.log(elemento);
     if (this.listaTarifasDeOrdVta.data.length == 1) {
       this.toastr.warning("No se pueden eliminar todas las tarifas");
       document.getElementById('idTipoTarifa').focus();
@@ -703,7 +696,7 @@ export class OrdenVentaComponent implements OnInit {
       dialogRef.afterClosed().subscribe(result => {
         if (result) {
           this.loaderService.show();
-          this.ordenVentaTarifaService.eliminar(elemento.idOrdenVentaTarifa).subscribe(
+          this.ordenVentaTarifaService.eliminarPorOrdenVentaYTipoTarifa(this.ORDEN_VTA_CABECERA, elemento.id).subscribe(
             res => {
               let respuesta = res.json();
               this.toastr.success(respuesta.mensaje);

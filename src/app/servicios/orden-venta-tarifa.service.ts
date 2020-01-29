@@ -64,4 +64,8 @@ export class OrdenVentaTarifaService {
   public eliminar(id) {
     return this.http.delete(this.url + '/' + id, this.options);
   }
+  //Elimina un registro por orden de venta y tipo de tarifa
+  public eliminarPorOrdenVentaYTipoTarifa(idOrdenVenta, idTipoTarifa) {
+    return this.http.delete(this.url + '/eliminarPorOrdenVentaYTipoTarifa/' + idOrdenVenta + '/' + idTipoTarifa, this.options);
+  }
 }
