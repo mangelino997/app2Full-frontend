@@ -221,74 +221,33 @@ export class PersonalService {
   }
   //Actualiza un registro
   public actualizar(elemento) {
-    let obj = Object.assign({}, elemento);
-    let foto = obj.foto;
-    let licConducir = obj.pdfLicConducir;
-    let libSanidad = obj.pdfLibSanidad;
-    let linti = obj.pdfLinti;
-    let dni = obj.pdfDni;
-    let altaTemprana = obj.pdfAltaTemprana;
-    let noBlobPdf = new Blob([null], { type: 'application/pdf' });
+    elemento.foto = null;
+    elemento.pdfDni = null;
+    elemento.pdfLicConducir = null;
+    elemento.pdfLinti = null;
+    elemento.pdfLibSanidad = null;
+    elemento.pdfAltaTemprana = null;
+    return this.http.put(this.url, elemento, this.options);
+  }
+  //Actualiza un pdf
+  public actualizarPDF(idPersonal, tipoPdf, elemento) {
     const formData = new FormData();
-    if (foto.nombre != null) {
-      let blob = new Blob([foto.datos], { type: 'image/jpeg' });
-      formData.append('foto', blob, foto.nombre);
-    } else {
-      let blob = new Blob([null], { type: 'image/jpeg' });
-      formData.append('foto', blob, '');
-    }
-    if (licConducir.nombre != null) {
-      let blobPdf = new Blob([licConducir.datos], { type: 'application/pdf' });
-      formData.append('licConducir', blobPdf, licConducir.nombre);
-    } else {
-      formData.append('licConducir', noBlobPdf, '');
-    }
-    if (libSanidad.nombre != null) {
-      let blobPdf = new Blob([libSanidad.datos], { type: 'application/pdf' });
-      formData.append('libSanidad', blobPdf, libSanidad.nombre);
-    } else {
-      formData.append('libSanidad', noBlobPdf, '');
-    }
-    if (linti.nombre != null) {
-      let blobPdf = new Blob([linti.datos], { type: 'application/pdf' });
-      formData.append('linti', blobPdf, linti.nombre);
-    } else {
-      formData.append('linti', noBlobPdf, '');
-    }
-    if (dni.nombre != null) {
-      let tipo = dni.nombre.split(".", 2);
-      if (this.tipos.includes(tipo[1])) {
-        let blobPdf = new Blob([dni.datos], { type: 'image/jpeg' });
-        formData.append('dni', blobPdf, dni.nombre);
-      } else if (tipo[1] == 'pdf') {
-        let blobPdf = new Blob([dni.datos], { type: 'application/pdf' });
-        formData.append('dni', blobPdf, dni.nombre);
-      } else {
-        formData.append('dni', noBlobPdf, '');
-      }
-    } else {
-      formData.append('dni', noBlobPdf, '');
-    }
-    if (altaTemprana.nombre != null) {
-      let blobPdf = new Blob([altaTemprana.datos], { type: 'application/pdf' });
-      formData.append('altaTemprana', blobPdf, altaTemprana.nombre);
-    } else {
-      formData.append('altaTemprana', noBlobPdf, '');
-    }
-    obj.foto = null;
-    obj.pdfLicConducir = null;
-    obj.pdfLibSanidad = null;
-    obj.pdfLinti = null;
-    obj.pdfDni = null;
-    obj.pdfAltaTemprana = null;
-    formData.append('personal', JSON.stringify(obj));
-    return fetch(this.url, {
+    let blob = new Blob([elemento.datos], { type: 'application/pdf' });
+    formData.append('idPersonal', JSON.stringify(idPersonal));
+    formData.append('idPdf', JSON.stringify(elemento.id));
+    formData.append('tipoPdf', tipoPdf);
+    formData.append('archivo', blob, elemento.nombre);
+    return fetch(this.url + '/actualizarPdf', {
       method: "PUT",
       headers: {
         'Authorization': localStorage.getItem('token')
       },
       body: formData
     });
+  }
+  //Elimina un pdf
+  public eliminarPdf(idPersonal, idPdf, tipoPdf) {
+    return this.http.delete(this.url + '/eliminarPdf/' + idPersonal + '/' + idPdf + '/' + tipoPdf, this.options);
   }
   //Elimina un registro
   public eliminar(id) {

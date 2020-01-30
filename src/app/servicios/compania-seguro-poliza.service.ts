@@ -101,25 +101,27 @@ export class CompaniaSeguroPolizaService {
   }
   //Actualiza un registro
   public actualizar(elemento) {
-    let obj = Object.assign({}, elemento);
-    let pdf = obj.pdf;
+    elemento.pdf = null;
+    return this.http.put(this.url, elemento, this.options);
+  }
+  //Actualiza un pdf
+  public actualizarPDF(idCompaniaSeguroPoliza, elemento) {
     const formData = new FormData();
-    if (pdf.nombre == null) {
-      let blob = new Blob([null], { type: 'application/pdf' });
-      formData.append('archivo', blob, '');
-    } else {
-      let blob = new Blob([pdf.datos], { type: 'application/pdf' });
-      formData.append('archivo', blob, pdf.nombre);
-    }
-    obj.pdf.datos = null;
-    formData.append('formulario', JSON.stringify(obj));
-    return fetch(this.url, {
+    let blob = new Blob([elemento.datos], { type: 'application/pdf' });
+    formData.append('idCompaniaSeguroPoliza', JSON.stringify(idCompaniaSeguroPoliza));
+    formData.append('idPdf', JSON.stringify(elemento.id));
+    formData.append('archivo', blob, elemento.nombre);
+    return fetch(this.url + '/actualizarPdf', {
       method: "PUT",
       headers: {
         'Authorization': localStorage.getItem('token')
       },
       body: formData
     });
+  }
+  //Elimina un pdf
+  public eliminarPdf(idCompaniaSeguroPoliza, idPdf) {
+    return this.http.delete(this.url + '/eliminarPdf/' + idCompaniaSeguroPoliza + '/' + idPdf, this.options);
   }
   //Elimina un registro
   public eliminar(id) {

@@ -13,6 +13,7 @@ import { TipoDocumentoService } from 'src/app/servicios/tipo-documento.service';
 import { PdfDialogoComponent } from '../pdf-dialogo/pdf-dialogo.component';
 import { BugImagenDialogoComponent } from '../bugImagen-dialogo/bug-imagen-dialogo.component';
 import { ReporteService } from 'src/app/servicios/reporte.service';
+import { MensajeExcepcion } from 'src/app/modelos/mensaje-excepcion';
 
 @Component({
   selector: 'app-vencimientos-choferes',
@@ -78,22 +79,6 @@ export class VencimientosChoferesComponent implements OnInit {
     public dialog: MatDialog, private appService: AppService, private personal: Personal, private toastr: ToastrService,
     private loaderService: LoaderService, private tipoDocumentoServicio: TipoDocumentoService, private reporteServicio: ReporteService) {
     //Autocompletado - Buscar por alias
-    // this.autocompletado.valueChanges.subscribe(data => {
-    //   if (typeof data == 'string') {
-    //     data = data.trim();
-    //     this.loaderService.show();
-    //     if (data == '*' || data.length > 0) {
-    //       this.servicio.listarPorAlias(data).subscribe(response => {
-    //         this.resultados = response;
-    //         this.loaderService.hide();
-    //       },
-    //         err => {
-    //           this.loaderService.hide();
-    //         })
-    //     }
-    //   }
-    // })
-    //Autocompletado - Buscar por alias
     this.autocompletado.valueChanges.subscribe(data => {
       let empresa = this.appService.getEmpresa();
       if (typeof data == 'string') {
@@ -118,7 +103,6 @@ export class VencimientosChoferesComponent implements OnInit {
       .subscribe((state: LoaderState) => {
         this.show = state.show;
       });
-    // this.loaderService.show();
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
       .subscribe(
@@ -144,14 +128,13 @@ export class VencimientosChoferesComponent implements OnInit {
     });
     this.formularioFiltro.get('chofer').setValue(0);
     //Establece los valores de la primera pestania activa
-    this.seleccionarPestania(1, 'Consultar');
+    this.seleccionarPestania(2, 'Consultar');
     //Obtiene la lista de tipos de documentos
     this.listarTiposDocumentos();
     //Deshabilita los campos de es chofer y es chofer larga distancia 
     this.formulario.get('esChofer').disable();
     this.formulario.get('esChoferLargaDistancia').disable();
   }
-
   //Obtiene el listado de tipos de documentos
   private listarTiposDocumentos() {
     this.tipoDocumentoServicio.listar().subscribe(
@@ -163,34 +146,11 @@ export class VencimientosChoferesComponent implements OnInit {
       }
     );
   }
-  //Obtiene la lista de Choferes por Empresa logueada
-  // private listar() {
-  //   this.loaderService.show();
-  //   let empresa = this.appService.getEmpresa();
-  //   this.servicio.listarChoferesPorEmpresa(empresa.id).subscribe(
-  //     res => {
-  //       if (this.indiceSeleccionado == 5) {
-  //         this.listaCompleta = new MatTableDataSource(res.json());
-  //         this.listaCompleta.sort = this.sort;
-  //         this.listaCompleta.paginator = this.paginator;
-  //       } else {
-  //         this.listaChoferes = res.json();
-  //       }
-  //       this.loaderService.hide();
-  //     },
-  //     err => {
-  //       let error = err.json();
-  //       this.toastr.error(error.mensaje);
-  //       this.loaderService.hide();
-  //     }
-  //   );
-  // }
   //Establece valores al seleccionar una pestania
   public seleccionarPestania(id, nombre) {
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
     this.reestablecerFormulario(null);
-    //this.listar();
     switch (id) {
       case 2:
         this.establecerValoresPestania(nombre, true, true, false);
@@ -285,8 +245,6 @@ export class VencimientosChoferesComponent implements OnInit {
   }
   //Controla si el adjunto es un PDF o JPEG y llama al readURL apropiado
   public controlAdjunto(event) {
-    let adjunto = event;
-    // let extension = this.formulario.get('pdfDni').value.tipo;
     let extension = event.target.files[0].type;
     if (extension == 'application/pdf') {
       this.readPdfURL(event, 'pdfDni');
@@ -301,18 +259,86 @@ export class VencimientosChoferesComponent implements OnInit {
       const reader = new FileReader();
       reader.onload = e => {
         let foto = {
-          id: this.formulario.get(campo + '.id').value ? this.formulario.get(campo + '.id').value : null,
+          id: this.formulario.get(campo + '.id').value ? this.formulario.get(campo + '.id').value : 0,
           nombre: file.name,
           datos: reader.result,
           tipo: 'image/jpeg'
         }
         this.formulario.get(campo).patchValue(foto);
         event.target.value = null;
+        if(this.indiceSeleccionado == 3) {
+          this.actualizarPDF(campo, foto);
+        }
       }
       reader.readAsDataURL(file);
     } else {
       this.toastr.error("Debe adjuntar un archivo con extensión .jpeg .png .jpg");
     }
+  }
+  //Actualiza un pdf de un vehiculo
+  private actualizarPDF(campo, pdf): void {
+    this.loaderService.show();
+    let idPersonal = this.formulario.get('id').value;
+    this.servicio.actualizarPDF(idPersonal, campo, pdf).then(
+      res => {
+        if(res.status == 200) {
+          res.json().then(
+            data => {
+              this.formulario.get('version').setValue(data.version);
+              //Si es una foto
+              if(campo == 'foto') {
+                this.formulario.get(campo + '.id').setValue(data.foto.id);
+                this.formulario.get(campo + '.version').setValue(data.foto.version);
+              } else {
+                //Si es un pdf
+                this.formulario.get(campo + '.id').setValue(data.pdfDni.id);
+                this.formulario.get(campo + '.version').setValue(data.pdfDni.version);
+              }
+            }
+          );
+        } else {
+          this.toastr.error(MensajeExcepcion.NO_ACTUALIZADO);
+        }
+        this.loaderService.hide();
+      },
+      err => {
+        this.toastr.error(MensajeExcepcion.NO_ACTUALIZADO);
+        this.loaderService.hide();
+      }
+    );
+  }
+  //Elimina un pdf ya cargado, se pasa el campo como parametro
+  public eliminarPdf(campoNombre, campo) {
+    if(this.indiceSeleccionado == 3) {
+      this.eliminarPdfPersonal(campoNombre, campo);
+    } else {
+      this.formulario.get(campo).reset();
+    }
+  }
+  //Elimina un pdf
+  private eliminarPdfPersonal(campoNombre, campo): void {
+    this.loaderService.show();
+    let idPersonal = this.formulario.get('id').value;
+    let idPdf = this.formulario.get(campo).value.id;
+    this.servicio.eliminarPdf(idPersonal, idPdf, campo).subscribe(
+      res => {
+        if(res.status == 200) {
+          this.formulario.get('version').setValue(res.json());
+          if (!this.formulario.get(campoNombre).value) {
+            this.toastr.success("Sin archivo adjunto");
+          } else {
+            this.formulario.get(campo).reset();
+          }
+        } else {
+          this.toastr.error(MensajeExcepcion.NO_ELIMINADO);
+        }
+        this.loaderService.hide();
+      },
+      err => {
+        this.toastr.error(MensajeExcepcion.NO_ELIMINADO);
+        this.loaderService.hide();
+      }
+    );
   }
   //Carga el archivo PDF 
   public readPdfURL(event, campo): void {
@@ -323,24 +349,19 @@ export class VencimientosChoferesComponent implements OnInit {
       const reader = new FileReader();
       reader.onload = e => {
         let pdf = {
-          id: this.formulario.get(campo + '.id').value ? this.formulario.get(campo + '.id').value : null,
+          id: this.formulario.get(campo + '.id').value ? this.formulario.get(campo + '.id').value : 0,
           nombre: file.name,
           datos: reader.result
         }
         this.formulario.get(campo).patchValue(pdf);
         event.target.value = null;
+        if(this.indiceSeleccionado == 3) {
+          this.actualizarPDF(campo, pdf);
+        }
       }
       reader.readAsDataURL(file);
     } else {
       this.toastr.error("Debe adjuntar un archivo con extensión .pdf");
-    }
-  }
-  //Elimina un pdf ya cargado, se pasa el campo como parametro
-  public eliminarPdf(campo) {
-    if (!this.formulario.get(campo).value) {
-      this.toastr.success("Sin archivo adjunto");
-    } else {
-      this.formulario.get(campo).setValue('');
     }
   }
   //Obtiene el dni para mostrarlo
@@ -358,9 +379,12 @@ export class VencimientosChoferesComponent implements OnInit {
     const dialogRef = this.dialog.open(BugImagenDialogoComponent, {
       width: '95%',
       height: '95%',
+      maxWidth: '95%',
+      maxHeight: '95%',
       data: {
+        id: this.formulario.get(campo + '.id').value,
+        datos: this.formulario.get(campo + '.datos').value,
         nombre: this.formulario.get(campo + '.nombre').value,
-        datos: this.formulario.get(campo + '.datos').value
       }
     });
     dialogRef.afterClosed().subscribe(resultado => { });
@@ -370,9 +394,12 @@ export class VencimientosChoferesComponent implements OnInit {
     const dialogRef = this.dialog.open(PdfDialogoComponent, {
       width: '95%',
       height: '95%',
+      maxWidth: '95%',
+      maxHeight: '95%',
       data: {
+        id: this.formulario.get(campo + '.id').value,
+        datos: this.formulario.get(campo + '.datos').value,
         nombre: this.formulario.get(campo + '.nombre').value,
-        datos: this.formulario.get(campo + '.datos').value
       }
     });
     dialogRef.afterClosed().subscribe(resultado => { });
@@ -382,12 +409,12 @@ export class VencimientosChoferesComponent implements OnInit {
     this.loaderService.show();
     this.formulario.enable();
     this.formulario.get('usuarioMod').setValue(this.appService.getUsuario());
-    this.servicio.actualizar(this.formulario.value).then(
+    this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
         if (res.status == 200) {
           this.reestablecerFormulario(undefined);
-          document.getElementById('idVtoCurso').focus();
-          this.toastr.success('Registro actualizado con éxito');
+          document.getElementById('idAutocompletado').focus();
+          this.toastr.success(MensajeExcepcion.ACTUALIZADO);
           this.resultados = [];
         }
         this.loaderService.hide();
@@ -399,6 +426,12 @@ export class VencimientosChoferesComponent implements OnInit {
         this.loaderService.hide();
       }
     );
+  }
+  //Verifica si se selecciono un elemento del autocompletado
+  public verificarSeleccion(valor): void {
+    if (typeof valor.value != 'object') {
+      valor.setValue(null);
+    }
   }
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
@@ -454,6 +487,21 @@ export class VencimientosChoferesComponent implements OnInit {
       }
     }
   }
+  //obtiene la lista por filtros
+  public listarChoferesPorFiltros(): void {
+    this.loaderService.show();
+    this.servicio.listarChoferesPorFiltros(this.formularioFiltro.value).subscribe(
+      res => {
+        this.listaCompleta = new MatTableDataSource(res.json());
+        this.listaCompleta.sort = this.sort;
+        this.listaCompleta.paginator = this.paginator;
+        this.loaderService.hide();
+      },
+      err => {
+        this.loaderService.hide();
+      }
+    );
+  }
   //Prepara los datos para exportar
   private prepararDatos(listaCompleta): Array<any> {
     let lista = listaCompleta;
@@ -483,20 +531,5 @@ export class VencimientosChoferesComponent implements OnInit {
       columnas: this.columnas
     }
     this.reporteServicio.abrirDialogo(datos);
-  }
-  //obtiene la lista por filtros
-  public listarChoferesPorFiltros(): void {
-    this.loaderService.show();
-    this.servicio.listarChoferesPorFiltros(this.formularioFiltro.value).subscribe(
-      res => {
-        this.listaCompleta = new MatTableDataSource(res.json());
-        this.listaCompleta.sort = this.sort;
-        this.listaCompleta.paginator = this.paginator;
-        this.loaderService.hide();
-      },
-      err => {
-        this.loaderService.hide();
-      }
-    );
   }
 }

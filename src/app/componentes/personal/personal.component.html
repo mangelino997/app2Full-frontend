@@ -213,7 +213,7 @@
                                 style="color: lightgreen">cloud_done</i>
                             </button>
                             <button class="btn-height" mat-raised-button color="warn"
-                              (click)="eliminarAdjunto('pdfDni')" [disabled]="!formulario.get('pdfDni.nombre').value ||
+                              (click)="eliminarPdf('pdfDni.nombre', 'pdfDni')" [disabled]="!formulario.get('pdfDni.nombre').value ||
                                 indiceSeleccionado == 2 || indiceSeleccionado == 4" style="width: 40px;"
                               matTooltip="Quitar">
                               <i class="material-icons">close</i>
@@ -263,7 +263,7 @@
                               <i class="material-icons" *ngIf="formulario.get('foto.datos').value"
                                 style="color: lightgreen">cloud_done</i>
                             </button>
-                            <button class="btn-height" mat-raised-button color="warn" (click)="eliminarAdjunto('foto')"
+                            <button class="btn-height" mat-raised-button color="warn" (click)="eliminarPdf('foto.nombre', 'foto')"
                               [disabled]="!formulario.get('foto.datos').value ||
                               indiceSeleccionado == 2 || indiceSeleccionado == 4" style="width: 40px;"
                               matTooltip="Quitar">
@@ -594,7 +594,8 @@
                             style="color: lightgreen">cloud_done</i>
                         </button>
                         <button class="btn-height" mat-raised-button color="warn"
-                          (click)="eliminarAdjunto('pdfAltaTemprana')" [disabled]="!formulario.get('pdfAltaTemprana.nombre').value || indiceSeleccionado == 2 
+                          (click)="eliminarPdf('pdfAltaTemprana.nombre', 'pdfAltaTemprana')" 
+                          [disabled]="!formulario.get('pdfAltaTemprana.nombre').value || indiceSeleccionado == 2 
                             || indiceSeleccionado == 4 " style="width: 40px;" matTooltip="Quitar">
                           <i class="material-icons">close</i>
                         </button>
@@ -907,8 +908,9 @@
                             style="color: lightgreen">cloud_done</i>
                         </button>
                         <button class="btn-height" mat-raised-button color="warn"
-                          (click)="eliminarAdjunto('pdfLicConducir')" [disabled]="!formulario.get('pdfLicConducir.nombre').value || indiceSeleccionado == 2 
-                          || indiceSeleccionado == 4 || !btnPdfLicConducir" style="width: 40px;" matTooltip="Quitar">
+                          (click)="eliminarPdf('pdfLicConducir.nombre', 'pdfLicConducir')" 
+                          [disabled]="!formulario.get('pdfLicConducir.nombre').value || indiceSeleccionado == 2 
+                            || indiceSeleccionado == 4 || !btnPdfLicConducir" style="width: 40px;" matTooltip="Quitar">
                           <i class="material-icons">close</i>
                         </button>
                         <button class="btn-height" mat-raised-button color="primary" (click)="verPDF('pdfLicConducir')"
@@ -938,7 +940,7 @@
                           <i class="material-icons" *ngIf="formulario.get('pdfLinti.nombre').value"
                             style="color: lightgreen">cloud_done</i>
                         </button>
-                        <button class="btn-height" mat-raised-button color="warn" (click)="eliminarAdjunto('pdfLinti')"
+                        <button class="btn-height" mat-raised-button color="warn" (click)="eliminarPdf('pdfLinti.nombre', 'pdfLinti')"
                           [disabled]="!formulario.get('pdfLinti.nombre').value || indiceSeleccionado == 2 ||
                            indiceSeleccionado == 4 || !btnPdflinti" style="width: 40px;" matTooltip="Quitar">
                           <i class="material-icons">close</i>
@@ -972,8 +974,9 @@
                             style="color: lightgreen">cloud_done</i>
                         </button>
                         <button class="btn-height" mat-raised-button color="warn"
-                          (click)="eliminarAdjunto('pdfLibSanidad')" [disabled]="!formulario.get('pdfLibSanidad.nombre').value || indiceSeleccionado == 2 ||
-                           indiceSeleccionado == 4 || !btnPdfLibSanidad" style="width: 40px;" matTooltip="Quitar">
+                          (click)="eliminarPdf('pdfLibSanidad.nombre', 'pdfLibSanidad')" 
+                          [disabled]="!formulario.get('pdfLibSanidad.nombre').value || indiceSeleccionado == 2 ||
+                            indiceSeleccionado == 4 || !btnPdfLibSanidad" style="width: 40px;" matTooltip="Quitar">
                           <i class="material-icons">close</i>
                         </button>
                         <button class="btn-height" mat-raised-button color="primary" (click)="verPDF('pdfLibSanidad')"
@@ -1099,8 +1102,8 @@
                     </div>
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
-                        <label for="idTurnoNSalida" class="tamanio-label">Turno Tarde Salida</label>
-                        <input id="idTurnoNSalida" [textMask]="{mask: mascararHora()}" type="text"
+                        <label for="idTurnoTSalida" class="tamanio-label">Turno Tarde Salida</label>
+                        <input id="idTurnoTSalida" [textMask]="{mask: mascararHora()}" type="text"
                           formControlName="turnoTSalida" autocomplete="off"
                           (blur)="desenmascararHora(formulario.get('turnoTSalida'))"
                           class="form-control form-control-sm number-right" placeholder="00:00 hs"
