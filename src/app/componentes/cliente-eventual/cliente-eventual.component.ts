@@ -138,6 +138,7 @@ export class ClienteEventualComponent implements OnInit {
     this.zonaServicio.listar().subscribe(
       res => {
         this.zonas = res.json();
+        this.formulario.get('zona').setValue(this.zonas[0]);
       },
       err => {
       }
@@ -152,6 +153,16 @@ export class ClienteEventualComponent implements OnInit {
       err => {
       }
     );
+  }
+  //Controla el cambio en el campo barrio
+  public cambioBarrio() {
+    this.verificarSeleccion(this.formulario.get('barrio'));
+    if (this.formulario.value.barrio) {
+      this.formulario.value.barrio.zona ? [this.formulario.get('zona').setValue({ id: this.formulario.value.barrio.zona.id }),
+      this.formulario.get('zona').disable()] : [this.formulario.get('zona').enable()];
+    } else {
+      this.formulario.get('zona').enable();
+    }
   }
   //Obtiene la mascara de enteros
   public mascararEnteros(limite) {
@@ -198,6 +209,7 @@ export class ClienteEventualComponent implements OnInit {
   //Agrega un cliente eventual
   public agregarClienteEventual(): void {
     this.loaderService.show();
+    this.formulario.get('zona').enable();
     this.formulario.get('id').setValue(null);
     this.formulario.get('usuarioAlta').setValue(this.data.usuario);
     this.clienteServicio.agregarClienteEventual(this.formulario.value).subscribe(

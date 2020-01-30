@@ -55,14 +55,14 @@
             <table mat-table [dataSource]="chequesCartera" matSort class="mat-elevation-z1">
                 <ng-container matColumnDef="CHECK" sticky>
                     <th style="padding-right: 5px;" mat-header-cell *matHeaderCellDef>
-                        <mat-checkbox (change)="$event ? alternarSeleccion() : null"
+                        <mat-checkbox (change)="$event ? alternarSeleccion() : null" color="primary"
                             [checked]="chequesCarteraSeleccionados.hasValue() && estanTodosSeleccionados()"
                             [indeterminate]="chequesCarteraSeleccionados.hasValue() && !estanTodosSeleccionados()"
                             [aria-label]="checkboxLabel()">
                         </mat-checkbox>
                     </th>
                     <td style="padding-right: 5px;" mat-cell *matCellDef="let row">
-                        <mat-checkbox (click)="$event.stopPropagation()"
+                        <mat-checkbox (click)="$event.stopPropagation()" color="primary"
                             (change)="$event ? seleccionarCheckbox(row) : null"
                             [checked]="chequesCarteraSeleccionados.isSelected(row)"
                             [aria-label]="checkboxLabel(row)">

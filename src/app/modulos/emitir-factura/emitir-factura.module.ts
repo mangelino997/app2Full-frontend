@@ -8,7 +8,7 @@ import {
   MatSelectModule, MatProgressBarModule, MatIconModule, MatButtonModule, MatDialogModule, MatRadioModule, MatCheckboxModule
 } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { ConceptosVariosDialogo, QuitarItemDialogo, ObservacionDialogo, ViajeDialogo, EmitirFacturaComponent } from 'src/app/componentes/emitir-factura/emitir-factura.component';
+import { ConceptosVariosDialogo, QuitarItemDialogo, ObservacionDialogo, ViajeDialogo, EmitirFacturaComponent, OtroItemDialogo } from 'src/app/componentes/emitir-factura/emitir-factura.component';
 import { TextMaskModule } from 'angular2-text-mask';
 import { VentaComprobanteService } from 'src/app/servicios/venta-comprobante.service';
 import { ClienteService } from 'src/app/servicios/cliente.service';
@@ -31,6 +31,7 @@ import { ViajeTramoRemitoService } from 'src/app/servicios/viaje-tramo-remito.se
 import { VentaComprobanteItemCR } from 'src/app/modelos/ventaComprobanteItemCR';
 import { ViajeTramoClienteRemitoService } from 'src/app/servicios/viaje-tramo-cliente-remito.service';
 import { AforoComponent } from 'src/app/componentes/aforo/aforo.component';
+import { TipoTarifaService } from 'src/app/servicios/tipo-tarifa.service';
 
 @NgModule({
   declarations: [
@@ -39,7 +40,7 @@ import { AforoComponent } from 'src/app/componentes/aforo/aforo.component';
     QuitarItemDialogo,
     ObservacionDialogo,
     ViajeDialogo,
-    
+    OtroItemDialogo
   ],
   imports: [
     CommonModule,
@@ -80,13 +81,15 @@ import { AforoComponent } from 'src/app/componentes/aforo/aforo.component';
     VentaConfigService,
     AfipCaeService,
     ViajeTramoRemitoService,
-    ViajeTramoClienteRemitoService
+    ViajeTramoClienteRemitoService,
+    TipoTarifaService
   ],
   entryComponents: [
     ConceptosVariosDialogo,
     QuitarItemDialogo,
     ObservacionDialogo,
     ViajeDialogo,
+    OtroItemDialogo
   ]
 })
 export class EmitirFacturaModule { }

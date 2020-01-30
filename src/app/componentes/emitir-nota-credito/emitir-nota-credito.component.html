@@ -241,10 +241,10 @@
             <ng-container matColumnDef="CHECK">
               <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
               <td mat-cell *matCellDef="let elemento; let i=index">
-                <mat-checkbox class="cursor-color" (change)="cambioCheck(elemento, i, $event)" *ngIf="idTipoCpte != 28"
+                <mat-checkbox class="cursor-color" color="primary" (change)="cambioCheck(elemento, i, $event)" *ngIf="idTipoCpte != 28"
                   [disabled]="idMod" [checked]="elemento.checked">
                 </mat-checkbox>
-                <mat-checkbox class="cursor-color" (change)="cambioCheck(elemento, i, $event)" *ngIf="idTipoCpte == 28"
+                <mat-checkbox class="cursor-color" color="primary" (change)="cambioCheck(elemento, i, $event)" *ngIf="idTipoCpte == 28"
                   [disabled]="elemento.ventaComprobanteItemNC.length == 0 && checkboxs" [checked]="elemento.checked">
                 </mat-checkbox>
               </td>

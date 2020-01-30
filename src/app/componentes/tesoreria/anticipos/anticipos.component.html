@@ -43,11 +43,11 @@
                         <mat-checkbox (change)="$event ? alternarSeleccion() : null"
                             [checked]="anticiposSeleccionados.hasValue() && estanTodosSeleccionados()"
                             [indeterminate]="anticiposSeleccionados.hasValue() && !estanTodosSeleccionados()"
-                            [aria-label]="checkboxLabel()">
+                            [aria-label]="checkboxLabel()" color="primary">
                         </mat-checkbox>
                     </th>
                     <td style="padding-right: 5px;" mat-cell *matCellDef="let elemento">
-                        <mat-checkbox (click)="$event.stopPropagation()"
+                        <mat-checkbox (click)="$event.stopPropagation()" color="primary"
                             (change)="$event ? seleccionarCheckbox(elemento) : null"
                             [checked]="anticiposSeleccionados.isSelected(elemento)" [aria-label]="checkboxLabel(elemento)">
                         </mat-checkbox>

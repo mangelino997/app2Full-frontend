@@ -29,8 +29,8 @@ export class ListaRemitoDialogoComponent implements OnInit {
   //Define el elemento seleccionado en el check-box como un FormControl y lo inicializa con valor por defecto
   public elementoSeleccionado: FormControl = new FormControl({ id: 0 });
   //Define las columnas de la tabla
-  public columnas: string[] = ['NUMERO_VIAJE', 'CHOFER', 'TRAMO', 'NUMERO_REMITO', 'FECHA', 'BULTOS', 'KG_EFECTIVO', 'VALOR_DECLARADO',
-    'REMITENTE', 'DESTINATARIO', 'SUC_ENTREGA', 'OBSERVACIONES', 'CHECK'];
+  public columnas: string[] = ['CHECK', 'NUMERO_VIAJE', 'NUMERO_REMITO', 'REMITENTE', 'DESTINATARIO', 'FECHA', 'BULTOS', 'KG_EFECTIVO', 'VALOR_DECLARADO',
+    'SUC_ENTREGA', 'CHOFER', 'TRAMO', 'OBSERVACIONES'];
   //Define la matSort
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   //Define el mostrar del circulo de progreso
@@ -103,7 +103,7 @@ export class ListaRemitoDialogoComponent implements OnInit {
       this.serviceRemitoGeneral.listarPorViajeYEstado(this.formularioFiltro.value).subscribe(
         res => {
           let respuesta = res.json();
-          respuesta.length > 0? this.asignarAtributoChecked(respuesta, true) : this.toastr.error("Sin registros para mostrar.");
+          respuesta.length > 0 ? this.asignarAtributoChecked(respuesta, true) : this.toastr.error("Sin registros para mostrar.");
           this.loaderService.hide();
         },
         err => {
@@ -115,7 +115,7 @@ export class ListaRemitoDialogoComponent implements OnInit {
       this.serviceNoEsRemitoGeneral.listarPorViajeYEstado(this.formularioFiltro.value).subscribe(
         res => {
           let respuesta = res.json();
-          respuesta.length > 0? this.asignarAtributoChecked(respuesta, false) : this.toastr.error("Sin registros para mostrar.");
+          respuesta.length > 0 ? this.asignarAtributoChecked(respuesta, false) : this.toastr.error("Sin registros para mostrar.");
           this.loaderService.hide();
         },
         err => {
@@ -134,7 +134,7 @@ export class ListaRemitoDialogoComponent implements OnInit {
         let registro = elemento; /* guarda los datos de cada fila devuelta */
         elemento = {};
         elemento.viajeRemito = registro; /* genero el atributo(json) viajeRemito y le asigno los datos del registro*/
-        
+
         /* genera el nuevo json con sus atributos correspondientes */
         elemento.id = registro.id;
         elemento.checked = false;

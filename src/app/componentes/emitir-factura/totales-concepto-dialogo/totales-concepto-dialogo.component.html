@@ -7,32 +7,32 @@
                 <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
                     <ng-container matColumnDef="ID">
                         <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
-                        <td mat-cell *matCellDef="let elemento; let i= index;" class="number-right">
+                        <td mat-cell *matCellDef="let elemento; let i= index;">
                             {{ i + 1}}
                         </td>
                     </ng-container>
                     <ng-container matColumnDef="SEGURO">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Seguro</th>
-                        <td mat-cell *matCellDef="let elemento" class="number-right">
-                            {{elemento.pSeguro? (elemento.pSeguro | number: '1.2-2')+' %' : '-'}}
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Seguro (%)</th>
+                        <td mat-cell *matCellDef="let elemento">
+                            {{elemento.pSeguro? (elemento.pSeguro | number: '1.2-2') : '-'}}
                         </td>
                     </ng-container>
                     <ng-container matColumnDef="FLETE">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Flete</th>
-                        <td mat-cell *matCellDef="let elemento" class="number-right">
-                            {{elemento.flete? '$' + (elemento.flete | number: '1.2-2') : '-'}}
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Flete ($)</th>
+                        <td mat-cell *matCellDef="let elemento">
+                            {{elemento.flete? (elemento.flete | number: '1.2-2') : '-'}}
                         </td>
                     </ng-container>
                     <ng-container matColumnDef="RETIRO">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Retiro</th>
-                        <td mat-cell *matCellDef="let elemento" class="number-right">
-                            {{elemento.importeRetiro? '$' + (elemento.importeRetiro | number: '1.2-2') : '-'}}
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Retiro ($)</th>
+                        <td mat-cell *matCellDef="let elemento">
+                            {{elemento.importeRetiro? (elemento.importeRetiro | number: '1.2-2') : '-'}}
                         </td>
                     </ng-container>
                     <ng-container matColumnDef="ENTREGA">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Entrega</th>
-                        <td mat-cell *matCellDef="let elemento" class="number-right">
-                            {{elemento.importeEntrega? '$' + (elemento.importeEntrega | number: '1.2-2') : '-'}}
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Entrega ($)</th>
+                        <td mat-cell *matCellDef="let elemento">
+                            {{elemento.importeEntrega? (elemento.importeEntrega | number: '1.2-2') : '-'}}
                         </td>
                     </ng-container>
                     <ng-container matColumnDef="VARIOS">
