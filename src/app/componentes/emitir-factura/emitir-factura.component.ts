@@ -72,7 +72,7 @@ export class EmitirFacturaComponent implements OnInit {
   //Define el boton 'G.S' para habilitarlo o no
   public btnGS: boolean = null;
   //Define el boton 'Agregar Otro Remito' para habilitarlo o no
-  public btnRemito: boolean = null;
+  // public btnRemito: boolean = null;
   /*
   ************** REVISAR ITEMFACTURA - TAL VEZ NO SEA UN FORMCONTROL ***************
   */
@@ -407,15 +407,15 @@ export class EmitirFacturaComponent implements OnInit {
       this.soloLectura = true;
       if (this.itemFactura.value.id == 1) {
         this.btnGS = false;
-        this.btnRemito = false; //Controla si habilita el boton 'Agregar Otro Remito'
+        // this.btnRemito = false; //Controla si habilita el boton 'Agregar Otro Remito'
         this.abrirListaRemitoDialogo(); //Abre dialogo G.S 
       } else {
         this.btnGS = true;
-        this.btnRemito = true; //Controla si habilita el boton 'Agregar Otro Remito'
+        // this.btnRemito = true; //Controla si habilita el boton 'Agregar Otro Remito'
       }
     } else {
       this.soloLectura = false;
-      this.btnRemito = true; // Controla si habilita el boton 'Agregar Otro Remito'
+      // this.btnRemito = true; // Controla si habilita el boton 'Agregar Otro Remito'
     }
     document.getElementById('idRemitente').focus();
   }
@@ -442,6 +442,43 @@ export class EmitirFacturaComponent implements OnInit {
         resultado ? this.manejoCambioItem() : this.manejoNoCambioItem();
       } else {
         resultado ? this.abrirListaRemitoDialogo() : '';
+      }
+    })
+  }
+  /*Abre modal para confirmar cambios */
+  public abrirAgregarOtroItemDialogo() {
+    const dialogRef = this.dialog.open(OtroItemDialogo, {
+      width: '50%',
+      maxWidth: '50%',
+      data: {
+        mensaje: '¿Qué ítem desea agregar?',
+        labelBtn: this.itemFactura.value.nombre
+      }
+    });
+    dialogRef.afterClosed().subscribe(resultado => {
+      console.log(resultado);
+      if (resultado) {
+        switch (resultado) {
+          case 'libre':
+            console.log("entra a libre");
+
+            this.formularioVtaCpteItemFA.enable();
+            this.reestablecerformularioVtaCpteItemFA();
+            this.ordenVenta.enable();
+            this.tarifaOrdenVenta.enable();
+            this.soloLectura = false;
+
+            break;
+
+          case 'remito':
+            console.log("entra a remito");
+            this.abrirListaRemitoDialogo()
+            break;
+
+          case 'cancelar':
+            this.manejoNoCambioItem();
+            break;
+        }
       }
     })
   }
@@ -489,6 +526,7 @@ export class EmitirFacturaComponent implements OnInit {
   }
   //Completa el input "porcentaje" segun la Orden Venta seleccionada 
   public cambioOrdenVta() {
+    this.formularioVtaCpteItemFA.get('flete').reset();
     //Con cada cambio limpia los campos 'Tarifa' - 'pSeguro'
     this.formularioVtaCpteItemFA.get('pSeguro').reset();
     this.tarifaOrdenVenta.reset();
@@ -499,12 +537,19 @@ export class EmitirFacturaComponent implements OnInit {
       this.formulario.value.cliente.esSeguroPropio ? this.formularioVtaCpteItemFA.get('importeSeguro').disable() :
         this.formularioVtaCpteItemFA.get('importeSeguro').enable();
     } else {
-      this.tarifaOrdenVenta.enable();
-      this.listarTarifasPorOrdenVenta(this.ordenVenta.value.ordenVenta.id);
-      this.formulario.value.cliente.esSeguroPropio ? this.formularioVtaCpteItemFA.get('pSeguro').disable() :
-        [this.formularioVtaCpteItemFA.get('pSeguro').setValue(this.appService.establecerDecimales(this.ordenVenta.value.ordenVenta.seguro, 2)),
-        this.calcularSubtotal()
-        ];
+      //Controla si la orden de venta seleccionada estaActiva
+      if (this.ordenVenta.value.estaActiva) {
+        this.tarifaOrdenVenta.enable();
+        this.listarTarifasPorOrdenVenta(this.ordenVenta.value.ordenVenta.id);
+        this.formulario.value.cliente.esSeguroPropio ? this.formularioVtaCpteItemFA.get('pSeguro').disable() :
+          [this.formularioVtaCpteItemFA.get('pSeguro').setValue(this.appService.establecerDecimales(this.ordenVenta.value.ordenVenta.seguro, 2)),
+          this.calcularSubtotal()
+          ];
+      } else {
+        this.toastr.error("Orden de venta inactiva - verifique.");
+        this.ordenVenta.reset();
+        document.getElementById('idOrdenVta').focus();
+      }
     }
   }
   //Obtiene el listado de tarifas para una orden de venta
@@ -522,6 +567,7 @@ export class EmitirFacturaComponent implements OnInit {
   }
   //Maneja el cambio en el campo 'Tarifa de Orden Vta.' y obtiene el precio del Flete
   public cambioTipoTarifa() {
+    this.formularioVtaCpteItemFA.get('flete').reset();
     /* habilita el formulario para poder obtener bultos, kg, m3 */
     this.formularioVtaCpteItemFA.enable();
     let kgMayor;
@@ -1079,7 +1125,7 @@ export class EmitirFacturaComponent implements OnInit {
 
     //Define el valor de los campos en el formulario
     this.btnFCE = true; //deshabilita
-    this.btnRemito = false;
+    // this.btnRemito = false;
     this.btnGS = false;
     this.formulario.get('pagoEnOrigen').setValue(false);
     this.formulario.get('importeSaldo').setValue(this.appService.establecerDecimales('0.00', 2));
@@ -1137,7 +1183,6 @@ export class EmitirFacturaComponent implements OnInit {
     this.ordenVenta.reset();
     this.viajeRemito.reset();
     this.tarifaOrdenVenta.reset();
-    this.formularioVtaCpteItemFA.reset();
     this.establecerValoresPorDefectoItemFA();
   }
   //Establece valores por defecto para el formulario
@@ -1151,9 +1196,9 @@ export class EmitirFacturaComponent implements OnInit {
     this.formularioVtaCpteItemFA.get('flete').setValue(this.appService.establecerDecimales('0.00', 2));
     this.formularioVtaCpteItemFA.get('descuentoFlete').setValue(this.appService.establecerDecimales('0.00', 2));
     this.formularioVtaCpteItemFA.get('ventaTipoItem').setValue(this.itemReserva.value);
-    if (this.itemReserva.value)
-      this.itemReserva.value.id == 1 || this.itemReserva.value.id == 2 ?
-        [this.soloLectura = true, this.formularioVtaCpteItemFA.disable(), this.ordenVenta.disable()] : this.soloLectura = false;
+    // if (this.itemReserva.value)
+    //   this.itemReserva.value.id == 1 || this.itemReserva.value.id == 2 ?
+    //     [this.soloLectura = true, this.formularioVtaCpteItemFA.disable(), this.ordenVenta.disable()] : this.soloLectura = false;
   }
   //Funcion para comparar y mostrar elemento de campo select
   public compareFn = this.compararFn.bind(this);
@@ -1511,6 +1556,25 @@ export class ObservacionDialogo {
         this.formulario.patchValue(res.json());
       }, err => { this.toastr.error(err.json().message); }
     )
+  }
+  onNoClick(): void {
+    this.dialogRef.close();
+  }
+}
+//Componente Otro Item Dialogo
+@Component({
+  selector: 'otro-item-dialogo',
+  templateUrl: 'otro-item-dialogo.html',
+})
+export class OtroItemDialogo {
+  //Define un formulario para validaciones de campos
+  public formulario: FormGroup;
+  constructor(public dialogRef: MatDialogRef<OtroItemDialogo>, @Inject(MAT_DIALOG_DATA) public data, public dialog: MatDialog,
+    private ventaConfigService: VentaConfigService, private toastr: ToastrService) {
+    this.dialogRef.disableClose = true;
+  }
+  ngOnInit() {
+
   }
   onNoClick(): void {
     this.dialogRef.close();

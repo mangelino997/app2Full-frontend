@@ -96,7 +96,7 @@
           <div class="border has-float-label margin-right" id="Remitente">
             <label style="font-size: 16px;">Remitente</label>
             <div class="row">
-              <div class="col-md-10">
+              <div class="col-md-11">
                 <div class="form-group has-float-label">
                   <label for="idRemitente" id="labelRemitente" class="tamanio-label">Buscar Remitente</label>
                   <input id="idRemitente" type="text" class="form-control form-control-sm" matInput
@@ -110,11 +110,15 @@
                   </mat-autocomplete>
                 </div>
               </div>
-              <div class="col-md-2">
+              <!-- <div class="col-md-2">
                 <div class="form-group ">
                   <button id="idBtnCli1" mat-raised-button color="primary" (click)="agregarClienteEventual('Remitente')"
                     style="width: 100%; margin-left: 5px;">Agregar</button>
                 </div>
+              </div> -->
+              <div class="col-md-1">
+                <button mat-raised-button color="primary" (click)="agregarClienteEventual('Remitente')"
+                  style="width: 100%; margin-left: 5px;">+</button>
               </div>
             </div>
             <form [formGroup]="formularioRemitente">
@@ -177,7 +181,7 @@
           <div class="border has-float-label margin-right" id="Destinatario">
             <label style="font-size: 16px;">Destinatario</label>
             <div class="row">
-              <div class="col-md-10">
+              <div class="col-md-11">
                 <div class="form-group has-float-label">
                   <label for="idDestinatario" id="labelDestinatario" class="tamanio-label">Buscar Destinatario</label>
                   <input id="idDestinatario" type="text" class="form-control form-control-sm" matInput
@@ -192,12 +196,16 @@
                   </mat-autocomplete>
                 </div>
               </div>
-              <div class="col-md-2">
+              <!-- <div class="col-md-2">
                 <div class="form-group ">
                   <button id="idBtnCli2" mat-raised-button color="primary"
                     (click)="agregarClienteEventual('Destinatario')"
                     style="width: 100%; margin-left: 5px;">Agregar</button>
                 </div>
+              </div> -->
+              <div class="col-md-1">
+                <button mat-raised-button color="primary" (click)="agregarClienteEventual('Destinatario')"
+                  style="width: 100%; margin-left: 5px;">+</button>
               </div>
             </div>
             <form [formGroup]="formularioDestinatario">
@@ -347,8 +355,8 @@
         <div class="row">
           <div class="col" style="max-width: 100px;">
             <div class="form-group has-float-label ">
-              <label for="idTarifaOVta" class="tamanio-label">Orden Vta. *</label>
-              <mat-select id="idTarifaOVta" class="form-control form-control-sm" [formControl]="ordenVenta"
+              <label for="idOrdenVta" class="tamanio-label">Orden Vta. *</label>
+              <mat-select id="idOrdenVta" class="form-control form-control-sm" [formControl]="ordenVenta"
                 [compareWith]="compareFn" (selectionChange)="cambioOrdenVta()">
                 <mat-option *ngFor="let item of ordenesVenta" [value]="item">
                   {{item.ordenVenta.nombre}}
@@ -359,7 +367,7 @@
           </div>
           <div class="col" style="max-width: 120px;">
             <div class="form-group has-float-label ">
-              <label for="idTarifaOVta" class="tamanio-label">Tarifa O.Vta. <span
+              <label for="idTarifaOVta" class="tamanio-label">Tarifa <span
                   *ngIf="ordenVenta.value == true">*</span></label>
               <mat-select id="idTarifaOVta" class="form-control form-control-sm" [formControl]="tarifaOrdenVenta"
                 [compareWith]="compareFn" (selectionChange)="cambioTipoTarifa()">
@@ -371,7 +379,7 @@
           </div>
           <div class="col">
             <div class="form-group has-float-label">
-              <label for="idValorDeclarado" class="tamanio-label">Valor Declarado</label>
+              <label for="idValorDeclarado" class="tamanio-label">Valor Decl.</label>
               <input id="idValorDeclarado" type="text" formControlName="valorDeclarado" placeholder="0.00"
                 class="form-control form-control-sm number-right" autocomplete="off"
                 [textMask]="mascararEnteroConDecimales(10)" (blur)="calcularSubtotal()">
@@ -392,8 +400,8 @@
             <div class="form-group has-float-label">
               <label for="idFlete" class="tamanio-label">Flete</label>
               <input id="idFlete" type="text" formControlName="flete" class="form-control form-control-sm number-right"
-                autocomplete="off" placeholder="0.00"
-                [textMask]="mascararEnteroConDecimales(8)" (blur)="calcularSubtotal()">
+                autocomplete="off" placeholder="0.00" [textMask]="mascararEnteroConDecimales(8)"
+                (blur)="calcularSubtotal()">
               <!--(blur)="calcularSubtotal($event)"-->
             </div>
           </div>
@@ -434,8 +442,7 @@
             <div class="form-group has-float-label">
               <label for="idSubtotal" class="tamanio-label">Subtotal</label>
               <input id="idSubtotal" type="text" formControlName="importeNetoGravado"
-                class="form-control form-control-sm number-right" [textMask]="mascararEnteroConDecimales(10)"
-                readonly>
+                class="form-control form-control-sm number-right" [textMask]="mascararEnteroConDecimales(10)" readonly>
             </div>
           </div>
           <div class="col" style="width: 80px; margin-left: 5px;">
@@ -457,8 +464,8 @@
           </div>
         </div>
       </form>
-      <div class="row" style="height: 150px;">
-        <div class="col-md-12">
+      <div class="row" style="height: 150px; padding-top: 10px;">
+        <div class="col-md-12 table-shadow">
           <table mat-table [dataSource]="listaCompletaItems" matSort class="mat-elevation-z1">
             <ng-container matColumnDef="NUMERO_VIAJE">
               <th mat-header-cell *matHeaderCellDef mat-sort-header>N° Viaje</th>
@@ -482,17 +489,17 @@
             </ng-container>
             <ng-container matColumnDef="VALOR_DECLARADO">
               <th mat-header-cell *matHeaderCellDef mat-sort-header>Valor Declarado ($)</th>
-              <td mat-cell *matCellDef="let elemento" class="number-right">
+              <td mat-cell *matCellDef="let elemento">
                 {{elemento.valorDeclarado | number: '1.2-2'}}</td>
             </ng-container>
             <ng-container matColumnDef="FLETE">
               <th mat-header-cell *matHeaderCellDef mat-sort-header>Flete ($)</th>
-              <td mat-cell *matCellDef="let elemento" class="number-right">
+              <td mat-cell *matCellDef="let elemento">
                 {{elemento.flete? (elemento.flete | number: '1.2-2') : '-' }}</td>
             </ng-container>
             <ng-container matColumnDef="SUBTOTAL">
               <th mat-header-cell *matHeaderCellDef mat-sort-header>Subtotal ($)</th>
-              <td mat-cell *matCellDef="let elemento" class="number-right">
+              <td mat-cell *matCellDef="let elemento">
                 {{elemento.importeNetoGravado | number: '1.2-2'}}</td>
             </ng-container>
             <ng-container matColumnDef="ALIC_IVA">
@@ -502,15 +509,17 @@
             </ng-container>
             <ng-container matColumnDef="SUBTOTAL_IVA">
               <th mat-header-cell *matHeaderCellDef mat-sort-header>Subtotal c/IVA ($)</th>
-              <td mat-cell *matCellDef="let elemento" class="number-right">
+              <td mat-cell *matCellDef="let elemento">
                 {{calcularSubtotalConIvaElemento(elemento) | number: '1.2-2'}}
               </td>
             </ng-container>
             <ng-container matColumnDef="QUITAR">
               <th mat-header-cell *matHeaderCellDef mat-sort-header>-</th>
               <td mat-cell *matCellDef="let elemento; let i=index">
-                <span (click)="quitarItemDialogo(i)" class="cursor-color-rojo">
-                  quitar</span>
+                <button mat-icon-button class="mat-icon-button-table" (click)="quitarItemDialogo(i)"
+                  style="margin-left: 20px;" matTooltip="Eliminar" matTooltipPosition="above">
+                  <mat-icon>delete</mat-icon>
+                </button>
               </td>
             </ng-container>
             <tr mat-header-row *matHeaderRowDef="columnasItems"></tr>
@@ -529,9 +538,12 @@
           </div>
         </div>
         <div>
-          <button class="btn btn-info btn-custom margin-left-button" style="min-width: fit-content;"
+          <!-- <button class="btn btn-info btn-custom margin-left-button" style="min-width: fit-content;"
             (click)="abrirConfirmarDialogo('¿Quiere agregar otro Remito?')" [disabled]="btnRemito">
-            Agregar Otro Remito</button>
+            Agregar Otro Item</button>  -->
+          <button class="btn btn-info btn-custom margin-left-button" style="min-width: fit-content;"
+            (click)="abrirAgregarOtroItemDialogo()">
+            Agregar Otro Item</button>
         </div>
       </div>
       <br>
@@ -590,7 +602,8 @@
       <div class="row justify-content-end" *ngIf="!show">
         <div class="col-md-1">
           <button mat-raised-button color="primary" type="button" style="width: 100%;"
-            (click)="agregarVentaComprobante()" [disabled]="!formulario.valid">Grabar</button>
+            (click)="agregarVentaComprobante()"
+            [disabled]="!formulario.valid || formulario.value.importeTotal==0">Grabar</button>
         </div>
       </div>
       <div class="row" *ngIf="show">

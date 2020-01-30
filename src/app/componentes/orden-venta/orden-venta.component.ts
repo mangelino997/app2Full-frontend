@@ -737,8 +737,8 @@ export class OrdenVentaComponent implements OnInit {
         res => {
           this.listaOrdenVenta = new MatTableDataSource(res.json());
           this.listaOrdenVenta.sort = this.sort;
-          this.listaCompleta.data.length == 0 ? this.toastr.error("Sin registros para mostrar.") : '';
-          this.listaCompleta.paginator = this.paginator;
+          this.listaOrdenVenta.data.length == 0 ? this.toastr.error("Sin registros para mostrar.") : '';
+          this.listaOrdenVenta.paginator = this.paginator;
         },
         err => {
           let error = err.json();
