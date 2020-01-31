@@ -156,7 +156,7 @@ export class ContactoCompaniaSeguroComponent implements OnInit {
       case 5:
         this.mostrarAutocompletado = true;
         setTimeout(function () {
-          document.getElementById('idCompaniaSeguro').focus();
+          document.getElementById('idCompaniaSeguroListar').focus();
         }, 20);
       default:
         break;
@@ -265,7 +265,7 @@ export class ContactoCompaniaSeguroComponent implements OnInit {
         var respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario(null);
-          document.getElementById('idNombre').focus();
+          document.getElementById('idCompaniaSeguro').focus();
           this.toastr.success(respuesta.mensaje);
         }
         this.loaderService.hide();

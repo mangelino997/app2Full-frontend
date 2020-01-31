@@ -97,10 +97,9 @@ import { TipoConceptoVentaService } from './servicios/tipo-concepto-venta.servic
 import { Aforo } from './modelos/aforo';
 
 const stompConfig: StompConfig = {
-  url: 'ws://localhost:8080/jitws/socket',
-  // url: 'ws://gestionws.appspot.com:8080/jitws/socket', //LOCAL
+  url: 'ws://localhost:8080/jitws/socket', //LOCAL
   // url: 'ws://200.58.102.22:8080/jitws/socket', //RIGAR
-  // url: 'ws://66.97.42.126:8080/jitws/socket',
+  // url: 'ws://66.97.42.126:8080/jitws/socket', //TESTING
   headers: {},
   heartbeat_in: 0,
   heartbeat_out: 20000,
