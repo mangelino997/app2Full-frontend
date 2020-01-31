@@ -16,7 +16,7 @@ import { GuardiaService } from './servicios/guardia.service';
 //Modulos
 import {
   MatMenuModule, MatDividerModule, MatIconModule, MatToolbarModule, MatDialogModule,
-  MatSelectModule, MatProgressSpinnerModule, MatCardModule, MatTableModule, MatButtonModule, MatPaginatorIntl, MatProgressBarModule, MatTreeModule, MatAutocompleteModule, MatCheckboxModule, MatSortModule
+  MatSelectModule, MatProgressSpinnerModule, MatCardModule, MatTableModule, MatButtonModule, MatPaginatorIntl, MatProgressBarModule, MatTreeModule, MatAutocompleteModule, MatCheckboxModule, MatSortModule, MatPaginatorModule
 } from '@angular/material';
 import { ReporteService } from './servicios/reporte.service';
 import { HttpModule } from '@angular/http';
@@ -95,6 +95,7 @@ import { AfipConceptoSueldoGrupoService } from './servicios/afip-concepto-sueldo
 import { AfipConceptoSueldoGrupo } from './modelos/afipConceptoSueldoGrupo';
 import { TipoConceptoVentaService } from './servicios/tipo-concepto-venta.service';
 import { Aforo } from './modelos/aforo';
+import { EmitirFacturaComponent } from './componentes/emitir-factura/emitir-factura.component';
 
 const stompConfig: StompConfig = {
   url: 'ws://localhost:8080/jitws/socket',
@@ -133,7 +134,7 @@ const stompConfig: StompConfig = {
     UsuariosActivosDialogoComponent,
     BugImagenDialogoComponent,
     CuentaBancariaDialogoComponent,
-
+    
   ],
   imports: [
     FormsModule,
@@ -151,6 +152,7 @@ const stompConfig: StompConfig = {
     HttpModule,
     MatDialogModule,
     MatTableModule,
+    MatPaginatorModule,
     MatSortModule,
     MatButtonModule,
     MatTreeModule,

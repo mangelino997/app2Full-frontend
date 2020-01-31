@@ -38,7 +38,7 @@
                     </span>
                   </div>
                   <input id="idFechaEmision" type="date" formControlName="fechaEmision" autocomplete="off"
-                    class="form-control form-control-sm" (blur)="cambioFecha()" style="min-width: 100px;">
+                    class="form-control form-control-sm"  style="min-width: 100px;"> <!--(blur)="cambioFecha()"-->
                 </div>
               </div>
             </div>
@@ -116,9 +116,9 @@
                     style="width: 100%; margin-left: 5px;">Agregar</button>
                 </div>
               </div> -->
-              <div class="col-md-1">
+              <div class="col-md-1 button-input">
                 <button mat-raised-button color="primary" (click)="agregarClienteEventual('Remitente')"
-                  style="width: 100%; margin-left: 5px;">+</button>
+                style="margin-left: 5px;">+</button>
               </div>
             </div>
             <form [formGroup]="formularioRemitente">
@@ -203,9 +203,9 @@
                     style="width: 100%; margin-left: 5px;">Agregar</button>
                 </div>
               </div> -->
-              <div class="col-md-1">
+              <div class="col-md-1 button-input">
                 <button mat-raised-button color="primary" (click)="agregarClienteEventual('Destinatario')"
-                  style="width: 100%; margin-left: 5px;">+</button>
+                  style="margin-left: 5px;">+</button>
               </div>
             </div>
             <form [formGroup]="formularioDestinatario">

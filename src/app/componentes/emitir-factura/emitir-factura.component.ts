@@ -118,6 +118,7 @@ export class EmitirFacturaComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   constructor(
+    // public dialogRef: MatDialogRef<ClienteEventualComponent>, @Inject(MAT_DIALOG_DATA) public data,
     private appComponent: AppComponent, public dialog: MatDialog, private fechaService: FechaService,
     private ventaComprobanteService: VentaComprobanteService, private tipoTarifaService: TipoTarifaService,
     public clienteService: ClienteService, private toastr: ToastrService,
@@ -128,7 +129,9 @@ export class EmitirFacturaComponent implements OnInit {
     private afipComprobanteService: AfipComprobanteService,
     private ordenVentaEscalaServicio: OrdenVentaEscalaService, private afipCaeService: AfipCaeService,
     private monedaService: MonedaService, private monedaCotizacionService: MonedaCotizacionService,
-    private loaderService: LoaderService) { }
+    private loaderService: LoaderService) {
+      // this.dialogRef.disableClose = true;
+     }
   ngOnInit() {
     //Establece la subscripcion a loader
     this.subscription = this.loaderService.loaderState
@@ -156,6 +159,9 @@ export class EmitirFacturaComponent implements OnInit {
     this.inicializar(this.appService.getRol().id, this.appService.getUsuario().sucursal.id);
     //Reestablece el formulario ('true' para limpiar todo, 'false' para mantener campos generales)
     this.reestablecerFormulario(true);
+    //Completa los datos de ventaComprobante enviados desde el componente consultarFacturas
+    // console.log(this.data);
+    
     //Autcompletado - Buscar por Remitente
     this.formulario.get('clienteRemitente').valueChanges.subscribe(data => {
       if (typeof data == 'string') {
@@ -574,27 +580,29 @@ export class EmitirFacturaComponent implements OnInit {
     let tipoTarifa = this.tarifaOrdenVenta.value.id;
     console.log(tipoTarifa, this.formularioVtaCpteItemFA.get('bultos').value);
     let idOrdenVta = this.ordenVenta.value.ordenVenta.id;
+    let idTipoTarifa = this.tarifaOrdenVenta.value.id;
     this.formularioVtaCpteItemFA.get('kilosEfectivo').value > this.formularioVtaCpteItemFA.get('kilosAforado').value ?
       kgMayor = this.formularioVtaCpteItemFA.get('kilosEfectivo').value : kgMayor = this.formularioVtaCpteItemFA.get('kilosAforado').value;
     switch (tipoTarifa) {
       case 1:
-        this.obtenerPrecioFlete(idOrdenVta, this.formularioVtaCpteItemFA.get('bultos').value);
+        this.obtenerPrecioFlete(idOrdenVta, idTipoTarifa, this.formularioVtaCpteItemFA.get('bultos').value);
         break;
       case 2:
-        this.obtenerPrecioFlete(idOrdenVta, kgMayor);
+        this.obtenerPrecioFlete(idOrdenVta, idTipoTarifa, kgMayor);
         break;
       case 3:
         kgMayor = kgMayor / 1000;
-        this.obtenerPrecioFlete(idOrdenVta, kgMayor);
+        this.obtenerPrecioFlete(idOrdenVta, idTipoTarifa, kgMayor);
         break;
       case 4:
-        this.obtenerPrecioFlete(idOrdenVta, this.formularioVtaCpteItemFA.get('m3').value);
+        this.obtenerPrecioFlete(idOrdenVta, idTipoTarifa, this.formularioVtaCpteItemFA.get('m3').value);
         break;
     }
   }
   //Obtiene el precio del campo 'Flete'
-  private obtenerPrecioFlete(idOrdenVenta, valor) {
-    this.ordenVentaEscalaServicio.obtenerPrecioFlete(idOrdenVenta, valor).subscribe(
+  private obtenerPrecioFlete(idOrdenVenta, idTipoTarifa, valor) {
+    console.log(idOrdenVenta);
+    this.ordenVentaEscalaServicio.obtenerPrecioFlete(idOrdenVenta, idTipoTarifa, valor).subscribe(
       res => {
         console.log(res.json());
         let respuesta = res.json();

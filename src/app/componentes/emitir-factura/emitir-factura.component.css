@@ -71,9 +71,6 @@ tr.planilla-no-seleccionada:hover {
 .planilla-seleccionada {
     background-color:#50A8FA !important;
 }
-button {
-    /* width: fit-content !important; */
-}
 /* Define el estilo de la tabla */
 .tabla {
     width: 100% !important;
@@ -110,4 +107,14 @@ button {
 /* Define el sobreado del borde de la tabla */
 .table-shadow{
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+/* Define el boton '+' */ 
+.button-input {
+    position: relative;
+    width: 100%;
+    min-height: 1px;
+    padding-left: 0px;
+}
+.mat-raised-button {
+    min-width: 40px !important;
 }

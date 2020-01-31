@@ -112,6 +112,7 @@ export class ListaRemitoDialogoComponent implements OnInit {
         }
       )
     } else {
+      this.formularioFiltro.value.idRemito = this.formularioFiltro.value.idRemito.toString();
       this.serviceNoEsRemitoGeneral.listarPorViajeYEstado(this.formularioFiltro.value).subscribe(
         res => {
           let respuesta = res.json();

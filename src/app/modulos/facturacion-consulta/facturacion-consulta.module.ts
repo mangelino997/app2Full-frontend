@@ -47,3 +47,4 @@ import { PuntoVentaService } from 'src/app/servicios/punto-venta.service';
   ]
 })
 export class FacturacionConsultaModule { }
+
