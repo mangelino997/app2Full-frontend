@@ -1,6 +1,6 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, Inject } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { MatTableDataSource, MatSort, MatPaginator, MatDialog } from '@angular/material';
+import { MatTableDataSource, MatSort, MatPaginator, MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { Subscription } from 'rxjs';
 import { FechaService } from 'src/app/servicios/fecha.service';
 import { ClienteService } from 'src/app/servicios/cliente.service';
@@ -13,6 +13,10 @@ import { LoaderState } from 'src/app/modelos/loader';
 import { VentaComprobanteService } from 'src/app/servicios/venta-comprobante.service';
 import { SucursalService } from 'src/app/servicios/sucursal.service';
 import { PuntoVentaService } from 'src/app/servicios/punto-venta.service';
+import { PersonalAdelanto } from 'src/app/modelos/personalAdelanto';
+import { VentaComprobante } from 'src/app/modelos/ventaComprobante';
+import { VentaComprobanteItemFA } from 'src/app/modelos/ventaComprobanteItemFA';
+import { EmitirFacturaComponent } from '../emitir-factura/emitir-factura.component';
 
 @Component({
   selector: 'app-facturacion-consulta',
@@ -271,6 +275,18 @@ export class FacturacionConsultaComponent implements OnInit {
       this.formulario.get('fechaHasta').setValue(this.FECHA_ACTUAL.value);
       document.getElementById('idFechaDesde').focus();
     }
+  }
+  //Abre un modal al consultar un registro de la tabla
+  public activarConsultar(elemento) {
+    const dialogRef = this.dialog.open(EmitirFacturaComponent, {
+      width: '95%',
+      maxWidth: '95%',
+      data: {
+        ventaComprobante: elemento
+      },
+    });
+    dialogRef.afterClosed().subscribe(result => {
+    });
   }
   //Formatea el numero a x decimales
   public setDecimales(formulario, cantidad) {

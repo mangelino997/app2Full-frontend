@@ -5,7 +5,7 @@ import { EmitirFacturaRoutingModule } from './emitir-factura-routing.module';
 
 import {
   MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule,
-  MatSelectModule, MatProgressBarModule, MatIconModule, MatButtonModule, MatDialogModule, MatRadioModule, MatCheckboxModule
+  MatSelectModule, MatProgressBarModule, MatIconModule, MatButtonModule, MatDialogModule, MatRadioModule, MatCheckboxModule, MatDialogRef
 } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ConceptosVariosDialogo, QuitarItemDialogo, ObservacionDialogo, ViajeDialogo, EmitirFacturaComponent, OtroItemDialogo } from 'src/app/componentes/emitir-factura/emitir-factura.component';
@@ -59,7 +59,7 @@ import { TipoTarifaService } from 'src/app/servicios/tipo-tarifa.service';
     MatButtonModule,
     MatDialogModule,
     MatRadioModule,
-    MatCheckboxModule
+    MatCheckboxModule,
   ],
   providers: [
     VentaComprobanteService,
