@@ -1,4 +1,11 @@
-<div id="proveedor" class="container-fluid" (window:keydown)="manejarEvento($event.keyCode)">
+<div class="container-fluid" *ngIf="render">
+  <div class="row">
+    <div class="col">
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    </div>
+  </div>
+</div>
+<div class="container-fluid" (window:keydown)="manejarEvento($event.keyCode)" *ngIf="!render">
   <div class="row">
     <div class="col" class="centrar">
       <nav mat-tab-nav-bar>
@@ -37,7 +44,7 @@
                         <label for="idAutocompletado" class="tamanio-label">Proveedor</label>
                         <input id="idAutocompletado" class="form-control form-control-sm color-busqueda" type="text"
                           matInput [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off"
-                          (blur)="verificarSeleccion(autocompletado)" placeholder="Buscar por alias">
+                          (blur)="verificarSeleccion(autocompletado)" placeholder="Buscar por ID, Razón Social, Nombre Fantasía o N° Documento">
                         <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayF.bind(this)"
                           (optionSelected)="establecerFormulario()">
                           <mat-option *ngFor="let item of resultados" [value]="item">

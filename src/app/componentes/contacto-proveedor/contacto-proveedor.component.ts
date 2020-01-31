@@ -78,7 +78,7 @@ export class ContactoProveedorComponent implements OnInit {
     /* Obtiene todos los listados */
     this.inicializar(this.appService.getRol().id, this.appService.getSubopcion());
     //Establece los valores de la primera pestania activa
-    this.seleccionarPestania(1, 'Agregar');
+    this.seleccionarPestania(1, 'Agregar', true);
     //Autocompletado Sucursal Banco - Buscar por nombre
     this.formulario.get('proveedor').valueChanges.subscribe(data => {
       if (typeof data == 'string') {
@@ -118,6 +118,8 @@ export class ContactoProveedorComponent implements OnInit {
   }
   //Establecer el formulario al cambiar elemento de autocompletado
   public cambioAutocompletado() {
+    const proveedor = this.formulario.get('proveedor').value;
+    this.autocompletado.value.proveedor = proveedor;
     this.formulario.patchValue(this.autocompletado.value);
   }
   //Vacia la lista de resultados de autocompletados
@@ -129,9 +131,6 @@ export class ContactoProveedorComponent implements OnInit {
   }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
-    /* Limpia el formulario para no mostrar valores en campos cuando 
-      la pestaña es != 1 */
-    this.indiceSeleccionado != 1 ? this.formulario.reset() : '';
     this.pestaniaActual = nombrePestania;
     this.mostrarAutocompletado = autocompletado;
     this.soloLectura = soloLectura;
@@ -142,10 +141,12 @@ export class ContactoProveedorComponent implements OnInit {
     }, 20);
   }
   //Establece valores al seleccionar una pestania
-  public seleccionarPestania(id, nombre) {
+  public seleccionarPestania(id, nombre, opcion) {
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    this.reestablecerFormulario(null);
+    if(opcion) {
+      this.reestablecerFormulario(null);
+    }
     switch (id) {
       case 1:
         this.establecerValoresPestania(nombre, false, false, true, 'idProveedor');
@@ -162,7 +163,7 @@ export class ContactoProveedorComponent implements OnInit {
       case 5:
         this.mostrarAutocompletado = true;
         setTimeout(function () {
-          document.getElementById('idProveedor').focus();
+          document.getElementById('idProveedorListar').focus();
         }, 20);
       default:
         break;
@@ -182,6 +183,22 @@ export class ContactoProveedorComponent implements OnInit {
         break;
       default:
         break;
+    }
+  }
+  //Obtiene la lista de contactos por proveedor
+  public listarContactosPorProveedor() {
+    if (this.mostrarAutocompletado) {
+      this.loaderService.show();
+      let elemento = this.formulario.get('proveedor').value;
+      this.servicio.listarPorProveedor(elemento.id).subscribe(
+        res => {
+          this.contactos = res.json();
+          this.loaderService.hide();
+        },
+        err => {
+          this.loaderService.hide();
+        }
+      )
     }
   }
   //Obtiene la lista de contactos por proveedor
@@ -312,17 +329,17 @@ export class ContactoProveedorComponent implements OnInit {
   }
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
-    this.listarPorProveedor();
-    this.seleccionarPestania(2, this.pestanias[1].nombre);
+    this.listarContactosPorProveedor();
+    this.seleccionarPestania(2, this.pestanias[1].nombre, false);
     this.autocompletado.setValue(elemento);
-    this.formulario.setValue(elemento);
+    this.cambioAutocompletado();
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
-    this.listarPorProveedor();
-    this.seleccionarPestania(3, this.pestanias[2].nombre);
+    this.listarContactosPorProveedor();
+    this.seleccionarPestania(3, this.pestanias[2].nombre, false);
     this.autocompletado.setValue(elemento);
-    this.formulario.setValue(elemento);
+    this.cambioAutocompletado();
   }
   //Define el mostrado de datos y comparacion en campo select
   public compareFn = this.compararFn.bind(this);
@@ -360,9 +377,9 @@ export class ContactoProveedorComponent implements OnInit {
     let indice = this.indiceSeleccionado;
     if (keycode == 113) {
       if (indice < this.pestanias.length) {
-        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre);
+        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre, true);
       } else {
-        this.seleccionarPestania(1, this.pestanias[0].nombre);
+        this.seleccionarPestania(1, this.pestanias[0].nombre, true);
       }
     }
   }

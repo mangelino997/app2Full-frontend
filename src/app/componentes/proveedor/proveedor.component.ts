@@ -153,12 +153,8 @@ export class ProveedorComponent implements OnInit {
       tipoProveedor: new FormControl('', Validators.required),
       condicionCompra: new FormControl('', Validators.required)
     });
-    //Establece la primera opcion seleccionada
-    this.seleccionarOpcion(8, 0);
     /* Obtiene todos los listados */
     this.inicializar(this.appService.getUsuario().id, this.appService.getRol().id, this.appService.getSubopcion());
-    //Establece los valores de la primera pestania activa
-    this.seleccionarPestania(1, 'Agregar');
     //Autocompletado Barrio - Buscar por nombre
     this.formulario.get('barrio').valueChanges.subscribe(data => {
       if (typeof data == 'string') {
@@ -228,10 +224,17 @@ export class ProveedorComponent implements OnInit {
   public cambioAutocompletadoBanco() {
     //Busca lista de sucursales solo si seleccionó un Banco
     if (this.banco.value) {
+      this.loaderService.show();
       this.sucursalService.listarPorBanco(this.banco.value.id).subscribe(
         res => {
           this.sucursales = res.json();
-          this.sucursales.length == 0 ? this.toastr.warning("El Banco no tiene sucursales asignadas.") : '';
+          if(this.sucursales.length == 0) {
+            this.toastr.warning("El Banco no tiene sucursales asignadas")
+          }
+          this.loaderService.hide();
+        },
+        err => {
+          this.loaderService.hide();
         }
       )
     }
@@ -267,6 +270,10 @@ export class ProveedorComponent implements OnInit {
         this.formulario.get('condicionCompra').setValue(this.condicionesCompras[0]);
         //Crea cuenta bancaria
         this.crearCuentasContables(respuesta.empresas);
+        //Establece los valores de la primera pestania activa
+        this.seleccionarPestania(1, 'Agregar');
+        //Establece la primera opcion seleccionada
+        this.seleccionarOpcion(8, 0);
         this.render = false;
       },
       err => {
@@ -279,13 +286,12 @@ export class ProveedorComponent implements OnInit {
   public establecerFormulario() {
     let elemento = this.autocompletado.value;
     this.formulario.patchValue(elemento);
-    this.indiceSeleccionado == 3 ? this.verificarCBU() : '';
-
-
+    if(this.indiceSeleccionado == 3) {
+      this.verificarCBU();
+    }
     /* Establece las cuentas bancarias del Proveedor */
     this.listaCuentaBancaria.data = elemento.proveedorCuentasBancarias;
     this.listaCuentaBancaria.sort = this.sort;
-
     /* Establece las cuentas contables del Proveedor */
     if (elemento.proveedorCuentasContables.length > 0) {
       elemento.proveedorCuentasContables.forEach(
@@ -444,25 +450,11 @@ export class ProveedorComponent implements OnInit {
       this.formularioCuentaBancaria.get('estaActiva').disable();
     }
   }
-  /* Habilita o deshabilita los campos del formulario de Cuenta Bancaria 
-    cuando se presiona en actualizar un registro de la tabla de Liquidacion*/
-  private establecerModCamposCuentaBancaria() {
-    this.banco.disable();
-    this.formularioCuentaBancaria.get('moneda').disable();
-    this.formularioCuentaBancaria.get('sucursalBanco').disable();
-    this.formularioCuentaBancaria.get('tipoCuentaBancaria').disable();
-    this.formularioCuentaBancaria.get('cbu').disable();
-    this.formularioCuentaBancaria.get('titular').disable();
-    this.formularioCuentaBancaria.get('aliasCBU').disable();
-    this.formularioCuentaBancaria.get('numeroCuenta').disable();
-    this.formularioCuentaBancaria.get('porDefecto').enable();
-    this.formularioCuentaBancaria.get('estaActiva').enable();
-  }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
-    /* Limpia el formulario para no mostrar valores en campos cuando 
-      la pestaña es != 1 */
-    this.indiceSeleccionado != 1 ? this.formulario.reset() : '';
+    if(this.indiceSeleccionado != 1) {
+      this.formulario.reset();
+    }
     this.pestaniaActual = nombrePestania;
     this.mostrarAutocompletado = autocompletado;
     this.soloLectura = soloLectura;
@@ -529,6 +521,10 @@ export class ProveedorComponent implements OnInit {
         setTimeout(function () {
           document.getElementById('idIngresarComprobante').focus();
         }, 20);
+        break;
+      case 13:
+        break;
+      case 14:
         break;
       default:
         setTimeout(function () {
@@ -617,10 +613,12 @@ export class ProveedorComponent implements OnInit {
         var respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario(null);
-          document.getElementById('idAutocompletado').focus();
-          this.toastr.success(respuesta.mensaje);
-          this.loaderService.hide();
+          setTimeout(function() {
+            document.getElementById('idAutocompletado').focus();
+          }, 40);
+          this.toastr.success(MensajeExcepcion.ACTUALIZADO);
         }
+        this.loaderService.hide();
       },
       err => {
         this.lanzarError(err.json());
@@ -654,21 +652,18 @@ export class ProveedorComponent implements OnInit {
     this.establecerValoresPorDefecto();
     this.reestablecerFormularioCB();
     id ? this.formulario.get('id').setValue(id) : this.formulario.get('id').setValue(this.ultimoId);
-
-    /* Limpia la tabla de Cuentas Contables */
+    //Limpia la tabla de Cuentas Contables
     this.limpiarCuentasContables();
-    /* Establece la primera opcion del sidenav */
-    if (this.indiceSeleccionado != 5)
+    //Establece la primera opcion del sidenav
+    if(this.indiceSeleccionado != 5) {
       this.seleccionarOpcion(8, 0);
-    else
-      this.seleccionarOpcion(null, 0);
-
+    }
   }
   //Limpia la tabla de Cuentas Contables
   private limpiarCuentasContables() {
     this.planesCuentas.data.forEach(
       item => {
-        /* limpia las cuentas bancarias asignadas  */
+        //Limpia las cuentas bancarias asignadas
         if (item.planCuentaCompra) {
           item.id = null;
           item.planCuentaCompra = null;
@@ -686,12 +681,17 @@ export class ProveedorComponent implements OnInit {
   }
   //Obtiene las sucursales del banco seleccionado y setea la correcta
   private establecerSucursal(idBanco, sucursal) {
+    this.loaderService.show();
     this.sucursalService.listarPorBanco(idBanco).subscribe(
       res => {
         this.sucursales = res.json();
+        this.loaderService.hide();
+      },
+      err => {
+        this.loaderService.hide();
       }
     )
-    this.formulario.value.sucursalBanco = sucursal; //Setea el banco
+    this.formulario.value.sucursalBanco = sucursal;
   }
   //Reestablece e inicializa el formulario filtro
   private establecerFormularioFiltro() {
@@ -762,16 +762,17 @@ export class ProveedorComponent implements OnInit {
   }
   //Obtiene la nueva lista de cuentas bancarias para un proveedor
   private listarCuentaBancariaPorPersonal(idProveedor) {
+    this.loaderService.show();
     this.proveedorCuentaBancariaService.listarPorProveedor(idProveedor).subscribe(
       res => {
         let respuesta = res.json();
         this.listaCuentaBancaria.data = respuesta;
         this.listaCuentaBancaria.sort = this.sort;
-        respuesta.length == 0 ? this.toastr.warning("Sin cuentas bancarias para mostrar.") : '';
+        this.loaderService.hide();
       },
       err => {
-        let error = err.json();
         this.toastr.error(err.mensaje);
+        this.loaderService.hide();
       }
     )
   }
@@ -788,18 +789,19 @@ export class ProveedorComponent implements OnInit {
     this.loaderService.show();
     //En pestaña 'Actualizar' se habilita el formulario porque hay campos deshabilitados
     this.formularioCuentaBancaria.enable();
-    //si el registro a modificar tiene asignado un 'id' entonces actualiza en el back
+    //Si el registro a modificar tiene asignado un 'id' entonces actualiza en el back
     if (this.formularioCuentaBancaria.value.id) {
-      //establezco el Personal a Cuenta Bancaria
+      //Establezco el Personal a Cuenta Bancaria
       this.formularioCuentaBancaria.value.proveedor = { id: this.autocompletado.value.id }
       this.proveedorCuentaBancariaService.actualizar(this.formularioCuentaBancaria.value).subscribe(
         res => {
           let respuesta = res.json();
           if (respuesta.codigo == 200) {
-            //establece la lista de cuentas bancarias, actualizada, del personal
+            //Establece la lista de cuentas bancarias, actualizada, del personal
             this.listarCuentaBancariaPorProveedor(this.formulario.value.id);
             this.toastr.success("Registro actualizado con éxito.");
           }
+          this.loaderService.hide();
         },
         err => {
           let error = err.json();
@@ -808,8 +810,10 @@ export class ProveedorComponent implements OnInit {
         }
       )
     } else {
-      /* limpia el registro que se actualizo en la posicion idMod para luego agregarlo
-      y poder controlar la unicidad del numeroCuenta y cbu */
+      /* 
+      * Limpia el registro que se actualizo en la posicion idMod para luego agregarlo
+      * y poder controlar la unicidad del numeroCuenta y cbu
+      */
       this.listaCuentaBancaria.data[this.idMod] = {};
       let registroActualizado = this.formularioCuentaBancaria.value;
       if (!this.verificarListaCB(registroActualizado)) {
@@ -826,6 +830,7 @@ export class ProveedorComponent implements OnInit {
   }
   //Obtiene la nueva lista de cuentas bancarias para un personal
   private listarCuentaBancariaPorProveedor(idProveedor) {
+    this.loaderService.show();
     this.proveedorCuentaBancariaService.listarPorProveedor(idProveedor).subscribe(
       res => {
         let respuesta = res.json();
@@ -931,11 +936,10 @@ export class ProveedorComponent implements OnInit {
   //Verifica que el CBU sea de 22 carácteres obligatorios
   public verificarCBU() {
     let elemento = this.formulario.value.numeroCBU;
-    elemento && elemento.length < 22 ?
-      [
-        this.toastr.error("El N° de CBU debe ser de 22 carácteres. Se reseteó el campo."),
-        this.formulario.get('numeroCBU').reset(),
-      ] : '';
+    if(elemento && elemento.length < 22) {
+      this.toastr.error("El N° de CBU debe ser de 22 carácteres");
+      this.formulario.get('numeroCBU').reset();
+    }
   }
   //Verifica si se selecciono un elemento del autocompletado
   public verificarSeleccion(valor): void {

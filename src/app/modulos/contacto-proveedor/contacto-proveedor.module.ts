@@ -5,7 +5,7 @@ import { ContactoProveedorRoutingModule } from './contacto-proveedor-routing.mod
 
 import {
   MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule,
-  MatSelectModule, MatProgressBarModule, MatButtonModule, MatIconModule
+  MatSelectModule, MatProgressBarModule, MatButtonModule, MatIconModule, MatProgressSpinnerModule
 } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ContactoProveedorComponent } from 'src/app/componentes/contacto-proveedor/contacto-proveedor.component';
@@ -30,7 +30,8 @@ import { ContactoProveedor } from 'src/app/modelos/contactoProveedor';
     MatSelectModule,
     MatProgressBarModule,
     MatButtonModule,
-    MatIconModule
+    MatIconModule,
+    MatProgressSpinnerModule
   ],
   providers: [
     ContactoProveedorService,

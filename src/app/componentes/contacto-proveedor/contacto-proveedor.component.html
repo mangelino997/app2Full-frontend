@@ -4,7 +4,7 @@
       <nav mat-tab-nav-bar>
         <a mat-tab-link disabled>CONTACTO PROVEEDOR</a>
         <a mat-tab-link *ngFor="let pestania of pestanias" [active]="activeLink == pestania.nombre"
-          (click)="seleccionarPestania(pestania.id, pestania.nombre)">{{pestania.nombre}}</a>
+          (click)="seleccionarPestania(pestania.id, pestania.nombre, true)">{{pestania.nombre}}</a>
       </nav>
     </div>
   </div>
@@ -18,9 +18,9 @@
               <label for="idProveedor" class="tamanio-label">Proveedor *</label>
               <input id="idProveedor" class="form-control form-control-sm" type="text" matInput
                 [formControl]="formulario.get('proveedor')" [matAutocomplete]="autoProveedor" autocomplete="off"
-                (blur)="verificarSeleccion(formulario.get('proveedor'))" placeholder="Buscar por alias">
+                (blur)="verificarSeleccion(formulario.get('proveedor'))" placeholder="Buscar por ID, Razón Social, Nombre Fantasía o N° Documento">
               <mat-autocomplete #autoProveedor="matAutocomplete" [displayWith]="displayF.bind(this)"
-                (optionSelected)="listarPorProveedor()">
+                (optionSelected)="listarContactosPorProveedor()">
                 <mat-option *ngFor="let itemProveedor of resultadosProveedores" [value]="itemProveedor">
                   {{itemProveedor.alias}}
                 </mat-option>
@@ -100,19 +100,13 @@
   </div>
   <div class="row justify-content-center contenedor" [hidden]="indiceSeleccionado != 5">
     <div class="col-md-10">
-      <div class="row" *ngIf="show">
-        <div class="col text-center">
-          <mat-progress-bar mode="indeterminate"></mat-progress-bar>
-        </div>
-      </div>
-      <br>
       <div class="row">
         <div class="col-md-6">
           <div class="form-group has-float-label">
-            <label for="idProveedor" class="tamanio-label">Proveedor *</label>
-            <input id="idProveedor" class="form-control form-control-sm" type="text" matInput
+            <label for="idProveedorListar" class="tamanio-label">Proveedor *</label>
+            <input id="idProveedorListar" class="form-control form-control-sm" type="text" matInput
               [formControl]="formulario.get('proveedor')" [matAutocomplete]="autoProveedor" autocomplete="off"
-              placeholder="Buscar por alias">
+              placeholder="Buscar por ID, Razón Social, Nombre Fantasía o N° Documento">
             <mat-autocomplete #autoProveedor="matAutocomplete" [displayWith]="displayF.bind(this)"
               (optionSelected)="listarPorProveedor()">
               <mat-option *ngFor="let itemProveedor of resultadosProveedores" [value]="itemProveedor">
@@ -120,6 +114,9 @@
               </mat-option>
             </mat-autocomplete>
           </div>
+        </div>
+        <div class="col-md-2" *ngIf="show">
+          <mat-spinner diameter="30"></mat-spinner>
         </div>
       </div>
       <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
