@@ -17,7 +17,6 @@ import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
 import { ClienteOrdenVentaService } from 'src/app/servicios/cliente-orden-venta.service';
-import { OrdenVentaTarifaService } from 'src/app/servicios/orden-venta-tarifa.service';
 import { CuentaBancariaDialogoComponent } from '../cuenta-bancaria-dialogo/cuenta-bancaria-dialogo.component';
 import { ReporteService } from 'src/app/servicios/reporte.service';
 import { MensajeExcepcion } from 'src/app/modelos/mensaje-excepcion';
@@ -463,9 +462,13 @@ export class ClienteComponent implements OnInit {
     this.formulario.get('creditoLimite').setValue(elemento.creditoLimite ? this.appService.establecerDecimales(elemento.creditoLimite, 2) : null);
     this.formulario.get('descuentoFlete').setValue(elemento.descuentoFlete ? this.appService.desenmascararPorcentaje(elemento.descuentoFlete.toString(), 2) : null);
     this.formulario.get('descuentoSubtotal').setValue(elemento.descuentoSubtotal ? this.appService.establecerDecimales(elemento.descuentoSubtotal, 2) : null);
-    elemento.barrio ? [this.formulario.get('zona').setValue({ id: elemento.barrio.zona.id }), this.formulario.get('zona').disable()] :
-      [this.formulario.get('zona').enable()];
-
+    if(elemento.barrio) {
+      console.log(elemento);
+      this.formulario.get('zona').setValue({ id: elemento.barrio.zona.id });
+      this.formulario.get('zona').disable();
+    } else {
+      this.formulario.get('zona').enable()
+    }
     /* Si no tiene seguro propio que compañia/poliza/vencimiento no sean readOnly */
     this.cambioTipoSeguro();
     /* Establece las cuentas bancarias del Cliente */
@@ -1131,13 +1134,11 @@ export class ListasDePreciosDialog {
   //Define la matSort
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   //Define las columnas de las tablas
-  public columnas: string[] = ['descripcion', /*'esOrdenVentaPorDefecto', 'tarifaDefecto',*/
-    'seguro', 'comisionCR', 'esContado', 'estaActiva', 'observaciones', 'EDITAR'];
+  public columnas: string[] = ['descripcion', 'seguro', 'esContado', 'estaActiva', 'observaciones', 'EDITAR'];
   //Constructor
   constructor(private appService: AppService, public dialogRef: MatDialogRef<ListasDePreciosDialog>, @Inject(MAT_DIALOG_DATA) public data,
     private loaderService: LoaderService, private ordenVentaService: OrdenVentaService, private clienteServicio: ClienteService,
-    private clienteOrdenVtaService: ClienteOrdenVentaService, private toastr: ToastrService, private ovTarifaService: OrdenVentaTarifaService,
-    public dialog: MatDialog) {
+    private clienteOrdenVtaService: ClienteOrdenVentaService, private toastr: ToastrService, public dialog: MatDialog) {
     dialogRef.disableClose = true;
   }
   ngOnInit() {
@@ -1156,8 +1157,6 @@ export class ListasDePreciosDialog {
       usuarioMod: new FormControl(),
       usuarioAlta: new FormControl(),
       ordenVenta: new FormControl('', Validators.required),
-      // esOrdenVentaPorDefecto: new FormControl('', Validators.required),
-      // ordenVentaTarifaPorDefecto: new FormControl('', Validators.required),
       estaActiva: new FormControl('', Validators.required),
       fechaAlta: new FormControl(),
       fechaUltimaMod: new FormControl(),

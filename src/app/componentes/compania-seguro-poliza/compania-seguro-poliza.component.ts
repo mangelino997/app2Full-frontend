@@ -12,6 +12,7 @@ import { Subscription } from 'rxjs';
 import { PdfService } from 'src/app/servicios/pdf.service';
 import { PdfDialogoComponent } from '../pdf-dialogo/pdf-dialogo.component';
 import { ReporteService } from 'src/app/servicios/reporte.service';
+import { MensajeExcepcion } from 'src/app/modelos/mensaje-excepcion';
 
 @Component({
   selector: 'app-compania-seguro-poliza',
@@ -221,18 +222,18 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
   //Actualiza un registro
   private actualizar() {
     this.loaderService.show();
-    this.servicio.actualizar(this.formulario.value).then(
+    this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
         if (res.status == 200) {
           this.reestablecerFormulario(null);
           document.getElementById('idCompaniaSeguro').focus();
-          this.toastr.success('Registro actualizado con éxito');
+          this.toastr.success(MensajeExcepcion.ACTUALIZADO);
         }
         this.loaderService.hide();
       },
       err => {
         var respuesta = err.json();
-        this.toastr.error(respuesta.mensaje);
+        this.toastr.error(MensajeExcepcion.NO_ACTUALIZADO);
         document.getElementById("idCompaniaSeguro").focus();
         this.loaderService.hide();
       }
@@ -308,12 +309,11 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
     let poliza = this.poliza.value;
     if (poliza.pdf) {
       this.formulario.patchValue(poliza);
-      this.obtenerPDF();
     } else {
       poliza.pdf = this.objetoPdf.value;
       this.formulario.patchValue(poliza);
-      this.obtenerPDF();
     }
+    // this.obtenerPDF();
   }
   //Reestablece los campos formularios
   private reestablecerFormulario(id) {
@@ -368,20 +368,6 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
       elemento.pdf.datos ? this.formulario.get('pdf.datos').setValue(atob(elemento.pdf.datos)) : '';
     }
   }
-  //Obtiene el pdf para mostrarlo
-  public obtenerPDF() {
-    if (this.formulario.value.pdf.id) {
-      this.pdfServicio.obtenerPorId(this.formulario.value.pdf.id).subscribe(res => {
-        let resultado = res.json();
-        let pdf = {
-          id: resultado.id,
-          nombre: resultado.nombre,
-          datos: atob(resultado.datos)
-        }
-        this.formulario.get('pdf').patchValue(pdf);
-      })
-    }
-  }
   //Obtiene el pdf para mostrarlo en la tabla
   public obtenerPDFTabla(elemento) {
     if (elemento.pdf) {
@@ -396,22 +382,17 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
       })
     }
   }
-  //Elimina un pdf ya cargado, se pasa el campo como parametro
-  public eliminarPdf(campo) {
-    if (!this.formulario.get(campo).value) {
-      this.toastr.success("Sin archivo adjunto");
-    } else {
-      this.formulario.get(campo).setValue('');
-    }
-  }
   //Muestra el pdf en una pestana nueva
   public verPDF() {
     const dialogRef = this.dialog.open(PdfDialogoComponent, {
       width: '95%',
       height: '95%',
+      maxWidth: '95%',
+      maxHeight: '95%',
       data: {
+        id: this.formulario.get('pdf.id').value,
+        datos: this.formulario.get('pdf.datos').value,
         nombre: this.formulario.get('pdf.nombre').value,
-        datos: this.formulario.get('pdf.datos').value
       }
     });
     dialogRef.afterClosed().subscribe(resultado => { });
@@ -421,10 +402,12 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
     if (!elemento.pdf) {
       this.toastr.success("Sin archivo adjunto");
     } else {
+      this.loaderService.show();
       this.pdfServicio.obtenerPorId(elemento.pdf.id).subscribe(
         res => {
           let respuesta = res.json();
           elemento.pdf.datos = respuesta.datos;
+          this.loaderService.hide();
           if (elemento.pdf.datos) {
             const dialogRef = this.dialog.open(PdfDialogoComponent, {
               width: '95%',
@@ -439,6 +422,7 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
         },
         err => {
           this.toastr.error("Error al obtener los datos del pdf '" + elemento.pdf.nombre + "'");
+          this.loaderService.hide();
         }
       );
     }
@@ -450,17 +434,84 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
       const reader = new FileReader();
       reader.onload = e => {
         let pdf = {
-          id: this.formulario.get('pdf.id').value ? this.formulario.get('pdf.id').value : null,
+          id: this.formulario.get('pdf.id').value ? this.formulario.get('pdf.id').value : 0,
           nombre: file.name,
           datos: reader.result
         }
         this.formulario.get('pdf').patchValue(pdf);
         event.target.value = null;
+        if(this.indiceSeleccionado == 3) {
+          this.actualizarPDF(pdf);
+        }
       }
       reader.readAsDataURL(file);
     } else {
       this.toastr.error("Debe adjuntar un archivo con extensión .pdf");
     }
+  }
+  //Actualiza un pdf de un vehiculo
+  private actualizarPDF(pdf): void {
+    this.loaderService.show();
+    let idCompaniaSeguroPoliza = this.formulario.get('id').value;
+    this.servicio.actualizarPDF(idCompaniaSeguroPoliza, pdf).then(
+      res => {
+        if(res.status == 200) {
+          res.json().then(
+            data => {
+              this.formulario.get('version').setValue(data.version);
+              this.formulario.get('pdf.id').setValue(data.pdf.id);
+              this.formulario.get('pdf.version').setValue(data.pdf.version);
+            }
+          );
+          this.toastr.success(MensajeExcepcion.ACTUALIZADO);
+        } else {
+          this.toastr.error(MensajeExcepcion.NO_ACTUALIZADO);
+        }
+        this.loaderService.hide();
+      },
+      err => {
+        this.toastr.error(MensajeExcepcion.NO_ACTUALIZADO);
+        this.loaderService.hide();
+      }
+    );
+  }
+  //Elimina un pdf ya cargado, se pasa el campo como parametro
+  public eliminarPdf() {
+    if(this.indiceSeleccionado == 3) {
+      this.eliminarPdfCompaniaSeguroPoliza();
+    } else {
+      if (!this.formulario.get('pdf').value) {
+        this.toastr.success("Sin archivo adjunto");
+      } else {
+        this.formulario.get('pdf').reset();
+      }
+    }
+  }
+  //Elimina un pdf
+  private eliminarPdfCompaniaSeguroPoliza(): void {
+    this.loaderService.show();
+    let idCompaniaSeguroPoliza = this.formulario.get('id').value;
+    let idPdf = this.formulario.get('pdf').value.id;
+    this.servicio.eliminarPdf(idCompaniaSeguroPoliza, idPdf).subscribe(
+      res => {
+        if(res.status == 200) {
+          this.formulario.get('version').setValue(res.json());
+          if (!this.formulario.get('pdf').value) {
+            this.toastr.success("Sin archivo adjunto");
+          } else {
+            this.formulario.get('pdf').reset();
+          }
+          this.toastr.success(MensajeExcepcion.ELIMINADO);
+        } else {
+          this.toastr.error(MensajeExcepcion.NO_ELIMINADO);
+        }
+        this.loaderService.hide();
+      },
+      err => {
+        this.toastr.error(MensajeExcepcion.NO_ELIMINADO);
+        this.loaderService.hide();
+      }
+    );
   }
   //Prepara los datos para exportar
   private prepararDatos(listaCompleta): Array<any> {

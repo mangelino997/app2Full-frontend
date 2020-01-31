@@ -100,8 +100,6 @@ export class VehiculoComponent implements OnInit {
   public companiaSeguro: FormControl = new FormControl();
   //Define si el tipo de vehiculo seleccionado es remolque
   public esVehiculoRemolque: boolean = false;
-  //Define la lista de tipos de imagenes
-  private tiposImagenes = ['image/png', 'image/jpg', 'image/jpeg'];
   //Define si el tipo vehiculo es vtoSanidadAlimenticia
   public esVtoSanidadAlimenticia: boolean = false;
   //Define el mostrar del circulo de progreso
@@ -197,13 +195,15 @@ export class VehiculoComponent implements OnInit {
         data = data.trim();
         if (data == '*' || data.length > 0) {
           this.loaderService.show();
-          this.personalServicio.listarChoferActivoPorAlias(data).subscribe(response => {
-            this.resultadosPersonales = response;
-            this.loaderService.hide();
-          },
+          this.personalServicio.listarChoferActivoPorAlias(data).subscribe(
+            res => {
+              this.resultadosPersonales = res;
+              this.loaderService.hide();
+            },
             err => {
               this.loaderService.hide();
-            })
+            }
+          );
         }
       }
     })
@@ -686,7 +686,6 @@ export class VehiculoComponent implements OnInit {
               this.formulario.get(campo + '.version').setValue(data.pdfTitulo.version);
             }
           );
-          this.toastr.success(MensajeExcepcion.ACTUALIZADO);
         } else {
           this.toastr.error(MensajeExcepcion.NO_ACTUALIZADO);
         }
@@ -724,7 +723,6 @@ export class VehiculoComponent implements OnInit {
           } else {
             this.formulario.get(campo).reset();
           }
-          this.toastr.success(MensajeExcepcion.ELIMINADO);
         } else {
           this.toastr.error(MensajeExcepcion.NO_ELIMINADO);
         }

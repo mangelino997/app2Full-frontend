@@ -10,8 +10,6 @@ import { MatSort, MatTableDataSource, MatDialog, MatPaginator } from '@angular/m
 import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
-import { FotoService } from 'src/app/servicios/foto.service';
-import { PdfService } from 'src/app/servicios/pdf.service';
 import { PdfDialogoComponent } from '../pdf-dialogo/pdf-dialogo.component';
 import { BugImagenDialogoComponent } from '../bugImagen-dialogo/bug-imagen-dialogo.component';
 import { ReporteService } from 'src/app/servicios/reporte.service';
@@ -140,8 +138,7 @@ export class PersonalComponent implements OnInit {
     private appServicio: AppService, private toastr: ToastrService,
     private personal: Personal, private appService: AppService,
     private barrioServicio: BarrioService, private localidadServicio: LocalidadService,
-    private loaderService: LoaderService, private fotoService: FotoService,
-    private pdfServicio: PdfService, private bancoService: BancoService,
+    private loaderService: LoaderService, private bancoService: BancoService,
     public dialog: MatDialog, private reporteServicio: ReporteService,
     private sucursalService: SucursalBancoService,
     private personalCuentaBancariaService: PersonalCuentaBancariaService) {
@@ -194,8 +191,6 @@ export class PersonalComponent implements OnInit {
     this.inicializar(this.appService.getUsuario().id, this.appService.getRol().id, this.appService.getSubopcion());
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar');
-    //Establece los valores por defecto
-    this.establecerValoresPorDefecto();
     //Autocompletado Barrio - Buscar por nombre
     this.formulario.get('barrio').valueChanges.subscribe(data => {
       if (typeof data == 'string') {
@@ -312,10 +307,9 @@ export class PersonalComponent implements OnInit {
         this.resultadosAfipSiniestrados = respuesta.afipSiniestrados;
         this.resultadosSeguridadesSociales = respuesta.seguridadSociales;
         this.resultadosAfipModContrataciones = respuesta.afipModContrataciones;
-
-        this.formulario.get('fechaInicio').setValue(respuesta.fecha);
-        this.formulario.get('tipoDocumento').setValue(this.tiposDocumentos[7]);
         this.formulario.get('id').setValue(respuesta.ultimoId);
+        //Establece los valores por defecto
+        this.establecerValoresPorDefecto();
         this.render = false;
       },
       err => {
@@ -382,6 +376,8 @@ export class PersonalComponent implements OnInit {
     this.formulario.get('vtoLINTI').disable();
     this.formulario.get('vtoLibretaSanidad').disable();
     this.formulario.get('vtoPsicoFisico').disable();
+    this.formulario.get('fechaInicio').setValue(this.fechaActual);
+    this.formulario.get('tipoDocumento').setValue(this.tiposDocumentos[7]);
     this.cambioEsChofer();
   }
   //Al cambiar elemento de select esChofer
@@ -488,14 +484,15 @@ export class PersonalComponent implements OnInit {
   }
   //Obtiene un registro por id
   private obtenerPorId(id) {
+    this.loaderService.show();
     this.servicio.obtenerPorId(id).subscribe(
       res => {
-        if (res.text() != "") {
-          let elemento = res.json();
-          this.establecerFotoYPdfs(elemento);
-        }
+        let elemento = res.json();
+        this.loaderService.hide();
+        this.establecerFotoYPdfs(elemento);
       },
       err => {
+        this.loaderService.hide();
       }
     );
   }
@@ -747,31 +744,6 @@ export class PersonalComponent implements OnInit {
         break;
     }
   }
-  //Obtiene el siguiente id
-  // private obtenerSiguienteId() {
-  //   this.servicio.obtenerSiguienteId().subscribe(
-  //     res => {
-  //       this.formulario.get('id').setValue(res.json());
-  //     },
-  //     err => {
-  //     }
-  //   );
-  // }
-  //Obtiene el listado de registros
-  // private listar() {
-  //   this.loaderService.show();
-  //   this.servicio.listar().subscribe(
-  //     res => {
-  //       this.listaCompleta = new MatTableDataSource(res.json());
-  //       this.listaCompleta.sort = this.sort;
-  //       this.listaCompleta.paginator = this.paginator;
-  //       this.loaderService.hide();
-  //     },
-  //     err => {
-  //       this.loaderService.hide();
-  //     }
-  //   );
-  // }
   //Agrega un registro
   private agregar() {
     this.loaderService.show();
@@ -788,7 +760,6 @@ export class PersonalComponent implements OnInit {
           respuesta.then(data => {
             this.ultimoId = data.id;
             this.reestablecerFormulario(data.id);
-            this.formulario.get('tipoDocumento').setValue(this.tiposDocumentos[7]);
             document.getElementById('idApellido').focus();
             this.toastr.success(data.mensaje);
           },
@@ -818,16 +789,15 @@ export class PersonalComponent implements OnInit {
     this.formulario.get('esJubilado').setValue(false);
     this.formulario.get('esMensualizado').setValue(true);
     this.formulario.get('personalCuentaBancarias').setValue(this.listaCuentaBancaria.data);
-    this.servicio.actualizar(this.formulario.value).then(
+    this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
-        let respuesta = res.json();
         if (res.status == 200) {
-          respuesta.then(data => {
-            this.reestablecerFormulario(null);
+          this.reestablecerFormulario(null);
+          setTimeout(function() {
             document.getElementById('idAutocompletado').focus();
-            this.toastr.success(data.mensaje);
-            this.loaderService.hide();
-          })
+          }, 40);
+          this.toastr.success(MensajeExcepcion.ACTUALIZADO);
+          this.loaderService.hide();
         }
       },
       err => {
@@ -872,10 +842,8 @@ export class PersonalComponent implements OnInit {
     this.listaCuentaBancaria = new MatTableDataSource([]);
     id ? this.formulario.get('id').setValue(id) : this.formulario.get('id').setValue(this.ultimoId);
     /* Establece la primera opcion del sidenav */
-    if (this.indiceSeleccionado != 5)
-      this.seleccionarOpcion(15, 0);
-    else
-      this.seleccionarOpcion(null, 0);
+    this.indiceSeleccionado != 5 ? this.seleccionarOpcion(15, 0) : this.seleccionarOpcion(null, 0);
+    this.establecerValoresPorDefecto();
   }
   //Reestablece el formulario de Cuenta Bancaria
   private reestablecerFormularioCB() {
@@ -1123,7 +1091,8 @@ export class PersonalComponent implements OnInit {
   //Valida el CUIL
   public validarCUIL(): void {
     let cuil = this.formulario.get('cuil').value;
-    if (cuil) {
+    console.log(cuil);
+    if (cuil && cuil != '') {
       let respuesta = this.appServicio.validarCUIT(cuil + '');
       if (!respuesta) {
         this.formulario.get('cuil').reset();
@@ -1150,7 +1119,6 @@ export class PersonalComponent implements OnInit {
   }
   //Controla si el adjunto es un PDF o JPEG y llama al readURL apropiado
   public controlAdjunto(event) {
-    // let extension = this.formulario.get('pdfDni').value.tipo;
     let extension = event.target.files[0].type;
     if (extension == 'application/pdf') {
       this.readPdfURL(event, 'pdfDni');
@@ -1165,12 +1133,15 @@ export class PersonalComponent implements OnInit {
       const reader = new FileReader();
       reader.onload = e => {
         let foto = {
-          id: this.formulario.get(campo + '.id').value ? this.formulario.get(campo + '.id').value : null,
+          id: this.formulario.get(campo + '.id').value ? this.formulario.get(campo + '.id').value : 0,
           nombre: file.name,
           datos: reader.result
         }
         this.formulario.get(campo).patchValue(foto);
         event.target.value = null;
+        if(this.indiceSeleccionado == 3) {
+          this.actualizarPDF(campo, foto);
+        }
       }
       reader.readAsDataURL(file);
     } else {
@@ -1185,90 +1156,91 @@ export class PersonalComponent implements OnInit {
       const reader = new FileReader();
       reader.onload = e => {
         let pdf = {
-          id: this.formulario.get(campo + ".id").value ? this.formulario.get(campo + ".id").value : null,
+          id: this.formulario.get(campo + ".id").value ? this.formulario.get(campo + ".id").value : 0,
           nombre: file.name,
           datos: reader.result
         }
         this.formulario.get(campo).patchValue(pdf);
         event.target.value = null;
+        if(this.indiceSeleccionado == 3) {
+          this.actualizarPDF(campo, pdf);
+        }
       }
       reader.readAsDataURL(file);
     } else {
       this.toastr.error("Debe adjuntar un archivo con extensión .pdf");
     }
   }
-  //Elimina un pdf/imagen ya cargado, se pasa el campo como parametro
-  public eliminarAdjunto(campo) {
-    if (!this.formulario.get(campo).value) {
-      this.toastr.success("Sin archivo adjunto");
+  //Actualiza un pdf de un vehiculo
+  private actualizarPDF(campo, pdf): void {
+    this.loaderService.show();
+    let idPersonal = this.formulario.get('id').value;
+    this.servicio.actualizarPDF(idPersonal, campo, pdf).then(
+      res => {
+        if(res.status == 200) {
+          res.json().then(
+            data => {
+              this.formulario.get('version').setValue(data.version);
+              //Si es una foto
+              if(campo == 'foto') {
+                this.formulario.get(campo + '.id').setValue(data.foto.id);
+                this.formulario.get(campo + '.version').setValue(data.foto.version);
+              } else {
+                //Si es un pdf
+                this.formulario.get(campo + '.id').setValue(data.pdfDni.id);
+                this.formulario.get(campo + '.version').setValue(data.pdfDni.version);
+              }
+            }
+          );
+        } else {
+          this.toastr.error(MensajeExcepcion.NO_ACTUALIZADO);
+        }
+        this.loaderService.hide();
+      },
+      err => {
+        this.toastr.error(MensajeExcepcion.NO_ACTUALIZADO);
+        this.loaderService.hide();
+      }
+    );
+  }
+  //Elimina un pdf ya cargado, se pasa el campo como parametro
+  public eliminarPdf(campoNombre, campo) {
+    if(this.indiceSeleccionado == 3) {
+      this.eliminarPdfPersonal(campoNombre, campo);
     } else {
-      this.formulario.get(campo + '.nombre').setValue('');
-      this.formulario.get(campo + '.datos').setValue('');
+      this.formulario.get(campo).reset();
     }
   }
-  //Obtiene el pdf para mostrarlo
-  public obtenerPDF(elemento) {
-    let resultadoPdf = {
-      id: null,
-      version: null,
-      nombre: null,
-      tipo: null,
-      tamanio: null,
-      datos: null,
-      tabla: null
-    };
-    if (elemento.id) {
-      this.pdfServicio.obtenerPorId(elemento.id).subscribe(res => {
-        let resultado = res.json();
-        let pdf = {
-          id: resultado.id,
-          version: resultado.version,
-          nombre: resultado.nombre,
-          tamanio: resultado.tamanio,
-          tipo: resultado.tipo,
-          tabla: resultado.tabla,
-          datos: atob(resultado.datos)
+  //Elimina un pdf
+  private eliminarPdfPersonal(campoNombre, campo): void {
+    this.loaderService.show();
+    let idPersonal = this.formulario.get('id').value;
+    let idPdf = this.formulario.get(campo).value.id;
+    this.servicio.eliminarPdf(idPersonal, idPdf, campo).subscribe(
+      res => {
+        if(res.status == 200) {
+          this.formulario.get('version').setValue(res.json());
+          if (!this.formulario.get(campoNombre).value) {
+            this.toastr.success("Sin archivo adjunto");
+          } else {
+            this.formulario.get(campo).reset();
+          }
+        } else {
+          this.toastr.error(MensajeExcepcion.NO_ELIMINADO);
         }
-        resultadoPdf = pdf;
-      })
-    }
-    return resultadoPdf;
-  }
-  //Obtiene el pdf para mostrarlo
-  public obtenerFoto(elemento) {
-    let resultadoFoto = {
-      id: null,
-      version: null,
-      nombre: null,
-      tipo: null,
-      tamanio: null,
-      datos: null,
-      tabla: null
-    };
-    if (elemento.id) {
-      this.fotoService.obtenerPorId(elemento.id).subscribe(res => {
-        let resultado = res.json();
-        let foto = {
-          id: resultado.id,
-          version: resultado.version,
-          nombre: resultado.nombre,
-          tamanio: resultado.tamanio,
-          tipo: resultado.tipo,
-          tabla: resultado.tabla,
-          datos: atob(resultado.datos)
-        }
-        resultadoFoto = foto;
-      })
-    }
-    return resultadoFoto;
+        this.loaderService.hide();
+      },
+      err => {
+        this.toastr.error(MensajeExcepcion.NO_ELIMINADO);
+        this.loaderService.hide();
+      }
+    );
   }
   //Obtiene el dni para mostrarlo
   public verDni() {
-    let tipo;
-    this.formulario.value.pdfDni.tipo ? tipo = this.formulario.value.pdfDni.tipo : tipo = this.formulario.value.pdfDni.nombre;
+    let tipo = this.formulario.value.pdfDni.tipo ? this.formulario.value.pdfDni.tipo : this.formulario.value.pdfDni.nombre;
     if (tipo) {
-      let extension;
-      this.formulario.value.pdfDni.tipo ? extension = tipo.split('/') : extension = tipo.split('.');
+      let extension = this.formulario.value.pdfDni.tipo ? tipo.split('/') : tipo.split('.');
       extension[1] == 'pdf' ? this.verPDF('pdfDni') : this.verFoto('pdfDni');
     }
   }
@@ -1277,21 +1249,27 @@ export class PersonalComponent implements OnInit {
     const dialogRef = this.dialog.open(BugImagenDialogoComponent, {
       width: '95%',
       height: '95%',
+      maxWidth: '95%',
+      maxHeight: '95%',
       data: {
+        id: this.formulario.get(campo + '.id').value,
+        datos: this.formulario.get(campo + '.datos').value,
         nombre: this.formulario.get(campo + '.nombre').value,
-        datos: this.formulario.get(campo + '.datos').value
       }
     });
     dialogRef.afterClosed().subscribe(resultado => { });
   }
   //Muestra el pdf en una pestana nueva
-  public verPDF(pdf) {
+  public verPDF(campo) {
     const dialogRef = this.dialog.open(PdfDialogoComponent, {
       width: '95%',
       height: '95%',
+      maxWidth: '95%',
+      maxHeight: '95%',
       data: {
-        nombre: this.formulario.get(pdf + '.nombre').value,
-        datos: this.formulario.get(pdf + '.datos').value
+        id: this.formulario.get(campo + '.id').value,
+        datos: this.formulario.get(campo + '.datos').value,
+        nombre: this.formulario.get(campo + '.nombre').value,
       }
     });
     dialogRef.afterClosed().subscribe(resultado => { });
@@ -1317,12 +1295,12 @@ export class PersonalComponent implements OnInit {
   }
   //Establece la foto y pdf (actilet consultar/actualizar)
   private establecerFotoYPdfs(elemento): void {
-    elemento.foto ? elemento.foto.datos = atob(elemento.foto.datos) : '';
-    elemento.pdfLicConducir ? elemento.pdfLicConducir.datos = atob(elemento.pdfLicConducir.datos) : '';
-    elemento.pdfLinti ? elemento.pdfLinti.datos = atob(elemento.pdfLinti.datos) : '';
-    elemento.pdfLibSanidad ? elemento.pdfLibSanidad.datos = atob(elemento.pdfLibSanidad.datos) : '';
-    elemento.pdfDni ? elemento.pdfDni.datos = atob(elemento.pdfDni.datos) : '';
-    elemento.pdfAltaTemprana ? elemento.pdfAltaTemprana.datos = atob(elemento.pdfAltaTemprana.datos) : '';
+    elemento.foto.datos = elemento.foto.nombre ? atob(elemento.foto.datos) : null;
+    elemento.pdfLicConducir ? elemento.pdfLicConducir.datos = atob(elemento.pdfLicConducir.datos) : null;
+    elemento.pdfLinti ? elemento.pdfLinti.datos = atob(elemento.pdfLinti.datos) : null;
+    elemento.pdfLibSanidad ? elemento.pdfLibSanidad.datos = atob(elemento.pdfLibSanidad.datos) : null;
+    elemento.pdfDni ? elemento.pdfDni.datos = atob(elemento.pdfDni.datos) : null;
+    elemento.pdfAltaTemprana ? elemento.pdfAltaTemprana.datos = atob(elemento.pdfAltaTemprana.datos) : null;
     this.formulario.patchValue(elemento);
     this.establecerValoresPersonal();
     this.cambioEsChofer();

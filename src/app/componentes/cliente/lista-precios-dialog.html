@@ -115,12 +115,6 @@
               <th mat-header-cell *matHeaderCellDef mat-sort-header>% Seguro</th>
               <td class="number-right" mat-cell *matCellDef="let elemento">% {{establecerDecimales(elemento.ordenVenta.seguro, 2)}}</td>
             </ng-container>
-            <ng-container matColumnDef="comisionCR">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header>% Comisión C.R.</th>
-              <td class="number-right" mat-cell *matCellDef="let elemento">
-                % {{establecerDecimales(elemento.ordenVenta.comisionCR ? elemento.ordenVenta.comisionCR : '0', 2)}}
-              </td>
-            </ng-container>
             <ng-container matColumnDef="esContado">
               <th mat-header-cell *matHeaderCellDef mat-sort-header>Es Contado</th>
               <td mat-cell *matCellDef="let elemento">{{elemento.ordenVenta.esContado? 'Sí' : 'No'}}</td>
