@@ -252,7 +252,7 @@ export class PaisComponent implements OnInit {
         var respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario(null);
-          document.getElementById('idNombre').focus();
+          document.getElementById("idAutocompletado").focus();
           this.toastr.success(respuesta.mensaje);
         }
         this.loaderService.hide();
@@ -274,6 +274,7 @@ export class PaisComponent implements OnInit {
     var elemento = this.autocompletado.value;
     this.autocompletado.setValue(elemento);
     this.formulario.patchValue(elemento);
+    document.getElementById("idNombre").focus()
   }
   //Verifica si se selecciono un elemento del autocompletado
   public verificarSeleccion(valor): void {

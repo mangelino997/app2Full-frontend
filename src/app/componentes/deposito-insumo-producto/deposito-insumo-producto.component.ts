@@ -240,7 +240,7 @@ export class DepositoInsumoProductoComponent implements OnInit {
         let respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario(null);
-          document.getElementById('idNombre').focus();
+          document.getElementById('idAutocompletado').focus();
           this.toastr.success(respuesta.mensaje);
         }
         this.loaderService.hide();
@@ -249,7 +249,7 @@ export class DepositoInsumoProductoComponent implements OnInit {
         let respuesta = err.json();
         if (respuesta.codigo == 500) {
           document.getElementById("labelNombre").classList.add('label-error');
-          document.getElementById("idNombre").classList.add('is-invalid');
+          document.getElementById("idAutocompletado").classList.add('is-invalid');
           document.getElementById("idNombre").focus();
           this.toastr.error(respuesta.mensaje);
         }
