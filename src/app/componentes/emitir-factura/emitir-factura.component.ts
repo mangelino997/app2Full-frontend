@@ -526,7 +526,7 @@ export class EmitirFacturaComponent implements OnInit {
       this.toastr.warning("Seleccione un Remitente.");
       this.formulario.get('clienteDestinatario').reset();
       this.formularioDestinatario.reset();
-      document.getElementById('idDestinatario').focus();
+      document.getElementById('idRemitente').focus();
     }
   }
   //Completa el input "porcentaje" segun la Orden Venta seleccionada 
@@ -577,7 +577,10 @@ export class EmitirFacturaComponent implements OnInit {
     this.formularioVtaCpteItemFA.enable();
     let kgMayor;
     let tipoTarifa = this.tarifaOrdenVenta.value.id;
-    console.log(tipoTarifa, this.formularioVtaCpteItemFA.get('bultos').value);
+
+    /* controla Orden Venta */
+    // !this.ordenVenta.value? this.ordenVenta.setValue(this.ordenesVenta[0]) : '';
+    console.log(tipoTarifa, this.ordenesVenta, this.formularioVtaCpteItemFA.get('bultos').value);
     let idOrdenVta = this.ordenVenta.value.ordenVenta.id;
     let idTipoTarifa = this.tarifaOrdenVenta.value.id;
     this.formularioVtaCpteItemFA.get('kilosEfectivo').value > this.formularioVtaCpteItemFA.get('kilosAforado').value ?
@@ -693,8 +696,9 @@ export class EmitirFacturaComponent implements OnInit {
     }
     this.controlCamposPorCliente();
     this.itemFactura.value.id != 1 ?
-      [this.formularioVtaCpteItemFA.enable(), this.ordenVenta.enable(), this.reestablecerformularioVtaCpteItemFA()] : '';
-
+      [this.formularioVtaCpteItemFA.enable(), this.ordenVenta.enable(),
+      this.reestablecerformularioVtaCpteItemFA(), document.getElementById('idViaje').focus()] :
+      document.getElementById('idDescripcionCarga').focus();
   }
   //Controla campos segun datos del Cliente que paga - Sale del metodo 'cambioPagoEnOrigen'
   private controlCamposPorCliente() {
@@ -705,10 +709,14 @@ export class EmitirFacturaComponent implements OnInit {
     this.cargarCodigoAfip(this.formulario.value.letra);
     console.log(this.formulario.value.cliente);
     //Controla la lista para el campo 'Orden Venta'
-    this.formulario.value.cliente.clienteOrdenesVentas ?
-      [this.ordenesVenta = this.formulario.value.cliente.clienteOrdenesVentas,
-      this.ordenesVenta.length == 0 ? this.toastr.warning("El cliente tiene asignado una lista vacía de orden venta.") : '']
-      : this.listarOrdenVentaEmpresa();
+    if (this.formulario.value.cliente.clienteOrdenesVentas) {
+      this.ordenesVenta = this.formulario.value.cliente.clienteOrdenesVentas;
+      this.ordenesVenta.length == 0 ?
+        this.toastr.warning("El cliente tiene asignado una lista vacía de orden venta.") :
+        this.ordenVenta.setValue(this.ordenesVenta[0]);
+    } else {
+      this.listarOrdenVentaEmpresa();
+    }
     //Controla el campo 'Seguro'
     !this.formulario.value.cliente.esSeguroPropio ||
       (this.formulario.value.cliente.vencimientoPolizaSeguro ?
@@ -774,7 +782,7 @@ export class EmitirFacturaComponent implements OnInit {
   //Controla los campos cuando se selecciona un Remito del modal abrirListaRemitoDialogo
   private controlarRemitoSeleccionado(resultado) {
     if (resultado.configuracionModalRemitos.formularioFiltro) {
-      let idViaje = resultado.remitoSeleccionado.viajeTramo.id;
+      let idViaje = null;//resultado.remitoSeleccionado.viajeTramo.id;
       let idRemito = resultado.remitoSeleccionado.viajeRemito.id;
       this.establecerValoresRemitoSeleccionado(resultado.remitoSeleccionado, idViaje, idRemito);
       this.configuracionModalRemitos.setValue(resultado.configuracionModalRemitos);
