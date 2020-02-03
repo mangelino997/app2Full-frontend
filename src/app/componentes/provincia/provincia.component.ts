@@ -245,7 +245,7 @@ export class ProvinciaComponent implements OnInit {
         let respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario(null);
-          document.getElementById('idNombre').focus();
+          document.getElementById("idAutocompletado").focus();
           this.toastr.success(respuesta.mensaje);
         }
         this.loaderService.hide();
@@ -299,6 +299,7 @@ export class ProvinciaComponent implements OnInit {
   }
   public cambioAutocompletado() {
     this.formulario.patchValue(this.autocompletado.value);
+    document.getElementById("idNombre").focus();
   }
   //Manejo de colores de campos y labels
   public cambioCampo(id, label) {
