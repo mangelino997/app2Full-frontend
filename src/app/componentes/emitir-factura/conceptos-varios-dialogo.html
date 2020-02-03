@@ -19,10 +19,10 @@
             </div>
             <div class="col-md-4">
                 <div class="form-group has-float-label">
-                    <label for="idImporte" class="tamanio-label">Importe</label>
+                    <label for="idImporte" class="tamanio-label">Importe ($)</label>
                     <input id="idImporte" type="text" formControlName="importe"
                         class="form-control form-control-sm number-right" placeholder="$ 0.00" autocomplete="off"
-                        [textMask]="mascararImporte(8, 2)" (blur)="setDecimales(formulario.get('importe'), 2)">
+                        [textMask]="mascararEnteroConDecimales(8)" (blur)="setDecimales(formulario.get('importe'), 2)">
                 </div>
             </div>
         </div>

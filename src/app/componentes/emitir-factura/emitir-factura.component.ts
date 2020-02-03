@@ -33,6 +33,7 @@ import { LoaderService } from 'src/app/servicios/loader.service';
 import { Subscription } from 'rxjs';
 import { LoaderState } from 'src/app/modelos/loader';
 import { TipoTarifaService } from 'src/app/servicios/tipo-tarifa.service';
+import { ObservacionesDialogo } from '../observaciones-dialogo/observaciones-dialogo.component';
 
 @Component({
   selector: 'app-emitir-factura',
@@ -109,8 +110,6 @@ export class EmitirFacturaComponent implements OnInit {
     'SUBTOTAL_IVA', 'QUITAR'];
   //Define la matSort
   @ViewChild(MatSort, { static: false }) sort: MatSort;
-  //Define la paginacion
-  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Define el mostrar del circulo de progreso
   public show = false;
   //Defiene el render
@@ -130,8 +129,8 @@ export class EmitirFacturaComponent implements OnInit {
     private ordenVentaEscalaServicio: OrdenVentaEscalaService, private afipCaeService: AfipCaeService,
     private monedaService: MonedaService, private monedaCotizacionService: MonedaCotizacionService,
     private loaderService: LoaderService) {
-      // this.dialogRef.disableClose = true;
-     }
+    // this.dialogRef.disableClose = true;
+  }
   ngOnInit() {
     //Establece la subscripcion a loader
     this.subscription = this.loaderService.loaderState
@@ -161,7 +160,7 @@ export class EmitirFacturaComponent implements OnInit {
     this.reestablecerFormulario(true);
     //Completa los datos de ventaComprobante enviados desde el componente consultarFacturas
     // console.log(this.data);
-    
+
     //Autcompletado - Buscar por Remitente
     this.formulario.get('clienteRemitente').valueChanges.subscribe(data => {
       if (typeof data == 'string') {
@@ -717,6 +716,9 @@ export class EmitirFacturaComponent implements OnInit {
       this.formularioVtaCpteItemFA.get('importeSeguro').enable() : this.formularioVtaCpteItemFA.get('importeSeguro').disable();
     //Controla si habilita el boton FCE MiPyMEs para abrir modal
     this.idTipoCpte == 26 && this.formulario.value.cliente.esReceptorFCE ? this.btnFCE = false : this.btnFCE = true;
+    /* abre dialogo observaciones */
+    this.formulario.value.cliente.notaEmisionComprobante ?
+      this.obervacionDialogo(this.formulario.value.cliente.notaEmisionComprobante) : '';
   }
   //Abre dialogo para agregar un cliente eventual
   public agregarClienteEventual(tipoCliente): void {
@@ -757,6 +759,7 @@ export class EmitirFacturaComponent implements OnInit {
     this.itemFactura.value.id == 1 ? esRemitoGeneral = true : esRemitoGeneral = false;
     const dialogRef = this.dialog.open(ListaRemitoDialogoComponent, {
       width: '1200px',
+      height: '450px',
       data: {
         esRemitoGeneral: esRemitoGeneral,
         listaItemsAsignados: this.listaCompletaItems.data,
@@ -874,15 +877,25 @@ export class EmitirFacturaComponent implements OnInit {
     dialogRef.afterClosed().subscribe(resultado => { });
   }
   //Abre un modal - Observaciones- para seleccionar la Nota de Impresion del Comprobante 
-  public abrirObervacionDialogo(): void {
-    let notaImpCpteCliente = this.formulario.value.cliente.notaImpresionComprobante;
-    const dialogRef = this.dialog.open(ObservacionDialogo, {
+  // public abrirObervacionDialogo(): void {
+  //   let notaImpCpteCliente = this.formulario.value.cliente.notaImpresionComprobante;
+  //   const dialogRef = this.dialog.open(ObservacionDialogo, {
+  //     width: '70%',
+  //     maxWidth: '70%',
+  //     data: { notaImpCpteCliente: notaImpCpteCliente }
+  //   });
+  //   dialogRef.afterClosed().subscribe(resultado => {
+  //     // resultado ? this.formulario.value.cliente.notaImpresionComprobante = resultado : ''; ?? CONSULTAR DONDE SE GUARDA
+  //   });
+  // }
+  //Abre un modal - Observaciones del cliente que paga
+  public obervacionDialogo(observacion): void {
+    const dialogRef = this.dialog.open(ObservacionesDialogo, {
       width: '70%',
       maxWidth: '70%',
-      data: { notaImpCpteCliente: notaImpCpteCliente }
+      data: { elemento: observacion, soloLectura: true }
     });
     dialogRef.afterClosed().subscribe(resultado => {
-      // resultado ? this.formulario.value.cliente.notaImpresionComprobante = resultado : ''; ?? CONSULTAR DONDE SE GUARDA
     });
   }
   //Calcular el Subtotal del item agregado
@@ -959,7 +972,6 @@ export class EmitirFacturaComponent implements OnInit {
   private actualizarTabla() {
     this.listaCompletaItems.data.push(this.formularioVtaCpteItemFA.value);
     this.listaCompletaItems.sort = this.sort;
-    this.listaCompletaItems.paginator = this.paginator;
     this.calcularImportesTotales();
     this.reestablecerformularioVtaCpteItemFA();
     this.contador.setValue(this.contador.value + 1);
@@ -1401,6 +1413,10 @@ export class ConceptosVariosDialogo {
   //Obtiene la mascara de importe
   public mascararImporte(intLimite, decimalLimite) {
     return this.appService.mascararImporte(intLimite, decimalLimite);
+  }
+  //Obtiene la mascara de enteros CON decimales
+  public mascararEnteroConDecimales(intLimite) {
+    return this.appService.mascararEnterosConDecimales(intLimite);
   }
   //Formatea el numero a x decimales
   public setDecimales(formulario, cantidad) {

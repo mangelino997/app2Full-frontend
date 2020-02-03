@@ -74,7 +74,9 @@ tr.planilla-no-seleccionada:hover {
 /* Define el estilo de la tabla */
 .tabla {
     width: 100% !important;
-    overflow: auto !important;
+    max-height: 300px;
+    /* overflow: auto !important; */
+    overflow-y: scroll;
 }
 .tabla-ancho {
     width: 1890px !important;
