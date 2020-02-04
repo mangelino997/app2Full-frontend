@@ -463,7 +463,6 @@ export class ClienteComponent implements OnInit {
     this.formulario.get('descuentoFlete').setValue(elemento.descuentoFlete ? this.appService.desenmascararPorcentaje(elemento.descuentoFlete.toString(), 2) : null);
     this.formulario.get('descuentoSubtotal').setValue(elemento.descuentoSubtotal ? this.appService.establecerDecimales(elemento.descuentoSubtotal, 2) : null);
     if(elemento.barrio) {
-      console.log(elemento);
       this.formulario.get('zona').setValue({ id: elemento.barrio.zona.id });
       this.formulario.get('zona').disable();
     } else {
@@ -683,8 +682,10 @@ export class ClienteComponent implements OnInit {
         let respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario(null);
-          document.getElementById('idAutocompletado').focus();
           this.toastr.success(respuesta.mensaje);
+          setTimeout(function() {
+            document.getElementById('idAutocompletado').focus();
+          }, 20);
           this.loaderService.hide();
         }
       },

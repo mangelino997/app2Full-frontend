@@ -23,6 +23,7 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { MensajeExcepcion } from 'src/app/modelos/mensaje-excepcion';
 import { DetalleRetencionesComponent } from '../tesoreria/detalle-retenciones/detalle-retenciones.component';
 import { ComprobanteComponent } from '../tesoreria/comprobante/comprobante.component';
+import { PagoParcialComponent } from '../tesoreria/pago-parcial/pago-parcial.component';
 
 @Component({
   selector: 'app-orden-pago',
@@ -179,7 +180,9 @@ export class OrdenPagoComponent implements OnInit {
       res => {
         this.comprasComprobantes = new MatTableDataSource(res.json());
         this.comprasComprobantes.sort = this.sort;
-        this.comprasComprobantes.data.length == 0 ? this.toastr.warning("El proveedor no tiene contactos asignados.") : '';
+        if(this.comprasComprobantes.data.length == 0) {
+          this.toastr.warning("El proveedor no tiene comprobantes asignados");
+        }
         this.calcularTotalItemsYTotalDeuda();
         //Habilita el campo Integracion En
         this.medioPago.enable();
@@ -316,6 +319,22 @@ export class OrdenPagoComponent implements OnInit {
         if(elemento.total != 0 && elemento.total != '0.00') {
           this.formularioDialogo.get('retenciones').setValue(elemento);
         }
+      }
+    });
+  }
+  //Abre el dialogo de pago parcial
+  public abrirDialogoPagoParcial(): void {
+    this.medioPago.reset();
+    const dialogRef = this.dialog.open(PagoParcialComponent, {
+      width: '60%',
+      maxWidth: '95%',
+      data: {
+        elemento: this.formularioDialogo.get('retenciones').value
+      }
+    });
+    dialogRef.afterClosed().subscribe(elemento => {
+      if(elemento) {
+        
       }
     });
   }

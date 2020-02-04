@@ -64,8 +64,13 @@
                                         <mat-checkbox (click)="$event.stopPropagation()"
                                             (change)="$event ? seleccionarCheckbox(row) : null"
                                             [checked]="comprasComprobantesSeleccionados.isSelected(row)"
-                                            [aria-label]="checkboxLabel(row)" color="primary">
+                                            [aria-label]="checkboxLabel(row)" color="primary"
+                                            matTooltip="Pago Total" matTooltipPosition="above">
                                         </mat-checkbox>
+                                        <button class="margin-left-3" mat-icon-button matTooltip="Pago Parcial" 
+                                            matTooltipPosition="above" (click)="abrirDialogoPagoParcial()">
+                                            <mat-icon>payment</mat-icon>
+                                          </button>
                                     </td>
                                 </ng-container>
                                 <ng-container matColumnDef="FECHA_EMISION">

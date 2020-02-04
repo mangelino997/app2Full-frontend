@@ -275,8 +275,9 @@ export class CompaniaSeguroComponent implements OnInit {
     this.resultados = [];
     this.formulario.reset();
     this.autocompletado.reset();
-    id ? this.formulario.get('id').setValue(id) : this.formulario.get('id').setValue(this.ultimoId);
-
+    if (this.indiceSeleccionado == 1) {
+      id ? this.formulario.get('id').setValue(id) : this.formulario.get('id').setValue(this.ultimoId);
+    }
   }
   //Manejo de colores de campos y labels
   public cambioCampo(id, label) {

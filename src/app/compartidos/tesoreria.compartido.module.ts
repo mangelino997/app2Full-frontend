@@ -14,6 +14,7 @@ import { TransferenciaBancariaComponent } from '../componentes/tesoreria/transfe
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, MatSelectModule, MatProgressBarModule, MatButtonModule, MatIconModule, MatTooltipModule, MatListModule, MatDialogModule, MatCheckboxModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TextMaskModule } from 'angular2-text-mask';
+import { PagoParcialComponent } from '../componentes/tesoreria/pago-parcial/pago-parcial.component';
 
 @NgModule({
   declarations: [
@@ -27,7 +28,8 @@ import { TextMaskModule } from 'angular2-text-mask';
     EfectivoComponent,
     OtrasCuentasComponent,
     OtrasMonedasComponent,
-    TransferenciaBancariaComponent
+    TransferenciaBancariaComponent,
+    PagoParcialComponent
   ],
   imports: [
     CommonModule,
@@ -78,7 +80,8 @@ import { TextMaskModule } from 'angular2-text-mask';
     EfectivoComponent,
     OtrasCuentasComponent,
     OtrasMonedasComponent,
-    TransferenciaBancariaComponent
+    TransferenciaBancariaComponent,
+    PagoParcialComponent
   ]
 })
 export class TesoreriaCompartidoModule { }

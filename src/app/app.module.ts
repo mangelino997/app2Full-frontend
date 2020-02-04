@@ -95,7 +95,6 @@ import { AfipConceptoSueldoGrupoService } from './servicios/afip-concepto-sueldo
 import { AfipConceptoSueldoGrupo } from './modelos/afipConceptoSueldoGrupo';
 import { TipoConceptoVentaService } from './servicios/tipo-concepto-venta.service';
 import { Aforo } from './modelos/aforo';
-import { EmitirFacturaComponent } from './componentes/emitir-factura/emitir-factura.component';
 
 const stompConfig: StompConfig = {
   url: 'ws://localhost:8080/jitws/socket', //LOCAL
@@ -132,8 +131,7 @@ const stompConfig: StompConfig = {
     TotalesConceptoDialogoComponent,
     UsuariosActivosDialogoComponent,
     BugImagenDialogoComponent,
-    CuentaBancariaDialogoComponent,
-    
+    CuentaBancariaDialogoComponent
   ],
   imports: [
     FormsModule,

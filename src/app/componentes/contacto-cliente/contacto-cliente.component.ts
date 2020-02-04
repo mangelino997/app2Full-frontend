@@ -248,7 +248,7 @@ export class ContactoClienteComponent implements OnInit {
         let respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario(null);
-          document.getElementById('idNombre').focus();
+          document.getElementById('idCliente').focus();
           this.toastr.success(respuesta.mensaje);
         }
         this.loaderService.hide();
