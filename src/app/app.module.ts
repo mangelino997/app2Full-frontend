@@ -175,7 +175,6 @@ const stompConfig: StompConfig = {
     UsuarioEmpresaService,
     ToastrService,
     LoaderService,
-    ToastrService,
     FechaService,
     StompService,
     ViajeCombustible,

@@ -1091,7 +1091,6 @@ export class PersonalComponent implements OnInit {
   //Valida el CUIL
   public validarCUIL(): void {
     let cuil = this.formulario.get('cuil').value;
-    console.log(cuil);
     if (cuil && cuil != '') {
       let respuesta = this.appServicio.validarCUIT(cuil + '');
       if (!respuesta) {
