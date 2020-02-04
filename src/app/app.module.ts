@@ -16,7 +16,7 @@ import { GuardiaService } from './servicios/guardia.service';
 //Modulos
 import {
   MatMenuModule, MatDividerModule, MatIconModule, MatToolbarModule, MatDialogModule,
-  MatSelectModule, MatProgressSpinnerModule, MatCardModule, MatTableModule, MatButtonModule, MatPaginatorIntl, MatProgressBarModule, MatTreeModule, MatAutocompleteModule, MatCheckboxModule, MatSortModule, MatPaginatorModule
+  MatSelectModule, MatProgressSpinnerModule, MatCardModule, MatTableModule, MatButtonModule, MatPaginatorIntl, MatProgressBarModule, MatTreeModule, MatAutocompleteModule, MatCheckboxModule, MatSortModule, MatPaginatorModule, MatTooltipModule
 } from '@angular/material';
 import { ReporteService } from './servicios/reporte.service';
 import { HttpModule } from '@angular/http';

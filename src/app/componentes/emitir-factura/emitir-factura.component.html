@@ -38,7 +38,8 @@
                     </span>
                   </div>
                   <input id="idFechaEmision" type="date" formControlName="fechaEmision" autocomplete="off"
-                    class="form-control form-control-sm"  style="min-width: 100px;"> <!--(blur)="cambioFecha()"-->
+                    class="form-control form-control-sm" style="min-width: 100px;">
+                  <!--(blur)="cambioFecha()"-->
                 </div>
               </div>
             </div>
@@ -72,7 +73,8 @@
         <div class="col-md-1">
           <div class="form-group has-float-label margin-right">
             <label for="idLetra" class="tamanio-label">Letra</label>
-            <input id="idLetra" type="text" formControlName="letra" class="form-control form-control-sm" readonly>
+            <input id="idLetra" type="text" formControlName="letra" class="form-control form-control-sm"
+            style="text-align: center;" readonly>
           </div>
         </div>
         <div class="col-md-1">
@@ -118,7 +120,7 @@
               </div> -->
               <div class="col-md-1 button-input">
                 <button mat-raised-button color="primary" (click)="agregarClienteEventual('Remitente')"
-                style="margin-left: 5px;">+</button>
+                  style="margin-left: 5px;">+</button>
               </div>
             </div>
             <form [formGroup]="formularioRemitente">
@@ -357,8 +359,10 @@
             <div class="form-group has-float-label ">
               <label for="idOrdenVta" class="tamanio-label">Orden Vta. *</label>
               <mat-select id="idOrdenVta" class="form-control form-control-sm" [formControl]="ordenVenta"
-                [compareWith]="compareFn" (selectionChange)="cambioOrdenVta()">
-                <mat-option *ngFor="let item of ordenesVenta" [value]="item">
+                [compareWith]="compareFn" (selectionChange)="cambioOrdenVta()" 
+                matTooltip="{{this.value}}">
+                <mat-option *ngFor="let item of ordenesVenta" 
+                [value]="item" >
                   {{item.ordenVenta.nombre}}
                 </mat-option>
                 <mat-option value=false>Libre</mat-option>
@@ -464,69 +468,71 @@
           </div>
         </div>
       </form>
-      <div class="row" style="height: 150px; padding-top: 10px;">
-        <div class="col-md-12 table-shadow">
-          <table mat-table [dataSource]="listaCompletaItems" matSort class="mat-elevation-z1">
-            <ng-container matColumnDef="NUMERO_VIAJE">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header>N° Viaje</th>
-              <td mat-cell *matCellDef="let elemento">
-                {{elemento.viajeRemito? elemento.viajeRemito.id : '-'}}</td>
-            </ng-container>
-            <ng-container matColumnDef="NUMERO_REMITO">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header>N° Remito</th>
-              <td mat-cell *matCellDef="let elemento">
-                {{elemento.numeroRemito? elemento.numeroRemito : '-'}}</td>
-            </ng-container>
-            <ng-container matColumnDef="BULTOS">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header>Bultos</th>
-              <td mat-cell *matCellDef="let elemento">
-                {{elemento.bultos? elemento.bultos: '-'}}</td>
-            </ng-container>
-            <ng-container matColumnDef="KG_EFECTIVO">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header>Kg. Efectivo</th>
-              <td mat-cell *matCellDef="let elemento">
-                {{elemento.kilosEfectivo ? (elemento.kilosEfectivo | number: '1.2-2') : '-'}}</td>
-            </ng-container>
-            <ng-container matColumnDef="VALOR_DECLARADO">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header>Valor Declarado ($)</th>
-              <td mat-cell *matCellDef="let elemento">
-                {{elemento.valorDeclarado | number: '1.2-2'}}</td>
-            </ng-container>
-            <ng-container matColumnDef="FLETE">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header>Flete ($)</th>
-              <td mat-cell *matCellDef="let elemento">
-                {{elemento.flete? (elemento.flete | number: '1.2-2') : '-' }}</td>
-            </ng-container>
-            <ng-container matColumnDef="SUBTOTAL">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header>Subtotal ($)</th>
-              <td mat-cell *matCellDef="let elemento">
-                {{elemento.importeNetoGravado | number: '1.2-2'}}</td>
-            </ng-container>
-            <ng-container matColumnDef="ALIC_IVA">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header>Alíc. IVA (%)</th>
-              <td mat-cell *matCellDef="let elemento">
-                {{elemento.afipAlicuotaIva.alicuota | number: '1.2-2'}}</td>
-            </ng-container>
-            <ng-container matColumnDef="SUBTOTAL_IVA">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header>Subtotal c/IVA ($)</th>
-              <td mat-cell *matCellDef="let elemento">
-                {{calcularSubtotalConIvaElemento(elemento) | number: '1.2-2'}}
-              </td>
-            </ng-container>
-            <ng-container matColumnDef="QUITAR">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header>-</th>
-              <td mat-cell *matCellDef="let elemento; let i=index">
-                <button mat-icon-button class="mat-icon-button-table" (click)="quitarItemDialogo(i)"
-                  style="margin-left: 20px;" matTooltip="Eliminar" matTooltipPosition="above">
-                  <mat-icon>delete</mat-icon>
-                </button>
-              </td>
-            </ng-container>
-            <tr mat-header-row *matHeaderRowDef="columnasItems"></tr>
-            <tr mat-row *matRowDef="let row; columns: columnasItems;"></tr>
-          </table>
-          <mat-paginator [pageSizeOptions]="[10]" showFirstLastButtons></mat-paginator>
+      <div class="row" style="padding-top: 10px;">
+        <div class="tabla">
+          <div class="col-md-12 table-shadow">
+            <table mat-table [dataSource]="listaCompletaItems" matSort class="mat-elevation-z1">
+              <ng-container matColumnDef="NUMERO_VIAJE">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>N° Viaje</th>
+                <td mat-cell *matCellDef="let elemento">
+                  {{elemento.viajeRemito? elemento.viajeRemito.id : '-'}}</td>
+              </ng-container>
+              <ng-container matColumnDef="NUMERO_REMITO">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>N° Remito</th>
+                <td mat-cell *matCellDef="let elemento">
+                  {{elemento.numeroRemito? elemento.numeroRemito : '-'}}</td>
+              </ng-container>
+              <ng-container matColumnDef="BULTOS">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Bultos</th>
+                <td mat-cell *matCellDef="let elemento">
+                  {{elemento.bultos? elemento.bultos: '-'}}</td>
+              </ng-container>
+              <ng-container matColumnDef="KG_EFECTIVO">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Kg. Efectivo</th>
+                <td mat-cell *matCellDef="let elemento">
+                  {{elemento.kilosEfectivo ? (elemento.kilosEfectivo | number: '1.2-2') : '-'}}</td>
+              </ng-container>
+              <ng-container matColumnDef="VALOR_DECLARADO">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Valor Declarado ($)</th>
+                <td mat-cell *matCellDef="let elemento" class="number-right">
+                  {{elemento.valorDeclarado | number: '1.2-2'}}</td>
+              </ng-container>
+              <ng-container matColumnDef="FLETE">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Flete ($)</th>
+                <td mat-cell *matCellDef="let elemento" class="number-right">
+                  {{elemento.flete? (elemento.flete | number: '1.2-2') : '-' }}</td>
+              </ng-container>
+              <ng-container matColumnDef="SUBTOTAL">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Subtotal ($)</th>
+                <td mat-cell *matCellDef="let elemento" class="number-right">
+                  {{elemento.importeNetoGravado | number: '1.2-2'}}</td>
+              </ng-container>
+              <ng-container matColumnDef="ALIC_IVA">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Alíc. IVA (%)</th>
+                <td mat-cell *matCellDef="let elemento">
+                  {{elemento.afipAlicuotaIva.alicuota | number: '1.2-2'}}</td>
+              </ng-container>
+              <ng-container matColumnDef="SUBTOTAL_IVA">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Subtotal c/IVA ($)</th>
+                <td mat-cell *matCellDef="let elemento" class="number-right">
+                  {{calcularSubtotalConIvaElemento(elemento) | number: '1.2-2'}}
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="QUITAR">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>-</th>
+                <td mat-cell *matCellDef="let elemento; let i=index">
+                  <button mat-icon-button class="mat-icon-button-table" (click)="quitarItemDialogo(i)"
+                    style="margin-left: 20px;" matTooltip="Eliminar" matTooltipPosition="above">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </td>
+              </ng-container>
+              <tr mat-header-row *matHeaderRowDef="columnasItems"></tr>
+              <tr mat-row *matRowDef="let row; columns: columnasItems;"></tr>
+            </table>
+          </div>
         </div>
+
       </div>
       <br>
       <div class="row">
