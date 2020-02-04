@@ -86,6 +86,7 @@ export class ListaRemitoDialogoComponent implements OnInit {
     this.tramoService.listar().subscribe(
       res => {
         this.listaTramos = res.json();
+        this.formularioFiltro.get('idRemito').setValue(0);
       },
       err => {
         this.toastr.error(err.json().message);
@@ -103,7 +104,15 @@ export class ListaRemitoDialogoComponent implements OnInit {
       this.serviceRemitoGeneral.listarPorViajeYEstado(this.formularioFiltro.value).subscribe(
         res => {
           let respuesta = res.json();
-          respuesta.length > 0 ? this.asignarAtributoChecked(respuesta, true) : this.toastr.error("Sin registros para mostrar.");
+          console.log(respuesta);
+          if (respuesta.length > 0) {
+            this.loaderService.hide();
+            this.asignarAtributoChecked(respuesta, true);
+          } else {
+            this.toastr.error("Sin registros para mostrar.");
+            this.listaCompleta = new MatTableDataSource(respuesta);
+            this.listaCompleta.sort = this.sort;
+          }
           this.loaderService.hide();
         },
         err => {
@@ -113,10 +122,20 @@ export class ListaRemitoDialogoComponent implements OnInit {
       )
     } else {
       // this.formularioFiltro.value.idRemito = this.formularioFiltro.value.idRemito.toString();
+      console.log(this.formularioFiltro.value);
       this.serviceNoEsRemitoGeneral.listarPorViajeYEstado(this.formularioFiltro.value).subscribe(
         res => {
           let respuesta = res.json();
-          respuesta.length > 0 ? this.asignarAtributoChecked(respuesta, false) : this.toastr.error("Sin registros para mostrar.");
+          console.log(respuesta);
+
+          if (respuesta.length > 0) {
+            this.listaCompleta.data = respuesta;
+            this.asignarAtributoChecked(respuesta, false);
+          } else {
+            this.toastr.error("Sin registros para mostrar.");
+            this.listaCompleta = new MatTableDataSource(respuesta);
+            this.listaCompleta.sort = this.sort;
+          }
           this.loaderService.hide();
         },
         err => {
@@ -167,17 +186,21 @@ export class ListaRemitoDialogoComponent implements OnInit {
   public mascararEnteroSinDecimales(intLimite) {
     return this.appService.mascararEnterosSinDecimales(intLimite);
   }
+  //Obtiene la mascara de enteros
+  public mascararEnteros(intLimite) {
+    return this.appService.mascararEnteros(intLimite);
+  }
   //Funcion para comparar y mostrar elemento de campo select
   public compareFn = this.compararFn.bind(this);
   private compararFn(a, b) {
     if (a != null && b != null) {
-      return a.id === b.id;
+      return a === b;
     }
   }
   //Controla el cambio los check-box
   public cambioCheck(elemento, indice, event) {
     event.checked ?
-      this.controlCheck(elemento) : this.listaCompleta.data[indice].checked = false;
+      this.controlCheck(elemento) : this.controlUncheck(indice);
     this.data.configuracionModalRemitos.listaCompletaRemitos = this.listaCompleta.data;
   }
   //Controla que un solo checkbox puede estar en true a la vez. recibe el id del elemento checkeado = true
@@ -187,9 +210,15 @@ export class ListaRemitoDialogoComponent implements OnInit {
     })
     this.data.remitoSeleccionado = elementoSeleccionado;
   }
+  //Controla el unchecked
+  private controlUncheck(indice) {
+    this.listaCompleta.data[indice].checked = false;
+    this.data.remitoSeleccionado = null;
+  }
   //Limpia formularioFiltro, listaCompleta y el data del modal
   public limpiarConfiguracion() {
     this.formularioFiltro.reset();
+    this.formularioFiltro.get('estaFacturado').setValue(0);
     this.listaCompleta = new MatTableDataSource([]);
     this.data.configuracionModalRemitos.listaCompletaRemitos = [];
     this.data.configuracionModalRemitos.formularioFiltro = [];

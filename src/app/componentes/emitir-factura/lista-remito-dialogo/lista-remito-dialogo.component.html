@@ -7,15 +7,15 @@
                     <div class="form-group has-float-label">
                         <label for="idViaje" class="tamanio-label">N° Viaje</label>
                         <input id="idViaje" type="text" formControlName="idViaje"
-                            [textMask]="mascararEnteroSinDecimales(11)" (blur)="cambioNumeroViaje()"
+                            [textMask]="mascararEnteros(11)" (blur)="cambioNumeroViaje()"
                             class="form-control form-control-sm number-right" [disabled]="">
                     </div>
                 </div>
                 <div class="col-md-2" *ngIf="data.esRemitoGeneral">
                     <div class="form-group has-float-label ">
-                        <label for="idRemito" class="tamanio-label">N° Remito*</label>
+                        <label for="idRemito" class="tamanio-label">N° Remito</label>
                         <input id="idRemito" type="text" formControlName="idRemito"
-                            [textMask]="mascararEnteroSinDecimales(8)" [disabled]=""
+                            [textMask]="mascararEnteros(8)" [disabled]=""
                             class="form-control form-control-sm number-right">
                     </div>
                 </div>
@@ -31,7 +31,7 @@
                                 {{item.destino.provincia.nombre}}
                                 ({{item.km}}km)
                             </mat-option>
-                            <mat-option value="0">TODOS</mat-option>
+                            <mat-option [value]=0>TODOS</mat-option>
                         </mat-select>
                     </div>
                 </div>
@@ -39,9 +39,9 @@
                     <div class="form-group has-float-label">
                         <label for="idPagoOrigen" class="tamanio-label">Estado</label>
                         <mat-select id="idPagoOrigen" formControlName="estaFacturado"
-                            class="form-control form-control-sm">
-                            <mat-option [value]="1">Facturado</mat-option>
-                            <mat-option [value]="0">Pendientes</mat-option>
+                            class="form-control form-control-sm" [compareWith]="compareFn">
+                            <mat-option [value]=1>Facturado</mat-option>
+                            <mat-option [value]=0>Pendientes</mat-option>
                         </mat-select>
                     </div>
                 </div>
@@ -57,7 +57,7 @@
             <div class="row">
                 <div class="tabla">
                     <div class="tabla-ancho">
-                        <table mat-table [dataSource]="listaCompleta" class="table-width-cb mat-elevation-z1">
+                        <table mat-table [dataSource]="listaCompleta" class="table-width-cb mat-elevation-z8">
                             <ng-container matColumnDef="CHECK" sticky>
                                 <th mat-header-cell *matHeaderCellDef>-</th>
                                 <td mat-cell *matCellDef="let elemento; let i = index">
@@ -72,7 +72,7 @@
                             <ng-container matColumnDef="NUMERO_VIAJE" sticky>
                                 <th mat-header-cell *matHeaderCellDef>N° Viaje</th>
                                 <td mat-cell *matCellDef="let elemento">
-                                    {{formularioFiltro.value.idViaje}}
+                                    {{elemento.viajeTramo.viaje.id}}
                                 </td>
                             </ng-container>
                             <ng-container matColumnDef="NUMERO_REMITO" sticky>
@@ -81,7 +81,7 @@
                                     <span>{{elemento.viajeRemito.numero}}</span>
                                 </td>
                             </ng-container>
-                            <ng-container matColumnDef="REMITENTE" sticky>
+                            <ng-container matColumnDef="REMITENTE" >
                                 <th mat-header-cell *matHeaderCellDef>Remitente</th>
                                 <td mat-cell *matCellDef="let elemento" class="text-left">
                                     <span
@@ -90,7 +90,7 @@
                                         *ngIf="!data.esRemitoGeneral">{{elemento.viajeRemito.viajeTramoCliente.clienteDador.razonSocial}}</span>
                                 </td>
                             </ng-container>
-                            <ng-container matColumnDef="DESTINATARIO" sticky>
+                            <ng-container matColumnDef="DESTINATARIO" >
                                 <th mat-header-cell *matHeaderCellDef>Destinatario</th>
                                 <td mat-cell *matCellDef="let elemento" class="text-left">
                                     <span
@@ -177,7 +177,7 @@
             <div class="row justify-content-center">
                 <div class="col-md-1">
                     <button id="idBoton" mat-raised-button color="primary" [mat-dialog-close]="data"
-                        *ngIf="!show">Aceptar</button>
+                        *ngIf="!show" [disabled]="data.remitoSeleccionado==null">Aceptar</button>
                 </div>
                 <div class="col-md-1">
                     <button id="idBotonCerrar" mat-raised-button color="secondary" *ngIf="!show"
