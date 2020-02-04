@@ -57,7 +57,8 @@
           <div class="col-md-2">
             <div class="form-group has-float-label">
               <label for="idEsContado" class="tamanio-label">Está Activa *</label>
-              <mat-select id="idEsContado" class="form-control form-control-sm" formControlName="estaActiva">
+              <mat-select id="idEsContado" class="form-control form-control-sm" 
+              formControlName="estaActiva" [compareWith]="compareT">
                 <mat-option [value]="false">No</mat-option>
                 <mat-option [value]="true">Si</mat-option>
               </mat-select>

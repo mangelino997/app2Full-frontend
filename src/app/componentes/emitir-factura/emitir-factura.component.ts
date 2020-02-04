@@ -712,8 +712,10 @@ export class EmitirFacturaComponent implements OnInit {
     if (this.formulario.value.cliente.clienteOrdenesVentas) {
       this.ordenesVenta = this.formulario.value.cliente.clienteOrdenesVentas;
       this.ordenesVenta.length == 0 ?
-        this.toastr.warning("El cliente tiene asignado una lista vacía de orden venta.") :
+        this.toastr.warning("Cliente sin orden de venta.") :
         this.ordenVenta.setValue(this.ordenesVenta[0]);
+        // PRUEBA 
+        this.cambioOrdenVta();
     } else {
       this.listarOrdenVentaEmpresa();
     }
@@ -766,7 +768,7 @@ export class EmitirFacturaComponent implements OnInit {
     /* itemFactura.value.id == 1 es Remito Gral. GS */
     this.itemFactura.value.id == 1 ? esRemitoGeneral = true : esRemitoGeneral = false;
     const dialogRef = this.dialog.open(ListaRemitoDialogoComponent, {
-      width: '1200px',
+      width: '1280px',
       height: '450px',
       data: {
         esRemitoGeneral: esRemitoGeneral,
@@ -782,8 +784,8 @@ export class EmitirFacturaComponent implements OnInit {
   //Controla los campos cuando se selecciona un Remito del modal abrirListaRemitoDialogo
   private controlarRemitoSeleccionado(resultado) {
     if (resultado.configuracionModalRemitos.formularioFiltro) {
-      let idViaje = null;//resultado.remitoSeleccionado.viajeTramo.id;
-      let idRemito = resultado.remitoSeleccionado.viajeRemito.id;
+      let idViaje = resultado.remitoSeleccionado.viajeTramo.viaje.id;
+      let idRemito = resultado.remitoSeleccionado.viajeRemito.numero;
       this.establecerValoresRemitoSeleccionado(resultado.remitoSeleccionado, idViaje, idRemito);
       this.configuracionModalRemitos.setValue(resultado.configuracionModalRemitos);
     }

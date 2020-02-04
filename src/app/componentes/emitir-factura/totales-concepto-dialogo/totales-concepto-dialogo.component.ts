@@ -23,6 +23,26 @@ export class TotalesConceptoDialogoComponent implements OnInit {
     this.listaCompleta.data = this.data.items;
     this.listaCompleta.sort = this.sort;
   }
+  /** Obtiene el total de seguro de listaCompleta. */
+  getTotalSeguro() {
+    return this.listaCompleta.data.map(t => Number(t.pSeguro)).reduce((acc, value) => acc + value, 0);
+  }
+  /** Obtiene el total de kgEfectivo de listaCompleta. */
+  getTotalFlete() {
+    return this.listaCompleta.data.map(t => Number(t.flete)).reduce((acc, value) => acc + value, 0);
+  }
+  /** Obtiene el total de kgAforado de listaCompleta. */
+  getTotalRetiro() {
+    return this.listaCompleta.data.map(t => Number(t.importeRetiro)).reduce((acc, value) => acc + value, 0);
+  }
+  /** Obtiene el total de valorDeclarado de listaCompleta. */
+  getTotalEntrega() {
+    return this.listaCompleta.data.map(t => Number(t.importeEntrega)).reduce((acc, value) => acc + value, 0);
+  }
+  /** Obtiene el total de m3 de listaCompleta. */
+  getTotalVarios() {
+    return this.listaCompleta.data.map(t => Number(t.importeTipoConceptoVenta)).reduce((acc, value) => acc + value, 0);
+  }
   onNoClick(): void {
     this.dialogRef.close();
   }
