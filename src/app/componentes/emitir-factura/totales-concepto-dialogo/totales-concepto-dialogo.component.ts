@@ -13,19 +13,24 @@ export class TotalesConceptoDialogoComponent implements OnInit {
   //Define la lista de Tramos
   public listaTramos: Array<any> = [];
   //Define las columnas de la tabla
-  public columnas: string[] = ['ID', 'SEGURO', 'FLETE', 'RETIRO', 'ENTREGA', 'VARIOS'];
+  public columnas: string[] = ['ID', 'SEGURO', 'IMPORTE_SEGURO', 'FLETE', 'RETIRO', 'ENTREGA', 'VARIOS'];
   //Define la matSort
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   constructor(public dialogRef: MatDialogRef<TotalesConceptoDialogoComponent>, @Inject(MAT_DIALOG_DATA) public data, public dialog: MatDialog) {
     this.dialogRef.disableClose = true;
-   }
+  }
   ngOnInit() {
     this.listaCompleta.data = this.data.items;
     this.listaCompleta.sort = this.sort;
+    console.log(this.data.items);
   }
   /** Obtiene el total de seguro de listaCompleta. */
   getTotalSeguro() {
     return this.listaCompleta.data.map(t => Number(t.pSeguro)).reduce((acc, value) => acc + value, 0);
+  }
+  /** Obtiene el total de seguro de listaCompleta. */
+  getTotalImporteSeguro() {
+    return this.listaCompleta.data.map(t => Number(t.importeSeguro)).reduce((acc, value) => acc + value, 0);
   }
   /** Obtiene el total de kgEfectivo de listaCompleta. */
   getTotalFlete() {

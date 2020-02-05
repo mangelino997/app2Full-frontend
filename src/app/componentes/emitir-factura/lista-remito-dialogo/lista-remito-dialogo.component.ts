@@ -29,7 +29,7 @@ export class ListaRemitoDialogoComponent implements OnInit {
   //Define el elemento seleccionado en el check-box como un FormControl y lo inicializa con valor por defecto
   public elementoSeleccionado: FormControl = new FormControl({ id: 0 });
   //Define las columnas de la tabla
-  public columnas: string[] = ['CHECK', 'NUMERO_VIAJE', 'NUMERO_REMITO', 'REMITENTE', 'DESTINATARIO', 'FECHA', 'BULTOS', 'KG_EFECTIVO', 'VALOR_DECLARADO',
+  public columnas: string[] = ['CHECK_REMITO', 'NUMERO_VIAJE', 'REMITENTE', 'DESTINATARIO', 'FECHA', 'BULTOS', 'KG_EFECTIVO', 'VALOR_DECLARADO',
     'SUC_ENTREGA', 'CHOFER', 'TRAMO', 'OBSERVACIONES'];
   //Define la matSort
   @ViewChild(MatSort, { static: false }) sort: MatSort;
@@ -73,12 +73,20 @@ export class ListaRemitoDialogoComponent implements OnInit {
     if (this.data.configuracionModalRemitos.formularioFiltro) {
       this.formularioFiltro.patchValue(this.data.configuracionModalRemitos.formularioFiltro);
       this.formularioFiltro.disable();
-      this.data.configuracionModalRemitos.listaCompletaRemitos.forEach(element => {
-        if (element.mostrarCheck = true)
-          this.remitoAsignado(element) ? element.mostrarCheck = false : element.mostrarCheck = true;
-      });
-      this.listaCompleta = new MatTableDataSource(this.data.configuracionModalRemitos.listaCompletaRemitos);
-      this.listaCompleta.sort = this.sort;
+      /*Controla cuando se recibe la lista de remitos desde Venta Comprobante
+      para mostrar las que ya fueron agregadas a la factura.
+      si recibe una lista vacia en 'listaCompletaRemitos' vuelve a llamar al metodo 'filtrar'
+      para recargar la lista completa de remitos. */
+      if (!this.data.configuracionModalRemitos.listaCompletaRemitos || this.data.configuracionModalRemitos.listaCompletaRemitos.length == 0) {
+        this.filtrar();
+      } else {
+        this.data.configuracionModalRemitos.listaCompletaRemitos.forEach(element => {
+          if (element.mostrarCheck = true)
+            this.remitoAsignado(element) ? element.mostrarCheck = false : element.mostrarCheck = true;
+        });
+        this.listaCompleta = new MatTableDataSource(this.data.configuracionModalRemitos.listaCompletaRemitos);
+        this.listaCompleta.sort = this.sort;
+      }
     }
   }
   //Carga la lista de Tramos
@@ -101,12 +109,12 @@ export class ListaRemitoDialogoComponent implements OnInit {
   public filtrar() {
     this.loaderService.show();
     if (this.data.esRemitoGeneral) {
+      this.listaCompleta.data = [];
       this.serviceRemitoGeneral.listarPorViajeYEstado(this.formularioFiltro.value).subscribe(
         res => {
           let respuesta = res.json();
           console.log(respuesta);
           if (respuesta.length > 0) {
-            this.loaderService.hide();
             this.asignarAtributoChecked(respuesta, true);
           } else {
             this.toastr.error("Sin registros para mostrar.");
@@ -123,13 +131,12 @@ export class ListaRemitoDialogoComponent implements OnInit {
     } else {
       // this.formularioFiltro.value.idRemito = this.formularioFiltro.value.idRemito.toString();
       console.log(this.formularioFiltro.value);
+      this.listaCompleta.data = [];
       this.serviceNoEsRemitoGeneral.listarPorViajeYEstado(this.formularioFiltro.value).subscribe(
         res => {
           let respuesta = res.json();
           console.log(respuesta);
-
           if (respuesta.length > 0) {
-            this.listaCompleta.data = respuesta;
             this.asignarAtributoChecked(respuesta, false);
           } else {
             this.toastr.error("Sin registros para mostrar.");
@@ -169,6 +176,7 @@ export class ListaRemitoDialogoComponent implements OnInit {
     this.data.configuracionModalRemitos.listaCompletaRemitos = listaModificada;
     this.listaCompleta = new MatTableDataSource(listaModificada);
     this.listaCompleta.sort = this.sort;
+    console.log(this.listaCompleta.data);
   }
   //Abre un dialogo para ver las observaciones
   public verObservacionesDialogo(elemento): void {
@@ -218,6 +226,7 @@ export class ListaRemitoDialogoComponent implements OnInit {
   //Limpia formularioFiltro, listaCompleta y el data del modal
   public limpiarConfiguracion() {
     this.formularioFiltro.reset();
+    this.formularioFiltro.get('idRemito').setValue(0);
     this.formularioFiltro.get('estaFacturado').setValue(0);
     this.listaCompleta = new MatTableDataSource([]);
     this.data.configuracionModalRemitos.listaCompletaRemitos = [];

@@ -17,7 +17,7 @@
                         <td mat-cell *matCellDef="let elemento">
                             {{elemento.bultos}}
                         </td>
-                        <td mat-footer-cell *matFooterCellDef > {{getTotalBultos() | number: '1.2-2'}} </td>
+                        <td mat-footer-cell *matFooterCellDef > {{getTotalBultos()}} </td>
                     </ng-container>
                     <ng-container matColumnDef="KILOS_EFECTIVO">
                         <th mat-header-cell *matHeaderCellDef mat-sort-header>Kg. Efectivo</th>
@@ -38,18 +38,18 @@
                     <ng-container matColumnDef="M3">
                         <th mat-header-cell *matHeaderCellDef mat-sort-header>m3</th>
                         <td mat-cell *matCellDef="let elemento">
-                            {{elemento.m3? (elemento.m3 | number: '1.2-2') : '-'}}
+                            {{elemento.m3? (elemento.m3) : '-'}}
                         </td>
-                        <td mat-footer-cell *matFooterCellDef style="text-align: center;"> 
+                        <td mat-footer-cell *matFooterCellDef> 
                             {{getTotalM3() | number: '1.2-2'}} </td>
                     </ng-container>
                     <ng-container matColumnDef="VALOR_DECLARADO">
                         <th mat-header-cell *matHeaderCellDef mat-sort-header>Valor Declarado ($)</th>
-                        <td mat-cell *matCellDef="let elemento" class="number-right">
+                        <td mat-cell *matCellDef="let elemento">
                             {{elemento.valorDeclarado? (elemento.valorDeclarado | number: '1.2-2') : '-'}}
                         </td>
-                        <td mat-footer-cell *matFooterCellDef class="number-right"> 
-                            {{getTotalVDeclarado() | currency}} 
+                        <td mat-footer-cell *matFooterCellDef> 
+                            {{getTotalVDeclarado() |  number: '1.2-2'}} 
                         </td>
                     </ng-container>
                     <tr mat-header-row *matHeaderRowDef="columnas"></tr>

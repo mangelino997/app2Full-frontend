@@ -17,38 +17,45 @@
                         <td mat-cell *matCellDef="let elemento">
                             {{elemento.pSeguro? (elemento.pSeguro | number: '1.2-2') : '-'}}
                         </td>
-                        <td mat-footer-cell *matFooterCellDef> {{getTotalSeguro() | number: '1.2-2'}} </td>
+                        <td mat-footer-cell *matFooterCellDef> - </td>
+                    </ng-container>
+                    <ng-container matColumnDef="IMPORTE_SEGURO">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Imp. Seguro ($)</th>
+                        <td mat-cell *matCellDef="let elemento">
+                            {{elemento.importeSeguro? (elemento.importeSeguro | number: '1.2-2') : '-'}}
+                        </td>
+                        <td mat-footer-cell *matFooterCellDef> {{getTotalImporteSeguro() | number: '1.2-2'}} </td>
                     </ng-container>
                     <ng-container matColumnDef="FLETE">
                         <th mat-header-cell *matHeaderCellDef mat-sort-header>Flete ($)</th>
-                        <td mat-cell *matCellDef="let elemento" class="number-right">
+                        <td mat-cell *matCellDef="let elemento" >
                             {{elemento.flete? (elemento.flete | number: '1.2-2') : '-'}}
                         </td>
-                        <td mat-footer-cell *matFooterCellDef class="number-right">
-                            {{getTotalFlete() | currency}} </td>
+                        <td mat-footer-cell *matFooterCellDef >
+                            {{getTotalFlete() |  number: '1.2-2'}} </td>
                     </ng-container>
                     <ng-container matColumnDef="RETIRO">
                         <th mat-header-cell *matHeaderCellDef mat-sort-header>Retiro ($)</th>
-                        <td mat-cell *matCellDef="let elemento" class="number-right">
+                        <td mat-cell *matCellDef="let elemento" >
                             {{elemento.importeRetiro? (elemento.importeRetiro | number: '1.2-2') : '-'}}
                         </td>
-                        <td mat-footer-cell *matFooterCellDef class="number-right">
-                            {{getTotalRetiro() | currency}} </td>
+                        <td mat-footer-cell *matFooterCellDef >
+                            {{getTotalRetiro() |  number: '1.2-2'}} </td>
                     </ng-container>
                     <ng-container matColumnDef="ENTREGA">
                         <th mat-header-cell *matHeaderCellDef mat-sort-header>Entrega ($)</th>
-                        <td mat-cell *matCellDef="let elemento" class="number-right">
+                        <td mat-cell *matCellDef="let elemento" >
                             {{elemento.importeEntrega? (elemento.importeEntrega | number: '1.2-2') : '-'}}
                         </td>
-                        <td mat-footer-cell *matFooterCellDef class="number-right">
-                            {{getTotalEntrega() | currency}} </td>
+                        <td mat-footer-cell *matFooterCellDef >
+                            {{getTotalEntrega() |  number: '1.2-2'}} </td>
                     </ng-container>
                     <ng-container matColumnDef="VARIOS">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Varios</th>
-                        <td mat-cell *matCellDef="let elemento" class="number-right">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Varios ($)</th>
+                        <td mat-cell *matCellDef="let elemento" >
                             {{elemento.importeTipoConceptoVenta}}</td>
-                        <td mat-footer-cell *matFooterCellDef class="number-right">
-                            {{getTotalVarios() | currency}} </td>
+                        <td mat-footer-cell *matFooterCellDef >
+                            {{getTotalVarios() |  number: '1.2-2'}} </td>
                     </ng-container>
                     <tr mat-header-row *matHeaderRowDef="columnas"></tr>
                     <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
