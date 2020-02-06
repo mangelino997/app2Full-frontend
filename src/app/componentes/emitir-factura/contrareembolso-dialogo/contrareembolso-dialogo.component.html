@@ -5,9 +5,9 @@
             <div class="row justify-content-center">
                 <div class="col-md-3">
                     <div class="form-group has-float-label">
-                        <label for="idImporteContrareembolso" class="tamanio-label">Imp. Contrareembolso</label>
+                        <label for="idImporteContrareembolso" class="tamanio-label">Imp. Contrareembolso ($)</label>
                         <input id="idImporteContrareembolso" type="text" formControlName="importeContraReembolso"
-                            placeholder="$0.00" [textMask]="mascararImporte(8, 2)"
+                            placeholder="0.00" [textMask]="mascararEnteroConDecimales(8)"
                             class="form-control form-control-sm number-right"
                             (blur)="setDecimales(formulario.get('importeContraReembolso'), 2)">
                     </div>
@@ -15,8 +15,8 @@
                 <div class="col-md-2">
                     <div class="form-group has-float-label ">
                         <label for="idComision" class="tamanio-label">% Comisión</label>
-                        <input id="idComision" type="text" formControlName="pComision" placeholder="0.00%"
-                            [textMask]="mascararPorcentaje()" class="form-control form-control-sm number-right"
+                        <input id="idComision" type="text" formControlName="pComision" placeholder="0.00"
+                            [textMask]="mascararEnteroConDecimales()" class="form-control form-control-sm number-right"
                             (blur)="calcularComision()">
                     </div>
                 </div>
@@ -33,17 +33,18 @@
                 </div>
                 <div class="col-md-2">
                     <div class="form-group has-float-label">
-                        <label for="idImporteIva" class="tamanio-label">Importe Iva</label>
-                        <input id="idImporteIva" type="text" formControlName="importeIva" placeholder="$0.00"
-                            [textMask]="mascararImporte(8, 2)" class="form-control form-control-sm number-right"
+                        <label for="idImporteIva" class="tamanio-label">Importe Iva ($)</label>
+                        <input id="idImporteIva" type="text" formControlName="importeIva" placeholder="0.00"
+                            [textMask]="mascararEnteroConDecimales(8)" class="form-control form-control-sm number-right"
                             (blur)="setDecimales(formulario.get('importeIva'), 2)" readonly>
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="form-group has-float-label">
-                        <label for="idImporteNetoGravado" class="tamanio-label">Imp. Nto. Gravado</label>
-                        <input id="idImporteNetoGravado" type="text" formControlName="importeNetoGravado" placeholder="$0.00"
-                            [textMask]="mascararImporte(8, 2)" class="form-control form-control-sm number-right"
+                        <label for="idImporteNetoGravado" class="tamanio-label">Imp. Nto. Gravado ($)</label>
+                        <input id="idImporteNetoGravado" type="text" formControlName="importeNetoGravado"
+                            placeholder="0.00" [textMask]="mascararEnteroConDecimales(8)"
+                            class="form-control form-control-sm number-right"
                             (blur)="setDecimales(formulario.get('importeNetoGravado'), 2)" readonly>
                     </div>
                 </div>
@@ -55,7 +56,8 @@
                         (click)="enviarContrareembolso()">Agregar</button>
                 </div>
                 <div class="col-md-1">
-                    <button id="idBoton" mat-raised-button color="secondary" [mat-dialog-close]="null">Cerrar</button>
+                    <button id="idBotonCerrar" mat-raised-button color="secondary"
+                        [mat-dialog-close]="null">Cerrar</button>
                 </div>
             </div>
         </form>

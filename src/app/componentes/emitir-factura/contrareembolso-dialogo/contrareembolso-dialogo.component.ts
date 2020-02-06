@@ -71,13 +71,9 @@ export class ContrareembolsoDialogoComponent implements OnInit {
     this.formulario.enable();
     this.dialogRef.close(this.formulario.value);
   }
-  //Obtiene la mascara de importe
-  public mascararImporte(intLimite, decimalLimite) {
-    return this.appService.mascararImporte(intLimite, decimalLimite);
-  }
-  //Mascara un porcentaje
-  public mascararPorcentaje() {
-    return this.appService.mascararPorcentaje();
+  //Obtiene la mascara de enteros CON decimales
+  public mascararEnteroConDecimales(intLimite) {
+    return this.appService.mascararEnterosConDecimales(intLimite);
   }
   //Establece los decimales de porcentaje
   public establecerPorcentaje(formulario, cantidad) {

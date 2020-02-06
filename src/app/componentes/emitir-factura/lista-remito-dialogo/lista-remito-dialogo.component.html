@@ -6,17 +6,16 @@
                 <div class="col-md-2">
                     <div class="form-group has-float-label">
                         <label for="idViaje" class="tamanio-label">N° Viaje</label>
-                        <input id="idViaje" type="text" formControlName="idViaje"
-                            [textMask]="mascararEnteros(11)" (blur)="cambioNumeroViaje()"
-                            class="form-control form-control-sm number-right" [disabled]="">
+                        <input id="idViaje" type="text" formControlName="idViaje" [textMask]="mascararEnteros(11)"
+                            (blur)="cambioNumeroViaje()" class="form-control form-control-sm number-right"
+                            [disabled]="">
                     </div>
                 </div>
                 <div class="col-md-2" *ngIf="data.esRemitoGeneral">
                     <div class="form-group has-float-label ">
                         <label for="idRemito" class="tamanio-label">N° Remito</label>
-                        <input id="idRemito" type="text" formControlName="idRemito"
-                            [textMask]="mascararEnteros(8)" [disabled]=""
-                            class="form-control form-control-sm number-right">
+                        <input id="idRemito" type="text" formControlName="idRemito" [textMask]="mascararEnteros(8)"
+                            [disabled]="" class="form-control form-control-sm number-right">
                     </div>
                 </div>
                 <div class="col-md-3" *ngIf="!data.esRemitoGeneral">
@@ -58,30 +57,35 @@
                 <div class="tabla">
                     <div class="tabla-ancho">
                         <table mat-table [dataSource]="listaCompleta" class="table-width-cb mat-elevation-z8">
-                            <ng-container matColumnDef="CHECK" sticky>
-                                <th mat-header-cell *matHeaderCellDef>-</th>
+                            <ng-container matColumnDef="CHECK_REMITO" sticky>
+                                <th mat-header-cell *matHeaderCellDef>Seleccionado / N° Remito</th>
                                 <td mat-cell *matCellDef="let elemento; let i = index">
-                                    <mat-checkbox class="cursor-color" [checked]="elemento.checked" color="primary"
-                                        (change)="cambioCheck(elemento, i, $event)" *ngIf="elemento.mostrarCheck">
-                                    </mat-checkbox>
-                                    <span *ngIf="!elemento.mostrarCheck">
-                                        asignado
-                                    </span>
+                                    <div style="text-align: left;">
+                                        <span style="float: left; width: 40%; text-align: left;">
+                                            <mat-checkbox class="cursor-color" [checked]="elemento.checked"
+                                                color="primary" (change)="cambioCheck(elemento, i, $event)"
+                                                *ngIf="elemento.mostrarCheck">
+                                            </mat-checkbox>
+                                            <span *ngIf="!elemento.mostrarCheck">
+                                                asignado
+                                            </span>
+                                        </span>
+                                        <span style="float: left; width: 40%; text-align: center;">
+                                            {{elemento.viajeRemito.numero}}
+                                        </span>
+                                    </div>
                                 </td>
                             </ng-container>
-                            <ng-container matColumnDef="NUMERO_VIAJE" sticky>
+                            <ng-container matColumnDef="NUMERO_VIAJE">
                                 <th mat-header-cell *matHeaderCellDef>N° Viaje</th>
                                 <td mat-cell *matCellDef="let elemento">
-                                    {{elemento.viajeTramo.viaje.id}}
+                                    <span *ngIf="data.esRemitoGeneral">
+                                        {{elemento.viajeTramo.viaje.id}}
+                                    </span>
+                                    <span *ngIf="!data.esRemitoGeneral"></span>
                                 </td>
                             </ng-container>
-                            <ng-container matColumnDef="NUMERO_REMITO" sticky>
-                                <th mat-header-cell *matHeaderCellDef>N° Remito</th>
-                                <td mat-cell *matCellDef="let elemento">
-                                    <span>{{elemento.viajeRemito.numero}}</span>
-                                </td>
-                            </ng-container>
-                            <ng-container matColumnDef="REMITENTE" >
+                            <ng-container matColumnDef="REMITENTE">
                                 <th mat-header-cell *matHeaderCellDef>Remitente</th>
                                 <td mat-cell *matCellDef="let elemento" class="text-left">
                                     <span
@@ -90,7 +94,7 @@
                                         *ngIf="!data.esRemitoGeneral">{{elemento.viajeRemito.viajeTramoCliente.clienteDador.razonSocial}}</span>
                                 </td>
                             </ng-container>
-                            <ng-container matColumnDef="DESTINATARIO" >
+                            <ng-container matColumnDef="DESTINATARIO">
                                 <th mat-header-cell *matHeaderCellDef>Destinatario</th>
                                 <td mat-cell *matCellDef="let elemento" class="text-left">
                                     <span
@@ -120,7 +124,8 @@
                                 </td>
                             </ng-container>
                             <ng-container matColumnDef="VALOR_DECLARADO">
-                                <th mat-header-cell *matHeaderCellDef class="header-align-right">Valor Declarado ($)</th>
+                                <th mat-header-cell *matHeaderCellDef class="header-align-right">Valor Declarado ($)
+                                </th>
                                 <td mat-cell *matCellDef="let elemento" class="number-right">
                                     <span>
                                         {{elemento.viajeRemito.valorDeclarado? (elemento.viajeRemito.valorDeclarado | number: '1.2-2') : '-'}}
@@ -147,7 +152,7 @@
                             </ng-container>
                             <ng-container matColumnDef="TRAMO">
                                 <th mat-header-cell *matHeaderCellDef class="header-align-right">Tramo</th>
-                                <td mat-cell *matCellDef="let elemento" >
+                                <td mat-cell *matCellDef="let elemento">
                                     <span *ngIf="data.esRemitoGeneral">
                                         {{elemento.viajeTramo.tramo.origen.nombre}},
                                         {{elemento.viajeTramo.tramo.origen.provincia.nombre}} ->
@@ -176,8 +181,8 @@
             <br>
             <div class="row justify-content-center">
                 <div class="col-md-1">
-                    <button id="idBoton" mat-raised-button color="primary" [mat-dialog-close]="data"
-                        *ngIf="!show" [disabled]="data.remitoSeleccionado==null">Aceptar</button>
+                    <button id="idBoton" mat-raised-button color="primary" [mat-dialog-close]="data" *ngIf="!show"
+                        [disabled]="data.remitoSeleccionado==null">Aceptar</button>
                 </div>
                 <div class="col-md-1">
                     <button id="idBotonCerrar" mat-raised-button color="secondary" *ngIf="!show"
