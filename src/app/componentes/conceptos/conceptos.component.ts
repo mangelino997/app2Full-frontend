@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, Inject } from '@angular/core';
 import { ConceptosService } from 'src/app/servicios/conceptos.service';
 import { TipoConceptoSueldoService } from 'src/app/servicios/tipo-concepto-sueldo.service';
 import { FormGroup, FormControl } from '@angular/forms';
@@ -10,7 +10,9 @@ import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
-import { MatTableDataSource, MatSort, MatPaginator } from '@angular/material';
+import { MatTableDataSource, MatSort, MatPaginator, MatDialog } from '@angular/material';
+import { LiquidacionesAsociadasComponent } from './liquidaciones-asociadas/liquidaciones-asociadas.component';
+import { SelectionModel } from '@angular/cdk/collections';
 
 @Component({
   selector: 'app-conceptos',
@@ -40,6 +42,11 @@ export class ConceptosComponent implements OnInit {
   public gruposConceptos: Array<any> = [];
   //Define la lista de Afip Concepto
   public afipConceptosSueldo: Array<any> = [];
+  //Define lista de tipo liquidaciones Suldo
+  public tiposLiquidacionesSueldos = {
+    listaCompleta: new MatTableDataSource([]), 
+    listaCompletaSeleccionados: new SelectionModel<any>(true, [])
+  };
   //Define la lista de Unidades Medidas Sueldos
   public unidadesMedidasSueldos: Array<any> = [];
   //Define la pestania actual seleccionada
@@ -72,8 +79,11 @@ export class ConceptosComponent implements OnInit {
   //Define la paginacion
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Define el constructor de la clase
-  constructor(private conceptosService: ConceptosService, private tipoConceptoSueldoService: TipoConceptoSueldoService, private loaderService: LoaderService, private toastrService: ToastrService,
-    private afipConceptoSueldoGrupoService: AfipConceptoSueldoGrupoService, private afipConceptoSueldoService: AfipConceptoSueldoService, private unidadMedidaSueldoService: UnidadMedidaSueldoService, private appService: AppService) {
+  constructor(private conceptosService: ConceptosService, private tipoConceptoSueldoService: TipoConceptoSueldoService, 
+    private loaderService: LoaderService, private toastrService: ToastrService,
+    private afipConceptoSueldoGrupoService: AfipConceptoSueldoGrupoService, 
+    private afipConceptoSueldoService: AfipConceptoSueldoService, private unidadMedidaSueldoService: UnidadMedidaSueldoService, 
+    private appService: AppService, public dialog: MatDialog) {
     this.formulario = new FormGroup({
       //Se definen los FormControl del Formulario
       id: new FormControl(),
@@ -87,6 +97,7 @@ export class ConceptosComponent implements OnInit {
       ingresaImporte: new FormControl(),
       esRepetible: new FormControl(),
       imprimeValorUnitario: new FormControl(),
+      tiposLiquidacionesSueldos: new FormControl(),
     })
     //Autocompletado - Buscar por nombre
     this.autocompletado.valueChanges.subscribe(nombre => {
@@ -227,15 +238,28 @@ export class ConceptosComponent implements OnInit {
         this.loaderService.hide();
       });
   }
-  public liquidacion() {
+  public abreLiquidaciones(): void {
+    const dialogRef = this.dialog.open(LiquidacionesAsociadasComponent, {
+      width: '80%',
+      maxWidth:'80%',
+      data: {
+        tiposLiquidacionesSueldos: this.tiposLiquidacionesSueldos
+      },
+    });
+    dialogRef.afterClosed().subscribe(resultado => {
+      if (resultado) {
+        this.tiposLiquidacionesSueldos = resultado;
+        this.formulario.get('tiposLiquidacionesSueldos').setValue(resultado.listaCompletaSeleccionados.selected);
+      }
+    });
   }
+
   public subSistema() {
   }
   public formula() {
   }
   //Agrega un registro
   public agregar() {
-    console.log(this.formulario.value);
     this.loaderService.show();
     this.conceptosService.agregar(this.formulario.value).subscribe(
       res => {
