@@ -261,6 +261,7 @@ export class EmitirFacturaComponent implements OnInit {
   }
   //Comprueba si ya existe un codigo de afip entonces vuelve a llamar a la funcion que obtiene el valor del campo Numero
   public cambioPuntoVenta() {
+    console.log(this.formulario.value.puntoVenta);
     //Establece el formControl puntoVenta
     this.puntoVenta.setValue(this.establecerCerosIzq(this.formulario.get('puntoVenta').value.puntoVenta, "0000", -5));
     this.validarFechaEmision();
@@ -1312,6 +1313,8 @@ export class EmitirFacturaComponent implements OnInit {
   public agregarVentaComprobante() {
     this.loaderService.show();
     if (this.controlarFactura()) {
+      /* guarda el objeto puntoVenta para reestablecer */
+      let puntoVenta = this.formulario.get('puntoVenta').value;
       /* habilita los campos de seleccion bloqueados */
       this.formulario.get('tipoComprobante').enable();
       this.formulario.get('puntoVenta').enable();
@@ -1332,6 +1335,8 @@ export class EmitirFacturaComponent implements OnInit {
           let respuesta = res.json();
           if (res.status == 201) {
             this.toastr.success(respuesta.mensaje);
+            /* reestablece el objeto puntoVenta al formulario*/
+            this.formulario.get('puntoVenta').setValue(puntoVenta);
             this.reestablecerFormulario(false);
             //Limpia listaCompletaRemitos para actualizar la lista 
             this.configuracionModalRemitos.value.listaCompletaRemitos = null;
