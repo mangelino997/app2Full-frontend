@@ -21,7 +21,7 @@
               <div class="form-group has-float-label margin-right">
                 <label for="idPuntoVenta" class="tamanio-label">Punto de Venta *</label>
                 <mat-select id="idPuntoVenta" class="form-control form-control-sm" formControlName="puntoVenta"
-                  [compareWith]="compareFn" (selectionChange)="cambioPuntoVenta()">
+                  [compareWith]="compareFnp" (selectionChange)="cambioPuntoVenta()">
                   <mat-option *ngFor="let item of resultadosPuntoVenta" [value]="item">
                     {{establecerCerosIzq(item.puntoVenta, "0000", -5)}}
                   </mat-option>
@@ -308,7 +308,7 @@
             <div class="form-group has-float-label">
               <label for="idBultos" class="tamanio-label">Bultos</label>
               <input id="idBultos" type="text" formControlName="bultos"
-                class="form-control form-control-sm number-right" placeholder="0" [textMask]="mascararEnteros(6)"
+                class="form-control form-control-sm number-right" placeholder="0" [textMask]="mascararEnteros(4)"
                 autocomplete="off" [readOnly]="soloLectura">
             </div>
           </div>
