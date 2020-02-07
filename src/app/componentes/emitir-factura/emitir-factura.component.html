@@ -414,7 +414,7 @@
               <label for="idDescuento" class="tamanio-label">% dto.</label>
               <input id="idDescuento" type="text" formControlName="descuentoFlete"
                 class="form-control form-control-sm number-right" placeholder="0.00" autocomplete="off"
-                [textMask]="mascararEnteroConDecimales(2)" (blur)="calcularSubtotal()">
+                [textMask]="mascararEnteroConDecimales(2)" (blur)="calcularSubtotal()" readonly>
               <!--(blur)="calcularSubtotal($event)"-->
             </div>
           </div>

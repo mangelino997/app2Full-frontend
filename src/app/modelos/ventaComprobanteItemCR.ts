@@ -19,6 +19,7 @@ export class VentaComprobanteItemCR {
             importeIva: new FormControl(),
             fechaCobro: new FormControl(),
             fechaPago: new FormControl(),
+            idProvincia:  new FormControl(),
         })
     }
 }

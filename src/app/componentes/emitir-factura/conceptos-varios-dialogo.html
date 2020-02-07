@@ -22,7 +22,8 @@
                     <label for="idImporte" class="tamanio-label">Importe ($)</label>
                     <input id="idImporte" type="text" formControlName="importe"
                         class="form-control form-control-sm number-right" placeholder="$ 0.00" autocomplete="off"
-                        [textMask]="mascararEnteroConDecimales(8)" (blur)="setDecimales(formulario.get('importe'), 2)">
+                        [textMask]="mascararEnteroConDecimales(8)" (blur)="setDecimales(formulario.get('importe'), 2)"
+                        (click)="onTextClick($event)">
                 </div>
             </div>
         </div>

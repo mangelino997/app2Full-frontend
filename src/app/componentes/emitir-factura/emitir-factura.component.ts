@@ -124,7 +124,7 @@ export class EmitirFacturaComponent implements OnInit {
     private ventaComprobante: VentaComprobante, private appService: AppService,
     private empresaOrdenVtaService: EmpresaOrdenVentaService,
     private sucursalService: SucursalClienteService, private puntoVentaService: PuntoVentaService,
-    private ventaCpteItemFA: VentaComprobanteItemFA,
+    private ventaCpteItemFA: VentaComprobanteItemFA, private ventaConfigService: VentaConfigService,
     private afipComprobanteService: AfipComprobanteService,
     private ordenVentaEscalaServicio: OrdenVentaEscalaService, private afipCaeService: AfipCaeService,
     private monedaService: MonedaService, private monedaCotizacionService: MonedaCotizacionService,
@@ -239,7 +239,14 @@ export class EmitirFacturaComponent implements OnInit {
   private listarOrdenVentaEmpresa() {
     this.empresaOrdenVtaService.listar().subscribe(
       res => {
-        this.ordenesVenta = res.json();
+        console.log(res.json());
+        if (res.json().length == 0) {
+          this.obtenerImpCpteGral();
+        } else {
+          this.ordenesVenta = res.json();
+          this.ordenVenta.setValue(this.ordenesVenta[0]);
+          this.cambioOrdenVta();
+        }
       }, err => { this.toastr.error(err.json().message); }
     )
   }
@@ -520,27 +527,67 @@ export class EmitirFacturaComponent implements OnInit {
   public cambioOrdenVta() {
     this.formularioVtaCpteItemFA.get('flete').reset();
     //Con cada cambio limpia los campos 'Tarifa' - 'pSeguro'
-    this.formularioVtaCpteItemFA.get('pSeguro').reset();
+    // this.formularioVtaCpteItemFA.get('pSeguro').reset();
     this.tarifaOrdenVenta.reset();
-    //Controla el campo 'Seguro'. El ordenVenta == false corresponde a 'Libre'
-    if (this.ordenVenta.value == 'false') {
-      this.tarifaOrdenVenta.disable();
-      this.formulario.value.cliente.esSeguroPropio ? this.formularioVtaCpteItemFA.get('importeSeguro').disable() :
-        this.formularioVtaCpteItemFA.get('importeSeguro').enable();
-    } else {
-      //Controla si la orden de venta seleccionada estaActiva
-      if (this.ordenVenta.value.ordenVenta.estaActiva) {
-        this.tarifaOrdenVenta.enable();
-        this.listarTarifasPorOrdenVenta(this.ordenVenta.value.ordenVenta.id);
-        this.formulario.value.cliente.esSeguroPropio ? this.formularioVtaCpteItemFA.get('pSeguro').disable() :
-          [this.formularioVtaCpteItemFA.get('pSeguro').setValue(this.appService.establecerDecimales(this.ordenVenta.value.ordenVenta.seguro, 2)),
-          this.calcularSubtotal()
-          ];
-      } else {
-        this.toastr.error("Orden de venta inactiva - verifique.");
-        this.ordenVenta.reset();
-        document.getElementById('idOrdenVta').focus();
+
+    /*La prioridad es si el cliente tiene seguro propio.
+    * si tiene, pSeguro se bloquea pero ordenVta y Tarifa quedan disponibles para
+    * calcular el flete. */
+    if (this.formulario.value.cliente.esSeguroPropio && !this.ordenVenta.value) {
+      if (this.formulario.value.cliente.vencimientoPolizaSeguro < this.formulario.value.fechaEmision) {
+        this.formularioVtaCpteItemFA.get('pSeguro').enable();
+        this.formularioVtaCpteItemFA.get('pSeguro').reset();
       }
+      else {
+        this.formularioVtaCpteItemFA.get('pSeguro').reset();
+        this.formularioVtaCpteItemFA.get('pSeguro').disable();
+      }
+    }
+    /* Si tiene seguro propio y además selecciona una orden de venta */
+    else if (this.formulario.value.cliente.esSeguroPropio && this.ordenVenta.value) {
+      //Controla el campo 'Seguro'. El ordenVenta == false corresponde a 'Libre'
+      if (this.ordenVenta.value == 'false') {
+        this.tarifaOrdenVenta.reset();
+        this.tarifaOrdenVenta.disable();
+        this.formularioVtaCpteItemFA.get('flete').reset();
+        this.formularioVtaCpteItemFA.get('pSeguro').reset();
+        this.formularioVtaCpteItemFA.get('descuentoFlete').reset();
+        this.calcularSubtotal();
+      } else {
+        //Controla si la orden de venta seleccionada estaActiva
+        this.verificarOrdenVtaActiva();
+      }
+    }
+    else {
+      //Controla el campo 'Seguro'. El ordenVenta == false corresponde a 'Libre'
+      if (this.ordenVenta.value == 'false') {
+        this.obtenerImpCpteGral();
+      } else {
+        //Controla si la orden de venta seleccionada estaActiva
+        this.verificarOrdenVtaActiva();
+      }
+    }
+  }
+  //Verifica si la orden de venta seleccionada estaActiva para listar las tarifas
+  private verificarOrdenVtaActiva() {
+    //Controla si la orden de venta seleccionada estaActiva
+    if (this.ordenVenta.value.ordenVenta.estaActiva) {
+      this.tarifaOrdenVenta.enable();
+      this.listarTarifasPorOrdenVenta(this.ordenVenta.value.ordenVenta.id);
+      let pSeguro = this.ordenVenta.value.ordenVenta.seguro;
+      if (this.formulario.value.cliente.esSeguroPropio) {
+        this.formularioVtaCpteItemFA.get('pSeguro').reset();
+        this.formularioVtaCpteItemFA.get('pSeguro').disable();
+      } else {
+        this.formularioVtaCpteItemFA.get('pSeguro').enable();
+        this.formularioVtaCpteItemFA.get('pSeguro').reset();
+        this.formularioVtaCpteItemFA.get('pSeguro').setValue(this.appService.establecerDecimales(pSeguro, 2));
+      }
+      this.calcularSubtotal();
+    } else {
+      this.toastr.error("Orden de venta inactiva - verifique.");
+      this.ordenVenta.reset();
+      document.getElementById('idOrdenVta').focus();
     }
   }
   //Obtiene el listado de tarifas para una orden de venta
@@ -689,30 +736,67 @@ export class EmitirFacturaComponent implements OnInit {
   }
   //Controla campos segun datos del Cliente que paga - Sale del metodo 'cambioPagoEnOrigen'
   private controlCamposPorCliente() {
+    let cliente= this.formulario.value.cliente;
     // Controla el campo 'Letra' - Es A cuando el cliente es responsable inscripto (afipCondicionIva == 1) sino es B consumidor final
-    this.formulario.value.cliente.afipCondicionIva.id == 1 ?
+    cliente.afipCondicionIva.id == 1 ?
       this.formulario.get('letra').setValue('A') : this.formulario.get('letra').setValue('B');
     // Obtiene el codigo afip y el número
     this.cargarCodigoAfip(this.formulario.value.letra);
-    //Controla la lista para el campo 'Orden Venta'
-    if (this.formulario.value.cliente.clienteOrdenesVentas) {
-      this.ordenesVenta = this.formulario.value.cliente.clienteOrdenesVentas;
-      this.ordenesVenta.length == 0 ?
-        this.toastr.warning("Cliente sin orden de venta.") :
-        [this.ordenVenta.setValue(this.ordenesVenta[0]), this.cambioOrdenVta()];
+    console.log(cliente);
+    /* establece valores a formularioVtaCpteItemFA obtenidos del cliente */
+    this.formularioVtaCpteItemFA.get('descuentoFlete').setValue(this.appService.establecerDecimales(
+      cliente.descuentoFlete ? cliente.descuentoFlete.toString() : '0.00', 2));
+
+    //Controla la lista para el campo 'Orden Venta', 'pSeguro'
+    if (cliente.esSeguroPropio) {
+      if (cliente.vencimientoPolizaSeguro < this.formulario.value.fechaEmision) {
+        this.formularioVtaCpteItemFA.get('pSeguro').enable();
+        this.formularioVtaCpteItemFA.get('pSeguro').reset();
+        this.toastr.warning("Póliza de seguro vencida.");
+      } else {
+        //abre modal con datos de la poliza de seguro
+        this.formularioVtaCpteItemFA.get('pSeguro').reset();
+        this.formularioVtaCpteItemFA.get('pSeguro').disable();
+        let observacion = 'Cliente con seguro propio. Vencimiento: ' +
+          cliente.vencimientoPolizaSeguro;
+        this.obervacionDialogo(observacion);
+      }
+      this.listarOrdenVentaCliente();
     } else {
+      this.formularioVtaCpteItemFA.get('pSeguro').enable();
+      this.formularioVtaCpteItemFA.get('pSeguro').reset();
+      this.listarOrdenVentaCliente();
+    }
+
+    //Controla si habilita el boton FCE MiPyMEs para abrir modal
+    this.idTipoCpte == 26 && cliente.esReceptorFCE ? this.btnFCE = false : this.btnFCE = true;
+    /* abre dialogo observaciones */
+    cliente.notaEmisionComprobante ?
+      this.obervacionDialogo(cliente.notaEmisionComprobante) : '';
+  }
+  //Carga las ordenes de venta del Cliente
+  private listarOrdenVentaCliente() {
+    if (this.formulario.value.cliente.clienteOrdenesVentas.length > 0) {
+      this.ordenesVenta = this.formulario.value.cliente.clienteOrdenesVentas;
+      this.ordenVenta.setValue(this.ordenesVenta[0]);
+      this.cambioOrdenVta();
+    } else {
+      this.toastr.warning("Cliente sin orden de venta.");
       this.listarOrdenVentaEmpresa();
     }
-    //Controla el campo 'Seguro'
-    !this.formulario.value.cliente.esSeguroPropio ||
-      (this.formulario.value.cliente.vencimientoPolizaSeguro ?
-        this.formulario.value.cliente.vencimientoPolizaSeguro < this.formulario.value.fechaEmision : '') ?
-      this.formularioVtaCpteItemFA.get('importeSeguro').enable() : this.formularioVtaCpteItemFA.get('importeSeguro').disable();
-    //Controla si habilita el boton FCE MiPyMEs para abrir modal
-    this.idTipoCpte == 26 && this.formulario.value.cliente.esReceptorFCE ? this.btnFCE = false : this.btnFCE = true;
-    /* abre dialogo observaciones */
-    this.formulario.value.cliente.notaEmisionComprobante ?
-      this.obervacionDialogo(this.formulario.value.cliente.notaEmisionComprobante) : '';
+  }
+  //Obtiene el importe de seguro general
+  private obtenerImpCpteGral() {
+    this.ventaConfigService.obtenerPorId(1).subscribe(
+      res => {
+        console.log(res.json());
+        this.ordenVenta.setValue(false);
+        this.tarifaOrdenVenta.reset();
+        this.tarifaOrdenVenta.disable();
+        this.formularioVtaCpteItemFA.get('pSeguro').setValue(res.json().seguro);
+        this.calcularSubtotal();
+      }, err => { this.toastr.error(err.json().message); }
+    )
   }
   //Abre dialogo para agregar un cliente eventual
   public agregarClienteEventual(tipoCliente): void {
@@ -800,7 +884,7 @@ export class EmitirFacturaComponent implements OnInit {
       remitoSeleccionado.viajeRemito.importeRetiro ? remitoSeleccionado.viajeRemito.importeRetiro.toString() : '0.00', 2));
     this.formularioVtaCpteItemFA.get('importeEntrega').setValue(this.appService.establecerDecimales(
       remitoSeleccionado.viajeRemito.importeEntrega ? remitoSeleccionado.viajeRemito.importeEntrega.toString() : '0.00', 2));
-
+    
     /* calcula el subtotal*/
     this.calcularSubtotal();
 
@@ -811,7 +895,7 @@ export class EmitirFacturaComponent implements OnInit {
       this.formulario.get('clienteDestinatario').setValue(remitoSeleccionado.viajeRemito.clienteDestinatario);
       this.cambioDestinatario();
     } else {
-      /* controla el camvio en la orden de venta */
+      /* controla el cambio en la orden de venta */
       this.cambioOrdenVta();
     }
   }
@@ -855,8 +939,12 @@ export class EmitirFacturaComponent implements OnInit {
       data: { ventaComprobanteItemCR: this.formulario.value.ventaComprobanteItemCR }
     });
     dialogRef.afterClosed().subscribe(resultado => {
-      resultado ?
-        this.formulario.get('ventaComprobanteItemCR').setValue([resultado]) : this.formulario.get('ventaComprobanteItemCR').setValue([]);
+      if(resultado){
+        resultado.idProvincia = this.formulario.get('remitente').value.localidad.provincia.id;
+        this.formulario.get('ventaComprobanteItemCR').setValue([resultado]);
+      }else{
+        this.formulario.get('ventaComprobanteItemCR').setValue([]);
+      }
     })
   }
   //Abre un modal ver los Totales de Carga
@@ -889,6 +977,7 @@ export class EmitirFacturaComponent implements OnInit {
   // }
   //Abre un modal - Observaciones del cliente que paga
   public obervacionDialogo(observacion): void {
+    console.log("entra");
     const dialogRef = this.dialog.open(ObservacionesDialogo, {
       width: '70%',
       maxWidth: '70%',
@@ -929,10 +1018,10 @@ export class EmitirFacturaComponent implements OnInit {
     let fleteNeto;
     if (descuento && descuento > 0) {
       fleteNeto = flete - flete * (descuento / 100);
-      this.formularioVtaCpteItemFA.get('importeFlete').setValue(this.appService.establecerDecimales(flete.toString(), 2));
+      this.formularioVtaCpteItemFA.get('importeFlete').setValue(this.appService.establecerDecimales(fleteNeto.toString(), 2));
     } else {
       fleteNeto = flete;
-      this.formularioVtaCpteItemFA.get('importeFlete').setValue(this.appService.establecerDecimales(flete.toString(), 2));
+      this.formularioVtaCpteItemFA.get('importeFlete').setValue(this.appService.establecerDecimales(fleteNeto.toString(), 2));
     }
 
     /* valor del item concepto */
@@ -961,7 +1050,9 @@ export class EmitirFacturaComponent implements OnInit {
   public agregarItem() {
     this.formularioVtaCpteItemFA.enable();
     /* Guarda el idProvincia del Remitente */
-    this.formularioVtaCpteItemFA.get('provincia').setValue(this.formulario.get('cliente').value.localidad.provincia);
+    this.formularioVtaCpteItemFA.get('provincia').setValue(this.formulario.get('remitente').value.localidad.provincia);
+
+    console.log(this.formularioVtaCpteItemFA.value);
 
     /* Establece la orden de vta. tarifa*/
     this.ordenVenta.value ? [this.formularioVtaCpteItemFA.value.ordenVentaTarifa = null, this.actualizarTabla()] :
@@ -1447,6 +1538,10 @@ export class ConceptosVariosDialogo {
     if (a != null && b != null) {
       return a.id === b.id;
     }
+  }
+  //Selecciona todo el texto del campo al posicionar el puntero sobre el campo
+  public onTextClick($event) {
+    $event.target.select();
   }
   onNoClick(): void {
     this.dialogRef.close();

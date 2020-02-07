@@ -3,13 +3,12 @@
     <div class="col-md-12 text-center">
         <form [formGroup]="formulario">
             <div class="row justify-content-center">
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <div class="form-group has-float-label">
                         <label for="idImporteContrareembolso" class="tamanio-label">Imp. Contrareembolso ($)</label>
                         <input id="idImporteContrareembolso" type="text" formControlName="importeContraReembolso"
                             placeholder="0.00" [textMask]="mascararEnteroConDecimales(8)"
-                            class="form-control form-control-sm number-right"
-                            (blur)="setDecimales(formulario.get('importeContraReembolso'), 2)">
+                            class="form-control form-control-sm number-right" (blur)="calcularComision()">
                     </div>
                 </div>
                 <div class="col-md-2">
@@ -18,6 +17,15 @@
                         <input id="idComision" type="text" formControlName="pComision" placeholder="0.00"
                             [textMask]="mascararEnteroConDecimales()" class="form-control form-control-sm number-right"
                             (blur)="calcularComision()">
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group has-float-label">
+                        <label for="idImporteNetoGravado" class="tamanio-label">Imp. Neto Gravado ($)</label>
+                        <input id="idImporteNetoGravado" type="text" formControlName="importeNetoGravado"
+                            placeholder="0.00" [textMask]="mascararEnteroConDecimales(8)"
+                            class="form-control form-control-sm number-right"
+                            (blur)="setDecimales(formulario.get('importeNetoGravado'), 2)" readonly>
                     </div>
                 </div>
                 <div class="col-md-2">
@@ -33,27 +41,18 @@
                 </div>
                 <div class="col-md-2">
                     <div class="form-group has-float-label">
-                        <label for="idImporteIva" class="tamanio-label">Importe Iva ($)</label>
-                        <input id="idImporteIva" type="text" formControlName="importeIva" placeholder="0.00"
+                        <label for="idImporteTotal" class="tamanio-label">Importe Total ($)</label>
+                        <input id="idImporteTotal" type="text" [formControl]="importeTotal" placeholder="0.00"
                             [textMask]="mascararEnteroConDecimales(8)" class="form-control form-control-sm number-right"
-                            (blur)="setDecimales(formulario.get('importeIva'), 2)" readonly>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="form-group has-float-label">
-                        <label for="idImporteNetoGravado" class="tamanio-label">Imp. Nto. Gravado ($)</label>
-                        <input id="idImporteNetoGravado" type="text" formControlName="importeNetoGravado"
-                            placeholder="0.00" [textMask]="mascararEnteroConDecimales(8)"
-                            class="form-control form-control-sm number-right"
-                            (blur)="setDecimales(formulario.get('importeNetoGravado'), 2)" readonly>
+                            (blur)="setDecimales(importeTotal, 2)" readonly>
                     </div>
                 </div>
             </div>
             <br>
             <div class="row justify-content-center">
                 <div class="col-md-1">
-                    <button id="idBoton" mat-raised-button color="primary"
-                        (click)="enviarContrareembolso()">Agregar</button>
+                    <button id="idBoton" mat-raised-button color="primary" (click)="enviarContrareembolso()"
+                        [disabled]="!formulario.get('importeNetoGravado').value || formulario.get('importeNetoGravado').value==0">Agregar</button>
                 </div>
                 <div class="col-md-1">
                     <button id="idBotonCerrar" mat-raised-button color="secondary"

@@ -5,6 +5,7 @@ import { FormGroup, FormControl } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material';
 import { ToastrService } from 'ngx-toastr';
 import { VentaComprobanteItemCR } from 'src/app/modelos/ventaComprobanteItemCR';
+import { VentaConfigService } from 'src/app/servicios/venta-config.service';
 
 @Component({
   selector: 'app-contrareembolso-dialogo',
@@ -14,11 +15,13 @@ import { VentaComprobanteItemCR } from 'src/app/modelos/ventaComprobanteItemCR';
 export class ContrareembolsoDialogoComponent implements OnInit {
   //Define un formulario para validaciones de campos
   public formulario: FormGroup;
+  //Define el importeTotal como un formControl
+  public importeTotal: FormControl = new FormControl();
   //Define la lista de Alicuotas Afip Iva que estan activas
   public afipAlicuotasIva = [];
   constructor(private appService: AppService, private alicuotasIvaService: AfipAlicuotaIvaService, public dialog: MatDialog,
     public dialogRef: MatDialogRef<ContrareembolsoDialogoComponent>, @Inject(MAT_DIALOG_DATA) public data, private toastr: ToastrService,
-    private modelo: VentaComprobanteItemCR) {
+    private modelo: VentaComprobanteItemCR, private ventaConfigService: VentaConfigService) {
     this.dialogRef.disableClose = true;
   }
   ngOnInit() {
@@ -29,6 +32,8 @@ export class ContrareembolsoDialogoComponent implements OnInit {
       [this.formulario.patchValue(this.data.ventaComprobanteItemCR[0]), this.cambioPComision()] : '';
     //Obtiene la lista de Alicuotas Iva
     this.listarAlicuotaIva();
+    //Obtiene el procentaje de comision por defecto
+    this.obtenerPComision();
   }
   //Obtiene una lista con las Alicuotas Iva
   public listarAlicuotaIva() {
@@ -38,6 +43,15 @@ export class ContrareembolsoDialogoComponent implements OnInit {
         this.establecerAlicuotaIva();
       }
     );
+  }
+  //Obtiene pComision de ventaConfig 
+  private obtenerPComision() {
+    this.ventaConfigService.obtenerPorId(1).subscribe(
+      res => {
+        this.formulario.get('pComision').setValue(this.appService.establecerDecimales(res.json().comisionCR, 2));
+      },
+      err => { this.toastr.error(err.json().mensaje); }
+    )
   }
   //Establece alicuota iva por defecto
   private establecerAlicuotaIva() {
@@ -54,21 +68,35 @@ export class ContrareembolsoDialogoComponent implements OnInit {
   }
   //Calcula el valor de la Comision
   public calcularComision() {
-    this.establecerPorcentaje(this.formulario.get('pComision'), 2);
-    let importe = Number(this.formulario.value.importeContraReembolso);
-    let pComision = Number(this.formulario.value.pComision);
-    this.formulario.get('afipAlicuotaIva').enable();
-    let afipAlicuotaIva = this.formulario.value.afipAlicuotaIva;
-    let importeComision = importe * (pComision / 100);
-    let importeIva = importeComision * (afipAlicuotaIva.alicuota / 100);
-    let importeNtoGravado = importeComision + importeIva;
-    this.formulario.get('importeIva').setValue(this.appService.establecerDecimales(importeIva, 2));
-    this.formulario.get('importeNetoGravado').setValue(this.appService.establecerDecimales(importeNtoGravado, 2));
-    this.formulario.get('afipAlicuotaIva').disable();
+    if (this.formulario.get('pComision').value && this.formulario.get('importeContraReembolso').value) {
+      /* establece los decimales */
+      this.establecerPorcentaje(this.formulario.get('pComision'), 2);
+      this.setDecimales(this.formulario.get('importeContraReembolso'), 2);
+
+      /* convierte a numerico para realizar los calculos */
+      let importe = Number(this.formulario.value.importeContraReembolso);
+      let pComision = Number(this.formulario.value.pComision);
+
+      /* realiza la operacion para calcular importes */
+      this.formulario.get('afipAlicuotaIva').enable();
+      let afipAlicuotaIva = this.formulario.value.afipAlicuotaIva;
+      let importeNetoGravado = importe * (pComision / 100);
+      let importeIva = importeNetoGravado * (afipAlicuotaIva.alicuota / 100);
+      let importeTotal = importeNetoGravado + importeIva;
+      this.formulario.get('importeIva').setValue(this.appService.establecerDecimales(importeIva.toString(), 2));
+      this.formulario.get('importeNetoGravado').setValue(this.appService.establecerDecimales(importeNetoGravado.toString(), 2));
+      this.importeTotal.setValue(this.appService.establecerDecimales(importeTotal.toString(), 2));
+      this.formulario.get('afipAlicuotaIva').disable();
+    } else {
+      this.toastr.error("Error al calcular importes. Valores en cero.");
+      this.formulario.get('importeNetoGravado').reset();
+      this.importeTotal.reset();
+    }
   }
   //Cierra el modal y envía el formulario de contrareembolso
-  public enviarContrareembolso(){
+  public enviarContrareembolso() {
     this.formulario.enable();
+    console.log(this.formulario.value);
     this.dialogRef.close(this.formulario.value);
   }
   //Obtiene la mascara de enteros CON decimales
