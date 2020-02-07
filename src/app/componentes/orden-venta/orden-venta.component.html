@@ -24,17 +24,20 @@
             </div>
           </div>
           <div class="col-md-4" *ngIf="tipoOrdenVenta.value == false">
-            <div class="form-group has-float-label">
-              <label for="idEmpresa" class="tamanio-label">Empresa *</label>
-              <input id="idEmpresa" type="text" [formControl]="empresa" class="form-control form-control-sm" readonly>
-            </div>
+            <label for="idEmpresa" class="tamanio-label">Empresa *</label>
+            <mat-select id="idEmpresa" class="form-control" [formControl]="empresa" [compareWith]="compareFn">
+              <mat-option *ngFor="let empresa of empresas" [value]="empresa">
+                {{empresa.razonSocial}}
+              </mat-option>
+            </mat-select>
           </div>
           <div class="col-md-4" *ngIf="tipoOrdenVenta.value == true">
             <div class="form-group has-float-label">
               <label for="idCliente" class="tamanio-label">Cliente *</label>
               <input id="idCliente" class="form-control form-control-sm" type="text" matInput
                 [readOnly]="soloLectura || soloLecturaMod" [formControl]="cliente" [matAutocomplete]="autoCliente"
-                autocomplete="off" (blur)="verificarSeleccion(cliente)" placeholder="Buscar por alias">
+                autocomplete="off" (blur)="verificarSeleccion(cliente)" 
+                placeholder="Buscar por ID, Razón Social, Nombre Fantasía o Tipo Documento">
               <mat-autocomplete #autoCliente="matAutocomplete" [displayWith]="displayF.bind(this)"
                 (optionSelected)="listarOrdenesVentas('cliente', cliente.value.id)">
                 <mat-option *ngFor="let itemCliente of resultadosClientes" [value]="itemCliente">

@@ -71,8 +71,6 @@ export class OrdenVentaComponent implements OnInit {
   public cliente: FormControl = new FormControl();
   //Define tipoOrdenVenta como FormControl
   public tipoOrdenVenta: FormControl = new FormControl('', Validators.required);
-  //
-  public columnasMostradas: FormControl = new FormControl();
   //Define la opcion (SELECT) Tipo Tarifa como un FormControl
   public tipoTarifa: FormControl = new FormControl();
   //Define la opcion (SELECT) Tipo Tarifa como un FormControl
@@ -298,8 +296,7 @@ export class OrdenVentaComponent implements OnInit {
       this.formularioFiltro.get('cliente').setValidators([]);
       this.formularioFiltro.get('empresa').setValidators(Validators.required);
       this.formularioFiltro.get('cliente').updateValueAndValidity();//Actualiza las validaciones en el Formulario de la pestaña listar
-    }
-    if (tipo == 'cliente') {
+    } else {
       this.formularioFiltro.get('empresa').setValue(null);
       this.formularioFiltro.get('empresa').setValidators([]);
       this.formularioFiltro.get('cliente').setValidators(Validators.required);
@@ -309,6 +306,7 @@ export class OrdenVentaComponent implements OnInit {
   //Lista las ordenes de ventas por Empresa o Cliente
   public listarOrdenesVentas(tipo, id) {
     this.loaderService.show();
+    this.formulario.get('seguro').enable();
     if (this.indiceSeleccionado != 1) {
       switch (tipo) {
         case 'empresa':
@@ -336,6 +334,17 @@ export class OrdenVentaComponent implements OnInit {
           );
           break;
       }
+    } else {
+      switch(tipo) {
+        case 'cliente':
+          let cliente = this.cliente.value;
+          if(cliente.esSeguroPropio) {
+            this.formulario.get('seguro').setValue(this.appService.establecerDecimales('0', 2));
+            this.formulario.get('seguro').disable();
+          }
+          break;
+      }
+      this.loaderService.hide();
     }
   }
   //Reestablecer campos
@@ -353,8 +362,6 @@ export class OrdenVentaComponent implements OnInit {
     this.cliente.reset();
     this.vaciarListas();
     this.ordenventa.reset();
-
-    // this.btnOrdenVta = false;
     this.empresa.reset();
     let empresa = this.appService.getEmpresa();
     this.formulario.value.empresas = [empresa];
