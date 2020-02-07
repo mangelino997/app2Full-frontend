@@ -128,7 +128,6 @@ const routes: Routes = [
     { path: 'gestiondepagosordenesdepago', loadChildren: () => import('./modulos/orden-pago/orden-pago.module').then(m => m.OrdenPagoModule), canActivate: [GuardiaService] },
     { path: 'conceptosadministrar', loadChildren: () => import('./modulos/conceptos/conceptos.module').then(m => m.ConceptosModule), canActivate: [GuardiaService] },
     { path: 'facturacionconsultas', loadChildren: () => import('./modulos/facturacion-consulta/facturacion-consulta.module').then(m => m.FacturacionConsultaModule), canActivate: [GuardiaService] },
-    { path: 'conceptosadministrar', loadChildren: () => import('./modulos/conceptos/conceptos.module').then(m => m.ConceptosModule), canActivate: [GuardiaService] },
     { path: 'configuracionunidadesdemedidasueldos', loadChildren: () => import('./modulos/unidad-medida-sueldo/unidad-medida-sueldo.module').then(m => m.UnidadMedidaSueldoModule), canActivate: [GuardiaService] }
 ];
 
