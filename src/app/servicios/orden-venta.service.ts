@@ -40,6 +40,10 @@ export class OrdenVentaService {
   public subscribirse = (m: Message) => {
     this.listaCompleta.next(JSON.parse(m.body));
   }
+  //Inicializa los datos del componente
+  public inicializar(idRol, idSubopcion) {
+    return this.http.get(this.url + '/inicializar/' + idRol + '/' + idSubopcion, this.options);
+  }
   //Obtiene el siguiente id
   public obtenerSiguienteId() {
     return this.http.get(this.url + '/obtenerSiguienteId', this.options);
