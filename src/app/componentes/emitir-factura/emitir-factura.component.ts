@@ -940,7 +940,7 @@ export class EmitirFacturaComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe(resultado => {
       if(resultado){
-        resultado.idProvincia = this.formulario.get('remitente').value.localidad.provincia.id;
+        resultado.idProvincia = this.formulario.get('clienteRemitente').value.localidad.provincia.id;
         this.formulario.get('ventaComprobanteItemCR').setValue([resultado]);
       }else{
         this.formulario.get('ventaComprobanteItemCR').setValue([]);
@@ -1049,8 +1049,9 @@ export class EmitirFacturaComponent implements OnInit {
   //Agrega a un Array el item e impacta en la tabla
   public agregarItem() {
     this.formularioVtaCpteItemFA.enable();
+    console.log(this.formulario);
     /* Guarda el idProvincia del Remitente */
-    this.formularioVtaCpteItemFA.get('provincia').setValue(this.formulario.get('remitente').value.localidad.provincia);
+    this.formularioVtaCpteItemFA.get('provincia').setValue(this.formulario.get('clienteRemitente').value.localidad.provincia);
 
     console.log(this.formularioVtaCpteItemFA.value);
 
