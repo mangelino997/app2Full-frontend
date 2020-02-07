@@ -239,7 +239,6 @@ export class EmitirFacturaComponent implements OnInit {
   private listarOrdenVentaEmpresa() {
     this.empresaOrdenVtaService.listar().subscribe(
       res => {
-        console.log(res.json());
         if (res.json().length == 0) {
           this.obtenerImpCpteGral();
         } else {
@@ -268,7 +267,6 @@ export class EmitirFacturaComponent implements OnInit {
   }
   //Comprueba si ya existe un codigo de afip entonces vuelve a llamar a la funcion que obtiene el valor del campo Numero
   public cambioPuntoVenta() {
-    console.log(this.formulario.value.puntoVenta);
     //Establece el formControl puntoVenta
     this.puntoVenta.setValue(this.establecerCerosIzq(this.formulario.get('puntoVenta').value.puntoVenta, "0000", -5));
     this.validarFechaEmision();
@@ -742,7 +740,6 @@ export class EmitirFacturaComponent implements OnInit {
       this.formulario.get('letra').setValue('A') : this.formulario.get('letra').setValue('B');
     // Obtiene el codigo afip y el número
     this.cargarCodigoAfip(this.formulario.value.letra);
-    console.log(cliente);
     /* establece valores a formularioVtaCpteItemFA obtenidos del cliente */
     this.formularioVtaCpteItemFA.get('descuentoFlete').setValue(this.appService.establecerDecimales(
       cliente.descuentoFlete ? cliente.descuentoFlete.toString() : '0.00', 2));
@@ -789,7 +786,6 @@ export class EmitirFacturaComponent implements OnInit {
   private obtenerImpCpteGral() {
     this.ventaConfigService.obtenerPorId(1).subscribe(
       res => {
-        console.log(res.json());
         this.ordenVenta.setValue(false);
         this.tarifaOrdenVenta.reset();
         this.tarifaOrdenVenta.disable();
@@ -934,18 +930,25 @@ export class EmitirFacturaComponent implements OnInit {
   }
   //Abre dialogo de Contrareembolso
   public abrirCRDialogo() {
-    const dialogRef = this.dialog.open(ContrareembolsoDialogoComponent, {
-      width: '1200px',
-      data: { ventaComprobanteItemCR: this.formulario.value.ventaComprobanteItemCR }
-    });
-    dialogRef.afterClosed().subscribe(resultado => {
-      if(resultado){
-        resultado.idProvincia = this.formulario.get('clienteRemitente').value.localidad.provincia.id;
-        this.formulario.get('ventaComprobanteItemCR').setValue([resultado]);
-      }else{
-        this.formulario.get('ventaComprobanteItemCR').setValue([]);
-      }
-    })
+    if(this.formulario.get('clienteRemitente').value){
+      const dialogRef = this.dialog.open(ContrareembolsoDialogoComponent, {
+        width: '1200px',
+        data: { 
+          ventaComprobanteItemCR: this.formulario.value.ventaComprobanteItemCR,
+          idProvincia: this.formulario.get('clienteRemitente').value.localidad.provincia.id,
+         }
+      });
+      dialogRef.afterClosed().subscribe(resultado => {
+        if(resultado == null){
+          this.formulario.get('ventaComprobanteItemCR').setValue([]);
+        }else{
+          this.formulario.get('ventaComprobanteItemCR').setValue([resultado]);
+        }
+      })
+    }else{
+      this.toastr.error("Debe seleccionar un cliente remitente.");
+    }
+    
   }
   //Abre un modal ver los Totales de Carga
   public abrirTotalCargaDialogo(): void {
@@ -977,7 +980,6 @@ export class EmitirFacturaComponent implements OnInit {
   // }
   //Abre un modal - Observaciones del cliente que paga
   public obervacionDialogo(observacion): void {
-    console.log("entra");
     const dialogRef = this.dialog.open(ObservacionesDialogo, {
       width: '70%',
       maxWidth: '70%',
@@ -1049,11 +1051,8 @@ export class EmitirFacturaComponent implements OnInit {
   //Agrega a un Array el item e impacta en la tabla
   public agregarItem() {
     this.formularioVtaCpteItemFA.enable();
-    console.log(this.formulario);
     /* Guarda el idProvincia del Remitente */
     this.formularioVtaCpteItemFA.get('provincia').setValue(this.formulario.get('clienteRemitente').value.localidad.provincia);
-
-    console.log(this.formularioVtaCpteItemFA.value);
 
     /* Establece la orden de vta. tarifa*/
     this.ordenVenta.value ? [this.formularioVtaCpteItemFA.value.ordenVentaTarifa = null, this.actualizarTabla()] :

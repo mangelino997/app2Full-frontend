@@ -52,11 +52,12 @@
             <div class="row justify-content-center">
                 <div class="col-md-1">
                     <button id="idBoton" mat-raised-button color="primary" (click)="enviarContrareembolso()"
-                        [disabled]="!formulario.get('importeNetoGravado').value || formulario.get('importeNetoGravado').value==0">Agregar</button>
+                        [disabled]="!formulario.get('importeNetoGravado').value || formulario.get('importeNetoGravado').value==0">
+                        Agregar</button>
                 </div>
                 <div class="col-md-1">
                     <button id="idBotonCerrar" mat-raised-button color="secondary"
-                        [mat-dialog-close]="null">Cerrar</button>
+                    (click)="enviarContrareembolso()">Cancelar</button>
                 </div>
             </div>
         </form>

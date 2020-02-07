@@ -29,7 +29,8 @@ export class ContrareembolsoDialogoComponent implements OnInit {
     this.formulario = this.modelo.formulario;
     //Si en el data viene un CR ya cargado lo setea
     this.data.ventaComprobanteItemCR.length > 0 ?
-      [this.formulario.patchValue(this.data.ventaComprobanteItemCR[0]), this.cambioPComision()] : '';
+      [this.formulario.patchValue(this.data.ventaComprobanteItemCR[0]), this.cambioPComision()] :
+       this.formulario.reset();
     //Obtiene la lista de Alicuotas Iva
     this.listarAlicuotaIva();
     //Obtiene el procentaje de comision por defecto
@@ -87,6 +88,9 @@ export class ContrareembolsoDialogoComponent implements OnInit {
       this.formulario.get('importeNetoGravado').setValue(this.appService.establecerDecimales(importeNetoGravado.toString(), 2));
       this.importeTotal.setValue(this.appService.establecerDecimales(importeTotal.toString(), 2));
       this.formulario.get('afipAlicuotaIva').disable();
+
+      /* asigna el idProvincia del clienteRemitente*/
+      this.formulario.get('idProvincia').setValue(this.data.idProvincia);
     } else {
       this.toastr.error("Error al calcular importes. Valores en cero.");
       this.formulario.get('importeNetoGravado').reset();
@@ -95,9 +99,13 @@ export class ContrareembolsoDialogoComponent implements OnInit {
   }
   //Cierra el modal y envía el formulario de contrareembolso
   public enviarContrareembolso() {
-    this.formulario.enable();
-    console.log(this.formulario.value);
-    this.dialogRef.close(this.formulario.value);
+    if(!this.formulario.get('importeNetoGravado').value || this.formulario.get('importeNetoGravado').value==0){
+      this.formulario.enable();
+      this.dialogRef.close(this.formulario.value);
+    }else{
+      this.dialogRef.close(null);
+    }
+    
   }
   //Obtiene la mascara de enteros CON decimales
   public mascararEnteroConDecimales(intLimite) {
