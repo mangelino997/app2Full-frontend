@@ -245,8 +245,7 @@ export class OrdenVentaComponent implements OnInit {
       this.formularioFiltro.get('cliente').setValidators([]);
       this.formularioFiltro.get('empresa').setValidators(Validators.required);
       this.formularioFiltro.get('cliente').updateValueAndValidity();//Actualiza las validaciones en el Formulario de la pestaña listar
-    }
-    if (tipo == 'cliente') {
+    } else {
       this.formularioFiltro.get('empresa').setValue(null);
       this.formularioFiltro.get('empresa').setValidators([]);
       this.formularioFiltro.get('cliente').setValidators(Validators.required);
@@ -255,6 +254,7 @@ export class OrdenVentaComponent implements OnInit {
   }
   //Lista las ordenes de ventas por Empresa o Cliente
   public listarOrdenesVentas(tipo, id) {
+    this.formulario.get('seguro').enable();
     if (this.indiceSeleccionado != 1) {
       this.loaderService.show();
       switch (tipo) {
@@ -283,6 +283,16 @@ export class OrdenVentaComponent implements OnInit {
               this.loaderService.hide();
             }
           );
+          break;
+      }
+    } else {
+      switch(tipo) {
+        case 'cliente':
+          let cliente = this.cliente.value;
+          if(cliente.esSeguroPropio) {
+            this.formulario.get('seguro').setValue(this.appService.establecerDecimales('0', 2));
+            this.formulario.get('seguro').disable();
+          }
           break;
       }
     }
